@@ -30,11 +30,6 @@ import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.html.HTMLEditorKit;
 
 import logger.Logger;
