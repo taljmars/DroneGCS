@@ -1,35 +1,34 @@
 package mavlink.is.model;
 
-import org.droidplanner.core.MAVLink.WaypointManager;
-import org.droidplanner.core.MAVLink.connection.RadioConnection;
-import org.droidplanner.core.drone.DroneInterfaces;
-import org.droidplanner.core.drone.Preferences;
-import org.droidplanner.core.drone.profiles.Parameters;
-import org.droidplanner.core.drone.profiles.VehicleProfile;
-import org.droidplanner.core.drone.variables.Altitude;
-import org.droidplanner.core.drone.variables.Battery;
-import org.droidplanner.core.drone.variables.Beacon;
-import org.droidplanner.core.drone.variables.Calibration;
-import org.droidplanner.core.drone.variables.CameraFootprints;
-import org.droidplanner.core.drone.variables.GCS;
-import org.droidplanner.core.drone.variables.GPS;
-import org.droidplanner.core.drone.variables.GuidedPoint;
-import org.droidplanner.core.drone.variables.Home;
-import org.droidplanner.core.drone.variables.Magnetometer;
-import org.droidplanner.core.drone.variables.MissionStats;
-import org.droidplanner.core.drone.variables.Navigation;
-import org.droidplanner.core.drone.variables.Orientation;
-import org.droidplanner.core.drone.variables.Perimeter;
-import org.droidplanner.core.drone.variables.RC;
-import org.droidplanner.core.drone.variables.Radio;
-import org.droidplanner.core.drone.variables.Speed;
-import org.droidplanner.core.drone.variables.State;
-import org.droidplanner.core.drone.variables.StreamRates;
-import org.droidplanner.core.drone.variables.Messeges;
-import org.droidplanner.core.firmware.FirmwareType;
-import org.droidplanner.core.mission.Mission;
-
-import com.MAVLink.Messages.ardupilotmega.msg_heartbeat;
+import mavlink.core.connection.RadioConnection;
+import mavlink.core.drone.DroneInterfaces;
+import mavlink.core.drone.Preferences;
+import mavlink.core.drone.profiles.Parameters;
+import mavlink.core.drone.profiles.VehicleProfile;
+import mavlink.core.drone.variables.Altitude;
+import mavlink.core.drone.variables.Battery;
+import mavlink.core.drone.variables.Beacon;
+import mavlink.core.drone.variables.Calibration;
+import mavlink.core.drone.variables.CameraFootprints;
+import mavlink.core.drone.variables.GCS;
+import mavlink.core.drone.variables.GPS;
+import mavlink.core.drone.variables.GuidedPoint;
+import mavlink.core.drone.variables.Home;
+import mavlink.core.drone.variables.Magnetometer;
+import mavlink.core.drone.variables.Messeges;
+import mavlink.core.drone.variables.MissionStats;
+import mavlink.core.drone.variables.Navigation;
+import mavlink.core.drone.variables.Orientation;
+import mavlink.core.drone.variables.Perimeter;
+import mavlink.core.drone.variables.RC;
+import mavlink.core.drone.variables.Radio;
+import mavlink.core.drone.variables.Speed;
+import mavlink.core.drone.variables.State;
+import mavlink.core.drone.variables.StreamRates;
+import mavlink.core.firmware.FirmwareType;
+import mavlink.core.mission.Mission;
+import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import mavlink.is.protocol.msgbuilder.WaypointManager;
 
 public interface Drone {
 

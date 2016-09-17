@@ -22,18 +22,16 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import mavlink.core.mission.Mission;
+import mavlink.core.mission.MissionItem;
+import mavlink.core.mission.commands.ReturnToHome;
+import mavlink.core.mission.commands.Takeoff;
+import mavlink.core.mission.waypoints.Circle;
+import mavlink.core.mission.waypoints.Land;
+import mavlink.core.mission.waypoints.Waypoint;
+import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
-
-import org.droidplanner.core.mission.Mission;
-import org.droidplanner.core.mission.MissionItem;
-import org.droidplanner.core.mission.commands.ReturnToHome;
-import org.droidplanner.core.mission.commands.Takeoff;
-import org.droidplanner.core.mission.waypoints.Circle;
-import org.droidplanner.core.mission.waypoints.Land;
-import org.droidplanner.core.mission.waypoints.Waypoint;
-
-import com.MAVLink.Messages.ardupilotmega.msg_mission_item;
 
 public class LayerMission extends Layer implements Serializable /*TALMA add serilizebae*/ {    
     /**

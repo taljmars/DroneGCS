@@ -1,8 +1,8 @@
 package desktop.logic;
 
-import org.droidplanner.core.drone.Preferences;
-import org.droidplanner.core.drone.profiles.VehicleProfile;
-import org.droidplanner.core.firmware.FirmwareType;
+import mavlink.core.drone.Preferences;
+import mavlink.core.drone.profiles.VehicleProfile;
+import mavlink.core.firmware.FirmwareType;
 
 public class FakeFactory {
 

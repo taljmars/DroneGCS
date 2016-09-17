@@ -39,11 +39,9 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
-import org.droidplanner.core.MAVLink.MavLinkModes;
-
 import logger.Logger;
-
-import com.MAVLink.Messages.ApmModes;
+import mavlink.is.protocol.msg_metadata.ApmModes;
+import mavlink.is.protocol.msgbuilder.MavLinkModes;
 
 /**
  * Tree of layers for JMapViewer component

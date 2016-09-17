@@ -6,16 +6,17 @@ import gui.jmapviewer.Dashboard;
 
 
 
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
 
+import mavlink.core.drone.DroneInterfaces.DroneEventsType;
+import mavlink.core.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.model.Drone;
 
-import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
-import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

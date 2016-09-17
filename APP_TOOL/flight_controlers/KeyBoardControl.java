@@ -17,10 +17,9 @@ import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.droidplanner.core.MAVLink.MavLinkRC;
-
 import communication_device.TwoWaySerialComm;
 import logger.Logger;
+import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
 public class KeyBoardControl implements JMapViewerEventListener {
 	

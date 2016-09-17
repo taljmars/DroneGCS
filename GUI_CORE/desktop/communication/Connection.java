@@ -6,10 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import org.droidplanner.core.MAVLink.MAVLinkStreams.MAVLinkOutputStream;
-
-import com.MAVLink.Parser;
-import com.MAVLink.Messages.MAVLinkPacket;
+import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import mavlink.is.protocol.msgbuilder.MAVLinkStreams.MAVLinkOutputStream;
+import mavlink.is.protocol.msgparser.Parser;
 
 public class Connection implements MAVLinkOutputStream {
 	public int localPort = 14550;

@@ -58,24 +58,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import mavlink.core.drone.DroneInterfaces.DroneEventsType;
+import mavlink.core.drone.DroneInterfaces.OnDroneListener;
+import mavlink.core.drone.DroneInterfaces.OnWaypointManagerListener;
+import mavlink.core.drone.variables.GuidedPoint;
+import mavlink.core.drone.variables.Home;
+import mavlink.core.mission.Mission;
+import mavlink.core.mission.commands.ReturnToHome;
+import mavlink.core.mission.commands.Takeoff;
+import mavlink.core.mission.waypoints.Circle;
+import mavlink.core.mission.waypoints.Land;
+import mavlink.core.mission.waypoints.Waypoint;
 import mavlink.is.model.Drone;
+import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
-
-import org.droidplanner.core.MAVLink.WaypointManager.WaypointEvent_Type;
-import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
-import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
-import org.droidplanner.core.drone.DroneInterfaces.OnWaypointManagerListener;
-import org.droidplanner.core.drone.variables.GuidedPoint;
-import org.droidplanner.core.drone.variables.Home;
-import org.droidplanner.core.mission.Mission;
-import org.droidplanner.core.mission.commands.ReturnToHome;
-import org.droidplanner.core.mission.commands.Takeoff;
-import org.droidplanner.core.mission.waypoints.Circle;
-import org.droidplanner.core.mission.waypoints.Land;
-import org.droidplanner.core.mission.waypoints.Waypoint;
 
 public class JInternalFrameMap extends JInternalFrame implements JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener {
 	

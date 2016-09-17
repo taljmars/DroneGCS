@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Handler implements
-		org.droidplanner.core.drone.DroneInterfaces.Handler {
+		mavlink.core.drone.DroneInterfaces.Handler {
 
 	private final ScheduledExecutorService scheduler = Executors
 			.newSingleThreadScheduledExecutor();

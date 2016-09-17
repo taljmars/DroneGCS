@@ -34,21 +34,22 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import logger.Logger;
+import mavlink.core.connection.RadioConnection;
+import mavlink.core.drone.MyDroneImpl;
+import mavlink.core.drone.DroneInterfaces.DroneEventsType;
+import mavlink.core.drone.DroneInterfaces.OnDroneListener;
+import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.model.Drone;
+import mavlink.is.protocol.msg_metadata.ApmModes;
+import mavlink.is.protocol.msgbuilder.MavLinkArm;
+import mavlink.is.protocol.msgbuilder.MavLinkModes;
+import mavlink.is.protocol.msgbuilder.MavLinkMsgHandler;
+import mavlink.is.protocol.msgbuilder.MavLinkRC;
+import mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
 
-import org.droidplanner.core.MAVLink.MavLinkArm;
-import org.droidplanner.core.MAVLink.MavLinkModes;
-import org.droidplanner.core.MAVLink.MavLinkMsgHandler;
-import org.droidplanner.core.MAVLink.MavLinkRC;
-import org.droidplanner.core.MAVLink.MavLinkStreamRates;
-import org.droidplanner.core.MAVLink.connection.RadioConnection;
-import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
-import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
-import org.droidplanner.core.drone.MyDroneImpl;
-import org.droidplanner.core.gcs.GCSHeartbeat;
 import org.json.simple.JSONObject;
 
 import desktop.logic.*;
@@ -60,9 +61,6 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-
-import com.MAVLink.Messages.ApmModes;
-
 import javax.swing.JDesktopPane;
 
 import java.awt.Font;
