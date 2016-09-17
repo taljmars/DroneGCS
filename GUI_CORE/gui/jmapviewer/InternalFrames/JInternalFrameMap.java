@@ -1,5 +1,6 @@
 package gui.jmapviewer.InternalFrames;
 
+import flight_controlers.KeyBoardControl;
 import gui.jmapviewer.Coordinate;
 import gui.jmapviewer.Dashboard;
 import gui.jmapviewer.JMapViewer;
@@ -76,8 +77,6 @@ import org.droidplanner.core.mission.waypoints.Circle;
 import org.droidplanner.core.mission.waypoints.Land;
 import org.droidplanner.core.mission.waypoints.Waypoint;
 import org.droidplanner.core.model.Drone;
-
-import controler.KeyBoardControl;
 
 public class JInternalFrameMap extends JInternalFrame implements JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener {
 	

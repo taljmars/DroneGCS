@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Vector;
 
+import flight_controlers.KeyBoardControl;
 import gui.jmapviewer.InternalFrames.JInternalFrameActualPWM;
 import gui.jmapviewer.InternalFrames.JInternalFrameMap;
 
@@ -54,8 +55,6 @@ import org.droidplanner.core.helpers.units.Altitude;
 import org.droidplanner.core.model.Drone;
 import org.json.simple.JSONObject;
 
-import controler.KeyBoardControl;
-import controler.RCStabilizer;
 import desktop.logic.*;
 
 import javax.swing.JProgressBar;
@@ -216,7 +215,7 @@ public class Dashboard implements OnDroneListener{
 					gcs.setActive(true);
 					
 					System.out.println("Start Outgoing Communication");
-					( new Thread( new RCStabilizer() ) ).start();
+					KeyBoardControl.get();
 					
 					System.out.println("Sign Dashboard as drone listener");
 					drone.addDroneListener(window);

@@ -1,4 +1,4 @@
-package controler;
+package flight_controlers;
 
 import gui.jmapviewer.Dashboard;
 import gui.jmapviewer.events.JMVCommandEvent;
@@ -20,18 +20,37 @@ import javax.swing.JOptionPane;
 import org.droidplanner.core.MAVLink.MavLinkRC;
 
 import communication_device.TwoWaySerialComm;
-
 import logger.Logger;
 
 public class KeyBoardControl implements JMapViewerEventListener {
 	
 	private static KeyBoardControl myKeyBoardControl = null;
 	private static boolean param_loaded = false;
+	private static Thread KeyboardStabilizer = null;
 	
 	public static KeyBoardControl get() {
 		if (myKeyBoardControl == null) {
 			myKeyBoardControl = new KeyBoardControl();
 			myKeyBoardControl.LoadParams();
+			
+			KeyboardStabilizer = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
+					while (true) {
+						try {
+							//Thread.sleep(1000);
+							Thread.sleep(100);
+							KeyBoardControl.get().Update();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+			KeyboardStabilizer.start();
 		}
 		
 		return myKeyBoardControl;
