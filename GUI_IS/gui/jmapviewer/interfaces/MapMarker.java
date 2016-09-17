@@ -1,8 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.jmapviewer.interfaces;
 
-import gui.jmapviewer.Coordinate;
 import gui.jmapviewer.JMapViewer;
+import gui.jmapviewer.impl.Coordinate;
 
 import java.awt.Graphics;
 import java.awt.Point;

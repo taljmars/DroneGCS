@@ -3,11 +3,12 @@ package desktop.location;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import mavlink.is.utils.coordinates.Coord2D;
+import mavlink.is.utils.geoTools.GeoTools;
+
 import org.droidplanner.core.gcs.location.Location;
 import org.droidplanner.core.gcs.location.Location.LocationFinder;
 import org.droidplanner.core.gcs.location.Location.LocationReceiver;
-import org.droidplanner.core.helpers.coordinates.Coord2D;
-import org.droidplanner.core.helpers.geoTools.GeoTools;
 
 public class FakeLocation implements LocationFinder {
 	private static final int UPDATE_INTERVAL = 500;

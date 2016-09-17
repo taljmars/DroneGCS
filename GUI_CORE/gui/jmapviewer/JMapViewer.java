@@ -1,9 +1,13 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.jmapviewer;
 
-import gui.jmapviewer.InternalFrames.JInternalFrameMap;
 import gui.jmapviewer.events.JMVCommandEvent;
 import gui.jmapviewer.events.JMVCommandEvent.COMMAND;
+import gui.jmapviewer.impl.Coordinate;
+import gui.jmapviewer.impl.MapLineImpl;
+import gui.jmapviewer.impl.MapPathImpl;
+import gui.jmapviewer.impl.MapPolygonImpl;
+import gui.jmapviewer.interfaces.AbstractLayer;
 import gui.jmapviewer.interfaces.ICoordinate;
 import gui.jmapviewer.interfaces.JMapViewerEventListener;
 import gui.jmapviewer.interfaces.MapLine;
@@ -17,6 +21,7 @@ import gui.jmapviewer.interfaces.TileLoader;
 import gui.jmapviewer.interfaces.TileLoaderListener;
 import gui.jmapviewer.interfaces.TileSource;
 import gui.jmapviewer.tilesources.BingAerialTileSource;
+import internalframes.JInternalFrameMap;
 
 import java.awt.Color;
 import java.awt.Dimension;

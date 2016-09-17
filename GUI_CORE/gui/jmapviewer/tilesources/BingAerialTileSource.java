@@ -13,8 +13,9 @@ import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
-import gui.jmapviewer.Coordinate;
 import gui.jmapviewer.JMapViewer;
+import gui.jmapviewer.impl.Coordinate;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

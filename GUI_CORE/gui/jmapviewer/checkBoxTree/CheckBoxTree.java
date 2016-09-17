@@ -1,9 +1,9 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.jmapviewer.checkBoxTree;
 
-import gui.jmapviewer.AbstractLayer;
-import gui.jmapviewer.Layer;
-import gui.jmapviewer.LayerGroup;
+import gui.jmapviewer.impl.Layer;
+import gui.jmapviewer.impl.LayerGroup;
+import gui.jmapviewer.interfaces.AbstractLayer;
 
 import java.awt.event.MouseAdapter;
 

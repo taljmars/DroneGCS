@@ -1,9 +1,9 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.jmapviewer.tilesources;
 
-import gui.jmapviewer.Coordinate;
 import gui.jmapviewer.OsmMercator;
 import gui.jmapviewer.TileXY;
+import gui.jmapviewer.impl.Coordinate;
 import gui.jmapviewer.interfaces.ICoordinate;
 
 import java.awt.Point;

@@ -1,5 +1,8 @@
 package gui.jmapviewer;
 
+import internalframes.JInternalFrameActualPWM;
+import internalframes.JInternalFrameMap;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,8 +19,6 @@ import java.util.Date;
 import java.util.Vector;
 
 import flight_controlers.KeyBoardControl;
-import gui.jmapviewer.InternalFrames.JInternalFrameActualPWM;
-import gui.jmapviewer.InternalFrames.JInternalFrameMap;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -33,6 +34,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import logger.Logger;
+import mavlink.is.utils.coordinates.Coord2D;
+import mavlink.is.utils.coordinates.Coord3D;
+import mavlink.is.utils.units.Altitude;
 
 import org.droidplanner.core.MAVLink.MavLinkArm;
 import org.droidplanner.core.MAVLink.MavLinkModes;
@@ -44,9 +48,6 @@ import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
 import org.droidplanner.core.drone.MyDroneImpl;
 import org.droidplanner.core.gcs.GCSHeartbeat;
-import org.droidplanner.core.helpers.coordinates.Coord2D;
-import org.droidplanner.core.helpers.coordinates.Coord3D;
-import org.droidplanner.core.helpers.units.Altitude;
 import org.droidplanner.core.model.Drone;
 import org.json.simple.JSONObject;
 

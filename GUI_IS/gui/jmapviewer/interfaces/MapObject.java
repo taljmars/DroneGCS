@@ -1,8 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.jmapviewer.interfaces;
 
-import gui.jmapviewer.Layer;
 import gui.jmapviewer.Style;
+import gui.jmapviewer.impl.Layer;
 
 import java.awt.Color;
 import java.awt.Font;

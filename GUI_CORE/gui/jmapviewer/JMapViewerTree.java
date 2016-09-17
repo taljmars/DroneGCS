@@ -3,6 +3,12 @@ package gui.jmapviewer;
 
 import gui.jmapviewer.checkBoxTree.CheckBoxNodePanel;
 import gui.jmapviewer.checkBoxTree.CheckBoxTree;
+import gui.jmapviewer.impl.Layer;
+import gui.jmapviewer.impl.LayerGroup;
+import gui.jmapviewer.impl.LayerMission;
+import gui.jmapviewer.impl.LayerPerimeter;
+import gui.jmapviewer.impl.MapPolygonImpl;
+import gui.jmapviewer.interfaces.AbstractLayer;
 import gui.jmapviewer.interfaces.MapObject;
 import gui.jmapviewer.interfaces.MapPolygon;
 

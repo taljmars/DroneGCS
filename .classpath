@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="MAVLink"/>
+	<classpathentry kind="src" path="MAVLINK_CORE"/>
 	<classpathentry kind="src" path="GUI_CORE"/>
 	<classpathentry kind="src" path="IS"/>
 	<classpathentry kind="src" path="GUI_IS"/>
+	<classpathentry kind="src" path="MAVLINK_IS"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/RXTXcomm.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/jcommon-1.0.23.jar"/>

@@ -3,8 +3,8 @@ package gui.jmapviewer.checkBoxTree;
 
 import java.io.Serializable;
 
-import gui.jmapviewer.AbstractLayer;
-import gui.jmapviewer.LayerGroup;
+import gui.jmapviewer.impl.LayerGroup;
+import gui.jmapviewer.interfaces.AbstractLayer;
 
 /**
  * Node Data for checkBox Tree
