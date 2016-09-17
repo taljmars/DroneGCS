@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 
 import org.droidplanner.core.MAVLink.MavLinkRC;
 
+import communication_device.TwoWaySerialComm;
+
 import logger.Logger;
 
 public class KeyBoardControl implements JMapViewerEventListener {

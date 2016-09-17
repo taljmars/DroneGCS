@@ -1,4 +1,4 @@
-package controler;
+package communication_device;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;

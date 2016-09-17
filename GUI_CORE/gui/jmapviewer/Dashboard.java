@@ -37,7 +37,6 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.html.HTMLEditorKit;
 
 import logger.Logger;
-import network.MyJSONParser;
 
 import org.droidplanner.core.MAVLink.MavLinkArm;
 import org.droidplanner.core.MAVLink.MavLinkModes;
@@ -74,6 +73,8 @@ import javax.swing.JDesktopPane;
 import java.awt.Font;
 
 import javax.swing.SwingConstants;
+
+import json.JSONHelper;
 
 public class Dashboard implements OnDroneListener{
 
@@ -736,7 +737,7 @@ public class Dashboard implements OnDroneListener{
 					
 	       			@Override
 	       			protected Void doInBackground() throws Exception {
-						JSONObject obj = MyJSONParser.makeHttpRequest("http://www.sparksapp.eu/public_scripts/QuadGetHomePosition.php");
+						JSONObject obj = JSONHelper.makeHttpPostRequest("http://www.sparksapp.eu/public_scripts/QuadGetHomePosition.php");
 						if (obj == null) {
 							addErrorMessegeToDisplay("Failed to get beacon point from the web");
 							return null;

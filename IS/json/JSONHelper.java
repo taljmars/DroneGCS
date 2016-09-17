@@ -1,4 +1,4 @@
-package network;
+package json;
 
 import java.io.BufferedReader;
 import org.json.simple.parser.*;
@@ -10,9 +10,9 @@ import java.net.URL;
 
 import org.json.simple.JSONObject;
 
-public class MyJSONParser {
+public class JSONHelper {
 
-	public static JSONObject makeHttpRequest(String addr) {
+	public static JSONObject makeHttpPostRequest(String addr) {
 		//Create connection
 		JSONObject ans = null;
 		URL url;

@@ -2,7 +2,8 @@ package org.droidplanner.core.MAVLink.connection;
 
 import java.io.File;
 import java.io.IOException;
-import controler.TwoWaySerialComm;
+
+import communication_device.TwoWaySerialComm;
 
 /**
  * Provides support for mavlink connection via udp.

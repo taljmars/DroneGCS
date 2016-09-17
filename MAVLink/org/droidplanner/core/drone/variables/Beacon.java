@@ -8,7 +8,7 @@ import logger.Logger;
 
 import javax.swing.SwingWorker;
 
-import network.MyJSONParser;
+import json.JSONHelper;
 
 import org.droidplanner.core.drone.DroneVariable;
 import org.droidplanner.core.drone.MyDroneImpl;
@@ -130,7 +130,7 @@ public class Beacon extends DroneVariable implements Serializable{
 
 	public void syncBeacon() {
 		Dashboard.addGeneralMessegeToDisplay("Sync Beacon");
-		JSONObject obj = MyJSONParser.makeHttpRequest("http://www.sparksapp.eu/public_scripts/QuadGetFollowPosition.php");
+		JSONObject obj = JSONHelper.makeHttpPostRequest("http://www.sparksapp.eu/public_scripts/QuadGetFollowPosition.php");
 		if (obj == null) {
 			Dashboard.addErrorMessegeToDisplay("Failed to get beacon point from the web");
 			return;
