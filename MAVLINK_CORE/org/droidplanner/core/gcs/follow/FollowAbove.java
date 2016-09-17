@@ -1,10 +1,10 @@
 package org.droidplanner.core.gcs.follow;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.units.Length;
 
 import org.droidplanner.core.gcs.location.Location;
-import org.droidplanner.core.model.Drone;
 
 public class FollowAbove extends FollowAlgorithm {
 

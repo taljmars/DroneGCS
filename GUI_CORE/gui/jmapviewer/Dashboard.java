@@ -34,6 +34,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import logger.Logger;
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
@@ -48,7 +49,6 @@ import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
 import org.droidplanner.core.drone.MyDroneImpl;
 import org.droidplanner.core.gcs.GCSHeartbeat;
-import org.droidplanner.core.model.Drone;
 import org.json.simple.JSONObject;
 
 import desktop.logic.*;

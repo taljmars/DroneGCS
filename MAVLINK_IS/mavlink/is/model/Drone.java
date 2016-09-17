@@ -1,4 +1,4 @@
-package org.droidplanner.core.model;
+package mavlink.is.model;
 
 import org.droidplanner.core.MAVLink.WaypointManager;
 import org.droidplanner.core.MAVLink.connection.RadioConnection;

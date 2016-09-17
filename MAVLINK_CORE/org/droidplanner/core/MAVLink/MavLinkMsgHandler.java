@@ -1,8 +1,7 @@
 package org.droidplanner.core.MAVLink;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord2D;
-
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.ApmModes;
 import com.MAVLink.Messages.MAVLinkMessage;

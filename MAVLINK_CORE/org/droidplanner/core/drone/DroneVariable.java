@@ -2,7 +2,7 @@ package org.droidplanner.core.drone;
 
 import java.io.Serializable;
 
-import org.droidplanner.core.model.Drone;
+import mavlink.is.model.Drone;
 
 public class DroneVariable  implements Serializable /*TALMA Serializele*/  {
 	/**

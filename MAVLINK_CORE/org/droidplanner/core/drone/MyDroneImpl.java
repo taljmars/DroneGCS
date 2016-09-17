@@ -1,5 +1,7 @@
 package org.droidplanner.core.drone;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.MAVLink.WaypointManager;
 import org.droidplanner.core.MAVLink.connection.RadioConnection;
 import org.droidplanner.core.drone.profiles.Parameters;
@@ -28,7 +30,6 @@ import org.droidplanner.core.drone.variables.StreamRates;
 import org.droidplanner.core.drone.variables.Type;
 import org.droidplanner.core.firmware.FirmwareType;
 import org.droidplanner.core.mission.Mission;
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.ardupilotmega.msg_heartbeat;
 

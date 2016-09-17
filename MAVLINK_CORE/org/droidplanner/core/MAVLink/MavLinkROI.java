@@ -1,9 +1,9 @@
 package org.droidplanner.core.MAVLink;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord3D;
 
 import org.droidplanner.core.mission.commands.EpmGripper;
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.ardupilotmega.msg_command_long;
 import com.MAVLink.Messages.ardupilotmega.msg_digicam_control;

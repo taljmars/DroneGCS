@@ -1,12 +1,13 @@
 package org.droidplanner.core.drone.variables;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.MAVLink.MavLinkStreamRates;
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
 import org.droidplanner.core.drone.DroneVariable;
 import org.droidplanner.core.drone.MyDroneImpl;
 import org.droidplanner.core.drone.Preferences.Rates;
-import org.droidplanner.core.model.Drone;
 
 public class StreamRates extends DroneVariable implements OnDroneListener {
 

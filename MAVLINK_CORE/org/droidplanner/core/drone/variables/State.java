@@ -1,6 +1,7 @@
 package org.droidplanner.core.drone.variables;
 
 import gui.jmapviewer.impl.Coordinate;
+import mavlink.is.model.Drone;
 import mavlink.is.utils.units.Altitude;
 
 import org.droidplanner.core.MAVLink.MavLinkModes;
@@ -8,7 +9,6 @@ import org.droidplanner.core.drone.DroneInterfaces.Clock;
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.Handler;
 import org.droidplanner.core.drone.DroneVariable;
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.ApmModes;
 

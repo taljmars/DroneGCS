@@ -1,12 +1,12 @@
 package org.droidplanner.core.drone.variables;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.math.MathUtil;
 
 import org.droidplanner.core.drone.DroneInterfaces;
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneVariable;
 import org.droidplanner.core.drone.MyDroneImpl;
-import org.droidplanner.core.model.Drone;
 
 public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener{
 	/**

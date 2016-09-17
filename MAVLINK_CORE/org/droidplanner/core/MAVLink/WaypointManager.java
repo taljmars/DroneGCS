@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.drone.DroneInterfaces.OnTimeout;
 import org.droidplanner.core.drone.DroneInterfaces.OnWaypointManagerListener;
 import org.droidplanner.core.drone.DroneVariable;
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.MAVLinkMessage;
 import com.MAVLink.Messages.ardupilotmega.msg_mission_ack;

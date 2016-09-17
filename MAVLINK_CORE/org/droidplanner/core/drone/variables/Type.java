@@ -1,11 +1,12 @@
 package org.droidplanner.core.drone.variables;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.drone.DroneInterfaces;
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneVariable;
 import org.droidplanner.core.drone.MyDroneImpl;
 import org.droidplanner.core.firmware.FirmwareType;
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.enums.MAV_TYPE;
 

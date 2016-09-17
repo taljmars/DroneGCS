@@ -1,15 +1,19 @@
 package desktop.logic;
 
 import java.io.IOException;
+
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.MAVLink.MavLinkMsgHandler;
 import org.droidplanner.core.MAVLink.connection.RadioConnection;
 import org.droidplanner.core.drone.DroneInterfaces.Handler;
 import org.droidplanner.core.drone.MyDroneImpl;
 import org.droidplanner.core.gcs.follow.Follow;
-import org.droidplanner.core.model.Drone;
+
 import com.MAVLink.Parser;
 import com.MAVLink.Messages.MAVLinkMessage;
 import com.MAVLink.Messages.MAVLinkPacket;
+
 import desktop.location.FakeLocation;
 
 public class MyLogic implements Runnable {

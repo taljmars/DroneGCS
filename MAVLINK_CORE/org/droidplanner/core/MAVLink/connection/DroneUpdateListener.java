@@ -3,11 +3,10 @@ package org.droidplanner.core.MAVLink.connection;
 import javax.swing.JOptionPane;
 
 import logger.Logger;
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord2D;
 import gui.jmapviewer.Dashboard;
 import gui.jmapviewer.Dashboard.Type;
-
-import org.droidplanner.core.model.Drone;
 
 import com.MAVLink.Messages.ApmModes;
 import com.MAVLink.Messages.MAVLinkMessage;

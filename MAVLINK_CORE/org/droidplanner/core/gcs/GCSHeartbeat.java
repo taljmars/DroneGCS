@@ -4,8 +4,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.MAVLink.MavLinkHeartbeat;
-import org.droidplanner.core.model.Drone;
 
 /**
  * This class is used to send periodic heartbeat messages to the drone.

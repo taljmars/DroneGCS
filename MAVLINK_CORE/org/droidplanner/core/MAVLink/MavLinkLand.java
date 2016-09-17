@@ -1,8 +1,7 @@
 package org.droidplanner.core.MAVLink;
 
 import gui.jmapviewer.impl.Coordinate;
-
-import org.droidplanner.core.model.Drone;
+import mavlink.is.model.Drone;
 
 import com.MAVLink.Messages.ardupilotmega.msg_command_long;
 import com.MAVLink.Messages.enums.MAV_CMD;

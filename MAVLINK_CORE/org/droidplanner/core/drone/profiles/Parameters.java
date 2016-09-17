@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.MAVLink.MavLinkParameters;
 import org.droidplanner.core.drone.DroneInterfaces;
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.Handler;
 import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
 import org.droidplanner.core.drone.DroneVariable;
-import org.droidplanner.core.model.Drone;
 import org.droidplanner.core.parameters.Parameter;
 
 import com.MAVLink.Messages.MAVLinkMessage;

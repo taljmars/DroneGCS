@@ -1,8 +1,10 @@
 package org.droidplanner.core.drone;
 
+import mavlink.is.model.Drone;
+
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneInterfaces.OnDroneListener;
-import org.droidplanner.core.model.Drone;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DroneEvents extends DroneVariable {

@@ -1,10 +1,10 @@
 package org.droidplanner.core.drone.variables;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.units.Length;
 
 import org.droidplanner.core.drone.DroneInterfaces.DroneEventsType;
 import org.droidplanner.core.drone.DroneVariable;
-import org.droidplanner.core.model.Drone;
 
 public class MissionStats extends DroneVariable {
 	/**

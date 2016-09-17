@@ -1,5 +1,6 @@
 package org.droidplanner.core.gcs.roi;
 
+import mavlink.is.model.Drone;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
@@ -9,7 +10,6 @@ import org.droidplanner.core.MAVLink.MavLinkROI;
 import org.droidplanner.core.drone.DroneInterfaces.Handler;
 import org.droidplanner.core.gcs.location.Location;
 import org.droidplanner.core.gcs.location.Location.LocationReceiver;
-import org.droidplanner.core.model.Drone;
 
 /**
  * Uses location data from Android's FusedLocation LocationManager at 1Hz and
