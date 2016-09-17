@@ -1,6 +1,6 @@
 package mavlink.is.protocol.msgbuilder;
 
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_override;
 
 public class MavLinkRC {

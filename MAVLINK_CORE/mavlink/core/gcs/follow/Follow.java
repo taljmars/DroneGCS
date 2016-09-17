@@ -1,16 +1,16 @@
 package mavlink.core.gcs.follow;
 
-import mavlink.core.drone.DroneInterfaces.DroneEventsType;
-import mavlink.core.drone.DroneInterfaces.Handler;
-import mavlink.core.drone.DroneInterfaces.OnDroneListener;
-import mavlink.core.drone.variables.GuidedPoint;
-import mavlink.core.drone.variables.State;
 import mavlink.core.gcs.follow.FollowAlgorithm.FollowModes;
 import mavlink.core.gcs.location.Location;
 import mavlink.core.gcs.location.Location.LocationFinder;
 import mavlink.core.gcs.location.Location.LocationReceiver;
 import mavlink.core.gcs.roi.ROIEstimator;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import mavlink.is.drone.DroneInterfaces.Handler;
+import mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import mavlink.is.drone.variables.GuidedPoint;
+import mavlink.is.drone.variables.State;
 import mavlink.is.protocol.msgbuilder.MavLinkROI;
 import mavlink.is.utils.units.Length;
 

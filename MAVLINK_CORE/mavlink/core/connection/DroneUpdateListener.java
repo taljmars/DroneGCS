@@ -3,7 +3,8 @@ package mavlink.core.connection;
 import javax.swing.JOptionPane;
 
 import logger.Logger;
-import mavlink.is.model.Drone;
+import mavlink.is.connection.MavLinkConnectionListener;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_attitude;
@@ -27,7 +28,7 @@ import mavlink.is.utils.coordinates.Coord2D;
 import gui.jmapviewer.Dashboard;
 import gui.jmapviewer.Dashboard.Type;
 
-public class DroneUpdateListener implements MavLinkConnectionListener{
+public class DroneUpdateListener implements MavLinkConnectionListener {
 
 	private static final byte SEVERITY_HIGH = 3;
     private static final byte SEVERITY_CRITICAL = 4;

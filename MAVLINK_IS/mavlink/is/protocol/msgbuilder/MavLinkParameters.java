@@ -1,7 +1,7 @@
 package mavlink.is.protocol.msgbuilder;
 
-import mavlink.core.parameters.Parameter;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_request_list;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_request_read;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_set;

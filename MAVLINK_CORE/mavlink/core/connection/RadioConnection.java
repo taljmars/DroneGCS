@@ -3,6 +3,8 @@ package mavlink.core.connection;
 import java.io.File;
 import java.io.IOException;
 
+import mavlink.is.connection.MavLinkConnection;
+import mavlink.is.connection.MavLinkConnectionTypes;
 import communication_device.TwoWaySerialComm;
 
 /**

@@ -1,6 +1,6 @@
 package mavlink.is.protocol.msgbuilder;
 
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_set_mode;

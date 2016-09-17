@@ -1,8 +1,8 @@
 package desktop.logic;
 
-import mavlink.core.drone.Preferences;
-import mavlink.core.drone.profiles.VehicleProfile;
 import mavlink.core.firmware.FirmwareType;
+import mavlink.is.drone.Preferences;
+import mavlink.is.drone.profiles.VehicleProfile;
 
 public class FakeFactory {
 

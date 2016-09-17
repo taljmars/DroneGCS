@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import mavlink.core.connection.RadioConnection;
 import mavlink.core.drone.MyDroneImpl;
-import mavlink.core.drone.DroneInterfaces.Handler;
 import mavlink.core.gcs.follow.Follow;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import mavlink.is.protocol.msgbuilder.MavLinkMsgHandler;

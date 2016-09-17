@@ -1,8 +1,9 @@
 package mavlink.core.connection;
 
+import mavlink.is.connection.MavLinkConnectionListener;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 
-public class GuiListener implements MavLinkConnectionListener{
+public class GuiListener implements MavLinkConnectionListener {
 
 	@Override
 	public void onConnect() {

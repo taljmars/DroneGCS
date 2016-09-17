@@ -1,9 +1,9 @@
 package mavlink.core.gcs.roi;
 
-import mavlink.core.drone.DroneInterfaces.Handler;
 import mavlink.core.gcs.location.Location;
 import mavlink.core.gcs.location.Location.LocationReceiver;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.protocol.msgbuilder.MavLinkROI;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;

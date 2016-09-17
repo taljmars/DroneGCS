@@ -1,7 +1,7 @@
 package mavlink.is.protocol.msgbuilder;
 
 import gui.jmapviewer.impl.Coordinate;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.utils.units.Altitude;

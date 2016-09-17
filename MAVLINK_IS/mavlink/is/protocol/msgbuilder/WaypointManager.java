@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import mavlink.core.drone.DroneVariable;
-import mavlink.core.drone.DroneInterfaces.OnTimeout;
-import mavlink.core.drone.DroneInterfaces.OnWaypointManagerListener;
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneVariable;
+import mavlink.is.drone.DroneInterfaces.OnTimeout;
+import mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_count;

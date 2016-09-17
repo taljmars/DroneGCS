@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import mavlink.is.model.Drone;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkHeartbeat;
 
 /**
