@@ -1,4 +1,4 @@
-package mavlink.core.mission;
+package mavlink.is.drone.mission;
 
 import java.io.Serializable;
 import java.util.ArrayList;

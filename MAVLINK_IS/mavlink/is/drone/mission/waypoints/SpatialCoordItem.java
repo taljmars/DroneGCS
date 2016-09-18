@@ -1,9 +1,9 @@
-package mavlink.core.mission.waypoints;
+package mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
 
-import mavlink.core.mission.Mission;
-import mavlink.core.mission.MissionItem;
+import mavlink.is.drone.mission.Mission;
+import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;

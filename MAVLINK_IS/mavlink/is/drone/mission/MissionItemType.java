@@ -1,19 +1,19 @@
-package mavlink.core.mission;
+package mavlink.is.drone.mission;
 
 import java.util.Collections;
 
-import mavlink.core.mission.commands.CameraTrigger;
-import mavlink.core.mission.commands.ChangeSpeed;
-import mavlink.core.mission.commands.EpmGripper;
-import mavlink.core.mission.commands.ReturnToHome;
-import mavlink.core.mission.commands.Takeoff;
-import mavlink.core.mission.survey.Survey;
-import mavlink.core.mission.waypoints.Circle;
-import mavlink.core.mission.waypoints.Land;
-import mavlink.core.mission.waypoints.RegionOfInterest;
-import mavlink.core.mission.waypoints.SplineWaypoint;
-import mavlink.core.mission.waypoints.StructureScanner;
-import mavlink.core.mission.waypoints.Waypoint;
+import mavlink.is.drone.mission.commands.CameraTrigger;
+import mavlink.is.drone.mission.commands.ChangeSpeed;
+import mavlink.is.drone.mission.commands.EpmGripper;
+import mavlink.is.drone.mission.commands.ReturnToHome;
+import mavlink.is.drone.mission.commands.Takeoff;
+import mavlink.is.drone.mission.survey.Survey;
+import mavlink.is.drone.mission.waypoints.Circle;
+import mavlink.is.drone.mission.waypoints.Land;
+import mavlink.is.drone.mission.waypoints.RegionOfInterest;
+import mavlink.is.drone.mission.waypoints.SplineWaypoint;
+import mavlink.is.drone.mission.waypoints.StructureScanner;
+import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.utils.coordinates.Coord2D;
 
 public enum MissionItemType {

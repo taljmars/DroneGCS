@@ -1,8 +1,8 @@
-package mavlink.core.mission.survey.grid;
+package mavlink.is.drone.mission.survey.grid;
 
 import java.util.List;
 
-import mavlink.core.mission.survey.SurveyData;
+import mavlink.is.drone.mission.survey.SurveyData;
 import mavlink.is.shapes.polygon.Polygon;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.geoTools.LineCoord2D;

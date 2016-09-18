@@ -51,7 +51,6 @@ public class RadioConnection extends MavLinkConnection {
 	@Override
 	public final void loadPreferences() {
 		addMavLinkConnectionListener("Drone", new DroneUpdateListener());
-		addMavLinkConnectionListener("GUI", new GuiListener());
 	}
 
 	@Override

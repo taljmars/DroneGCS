@@ -1,14 +1,14 @@
-package mavlink.core.mission.survey;
+package mavlink.is.drone.mission.survey;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mavlink.core.mission.Mission;
-import mavlink.core.mission.MissionItem;
-import mavlink.core.mission.MissionItemType;
-import mavlink.core.mission.commands.CameraTrigger;
-import mavlink.core.mission.survey.grid.Grid;
-import mavlink.core.mission.survey.grid.GridBuilder;
+import mavlink.is.drone.mission.Mission;
+import mavlink.is.drone.mission.MissionItem;
+import mavlink.is.drone.mission.MissionItemType;
+import mavlink.is.drone.mission.commands.CameraTrigger;
+import mavlink.is.drone.mission.survey.grid.Grid;
+import mavlink.is.drone.mission.survey.grid.GridBuilder;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;

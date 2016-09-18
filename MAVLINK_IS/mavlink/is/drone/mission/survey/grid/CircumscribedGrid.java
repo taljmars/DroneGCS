@@ -1,4 +1,4 @@
-package mavlink.core.mission.survey.grid;
+package mavlink.is.drone.mission.survey.grid;
 
 import java.util.ArrayList;
 import java.util.List;

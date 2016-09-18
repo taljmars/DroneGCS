@@ -3,7 +3,7 @@ package mavlink.core.survey;
 import java.util.ArrayList;
 import java.util.List;
 
-import mavlink.core.mission.survey.CameraInfo;
+import mavlink.is.drone.mission.survey.CameraInfo;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.geoTools.GeoTools;
