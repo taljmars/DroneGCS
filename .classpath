@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="mavlink_core"/>
-	<classpathentry kind="src" path="gui_core"/>
+	<classpathentry kind="src" path="mavlink_core1"/>
+	<classpathentry kind="src" path="gui_core1"/>
 	<classpathentry kind="src" path="tools"/>
-	<classpathentry kind="src" path="gui_is"/>
-	<classpathentry kind="src" path="mavlink_is"/>
+	<classpathentry kind="src" path="gui_is1"/>
+	<classpathentry kind="src" path="mavlink_is1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jfreechart-1.0.19.jar"/>

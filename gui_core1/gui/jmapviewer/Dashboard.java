@@ -952,7 +952,7 @@ public class Dashboard implements OnDroneListener{
 		return true;
 	}
 	
-	private void ActivateBeacon() throws InterruptedException {
+	/*private void ActivateBeacon() throws InterruptedException {
 		int delay = 5;
 		addGeneralMessegeToDisplay("Start following beacon in ...");
 		while (delay > 0) {
@@ -962,7 +962,7 @@ public class Dashboard implements OnDroneListener{
 		}
 		addGeneralMessegeToDisplay("Go");
 		drone.getBeacon().setActive(true);
-	}
+	}*/
 	
 	private void DeactivateBeacon() {
 		addGeneralMessegeToDisplay("Stopping Follow");
