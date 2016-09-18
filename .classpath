@@ -6,9 +6,9 @@
 	<classpathentry kind="src" path="GUI_IS"/>
 	<classpathentry kind="src" path="MAVLINK_IS"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/RXTXcomm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/jfreechart-1.0.19.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/Desktop/Quadcopter/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/RXTXcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
