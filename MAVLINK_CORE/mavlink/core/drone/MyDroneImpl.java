@@ -41,9 +41,9 @@ public class MyDroneImpl implements Drone {
 	private final DroneEvents events;
 	private final Type type;
 	private VehicleProfile profile;
-	private final mavlink.is.drone.variables.GPS GPS;
+	private final GPS GPS;
 
-	private final mavlink.is.drone.variables.RC RC;
+	private final RC RC;
 	private final Follow follow;
 	private final Perimeter Perimeter;
 	private final Beacon Beacon;
