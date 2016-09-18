@@ -21,14 +21,14 @@ import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
 
-public class MavLinkMsgHandler {
+public class MavLinkMsgHandler_1 {
 
 	private static final byte SEVERITY_HIGH = 3;
     private static final byte SEVERITY_CRITICAL = 4;
 
 	private Drone drone;
 
-	public MavLinkMsgHandler(Drone drone) {
+	public MavLinkMsgHandler_1(Drone drone) {
 		this.drone = drone;
 	}
 

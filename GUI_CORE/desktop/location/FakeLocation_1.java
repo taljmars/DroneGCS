@@ -9,7 +9,7 @@ import mavlink.core.gcs.location.Location.LocationReceiver;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.geoTools.GeoTools;
 
-public class FakeLocation implements LocationFinder {
+public class FakeLocation_1 implements LocationFinder {
 	private static final int UPDATE_INTERVAL = 500;
 	private static final double SPEED = 3;
 	private LocationReceiver receiver;

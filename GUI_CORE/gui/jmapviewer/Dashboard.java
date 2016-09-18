@@ -43,7 +43,7 @@ import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.MavLinkArm;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
-import mavlink.is.protocol.msgbuilder.MavLinkMsgHandler;
+//import mavlink.is.protocol.msgbuilder.MavLinkMsgHandler;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 import mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 import mavlink.is.utils.coordinates.Coord2D;
@@ -145,7 +145,7 @@ public class Dashboard implements OnDroneListener{
 	
 	public static Dashboard window = null;
 	
-	protected static MavLinkMsgHandler mavlinkHandler;
+	//protected static MavLinkMsgHandler mavlinkHandler;
 	
     public static JDesktopPane desktopPane;
 	
@@ -192,12 +192,13 @@ public class Dashboard implements OnDroneListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					System.out.println("Start Outgoing Communication");
 					radConn = new RadioConnection();
 					radConn.connect();
 					
 					Handler handler = new desktop.logic.Handler();
 					drone = new MyDroneImpl(radConn, new Clock(), handler,FakeFactory.fakePreferences());
-					mavlinkHandler = new MavLinkMsgHandler(drone);
+					//mavlinkHandler = new MavLinkMsgHandler(drone);
 					
 					window = new Dashboard();
 					window.frame.setVisible(true);
@@ -208,7 +209,7 @@ public class Dashboard implements OnDroneListener{
 					GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
 					gcs.setActive(true);
 					
-					System.out.println("Start Outgoing Communication");
+					System.out.println("Start Keyboard Stabilizer");
 					KeyBoardControl.get();
 					
 					System.out.println("Sign Dashboard as drone listener");
@@ -690,7 +691,8 @@ public class Dashboard implements OnDroneListener{
 	        							return null;
 	        						}
 	    		        			
-	    		        			ActivateBeacon();
+	    		        			//ActivateBeacon();
+				        			drone.getFollow().toggleFollowMeState();
 				        		}
 				        		catch (NumberFormatException e) {
 				        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'");
@@ -703,7 +705,8 @@ public class Dashboard implements OnDroneListener{
 				        		}
 			        		}
 			        		else {
-								ActivateBeacon();
+								//ActivateBeacon();
+			        			drone.getFollow().toggleFollowMeState();
 			        		}
 							return null;
         				}
@@ -712,7 +715,8 @@ public class Dashboard implements OnDroneListener{
         		}
         		else {
         			// Not selected
-        			DeactivateBeacon();
+        			//DeactivateBeacon();
+        			drone.getFollow().toggleFollowMeState();
             		addErrorMessegeToDisplay("Not Selected");
             		if (FollowBeaconStartThread != null)
             			FollowBeaconStartThread.cancel(true);
@@ -1237,7 +1241,15 @@ public class Dashboard implements OnDroneListener{
 			case STATE:
 				setFlightTime(drone.getState().getFlightTime());
 				return;
-				
+			case FOLLOW_START:
+				addGeneralMessegeToDisplay("Follow Me Started");
+				return;
+			case FOLLOW_UPDATE:
+				addGeneralMessegeToDisplay("Follow Me Updated");
+				return;
+			case FOLLOW_STOP:
+				addGeneralMessegeToDisplay("Follow Me Ended");
+				return;
 		}
 	}
 

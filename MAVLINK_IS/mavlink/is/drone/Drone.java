@@ -2,6 +2,7 @@ package mavlink.is.drone;
 
 import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
+import mavlink.core.gcs.follow.Follow;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.profiles.Parameters;
 import mavlink.is.drone.profiles.VehicleProfile;
@@ -110,5 +111,7 @@ public interface Drone {
 	public Beacon getBeacon();
 
 	public GCS getGCS();
+
+	public Follow getFollow();
 	
 }

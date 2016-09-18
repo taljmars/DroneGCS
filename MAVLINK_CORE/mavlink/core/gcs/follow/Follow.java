@@ -30,7 +30,7 @@ public class Follow implements OnDroneListener, LocationReceiver {
 
 	public Follow(Drone drone, Handler handler, LocationFinder locationFinder) {
 		this.drone = drone;
-		followAlgorithm = FollowAlgorithm.FollowModes.LEASH.getAlgorithmType(drone);
+		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);
 		this.locationFinder = locationFinder;
 		locationFinder.setLocationListener(this);
 		roiEstimator = new ROIEstimator(handler, drone);

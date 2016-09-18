@@ -1,7 +1,9 @@
 package mavlink.core.drone;
 
+import mavlink.core.connection.MyLocationFinder;
 import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
+import mavlink.core.gcs.follow.Follow;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneEvents;
 import mavlink.is.drone.DroneInterfaces;
@@ -42,6 +44,7 @@ public class MyDroneImpl implements Drone {
 	private final mavlink.is.drone.variables.GPS GPS;
 
 	private final mavlink.is.drone.variables.RC RC;
+	private final Follow follow;
 	private final Perimeter Perimeter;
 	private final Beacon Beacon;
 	private final GCS GCS;
@@ -100,6 +103,7 @@ public class MyDroneImpl implements Drone {
         this.mag = new Magnetometer(this);
         this.footprints = new CameraFootprints(this);
         this.messeges = new Messeges(this);
+        this.follow = new Follow(this, handler, new MyLocationFinder());
 
         loadVehicleProfile();
 	}
@@ -307,5 +311,10 @@ public class MyDroneImpl implements Drone {
 	@Override
 	public GCS getGCS() {
 		return GCS;
+	}
+
+	@Override
+	public Follow getFollow() {
+		return follow;
 	}
 }
