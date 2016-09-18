@@ -30,6 +30,7 @@ public class MyLocationFinder implements LocationFinder {
 	@Override
 	public void enableLocationUpdates() {
 		Timer timer = new Timer();
+		Logger.LogDesignedMessege(getClass() + " Location updates started!");
 		myTimerTask = new TimerTask() {
 			long lastTime = System.currentTimeMillis();
 
@@ -60,6 +61,8 @@ public class MyLocationFinder implements LocationFinder {
 	public void disableLocationUpdates() {
 		if (myTimerTask != null)
 			myTimerTask.cancel();
+		
+		Logger.LogDesignedMessege(getClass() + " Location updates canceled!");
 	}
 
 	
