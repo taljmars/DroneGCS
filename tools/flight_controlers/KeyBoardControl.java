@@ -1,8 +1,8 @@
 package flight_controlers;
 
-import gui.jmapviewer.Dashboard;
-import gui.jmapviewer.events.JMVCommandEvent;
-import gui.jmapviewer.interfaces.JMapViewerEventListener;
+import gui.core.Dashboard;
+import gui.is.events.JMVCommandEvent;
+import gui.is.interfaces.JMapViewerEventListener;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -400,14 +400,14 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		    	_TRIM_ANGLE_ROLL = RC_Roll;
 		    	_TRIM_ANGLE_PITCH = RC_Pitch;
 		    	_TRIM_ANGLE_YAW = RC_Yaw;
-		    	Dashboard.addGeneralMessegeToDisplay("Calibrating New Center of Keyboard Control");
+		    	Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Calibrating New Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		    case KeyEvent.VK_BACK_SPACE :
 		    	_TRIM_ANGLE_ROLL = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_PITCH = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_YAW = _TRIM_ANGLE;
-		    	Dashboard.addGeneralMessegeToDisplay("Reseting Center of Keyboard Control");
+		    	Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Reseting Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		}
