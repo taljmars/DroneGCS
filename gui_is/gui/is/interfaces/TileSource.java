@@ -1,9 +1,9 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.interfaces;
 
-import gui.core.JMapViewer;
-import gui.core.Tile;
-import gui.core.TileXY;
+import gui.core.mapViewer.JMapViewer;
+import gui.is.classes.Tile;
+import gui.is.classes.TileXY;
 
 import java.awt.Point;
 import java.io.IOException;

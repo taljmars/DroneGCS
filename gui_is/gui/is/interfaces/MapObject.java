@@ -1,8 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.interfaces;
 
-import gui.core.Style;
-import gui.core.impl.Layer;
+import gui.core.mapObjects.Layer;
+import gui.is.classes.Style;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,9 +1,9 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.interfaces;
 
-import gui.core.Style;
-import gui.core.impl.LayerGroup;
-import gui.core.impl.MapMarkerCircle;
+import gui.core.mapObjects.LayerGroup;
+import gui.core.mapObjects.MapMarkerCircle;
+import gui.is.classes.Style;
 
 import java.io.Serializable;
 import java.util.ArrayList;

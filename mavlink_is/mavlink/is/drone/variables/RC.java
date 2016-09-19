@@ -41,5 +41,16 @@ public class RC extends DroneVariable {
 		out[7] = msg.servo8_raw;
 		myDrone.notifyDroneEvent(DroneEventsType.RC_OUT);
 	}
+	
+	public int getAverageThrust() {
+		int e1 = out[0];
+		int e2 = out[1];
+		int e3 = out[2];
+		int e4 = out[3];
+		
+		int eAvg = (e1 + e2 + e3 + e4) / 4;
+		
+		return eAvg;
+	}
 
 }

@@ -1,6 +1,6 @@
 package flight_controlers;
 
-import gui.core.Dashboard;
+import gui.core.dashboard.Dashboard;
 import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.JMapViewerEventListener;
 
@@ -417,7 +417,7 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		if (! val.isEmpty()) {
 			TwoWaySerialComm.get().write(val);
 			System.out.println("Sending '" + val + "'");
-			Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
+			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(Dashboard.drone, rcOutputs);
 		}
@@ -434,7 +434,7 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		if (param_loaded && ! val.isEmpty()) {
 			TwoWaySerialComm.get().write(val);
 			System.out.println("Sending '" + val + "'");
-			Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
+			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(Dashboard.drone, rcOutputs);
 		}
@@ -443,8 +443,8 @@ public class KeyBoardControl implements JMapViewerEventListener {
 	public void Reset() {
 		System.out.println("Reseting RC Set");
 		ResetRCSet();
-		if (Dashboard.window != null)
-			Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
+		//if (Dashboard.window != null)
+		//	Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 	}
 
 	public void SetThrust(int parseInt) {

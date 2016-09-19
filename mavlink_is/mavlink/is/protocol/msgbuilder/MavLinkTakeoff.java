@@ -1,6 +1,6 @@
 package mavlink.is.protocol.msgbuilder;
 
-import gui.core.impl.Coordinate;
+import gui.core.mapObjects.Coordinate;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;

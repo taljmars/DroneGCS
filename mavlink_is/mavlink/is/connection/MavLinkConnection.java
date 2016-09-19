@@ -1,7 +1,6 @@
 package mavlink.is.connection;
 
 import logger.Logger;
-import gui.core.LoggerDisplayerManager;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -145,7 +144,7 @@ public abstract class MavLinkConnection {
 					final MAVLinkPacket packet = mPacketsToSend.take();
 					if (packet.unpack().msgid != msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT) {
 						System.err.println("[SND] " + packet.unpack().toString());
-						String log_entry = LoggerDisplayerManager.generateDesignedMessege(packet.unpack().toString(), LoggerDisplayerManager.Type.OUTGOING, false);
+						String log_entry = Logger.generateDesignedMessege(packet.unpack().toString(), Logger.Type.OUTGOING, false);
 						Logger.LogDesignedMessege(log_entry);
 					}
 					packet.seq = msgSeqNumber;

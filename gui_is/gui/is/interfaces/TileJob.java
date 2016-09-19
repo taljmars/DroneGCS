@@ -1,7 +1,7 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.interfaces;
 
-import gui.core.Tile;
+import gui.is.classes.Tile;
 
 /**
  * Interface for implementing a tile loading job. Tiles are usually loaded via HTTP

@@ -1,6 +1,6 @@
 package mavlink.is.drone.variables;
 
-import gui.core.impl.Coordinate;
+import gui.core.mapObjects.Coordinate;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;

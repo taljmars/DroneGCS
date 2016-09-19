@@ -111,4 +111,53 @@ public class Logger {
 			e.printStackTrace();
 		}
 	}
+	
+	public static enum Type {
+		GENERAL,
+		ERROR,
+		INCOMING,
+		OUTGOING
+	};
+	
+	public static String generateDesignedMessege(String cmd, Type t, boolean no_date)
+	{
+		String newcontent = "";
+		
+		String ts_string = "";
+		if (!no_date) { 
+			Date date = new Date();
+			Timestamp ts = new Timestamp(date.getTime());
+			ts_string = "[" + ts.toString() + "]";
+		}
+		/*
+		 * Currently i am converting NL char to space and comma sep.
+		 */
+		cmd = cmd.replace("\n", ",");
+		cmd = cmd.trim();
+		String[] lines = cmd.split("\n");
+		for (int i = 0 ; i < lines.length ; i++ ){
+			if (lines[i].length() == 0)
+				continue;
+
+			switch (t) {
+				case GENERAL:
+					newcontent = ("<font color=\"black\">" + ts_string + " " + lines[i] + "</font>" + "<br/>");
+					break;
+				case OUTGOING:
+					newcontent = ("<font color=\"blue\">" + ts_string + " " + lines[i] + "</font>" + "<br/>");
+					break;
+				case INCOMING:
+					newcontent = ("<font color=\"green\">" + ts_string + " " + lines[i] + "</font>" + "<br/>");
+					break;
+				case ERROR:
+					newcontent = ("<font color=\"red\">" + ts_string + " " + lines[i] + "</font>" + "<br/>");
+					break;
+				default:
+					newcontent = ("<font color=\"red\">" + ts_string + " Unrecognized: " + lines[i] + "</font>" + "<br/>");
+					break;
+			}
+		}
+		
+		return newcontent;
+	}
 }

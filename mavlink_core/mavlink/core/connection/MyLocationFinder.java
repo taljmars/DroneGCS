@@ -1,6 +1,6 @@
 package mavlink.core.connection;
 
-import gui.core.Dashboard;
+import gui.core.dashboard.Dashboard;
 
 import java.util.Timer;
 import java.util.TimerTask;

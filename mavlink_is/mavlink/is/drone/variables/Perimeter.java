@@ -3,8 +3,8 @@ package mavlink.is.drone.variables;
 import java.io.Serializable;
 import java.util.List;
 
-import gui.core.Dashboard;
-import gui.core.impl.Coordinate;
+import gui.core.dashboard.Dashboard;
+import gui.core.mapObjects.Coordinate;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapPolygon;
 import logger.Logger;

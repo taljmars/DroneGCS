@@ -1,6 +1,6 @@
 package mavlink.is.drone.variables;
 
-import gui.core.Dashboard;
+import gui.core.dashboard.Dashboard;
 
 import java.io.Serializable;
 

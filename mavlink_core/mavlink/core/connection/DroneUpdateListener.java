@@ -25,8 +25,7 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
-import gui.core.Dashboard;
-import gui.core.LoggerDisplayerManager;
+import gui.core.dashboard.Dashboard;
 
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
@@ -58,7 +57,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 			return;
 		}
 		
-		String log_entry = LoggerDisplayerManager.generateDesignedMessege(msg.toString(), LoggerDisplayerManager.Type.INCOMING, false);
+		String log_entry = Logger.generateDesignedMessege(msg.toString(), Logger.Type.INCOMING, false);
 		Logger.LogDesignedMessege(log_entry);
 
 		drone.getWaypointManager().processMessage(msg);

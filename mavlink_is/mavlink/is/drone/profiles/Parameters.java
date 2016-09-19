@@ -1,6 +1,6 @@
 package mavlink.is.drone.profiles;
 
-import gui.core.Dashboard;
+import gui.core.dashboard.Dashboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;

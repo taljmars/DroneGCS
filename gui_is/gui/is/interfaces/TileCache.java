@@ -1,8 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.interfaces;
 
-import gui.core.JMapViewer;
-import gui.core.Tile;
+import gui.core.mapViewer.JMapViewer;
+import gui.is.classes.Tile;
 
 /**
  * Implement this interface for creating your custom tile cache for

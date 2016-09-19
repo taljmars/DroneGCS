@@ -2,7 +2,7 @@ package mavlink.is.utils.coordinates;
 
 import java.io.Serializable;
 
-import gui.core.impl.Coordinate;
+import gui.core.mapObjects.Coordinate;
 
 public class Coord2D implements Serializable /*TALMA Serializele*/  {
 	/**
