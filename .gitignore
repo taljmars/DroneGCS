@@ -1,3 +1,6 @@
+# Igone bin directory - talma
+bin/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -17,13 +20,13 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Java compliation file
+# Java compliation file - talma
 *.class
 
-# Logs file
+# Logs file - talma
 *.html
 
-# My Saved file
+# My Saved file - talma
 *.ini
 
 # =========================
@@ -53,7 +56,6 @@ $RECYCLE.BIN/
 .AppleDesktop
 Network Trash Folder
 Temporary Items
-bin/
 .apdisk
 *.class
 *.html
