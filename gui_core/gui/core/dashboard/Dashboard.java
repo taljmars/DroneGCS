@@ -626,60 +626,6 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         setButtonControl(false);
 	}
 	
-	/*private boolean ArmQuad() throws InterruptedException {
-		loggerDisplayerManager.addGeneralMessegeToDisplay("Arming Quad");
-		MavLinkArm.sendArmMessage(Dashboard.drone, true);
-		int armed_waiting_time = 5000; // 5 seconds
-		long sleep_time = 1000;
-		int retry = (int) (armed_waiting_time / sleep_time);
-		while (retry > 0) {
-			if (drone.getState().isArmed())
-				break;
-			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
-			loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for arming approval (" + retry + ")");
-			Thread.sleep(sleep_time);
-			retry--;
-		}
-		
-		if (retry <= 0) {
-			JOptionPane.showMessageDialog(null, "Failed to arm quadcopter, taking off was canceled");
-			System.out.println(getClass().getName() + "Failed to arm quadcopter, taking off was canceled");
-			loggerDisplayerManager.addErrorMessegeToDisplay("Failed to arm quad");
-			return false;
-		}
-		
-		return true;
-	}*/
-	
-//	private boolean TakeoffQuad(double real_value) throws InterruptedException {
-//		loggerDisplayerManager.addGeneralMessegeToDisplay("Starting Takeoff");
-//		drone.getState().doTakeoff(new Altitude(real_value));
-//		int takeoff_waiting_time = 15000; // 15 seconds
-//		long sleep_time = 1000;
-//		int retry = (int) (takeoff_waiting_time / sleep_time);
-//		while (retry > 0) {
-//			double alt = drone.getAltitude().getAltitude();
-//			if (alt >= real_value * 0.95 && alt <= real_value * 1.05 )
-//				break;
-//			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
-//			loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for takeoff to finish (" + retry + ")");
-//			loggerDisplayerManager.addGeneralMessegeToDisplay("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + real_value);
-//			Thread.sleep(sleep_time);
-//			retry--;
-//		}
-//		
-//		if (retry <= 0) {
-//			JOptionPane.showMessageDialog(null, "Failed to lift quadcopter, taking off was canceled");
-//			System.out.println(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
-//			loggerDisplayerManager.addErrorMessegeToDisplay("Failed to lift quad");
-//			return false;
-//		}
-//		
-//		loggerDisplayerManager.addGeneralMessegeToDisplay("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
-//		
-//		return true;
-//	}
-	
 	/*private void ActivateBeacon() throws InterruptedException {
 		int delay = 5;
 		addGeneralMessegeToDisplay("Start following beacon in ...");
