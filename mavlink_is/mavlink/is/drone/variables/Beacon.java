@@ -5,19 +5,13 @@ import gui.core.dashboard.Dashboard;
 import java.io.Serializable;
 
 import logger.Logger;
+import mavlink.core.connection.helper.BeaconData;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
-import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
-import mavlink.is.utils.units.Altitude;
-
 import javax.swing.SwingWorker;
-
-import json.JSONHelper;
-
-import org.json.simple.JSONObject;
 
 public class Beacon extends DroneVariable implements Serializable{
 	/**
@@ -129,14 +123,11 @@ public class Beacon extends DroneVariable implements Serializable{
 
 	public void syncBeacon() {
 		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Sync Beacon");
-		JSONObject obj = JSONHelper.makeHttpPostRequest("http://www.sparksapp.eu/public_scripts/QuadGetFollowPosition.php");
-		if (obj == null) {
+		BeaconData beaconData = BeaconData.fetch();
+		if (beaconData == null) {
 			Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
 			return;
 		}
-		double lat = Double.parseDouble((String) obj.get("Lat"));
-		double lon = Double.parseDouble((String) obj.get("Lng"));
-		double alt = Double.parseDouble((String) obj.get("Z"));
-		setPosition(new Coord3D(new Coord2D(lat, lon), new Altitude(alt)));
+		setPosition(beaconData.getCoordinate());
 	}
 }

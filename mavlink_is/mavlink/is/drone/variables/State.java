@@ -1,5 +1,6 @@
 package mavlink.is.drone.variables;
 
+import gui.core.dashboard.Dashboard;
 import gui.core.mapObjects.Coordinate;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
@@ -115,6 +116,8 @@ public class State extends DroneVariable {
 
 	public void changeFlightMode(ApmModes mode) {
 		if (ApmModes.isValid(mode)) {
+			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + mode.getName());
+			System.out.println(getClass().getName() + mode.getName());
 			MavLinkModes.changeFlightMode(myDrone, mode);
 		}
 	}

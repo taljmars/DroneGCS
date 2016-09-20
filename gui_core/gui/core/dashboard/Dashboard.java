@@ -2,6 +2,8 @@ package gui.core.dashboard;
 
 import gui.core.internalFrames.*;
 import gui.core.internalPanels.*;
+import gui.core.operations.internal.ArmQuad;
+import gui.core.operations.internal.TakeoffQuad;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -10,11 +12,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.FlowLayout;
 import java.util.Timer;
 
 import flight_controlers.KeyBoardControl;
@@ -36,25 +33,18 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
-import javax.swing.SwingConstants;
-
 import logger.Logger;
 import mavlink.core.connection.RadioConnection;
+import mavlink.core.connection.helper.GCSLocationData;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.*;
-import mavlink.is.utils.coordinates.*;
-import mavlink.is.utils.units.Altitude;
-
-import org.json.simple.JSONObject;
-
 import desktop.logic.*;
 import desktop.logic.Clock;
 import desktop.logic.Handler;
-import json.JSONHelper;
 
 public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerDisplayerHandler {
 
@@ -73,7 +63,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
     public JToggleButton areaLogLockTop;
     
     private JLabel keepAliveLabel;
-    private JLabel lblCriticalMsg;
+    //private JLabel lblCriticalMsg;
     
     private JPanelTelemetrySatellite telemetryPanel;
 
@@ -92,8 +82,6 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
     private JButton btnStopFollow;
     private JButton btnHoldPosition;
     private JButton btnStartMission;
-    public static JButton btnMap;
-    public static JButton btnActualPWM;
     
     private JToolBar tbTelemtry;
 	private JToolBar tbContorlButton;
@@ -108,6 +96,8 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
     
     public JCheckBox cbActiveGeofencePerimeterEnforce = null;
     public JCheckBox cbActiveGeofencePerimeterAlert = null;
+
+	private JPanelToolBar pnlToolbar_North;
 
 	public static LoggerDisplayerManager loggerDisplayerManager = null;
 	
@@ -210,36 +200,8 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         desktopPane = new JDesktopPane();
         frame.getContentPane().add(desktopPane, BorderLayout.CENTER);               
         
-        JPanel pnlNorth = new JPanel();
-        frame.getContentPane().add(pnlNorth, BorderLayout.NORTH);
-        pnlNorth.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        
-        btnMap = new JButton("Map");
-        btnMap.setSelected(true);
-        pnlNorth.add(btnMap);
-        btnMap.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent arg0) {
-        		if (arg0.getID() == MouseEvent.MOUSE_CLICKED) {
-        			JInternalFrameMap.Generate();
-        		}
-        	}
-        });
-        
-        btnActualPWM = new JButton("Actual PWM");
-        pnlNorth.add(btnActualPWM);
-        
-        lblCriticalMsg = new JLabel("MSG");
-        lblCriticalMsg.setHorizontalAlignment(SwingConstants.TRAILING);
-        pnlNorth.add(lblCriticalMsg);
-        btnActualPWM.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent arg0) {
-        		if (arg0.getID() == MouseEvent.MOUSE_CLICKED) {
-        			JInternalFrameActualPWM.Generate();
-        		}
-        	}
-        });
+        pnlToolbar_North = new JPanelToolBar();
+        frame.getContentPane().add(pnlToolbar_North, BorderLayout.NORTH);
         
         JPanel southPanel = new JPanel(new BorderLayout());
         frame.getContentPane().add(southPanel, BorderLayout.SOUTH);
@@ -272,26 +234,13 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         pnlLogBox.add(pnlLogbox, c);
         
         JPanel pnlLogToolBox = new JPanel(new GridLayout(0,1,0,0));     
-        areaLogLockTop = new JToggleButton("Top");
-        areaLogLockTop.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (areaLogLockTop.isSelected()) {
-					logbox.getVerticalScrollBar().setValue(0);
-				}
-			}
-		});
+        areaLogLockTop = new JToggleButton("Top");        
+        areaLogLockTop.addActionListener(e -> {if (areaLogLockTop.isSelected()) logbox.getVerticalScrollBar().setValue(0);});
+        
         pnlLogToolBox.add(areaLogLockTop);
         
         JButton areaLogClear = new JButton("CLR");
-        areaLogClear.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				logBox.setText("");
-			}
-		});
+        areaLogClear.addActionListener(e -> logBox.setText(""));
         pnlLogToolBox.add(areaLogClear);
         
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -305,44 +254,15 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         areaConfiguration.setPreferredSize(southPanelDimension);
         
         cbActiveGeofencePerimeterAlert = new JCheckBox("Active GeoFence/Perimeter Alert");
-        cbActiveGeofencePerimeterAlert.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (cbActiveGeofencePerimeterAlert.isSelected()) {
-					loggerDisplayerManager.addGeneralMessegeToDisplay("Enable perimeter alert");
-					drone.getPerimeter().setAlert(true);
-				}
-				else {
-					loggerDisplayerManager.addGeneralMessegeToDisplay("Disable perimeter alert");
-					drone.getPerimeter().setAlert(false);
-				}
-			}
-		});
+        cbActiveGeofencePerimeterAlert.addActionListener( e -> drone.getPerimeter().setAlert(cbActiveGeofencePerimeterAlert.isSelected() ? true : false));
+        cbActiveGeofencePerimeterAlert.setSelected(false);
+        pnlConfiguration.add(cbActiveGeofencePerimeterAlert);
         
         cbActiveGeofencePerimeterEnforce = new JCheckBox("Active GeoFence/Perimeter Enforcement");
-        cbActiveGeofencePerimeterEnforce.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (cbActiveGeofencePerimeterEnforce.isSelected()) {
-					loggerDisplayerManager.addGeneralMessegeToDisplay("Enable Perimeter enforcement");
-					drone.getPerimeter().setEnforce(true);
-				}
-				else {
-					loggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter enforcement");
-					drone.getPerimeter().setEnforce(false);
-				}
-			}
-		});
-        cbActiveGeofencePerimeterAlert.setSelected(false);
+        cbActiveGeofencePerimeterEnforce.addActionListener( e -> drone.getPerimeter().setEnforce(cbActiveGeofencePerimeterEnforce.isSelected() ? true : false));
         cbActiveGeofencePerimeterEnforce.setSelected(false);
-        pnlConfiguration.add(cbActiveGeofencePerimeterAlert);
         pnlConfiguration.add(cbActiveGeofencePerimeterEnforce);
         
-        /*FlowLayout flowLayout = (FlowLayout) pnlConfiguration.getLayout();
-        flowLayout.setAlignOnBaseline(true);
-        flowLayout.setAlignment(FlowLayout.LEFT);*/
         tbSouth.addTab("Configuration", null, areaConfiguration, null);
         
         areaMission = new JScrollPane(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -377,359 +297,320 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         tbContorlButton.add(eastPanel_buttons);
         
         btnExit = new JButton("Exit");
-        btnExit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) { 
-            	if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Are you sure you wand to exit?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
-            		System.out.println("Bye Bye");
-            		Logger.LogGeneralMessege("");
-            		Logger.LogGeneralMessege("Summary:");
-            		Logger.LogGeneralMessege("--------");
-            		Logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
-            		Logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
-    				Logger.close();
-    				System.exit(0);
-            	}
-			}
+        btnExit.addActionListener( e -> {
+        	if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Are you sure you wand to exit?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+        		System.out.println("Bye Bye");
+        		Logger.LogGeneralMessege("");
+        		Logger.LogGeneralMessege("Summary:");
+        		Logger.LogGeneralMessege("--------");
+        		Logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
+        		Logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
+				Logger.close();
+				System.exit(0);
+        	}
 		});
         eastPanel_buttons.add(btnExit);
         
         btnSyncDrone = new JButton("Sync Drone");
-        btnSyncDrone.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	loggerDisplayerManager.addGeneralMessegeToDisplay("Syncing Drone parameters");
-        		resetProgressBar();
-        		drone.getParameters().refreshParameters();
-            }
+        btnSyncDrone.addActionListener( e -> {
+        	loggerDisplayerManager.addGeneralMessegeToDisplay("Syncing Drone parameters");
+    		resetProgressBar();
+    		drone.getParameters().refreshParameters();
         });
         eastPanel_buttons.add(btnSyncDrone);
         
         btnFly = new JButton("Controler: RC");
         //btnFly.addKeyListener(KeyBoardControl.get());
-        btnFly.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	KeyBoardControl.get().HoldIfNeeded();
-            	Object[] options = {"KeyBoard", "RC Controller"};
-            	int n = JOptionPane.showOptionDialog(null, "Choose Controler", "",
-            		    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-            		    options, options[1]); //default button title
-            	if (n == 0) {
-            		KeyBoardControl.get().ReleaseIfNeeded();
-            		KeyBoardControl.get().Activate();
-            		int eAvg = drone.getRC().getAverageThrust();
-            		loggerDisplayerManager.addGeneralMessegeToDisplay("Setting Keyboard Thrust starting value to " + eAvg);
-            		KeyBoardControl.get().SetThrust(eAvg);
-            		btnFly.setText("Controler: Keyboard");
-            	}
-            	else {
-            		KeyBoardControl.get().ReleaseIfNeeded();
-            		KeyBoardControl.get().Deactivate();
-            		/*lblRoll.setText("---");
-            		lblPitch.setText("---");
-            		lblThrust.setText("---");
-            		lblYaw.setText("---");*/
-            		int[] rcOutputs = {0, 0, 0, 0, 0, 0, 0, 0};
+        btnFly.addActionListener( e -> {
+        	KeyBoardControl.get().HoldIfNeeded();
+        	Object[] options = {"KeyBoard", "RC Controller"};
+        	int n = JOptionPane.showOptionDialog(null, "Choose Controler", "",
+        		    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+        		    options, options[1]); //default button title
+        	if (n == 0) {
+        		KeyBoardControl.get().ReleaseIfNeeded();
+        		KeyBoardControl.get().Activate();
+        		int eAvg = drone.getRC().getAverageThrust();
+        		loggerDisplayerManager.addGeneralMessegeToDisplay("Setting Keyboard Thrust starting value to " + eAvg);
+        		KeyBoardControl.get().SetThrust(eAvg);
+        		btnFly.setText("Controler: Keyboard");
+        	}
+        	else {
+        		KeyBoardControl.get().ReleaseIfNeeded();
+        		KeyBoardControl.get().Deactivate();
+        		int[] rcOutputs = {0, 0, 0, 0, 0, 0, 0, 0};
+        		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
+        		try {
+					Thread.sleep(200);
+					MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
+            		Thread.sleep(200);
             		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
-            		try {
-						Thread.sleep(200);
-						MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
-	            		Thread.sleep(200);
-	            		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-            		btnFly.setText("Controler: RC");
-            	}
-            	loggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
-            }
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+        		btnFly.setText("Controler: RC");
+        	}
+        	loggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
         });
         eastPanel_buttons.add(btnFly);        
         
         btnArm = new JToggleButton("Arm Motors");
-        btnArm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (btnArm.isSelected()) {
-            		motorArmed = true;
-            		loggerDisplayerManager.addOutgoingMessegeToDisplay("arm");
-            		MavLinkArm.sendArmMessage(drone, true);
-            	}
-            	else {
-            		// Not selected
-            		if (drone.getState().isFlying()) {
-            			Object[] options = {"Land", "RTL", "Cancel"};
-                    	int n = JOptionPane.showOptionDialog(null, "Drone is flying, dis-arming motor is dangeures, what what you like to do?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    		    null, options, options[0]);
-                    	if (n == 0) {
-                    		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
-                    		loggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
-                    		notificationManager.add("Landing");
-                    	}
-                    	else if (n == 1) {
-                    		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-                    		loggerDisplayerManager.addGeneralMessegeToDisplay("RTL");
-                    		notificationManager.add("RTL");
-                    	}
-                    	else 
-                    		btnArm.setSelected(true);
-            		}
-            		else {
-            			motorArmed = false;
-            			loggerDisplayerManager.addOutgoingMessegeToDisplay("disarm");
-            			MavLinkArm.sendArmMessage(drone, false);
-            		}
-            	}
-            }
+        btnArm.addActionListener( e -> {
+        	if (btnArm.isSelected()) {
+        		motorArmed = true;
+        		loggerDisplayerManager.addOutgoingMessegeToDisplay("arm");
+        		MavLinkArm.sendArmMessage(drone, true);
+        	}
+        	else {
+        		// Not selected
+        		if (drone.getState().isFlying()) {
+        			Object[] options = {"Land", "RTL", "Cancel"};
+                	int n = JOptionPane.showOptionDialog(null, "Drone is flying, dis-arming motor is dangeures, what what you like to do?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                		    null, options, options[0]);
+                	if (n == 0) {
+                		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
+                		loggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
+                		notificationManager.add("Landing");
+                	}
+                	else if (n == 1) {
+                		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
+                		loggerDisplayerManager.addGeneralMessegeToDisplay("RTL");
+                		notificationManager.add("RTL");
+                	}
+                	else 
+                		btnArm.setSelected(true);
+        		}
+        		else {
+        			motorArmed = false;
+        			loggerDisplayerManager.addOutgoingMessegeToDisplay("disarm");
+        			MavLinkArm.sendArmMessage(drone, false);
+        		}
+        	}
         });
         eastPanel_buttons.add(btnArm);
         
         btnLandRTL = new JButton("Land/RTL");
-        btnLandRTL.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		KeyBoardControl.get().HoldIfNeeded();
-        		Object[] options = {"Land", "RTL", "Cancel"};
-            	int n = JOptionPane.showOptionDialog(null, "Choose Land Option", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            		    null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
-            	if (n == 0) {
-            		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
-            		loggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
-            		notificationManager.add("Landing");
-            	}
-            	else if(n == 1) {
-            		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-            		loggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
-            		notificationManager.add("Return To Lunch");
-            	}
-            	KeyBoardControl.get().ReleaseIfNeeded();
+        btnLandRTL.addActionListener( e -> {
+    		KeyBoardControl.get().HoldIfNeeded();
+    		Object[] options = {"Land", "RTL", "Cancel"};
+        	int n = JOptionPane.showOptionDialog(null, "Choose Land Option", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+        		    null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
+        	if (n == 0) {
+        		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
+        		loggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
+        		notificationManager.add("Landing");
         	}
+        	else if(n == 1) {
+        		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
+        		loggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
+        		notificationManager.add("Return To Lunch");
+        	}
+        	KeyBoardControl.get().ReleaseIfNeeded();
         });
         eastPanel_buttons.add(btnLandRTL);
         
         btnTakeoff = new JButton("Takeoff");
-        btnTakeoff.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		if (takeOffThreadRunning) {
-        			JOptionPane.showMessageDialog(null, "Takeoff procedure was already started");
-        			return;
-        		}
-        		takeOffThreadRunning = true;
-        		takeOffThread = new SwingWorker<Void, Void>(){
-        			
-        			@Override
-	       			protected Void doInBackground() throws Exception {
-        				Logger.LogGeneralMessege("Takeoff thread Stated!");
-        				
-		        		if (!Dashboard.drone.getState().isArmed()) {
-							JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
-						}
-		        		
-		        		Object val = JOptionPane.showInputDialog(null, "Choose altitude", "", JOptionPane.OK_CANCEL_OPTION, null, null, 5);
-		        		if (val == null) {
-		        			System.out.println(getClass().getName() + " Takeoff canceled");
-		        			return null;
-		        		}
-		        		
-		        		try {
-		        			double real_value = Double.parseDouble((String) val);
-		        			System.out.println(getClass().getName() + " Required hight is " + real_value);
-		        			if (real_value < 0 || real_value > 15) {
-		        				JOptionPane.showMessageDialog(null, "Altitude limition during takeoff is limited to 15");
-		        				return null;
-		        			}
-		        			
-    						if (!drone.getState().isArmed() && !ArmQuad())
-    							return null;
-		        			
-		        			if (!TakeoffQuad(real_value))
-		        				return null;
-		        		}
-		        		catch (NumberFormatException e) {
-		        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'");
-		        		}
-		        		catch (Exception e) {
-		        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'\n" + e.getMessage());
-		        		}
-		        		return null;
-        			}
-        			
+        btnTakeoff.addActionListener( e -> {
+    		if (takeOffThreadRunning) {
+    			JOptionPane.showMessageDialog(null, "Takeoff procedure was already started");
+    			return;
+    		}
+    		takeOffThreadRunning = true;
+    		takeOffThread = new SwingWorker<Void, Void>(){
+    			
+    			@Override
+       			protected Void doInBackground() throws Exception {
+    				Logger.LogGeneralMessege("Takeoff thread Stated!");
+    				
+	        		if (!Dashboard.drone.getState().isArmed()) {
+						JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
+					}
+	        		
+	        		Object val = JOptionPane.showInputDialog(null, "Choose altitude", "", JOptionPane.OK_CANCEL_OPTION, null, null, 5);
+	        		if (val == null) {
+	        			System.out.println(getClass().getName() + " Takeoff canceled");
+	        			return null;
+	        		}
+	        		
+	        		try {
+	        			double real_value = Double.parseDouble((String) val);
+	        			System.out.println(getClass().getName() + " Required hight is " + real_value);
+	        			if (real_value < 0 || real_value > 15) {
+	        				JOptionPane.showMessageDialog(null, "Altitude limition during takeoff is limited to 15");
+	        				return null;
+	        			}
+	        			
+	        			ArmQuad armQuad = new ArmQuad(drone);
+						TakeoffQuad toff = new TakeoffQuad(drone, real_value);
+						armQuad.setNext(toff);
+	        			armQuad.go();
+	        		}
+	        		catch (NumberFormatException e) {
+	        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'");
+	        		}
+	        		catch (Exception e) {
+	        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'\n" + e.getMessage());
+	        		}
+	        		return null;
+    			}
+    			
 
-	       			@Override
-	                protected void done() {
-	       				takeOffThreadRunning = false;
-	       				Logger.LogGeneralMessege("Takeoff thread Done!");
-	                }
-        		};
-        		takeOffThread.execute();
-        	}
+       			@Override
+                protected void done() {
+       				takeOffThreadRunning = false;
+       				Logger.LogGeneralMessege("Takeoff thread Done!");
+                }
+    		};
+    		takeOffThread.execute();
         });
         eastPanel_buttons.add(btnTakeoff);
         
         btnFollowBeaconShow = new JButton("Show Beacon");
-        btnFollowBeaconShow.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {        		
-        		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
-					
-	       			@Override
-	       			protected Void doInBackground() throws Exception {	       				
-						drone.getBeacon().syncBeacon();
-						return null;
-					}
-				};
-       		
-				w.execute();
-        	}
+        btnFollowBeaconShow.addActionListener( e -> {        		
+    		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
+				
+       			@Override
+       			protected Void doInBackground() throws Exception {	       				
+					drone.getBeacon().syncBeacon();
+					return null;
+				}
+			};
+   		
+			w.execute();
         });
         eastPanel_buttons.add(btnFollowBeaconShow);
         
         btnFollowBeaconStart = new JToggleButton("Lock on Beacon");
-        btnFollowBeaconStart.addActionListener(new ActionListener() {        	
-        	public void actionPerformed(ActionEvent arg0) {
-        		if (btnFollowBeaconStart.isSelected()) {        			
-        			FollowBeaconStartThread = new SwingWorker<Void, Void>(){
-        				@Override
-		       			protected Void doInBackground() throws Exception {
-			        		if (!Dashboard.drone.getState().isArmed()) {
-								JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
-							}
-			        		
-			        		if (!Dashboard.drone.getState().isFlying()) {
-				        		Object val = JOptionPane.showInputDialog(null, "Choose altitude", "", JOptionPane.OK_CANCEL_OPTION, null, null, 5);
-				        		if (val == null) {
-				        			System.out.println(getClass().getName() + " Takeoff canceled");
-				        			btnFollowBeaconStart.setSelected(false);				        			
-				        			return null;
-				        		}
-			        		
-				        		try {
-				        			double real_value = Double.parseDouble((String) val);
-				        			System.out.println(getClass().getName() + " Required height is " + real_value);
-				        			if (real_value < 0 || real_value > 15) {
-				        				JOptionPane.showMessageDialog(null, "Altitude limition during takeoff is limited to 15");
-				        				btnFollowBeaconStart.setSelected(false);
-				        				return null;
-				        			}
-				        			
-				        			if (!drone.getState().isArmed()) {
-		        						if (!ArmQuad()) {
-		        							btnFollowBeaconStart.setSelected(false);
-		        							return null;
-		        						}
-				        			}
-				        			
-				        			if (!TakeoffQuad(real_value)) {
-	        							btnFollowBeaconStart.setSelected(false);
-	        							return null;
-	        						}
-	    		        			
-	    		        			//ActivateBeacon();
-				        			drone.getFollow().toggleFollowMeState();
-				        		}
-				        		catch (NumberFormatException e) {
-				        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'");
-				        		}
-				        		catch (InterruptedException e) {
-				        			JOptionPane.showMessageDialog(null, "Beacon lock operation was cancel");
-				        		}
-				        		catch (Exception e) {
-				        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'\n" + e.getMessage());
-				        		}
+        btnFollowBeaconStart.addActionListener( e -> {
+    		if (btnFollowBeaconStart.isSelected()) {        			
+    			FollowBeaconStartThread = new SwingWorker<Void, Void>(){
+    				@Override
+	       			protected Void doInBackground() throws Exception {
+		        		if (!Dashboard.drone.getState().isArmed()) {
+							JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
+						}
+		        		
+		        		if (!Dashboard.drone.getState().isFlying()) {
+			        		Object val = JOptionPane.showInputDialog(null, "Choose altitude", "", JOptionPane.OK_CANCEL_OPTION, null, null, 5);
+			        		if (val == null) {
+			        			System.out.println(getClass().getName() + " Takeoff canceled");
+			        			btnFollowBeaconStart.setSelected(false);				        			
+			        			return null;
 			        		}
-			        		else {
-								//ActivateBeacon();
+		        		
+			        		try {
+			        			double real_value = Double.parseDouble((String) val);
+			        			System.out.println(getClass().getName() + " Required height is " + real_value);
+			        			if (real_value < 0 || real_value > 15) {
+			        				JOptionPane.showMessageDialog(null, "Altitude limition during takeoff is limited to 15");
+			        				btnFollowBeaconStart.setSelected(false);
+			        				return null;
+			        			}
+			        			
+			        			ArmQuad armQuad = new ArmQuad(drone);
+	        					if (!armQuad.go()) {
+	        						btnFollowBeaconStart.setSelected(false);
+	        						return null;
+	        					}
+			        			
+			        			TakeoffQuad toff = new TakeoffQuad(drone, real_value);
+			        			if (!toff.go()) {
+        							btnFollowBeaconStart.setSelected(false);
+        							return null;
+        						}
+    		        			
+    		        			//ActivateBeacon();
 			        			drone.getFollow().toggleFollowMeState();
 			        		}
-							return null;
-        				}
-        			};
-        			FollowBeaconStartThread.execute();
-        		}
-        		else {
-        			// Not selected
-        			//DeactivateBeacon();
-        			drone.getFollow().toggleFollowMeState();
-        			loggerDisplayerManager.addErrorMessegeToDisplay("Not Selected");
-            		if (FollowBeaconStartThread != null)
-            			FollowBeaconStartThread.cancel(true);
-            		
-            		FollowBeaconStartThread = null;
-            	}
+			        		catch (NumberFormatException e) {
+			        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'");
+			        		}
+			        		catch (InterruptedException e) {
+			        			JOptionPane.showMessageDialog(null, "Beacon lock operation was cancel");
+			        		}
+			        		catch (Exception e) {
+			        			JOptionPane.showMessageDialog(null, "Failed to get required height for value '" + val + "'\n" + e.getMessage());
+			        		}
+		        		}
+		        		else {
+							//ActivateBeacon();
+		        			drone.getFollow().toggleFollowMeState();
+		        		}
+						return null;
+    				}
+    			};
+    			FollowBeaconStartThread.execute();
+    		}
+    		else {
+    			// Not selected
+    			//DeactivateBeacon();
+    			drone.getFollow().toggleFollowMeState();
+    			loggerDisplayerManager.addErrorMessegeToDisplay("Not Selected");
+        		if (FollowBeaconStartThread != null)
+        			FollowBeaconStartThread.cancel(true);
+        		
+        		FollowBeaconStartThread = null;
         	}
         });
         eastPanel_buttons.add(btnFollowBeaconStart);
         
         btnGCSShow = new JButton("Get GCS Position");
-        btnGCSShow.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {        		
-        		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
-					
-	       			@Override
-	       			protected Void doInBackground() throws Exception {
-						JSONObject obj = JSONHelper.makeHttpPostRequest("http://www.sparksapp.eu/public_scripts/QuadGetHomePosition.php");
-						if (obj == null) {
-							loggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
-							return null;
-						}
-						double lat = Double.parseDouble((String) obj.get("Lat"));
-						double lon = Double.parseDouble((String) obj.get("Lng"));
-						double alt = Double.parseDouble((String) obj.get("Z"));
-						drone.getGCS().setPosition(new Coord3D(new Coord2D(lat, lon), new Altitude(alt)));
-						drone.getGCS().UpdateAll();
+        btnGCSShow.addActionListener( e -> {
+    		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
+				
+       			@Override
+       			protected Void doInBackground() throws Exception {
+					GCSLocationData gcslocation = GCSLocationData.fetch();
+					if (gcslocation == null) {
+						loggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
 						return null;
 					}
-				};
-       		
-				w.execute();
-        	}
+					drone.getGCS().setPosition(gcslocation.getCoordinate());
+					drone.getGCS().UpdateAll();
+					return null;
+				}
+			};
+   		
+			w.execute();
         });
         eastPanel_buttons.add(btnGCSShow);
         
         btnStopFollow = new JButton("Kill Follow");
-        btnStopFollow.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {        		
-        		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
-					
-	       			@Override
-	       			protected Void doInBackground() throws Exception {
-	       				DeactivateBeacon();
-						return null;
-					}
-				};
-       		
-				w.execute();
-        	}
+        btnStopFollow.addActionListener( e -> {        		
+    		SwingWorker<Void, Void> w = new SwingWorker<Void, Void>(){
+				
+       			@Override
+       			protected Void doInBackground() throws Exception {
+       				//DeactivateBeacon();
+					return null;
+				}
+			};
+   		
+			w.execute();
         });
         eastPanel_buttons.add(btnStopFollow);
         
         btnHoldPosition = new JButton("Hold Position");
-        btnHoldPosition.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		if (!drone.getState().isArmed()) {
-        			loggerDisplayerManager.addErrorMessegeToDisplay("Quad must be armed in order to change this mode");
-        			return;
-        		}
-        		
-        		if (drone.getGps().isPositionValid()) {
-        			drone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
-        			loggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Position Hold' - GPS");
-        		}
-        		else {
-        			drone.getState().changeFlightMode(ApmModes.ROTOR_ALT_HOLD);
-        			loggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Altitude Hold' - Barometer");
-        		}
-        	}
+        btnHoldPosition.addActionListener( e -> {
+    		if (!drone.getState().isArmed()) {
+    			loggerDisplayerManager.addErrorMessegeToDisplay("Quad must be armed in order to change this mode");
+    			return;
+    		}
+    		
+    		if (drone.getGps().isPositionValid()) {
+    			drone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
+    			loggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Position Hold' - GPS");
+    		}
+    		else {
+    			drone.getState().changeFlightMode(ApmModes.ROTOR_ALT_HOLD);
+    			loggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Altitude Hold' - Barometer");
+    		}
         });
         btnHoldPosition.setEnabled(false);
         eastPanel_buttons.add(btnHoldPosition);
         
         btnStartMission = new JButton("Start Mission");
-        btnStartMission.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		loggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + ApmModes.ROTOR_AUTO.getName());
-        		drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
-        	}
-        });
+        btnStartMission.addActionListener( e -> drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO));
         
         btnStartMission.setEnabled(false);
         eastPanel_buttons.add(btnStartMission);
@@ -745,7 +626,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
         setButtonControl(false);
 	}
 	
-	private boolean ArmQuad() throws InterruptedException {
+	/*private boolean ArmQuad() throws InterruptedException {
 		loggerDisplayerManager.addGeneralMessegeToDisplay("Arming Quad");
 		MavLinkArm.sendArmMessage(Dashboard.drone, true);
 		int armed_waiting_time = 5000; // 5 seconds
@@ -768,36 +649,36 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
 		}
 		
 		return true;
-	}
+	}*/
 	
-	private boolean TakeoffQuad(double real_value) throws InterruptedException {
-		loggerDisplayerManager.addGeneralMessegeToDisplay("Starting Takeoff");
-		drone.getState().doTakeoff(new Altitude(real_value));
-		int takeoff_waiting_time = 15000; // 15 seconds
-		long sleep_time = 1000;
-		int retry = (int) (takeoff_waiting_time / sleep_time);
-		while (retry > 0) {
-			double alt = drone.getAltitude().getAltitude();
-			if (alt >= real_value * 0.95 && alt <= real_value * 1.05 )
-				break;
-			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
-			loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for takeoff to finish (" + retry + ")");
-			loggerDisplayerManager.addGeneralMessegeToDisplay("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + real_value);
-			Thread.sleep(sleep_time);
-			retry--;
-		}
-		
-		if (retry <= 0) {
-			JOptionPane.showMessageDialog(null, "Failed to lift quadcopter, taking off was canceled");
-			System.out.println(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
-			loggerDisplayerManager.addErrorMessegeToDisplay("Failed to lift quad");
-			return false;
-		}
-		
-		loggerDisplayerManager.addGeneralMessegeToDisplay("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
-		
-		return true;
-	}
+//	private boolean TakeoffQuad(double real_value) throws InterruptedException {
+//		loggerDisplayerManager.addGeneralMessegeToDisplay("Starting Takeoff");
+//		drone.getState().doTakeoff(new Altitude(real_value));
+//		int takeoff_waiting_time = 15000; // 15 seconds
+//		long sleep_time = 1000;
+//		int retry = (int) (takeoff_waiting_time / sleep_time);
+//		while (retry > 0) {
+//			double alt = drone.getAltitude().getAltitude();
+//			if (alt >= real_value * 0.95 && alt <= real_value * 1.05 )
+//				break;
+//			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
+//			loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for takeoff to finish (" + retry + ")");
+//			loggerDisplayerManager.addGeneralMessegeToDisplay("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + real_value);
+//			Thread.sleep(sleep_time);
+//			retry--;
+//		}
+//		
+//		if (retry <= 0) {
+//			JOptionPane.showMessageDialog(null, "Failed to lift quadcopter, taking off was canceled");
+//			System.out.println(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
+//			loggerDisplayerManager.addErrorMessegeToDisplay("Failed to lift quad");
+//			return false;
+//		}
+//		
+//		loggerDisplayerManager.addGeneralMessegeToDisplay("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
+//		
+//		return true;
+//	}
 	
 	/*private void ActivateBeacon() throws InterruptedException {
 		int delay = 5;
@@ -811,10 +692,10 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
 		drone.getBeacon().setActive(true);
 	}*/
 	
-	private void DeactivateBeacon() {
+	/*private void DeactivateBeacon() {
 		loggerDisplayerManager.addGeneralMessegeToDisplay("Stopping Follow");
 		drone.getBeacon().setActive(false);
-	}
+	}*/
 
 	public void SetHeartBeat(boolean on) {
 		if (on) {
@@ -825,11 +706,6 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
 		
 		keepAliveLabel.setText("Disconnected");
 		keepAliveLabel.setForeground(Color.RED);
-	}
-		
-	@Override
-	protected void finalize() {
-		System.out.println("in Demo Finilize");
 	}
 	
 	private void setButtonControl(boolean val) {
@@ -984,22 +860,12 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
 
 	@Override
 	public void ClearNotification() {
-		lblCriticalMsg.setVisible(false);
+		pnlToolbar_North.ClearNotification();
 	}
 
 	@Override
 	public void SetNotification(String notification) {
-		lblCriticalMsg.setVisible(true);
-		if (lblCriticalMsg.getBackground() != Color.BLUE) {
-			lblCriticalMsg.setBackground(Color.BLUE);
-			lblCriticalMsg.setForeground(Color.WHITE);
-		}
-		else {
-			lblCriticalMsg.setBackground(Color.YELLOW);
-			lblCriticalMsg.setForeground(Color.BLACK);
-		}
-		lblCriticalMsg.setOpaque(true);
-		lblCriticalMsg.setText(notification);
+		pnlToolbar_North.SetNotification(notification);
 	}
 
 	@Override
@@ -1014,5 +880,5 @@ public class Dashboard implements OnDroneListener, NotificationsHandler, LoggerD
 		if (logBox == null)
 			System.err.println("LogBox was not created");
 		logBox.setText(text);
-	} 
+	}
 }

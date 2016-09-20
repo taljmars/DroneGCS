@@ -10,10 +10,12 @@ import json.JSONHelper;
 import org.json.simple.JSONObject;
 
 import logger.Logger;
+import mavlink.core.connection.helper.BeaconData;
 import mavlink.core.gcs.location.Location;
 import mavlink.core.gcs.location.Location.LocationFinder;
 import mavlink.core.gcs.location.Location.LocationReceiver;
 import mavlink.is.utils.coordinates.Coord2D;
+import mavlink.is.utils.coordinates.Coord3D;
 
 public class MyLocationFinder implements LocationFinder {
 	private static final int UPDATE_INTERVAL = 1000;// TALMA was 500;
@@ -32,23 +34,16 @@ public class MyLocationFinder implements LocationFinder {
 		Timer timer = new Timer();
 		Logger.LogDesignedMessege(getClass() + " Location updates started!");
 		myTimerTask = new TimerTask() {
-			long lastTime = System.currentTimeMillis();
-
 			@Override
 			public void run() {
 				
-				lastTime = System.currentTimeMillis();
-				JSONObject obj = JSONHelper.makeHttpPostRequest("http://www.sparksapp.eu/public_scripts/QuadGetFollowPosition.php");
-				if (obj == null) {
+				BeaconData beaconDate = BeaconData.fetch();
+				if (beaconDate == null) {
 					Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
 					return;
 				}
-				Logger.LogDesignedMessege("Request took " + (lastTime - System.currentTimeMillis()) + "ms");
-				double lat = Double.parseDouble((String) obj.get("Lat"));
-				double lon = Double.parseDouble((String) obj.get("Lng"));
-				//double alt = Double.parseDouble((String) obj.get("Z"));
-				
-				Coord2D coord = new Coord2D(lat, lon);
+				Logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				
+				Coord2D coord = beaconDate.getCoordinate().dot(1);
 				
 				receiver.onLocationChanged(new Location(coord, 0, (float) SPEED, true));
 			}
@@ -63,7 +58,5 @@ public class MyLocationFinder implements LocationFinder {
 			myTimerTask.cancel();
 		
 		Logger.LogDesignedMessege(getClass() + " Location updates canceled!");
-	}
-
-	
+	}	
 }

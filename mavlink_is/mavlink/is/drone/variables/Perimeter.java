@@ -74,10 +74,18 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	}
 	
 	public void setEnforce(boolean enforce) {
+		if (enforce)
+			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Enable Perimeter enforcement");
+		else
+			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter enforcement");
 		pEnforce = enforce;
 	}
 	
 	public void setAlert(boolean alert) {
+		if (alert)
+			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Enable perimeter alert");
+		else
+			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Disable perimeter alert");
 		pAlert = alert;
 	}
 	
