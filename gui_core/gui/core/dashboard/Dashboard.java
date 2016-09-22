@@ -81,22 +81,19 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 
 	private void initializeComponents() {
 		System.out.println("Start Logger Displayer Manager");
-		loggerDisplayerManager = new LoggerDisplayerManager(areaLogBox,
-				LOG_BOX_MAX_LINES);
+		loggerDisplayerManager = new LoggerDisplayerManager(areaLogBox, LOG_BOX_MAX_LINES);
 
 		System.out.println("Start Outgoing Communication");
 		radConn = new RadioConnection();
 		radConn.connect();
 
 		HandlerImpl handler = new mavlink.core.drone.HandlerImpl();
-		drone = new MyDroneImpl(radConn, new ClockImpl(), handler,
-				PreferencesFactory.getPreferences());
+		drone = new MyDroneImpl(radConn, new ClockImpl(), handler, PreferencesFactory.getPreferences());
 
 		System.out.println("Start Notifications Manager");
 		Timer timer = new Timer();
 		notificationManager = new NotificationManager(window);
-		timer.scheduleAtFixedRate(notificationManager, 0,
-				NotificationManager.MSG_CHECK_PERIOD);
+		timer.scheduleAtFixedRate(notificationManager, 0, NotificationManager.MSG_CHECK_PERIOD);
 
 		System.out.println("Start GCS Heartbeat");
 		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
@@ -137,12 +134,10 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 			// if (drone.getGuidedPoint().isIdle()) {
 			if (d == 0) {
 				notificationManager.add("In Position");
-				loggerDisplayerManager
-						.addGeneralMessegeToDisplay("Guided: In Position");
+				loggerDisplayerManager.addGeneralMessegeToDisplay("Guided: In Position");
 			} else {
 				notificationManager.add("Flying to destination");
-				loggerDisplayerManager
-						.addGeneralMessegeToDisplay("Guided: Fly to distination");
+				loggerDisplayerManager.addGeneralMessegeToDisplay("Guided: Fly to distination");
 			}
 		}
 	}
@@ -183,25 +178,19 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 		Dimension southPanelDimension = new Dimension(1200, 150);
 		areaLogBox = new JPanelLogBox(new GridBagLayout());
 		tbSouth.addTab("Log Book", null, areaLogBox, null);
-		areaConfiguration = new JPanelConfigurationBox(new JPanel(),
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, southPanelDimension);
+		areaConfiguration = new JPanelConfigurationBox(new JPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, southPanelDimension);
 		tbSouth.addTab("Configuration", null, areaConfiguration, null);
-		areaMission = new JPanelMissionBox(null,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, southPanelDimension);
+		areaMission = new JPanelMissionBox(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, southPanelDimension);
 		tbSouth.addTab("Mission", null, areaMission, null);
 
 		// North Panel
-		tbToolBar = new JPanelToolBarSatellite(desktopPane, areaMission,
-				areaConfiguration);
+		tbToolBar = new JPanelToolBarSatellite(desktopPane, areaMission, areaConfiguration);
 		frame.getContentPane().add(tbToolBar, BorderLayout.NORTH);
 
 		// East Panel
 		JPanel eastPanel = new JPanel(new GridLayout(3, 1, 5, 5));
 		frame.getContentPane().add(eastPanel, BorderLayout.EAST);
-		tbContorlButton = new JPanelButtonBoxSatellite(new GridLayout(0, 2, 1,
-				1));
+		tbContorlButton = new JPanelButtonBoxSatellite(new GridLayout(0, 2, 1, 1));
 		eastPanel.add(tbContorlButton);
 
 		// East Panel
@@ -260,83 +249,65 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 		switch (event) {
 		case LEFT_PERIMETER:
 			notificationManager.add("Outside Perimeter");
-			loggerDisplayerManager
-					.addErrorMessegeToDisplay("Quad left the perimeter");
+			loggerDisplayerManager.addErrorMessegeToDisplay("Quad left the perimeter");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case ENFORCING_PERIMETER:
 			notificationManager.add("Enforcing Perimeter");
-			loggerDisplayerManager
-					.addErrorMessegeToDisplay("Enforcing Perimeter");
+			loggerDisplayerManager.addErrorMessegeToDisplay("Enforcing Perimeter");
 			return;
 		case ORIENTATION:
-			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP()
-					.valueInMeters());
+			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP().valueInMeters());
 			return;
 		case BATTERY:
 			VerifyBattery(drone.getBattery().getBattRemain());
 			return;
 		case MODE:
-			frame.setTitle(APP_TITLE + " ("
-					+ drone.getState().getMode().getName() + ")");
+			frame.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
 			return;
 		case PARAMETER:
 			LoadParameter(drone.getParameters().getExpectedParameterAmount());
 			return;
 		case PARAMETERS_DOWNLOAD_START:
-			loggerDisplayerManager
-					.addGeneralMessegeToDisplay("Parameters Downloading begin");
+			loggerDisplayerManager.addGeneralMessegeToDisplay("Parameters Downloading begin");
 			resetProgressBar();
 			return;
 		case PARAMETERS_DOWNLOADED_FINISH:
-			loggerDisplayerManager
-					.addGeneralMessegeToDisplay("Parameters Downloaded succussfully");
+			loggerDisplayerManager.addGeneralMessegeToDisplay("Parameters Downloaded succussfully");
 			return;
 		case TEXT_MESSEGE:
-			loggerDisplayerManager.addIncommingMessegeToDisplay(drone
-					.getMessegeQueue().pop());
+			loggerDisplayerManager.addIncommingMessegeToDisplay(drone.getMessegeQueue().pop());
 			return;
 		case WARNING_SIGNAL_WEAK:
-			loggerDisplayerManager
-					.addErrorMessegeToDisplay("Warning: Weak signal");
-			loggerDisplayerManager
-					.addErrorMessegeToDisplay("Warning: Weak signal");
-			loggerDisplayerManager
-					.addErrorMessegeToDisplay("Warning: Weak signal");
+			loggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
+			loggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
+			loggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case FOLLOW_START:
-			loggerDisplayerManager
-					.addGeneralMessegeToDisplay("Follow Me Started");
+			loggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Started");
 			return;
 		case FOLLOW_UPDATE:
-			loggerDisplayerManager
-					.addGeneralMessegeToDisplay("Follow Me Updated");
+			loggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Updated");
 			return;
 		case FOLLOW_STOP:
-			loggerDisplayerManager
-					.addGeneralMessegeToDisplay("Follow Me Ended");
+			loggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Ended");
 			return;
 		}
 	}
 
 	private void LoadParameter(int expectedParameterAmount) {
-		setProgressBar(0,
-				drone.getParameters().getLoadedDownloadedParameters(), drone
-						.getParameters().getExpectedParameterAmount());
-		int prc = (int) (((double) (drone.getParameters()
-				.getLoadedDownloadedParameters()) / drone.getParameters()
-				.getExpectedParameterAmount()) * 100);
+		setProgressBar(0, drone.getParameters().getLoadedDownloadedParameters(), drone.getParameters().getExpectedParameterAmount());
+		int prc = (int) (((double) (drone.getParameters().getLoadedDownloadedParameters()) / drone.getParameters().getExpectedParameterAmount()) * 100);
 		if (prc > 95) {
 			System.out.println(getClass().getName() + " Setup stream rate");
 			// MavLinkStreamRates.setupStreamRates(drone.getMavClient(), 1, 1,
 			// 1, 1, 1, 1, 1, 1);
 			drone.getStreamRates().setupStreamRatesFromPref();
 			tbContorlButton.setButtonControl(true);
-			System.out.println(getClass().getName() + " "
-					+ drone.getParameters().getParameter("MOT_SPIN_ARMED"));
+			System.out.println(getClass().getName() + " " + drone.getParameters().getParameter("MOT_SPIN_ARMED"));
 			if (drone.isConnectionAlive()) {
 				tbTelemtry.SetHeartBeat(true);
 				// SetFlightModeLabel(drone.getState().getMode().getName());
