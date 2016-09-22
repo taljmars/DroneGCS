@@ -44,8 +44,9 @@ public class LoggerDisplayerManager {
 		if (idx == -1) {
 			content = "";
 		}
-		else
+		else {
 			content = content.substring(idx);
+		}
 		
 		String futureText = "<html>";
 		
