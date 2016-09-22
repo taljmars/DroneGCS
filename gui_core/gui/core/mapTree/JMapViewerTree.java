@@ -2,6 +2,8 @@
 package gui.core.mapTree;
 
 import gui.core.dashboard.Dashboard;
+import gui.core.internalPanels.JPanelConfigurationBox;
+import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapObjects.Layer;
 import gui.core.mapObjects.LayerGroup;
 import gui.core.mapObjects.LayerMission;
@@ -55,9 +57,13 @@ public class JMapViewerTree extends JPanel {
     private JSplitPane splitPane;
     private LayerMission ActiveLayerMission = null;
     private LayerPerimeter ActiveLayerPerimeter = null;
+    private JPanelMissionBox areaMission;
+	private JPanelConfigurationBox areaConfiguration;
 
-    public JMapViewerTree(String name) {
+    public JMapViewerTree(String name, JPanelMissionBox areaMission, JPanelConfigurationBox areaConfiguration) {
         this(name, false);
+        this.areaMission = areaMission;
+        this.areaConfiguration = areaConfiguration;
     }
 
     public JMapViewerTree(String name, boolean treeVisible) {
@@ -126,10 +132,10 @@ public class JMapViewerTree extends JPanel {
                     if (layer instanceof LayerMission) {
                     	LayerMission lm = (LayerMission) layer;
                     	lm.buildMissionTable(map);
-                    	Dashboard.window.areaMission.setEnabled(false);
+                    	areaMission.setEnabled(false);
                     }
                     else {
-                    	Dashboard.window.areaMission.setViewportView(null);
+                    	areaMission.clear();
                     }
                     e.consume();
                     return;
@@ -340,7 +346,7 @@ public class JMapViewerTree extends JPanel {
         			}
         			
             		Dashboard.drone.getPerimeter().setAlert(true);
-            		Dashboard.window.cbActiveGeofencePerimeterAlert.setSelected(true);
+            		areaConfiguration.setAlertOn(true);
             		           		
             		tree.repaint();
             		tree.updateUI();
@@ -360,7 +366,7 @@ public class JMapViewerTree extends JPanel {
             		
         			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Alert");
             		Dashboard.drone.getPerimeter().setAlert(false);
-            		Dashboard.window.cbActiveGeofencePerimeterAlert.setSelected(false);
+            		areaConfiguration.setAlertOn(false);
             		           		
             		tree.repaint();
             		tree.updateUI();
@@ -399,7 +405,7 @@ public class JMapViewerTree extends JPanel {
         			}
         			
             		Dashboard.drone.getPerimeter().setEnforce(true);
-            		Dashboard.window.cbActiveGeofencePerimeterEnforce.setSelected(true);            		
+            		areaConfiguration.setEnforceOn(true);            		
             		           		
             		tree.repaint();
             		tree.updateUI();
@@ -419,7 +425,7 @@ public class JMapViewerTree extends JPanel {
             		
             		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Enforce");
                 	Dashboard.drone.getPerimeter().setEnforce(false);
-                	Dashboard.window.cbActiveGeofencePerimeterEnforce.setSelected(false);
+                	areaConfiguration.setEnforceOn(false);
             		           		
             		tree.repaint();
             		tree.updateUI();
@@ -436,8 +442,8 @@ public class JMapViewerTree extends JPanel {
 		Dashboard.drone.getPerimeter().setPolygon(null);
 		Dashboard.drone.getPerimeter().setAlert(false);
 		Dashboard.drone.getPerimeter().setEnforce(false);
-		Dashboard.window.cbActiveGeofencePerimeterAlert.setSelected(false);
-		Dashboard.window.cbActiveGeofencePerimeterEnforce.setSelected(false);
+		areaConfiguration.setAlertOn(false);
+		areaConfiguration.setEnforceOn(false);
 		
 		tree.repaint();
 		tree.updateUI();

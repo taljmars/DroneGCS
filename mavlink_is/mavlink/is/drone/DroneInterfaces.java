@@ -190,11 +190,13 @@ public class DroneInterfaces {
          * 
          */
 		FOLLOW_CHANGE_TYPE,
+		
+		PARAMETERS_DOWNLOAD_START,
 
 		/**
 		 *
 		 */
-		PARAMETERS_DOWNLOADED,
+		PARAMETERS_DOWNLOADED_FINISH,
 
 		/**
 		 *

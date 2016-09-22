@@ -59,6 +59,8 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	public void refreshParameters() {
 		parameters.clear();
         parameterList.clear();
+        
+        myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOAD_START);
 
 		if (parameterListener != null)
 			parameterListener.onBeginReceivingParameters();
@@ -110,7 +112,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 			}
 			killWatchdog();
 			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Parameters finished!");
-			myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED);
+			myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED_FINISH);
 
 			if (parameterListener != null) {
 				parameterListener.onEndReceivingParameters(parameterList);

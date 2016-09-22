@@ -81,7 +81,7 @@ public class Beacon extends DroneVariable implements Serializable{
 					// tmpPos != null mark that we are in the first iteration of the loop
 					if (started && !GuidedPoint.isGuidedMode(myDrone)) {
 						Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Quad is must be in guided mode to follow beacon, operation canceled");
-						Dashboard.window.btnFollowBeaconStart.setSelected(false);
+						myDrone.notifyDroneEvent(DroneEventsType.FOLLOW_STOP);
 						started = false;
 						break;
 					}

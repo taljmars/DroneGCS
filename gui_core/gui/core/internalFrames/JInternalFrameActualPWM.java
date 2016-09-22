@@ -1,11 +1,10 @@
 package gui.core.internalFrames;
 
-import gui.core.dashboard.Dashboard;
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.beans.PropertyVetoException;
 
+import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 
 import mavlink.is.drone.Drone;
@@ -37,17 +36,21 @@ public class JInternalFrameActualPWM extends JInternalFrame implements OnDroneLi
     
     private static JInternalFrameActualPWM instance = null;
 
-	public static void Generate() {
+	private JDesktopPane container;
+
+	public static void Generate(JDesktopPane container) {
 		if (instance != null) {
 			instance.moveToFront();
+			instance.container = container;
 			return;
 		}
 		
 		JInternalFrameActualPWM ifrm = new JInternalFrameActualPWM("Actual PWM");
 		ifrm.setBounds(25, 25, 800, 400);
-		Dashboard.desktopPane.add(ifrm);
         
         instance = ifrm;
+        instance.container = container;
+        instance.container.add(ifrm);
         instance.setVisible(true);
         try {
         	instance.setMaximum(true);

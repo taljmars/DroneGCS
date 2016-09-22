@@ -1,20 +1,25 @@
 package gui.core.internalPanels;
 
+import gui.core.dashboard.LoggerDisplayerManager;
+
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
-public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener {
+public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListener {
 	
 	private static final long serialVersionUID = 486044738229582782L;
+	
+	private JPanel pnl;
 	
 	private JLabel lblHeightVal;
 	private JLabel lblSignalVal;
@@ -32,11 +37,16 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
 	private JLabel lblRoll;
 	
 	private JLabel lblFlightTimeVal;
-	private JLabel lblFlightDistanceVal; 
+	private JLabel lblFlightDistanceVal;
+
+	private JLabel keepAliveLabel;
+
+	private LoggerDisplayerManager loggerDisplayerManager; 
 	
 	public JPanelTelemetrySatellite() {
-		setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		pnl = new JPanel();
+		pnl.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		pnl.setLayout(new BoxLayout(pnl, BoxLayout.PAGE_AXIS));
 		
         JPanel pnlStatus = new JPanel();
         JPanel pnlSignal = new JPanel();
@@ -45,17 +55,17 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
 		JPanel pnlStatisticsTime = new JPanel();
 		JPanel pnlStatisticsDistanceTraveled = new JPanel();
 		
-		this.add(pnlStatus);
-		this.add(pnlSignal);
-		this.add(pnlRCSend);
-        this.add(pnlRCActual);
-        this.add(pnlStatisticsTime);
-        this.add(pnlStatisticsDistanceTraveled);
+		pnl.add(pnlStatus);
+		pnl.add(pnlSignal);
+		pnl.add(pnlRCSend);
+		pnl.add(pnlRCActual);
+		pnl.add(pnlStatisticsTime);
+		pnl.add(pnlStatisticsDistanceTraveled);
         
         JLabel lblStatus = new JLabel("Status:");
         pnlStatus.add(lblStatus);
         
-        JLabel keepAliveLabel = new JLabel("Disonnected");
+        keepAliveLabel = new JLabel("Disonnected");
         pnlStatus.add(keepAliveLabel);
         keepAliveLabel.setForeground(Color.RED);
         JLabel lblFlightMode = new JLabel("Mode:");
@@ -108,6 +118,7 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
         pnlStatisticsDistanceTraveled.add(lblFlightDistance);
         pnlStatisticsDistanceTraveled.add(lblFlightDistanceVal);
         
+        add(pnl);
 	}
 	
 	protected void SetFlightModeLabel(String name) {
@@ -148,6 +159,17 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
 		lblYaw.setText("Yaw: " + yaw);
 	}
 	
+	public void SetHeartBeat(boolean on) {
+		if (on) {
+			keepAliveLabel.setText("Connected");
+			keepAliveLabel.setForeground(Color.GREEN);
+			return;
+		}
+		
+		keepAliveLabel.setText("Disconnected");
+		keepAliveLabel.setForeground(Color.RED);
+	}
+	
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
@@ -155,11 +177,21 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
 			case ORIENTATION:
 				SetLblHeight(drone.getAltitude().getAltitude());
 				return;
+			case HEARTBEAT_FIRST:
+				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				SetHeartBeat(true);
+				return;
+			case HEARTBEAT_RESTORED:
+				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				SetHeartBeat(true);
+				return;
 			case HEARTBEAT_TIMEOUT:
+				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Disconnected");
 				SetLblHeight(0);
 				SetSignal(0);
 				SetLblBattery(0);
 				SetFlightModeLabel("Unknown");
+				SetHeartBeat(false);
 				return;
 			case RADIO:
 				SetSignal(drone.getRadio().getSignalStrength());
@@ -183,5 +215,9 @@ public class JPanelTelemetrySatellite extends JPanel implements OnDroneListener 
 				SetFlightModeLabel(drone.getState().getMode().getName());
 				return;
 		}
+	}
+
+	public void setLoggerDisplayerManager(LoggerDisplayerManager loggerDisplayerManager) {
+		this.loggerDisplayerManager = loggerDisplayerManager;
 	}
 }

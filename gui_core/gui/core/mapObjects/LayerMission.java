@@ -5,6 +5,7 @@ import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapObject;
 import gui.core.dashboard.Dashboard;
 import gui.core.internalFrames.helper.ButtonColumn;
+import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapViewer.JMapViewer;
 
 import java.awt.Color;
@@ -40,6 +41,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	
 	private static final long serialVersionUID = -1287037956711191751L;
 	private Mission mission;
+	private JPanelMissionBox missionBox;
 	
 	enum Column {
 		Order ("Order"), 
@@ -116,12 +118,14 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 		}
 	}	
 
-    public LayerMission(String name) {
+    public LayerMission(String name, JPanelMissionBox missionBox) {
         super(name);
+        this.missionBox = missionBox;
     }
     
-    public LayerMission(LayerMission layer) {
+    public LayerMission(LayerMission layer, JPanelMissionBox missionBox) {
     	super(layer);
+    	this.missionBox = missionBox;
     	if (layer.getMission() != null) {
     		this.mission = new Mission(Dashboard.drone);
     		Iterator<MissionItem> it = layer.getMission().getItems().iterator();
@@ -471,7 +475,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	    new ButtonColumn(missionTable, upMissionItem, Column.SetUp.ordinal());	    
 	    new ButtonColumn(missionTable, downMissionItem, Column.SetDown.ordinal());
 	    new ButtonColumn(missionTable, deleteMissionItem, Column.Remove.ordinal());
-	    Dashboard.window.areaMission.setViewportView(missionTable);
+	    missionBox.updateTable(missionTable);
 	    
 	}
 	

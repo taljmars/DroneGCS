@@ -2,6 +2,8 @@ package gui.core.internalFrames;
 
 import flight_controlers.KeyBoardControl;
 import gui.core.dashboard.Dashboard;
+import gui.core.internalPanels.JPanelConfigurationBox;
+import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapObjects.Coordinate;
 import gui.core.mapObjects.Layer;
 import gui.core.mapObjects.LayerGroup;
@@ -50,6 +52,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -121,10 +124,15 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 	private static JInternalFrameMap instance = null;
 	
 	Layer spain = null;
+	private JPanelMissionBox missionBox;
+	private JPanelConfigurationBox conifgurationBox;
+	private JDesktopPane container;
+	
 	private JInternalFrameMap(String name, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 		super(name, resizable, closable, maximizable, iconifiable);
         
-        treeMap = new JMapViewerTree("Map Views");
+        treeMap = new JMapViewerTree("Map Views", missionBox, conifgurationBox);
+        
         getContentPane().add(treeMap, BorderLayout.CENTER);
         
         JPanel panelTop = new JPanel();
@@ -377,8 +385,11 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 		return instance;
 	}
 
-	public static void Generate() {
+	public static void Generate(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox conifgurationBox) {		
 		if (instance != null) {
+			instance.missionBox = missionBox;
+			instance.conifgurationBox = conifgurationBox;
+			instance.container = container;
 			instance.moveToFront();
 			return;
 		}
@@ -386,8 +397,12 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 		JInternalFrameMap ifrm = new JInternalFrameMap("Map View");
 		Dashboard.drone.addDroneListener(ifrm);
 		ifrm.setBounds(25, 25, 800, 400);
-		Dashboard.desktopPane.add(ifrm);
         instance = ifrm;
+        instance.missionBox = missionBox;
+        instance.conifgurationBox = conifgurationBox;
+        instance.container = container;
+        
+        instance.container.add(ifrm);
         instance.setVisible(true);
         try {
         	instance.setMaximum(true);
@@ -685,7 +700,7 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
             public void actionPerformed(ActionEvent arg0) {
         		map().SetEditModeGUI(true);
         		if (modifyiedLayerMission == null) {
-        			modifyiedLayerMission = new LayerMission("New Mission*");
+        			modifyiedLayerMission = new LayerMission("New Mission*", missionBox);
         			modifyiedLayerMission.initialize();
         			missionsGroup.add(modifyiedLayerMission);
         			treeMap.addLayer(modifyiedLayerMission);
@@ -908,7 +923,7 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 				if (layer instanceof LayerMission) {
 					System.out.println("Working on Mission Layer");
 					modifyiedLayerMission = (LayerMission) layer;
-					modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
+					modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, missionBox);
 					modifyiedLayerMissionOriginal.initialize();
 					modifyiedLayerMission.buildMissionTable(map());
 					isMissionBuildMode = true;
@@ -980,7 +995,7 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
 		
-		Dashboard.window.areaMission.setViewportView(null);
+		missionBox.clear();
 	}
 
 	private void EditModeSaveChanges() {
@@ -999,7 +1014,7 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
 		
-		Dashboard.window.areaMission.setViewportView(null);
+		missionBox.clear();
 	}
 
 	private void EditModeOff() {
@@ -1074,7 +1089,7 @@ public class JInternalFrameMap extends JInternalFrame implements JMapViewerEvent
 				return;
 			}
 			
-			LayerMission instMission = new LayerMission("Current Installed Mission");
+			LayerMission instMission = new LayerMission("Current Installed Mission", missionBox);
 			instMission.initialize();
 			missionsGroup.add(instMission);
 			treeMap.addLayer(instMission);
