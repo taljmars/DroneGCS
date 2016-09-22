@@ -143,14 +143,12 @@ public class JInternalFrameMap extends JInternalFrame implements
 		getContentPane().add(panelBottom, BorderLayout.SOUTH);
 
 		JLabel mperpLabelName = new JLabel("Meters/Pixels: ");
-		mperpLabelValue = new JLabel(String.format("%s", map()
-				.getMeterPerPixel()));
+		mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
 
 		JLabel zoomLabel = new JLabel("Zoom: ");
 		zoomValue = new JLabel(String.format("%s", map().getZoom()));
 
-		JButton btnSetDisplayToFitMarkers = new JButton(
-				"setDisplayToFitMapMarkers");
+		JButton btnSetDisplayToFitMarkers = new JButton("setDisplayToFitMapMarkers");
 		btnSetDisplayToFitMarkers.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -249,42 +247,28 @@ public class JInternalFrameMap extends JInternalFrame implements
 		Layer germanyEastLayer = germanyGroup.addLayer("Germany East");
 		treeMap.addLayer(germanyWestLayer);
 		treeMap.addLayer(germanyEastLayer);
-		MapMarkerDot eberstadt = new MapMarkerDot(germanyEastLayer,
-				"Eberstadt", 49.814284999, 8.642065999);
-		MapMarkerDot ebersheim = new MapMarkerDot(germanyWestLayer,
-				"Ebersheim", 49.91, 8.24);
+		MapMarkerDot eberstadt = new MapMarkerDot(germanyEastLayer,"Eberstadt", 49.814284999, 8.642065999);
+		MapMarkerDot ebersheim = new MapMarkerDot(germanyWestLayer,"Ebersheim", 49.91, 8.24);
 		MapMarkerDot empty = new MapMarkerDot(germanyEastLayer, 49.71, 8.64);
-		MapMarkerDot darmstadt = new MapMarkerDot(germanyEastLayer,
-				"Darmstadt", 49.8588, 8.643);
+		MapMarkerDot darmstadt = new MapMarkerDot(germanyEastLayer,"Darmstadt", 49.8588, 8.643);
 
 		map().addMapMarker(eberstadt);
 		map().addMapMarker(ebersheim);
 		map().addMapMarker(empty);
-		map().addMapMarker(
-				new MapMarkerDot(franceLayer, "La Gallerie", 48.71, -1));
+		map().addMapMarker(new MapMarkerDot(franceLayer, "La Gallerie", 48.71, -1));
 		map().addMapMarker(new MapMarkerDot(43.604, 1.444));
 		map().addMapMarker(new MapMarkerCircle(53.343, -6.267, 0.666));
-		map().addMapRectangle(
-				new MapRectangleImpl(new Coordinate(53.343, -6.267),
-						new Coordinate(43.604, 1.444)));
+		map().addMapRectangle(new MapRectangleImpl(new Coordinate(53.343, -6.267),new Coordinate(43.604, 1.444)));
 		map().addMapMarker(darmstadt);
 
 		MapPolygon bermudas = new MapPolygonImpl(c(49, 1), c(45, 10), c(40, 5));
 		map().addMapPolygon(bermudas);
-		map().addMapPolygon(
-				new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim,
-						darmstadt, eberstadt, empty));
+		map().addMapPolygon(new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim,darmstadt, eberstadt, empty));
 
-		map().addMapMarker(
-				new MapMarkerCircle(germanyWestLayer, "North of Suisse",
-						new Coordinate(48, 7), .5));
-		map().addMapMarker(
-				new MapMarkerCircle(spain, "La Garena", new Coordinate(40.4838,
-						-3.39), .002));
+		map().addMapMarker(new MapMarkerCircle(germanyWestLayer, "North of Suisse",new Coordinate(48, 7), .5));
+		map().addMapMarker(new MapMarkerCircle(spain, "La Garena", new Coordinate(40.4838,-3.39), .002));
 		spain.setVisible(Boolean.FALSE);
-		map().addMapRectangle(
-				new MapRectangleImpl(wales, "Wales", c(53.35, -4.57), c(51.64,
-						-2.63)));
+		map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35, -4.57), c(51.64,-2.63)));
 
 		// map().setDisplayPosition(new Coordinate(31.918, 35.0244), 5);
 		map().setDisplayPosition(new Coordinate(32.0684, 34.8248), 8);
@@ -294,8 +278,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					map().getAttribution()
-							.handleAttribution(e.getPoint(), true);
+					map().getAttribution().handleAttribution(e.getPoint(), true);
 				}
 			}
 		});
@@ -304,8 +287,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				Point p = e.getPoint();
-				boolean cursorHand = map().getAttribution()
-						.handleAttributionCursor(p);
+				boolean cursorHand = map().getAttribution().handleAttributionCursor(p);
 				if (cursorHand) {
 					map().setCursor(new Cursor(Cursor.HAND_CURSOR));
 				} else {
@@ -348,12 +330,10 @@ public class JInternalFrameMap extends JInternalFrame implements
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if (cbLockMyPos.isSelected()) {
-					Dashboard.loggerDisplayerManager
-							.addGeneralMessegeToDisplay("Lock on my position");
+					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
 					lockMapOnMyPosition = true;
 				} else {
-					Dashboard.loggerDisplayerManager
-							.addGeneralMessegeToDisplay("Release lock on my position");
+					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
 					lockMapOnMyPosition = false;
 				}
 			}
@@ -364,13 +344,11 @@ public class JInternalFrameMap extends JInternalFrame implements
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if (cbFollowTrail.isSelected()) {
-					Dashboard.loggerDisplayerManager
-							.addGeneralMessegeToDisplay("Paint My Trail");
+					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
 					myTrailPath = null;
 					paintTrail = true;
 				} else {
-					Dashboard.loggerDisplayerManager
-							.addGeneralMessegeToDisplay("Stop Paint My Trail");
+					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
 					paintTrail = false;
 					map().removeMapPath(myTrailPath);
 					myTrailPath = null;
@@ -388,9 +366,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		if (myPos == null || myPos.getColor() == Color.RED)
 			return;
 
-		MapMarkerDot tmp = new MapMarkerDot(null, null, myPos.getCoordinate(),
-				new Style(Color.BLACK, Color.RED, null,
-						MapMarkerDot.getDefaultFont()));
+		MapMarkerDot tmp = new MapMarkerDot(null, null, myPos.getCoordinate(), new Style(Color.BLACK, Color.RED, null, MapMarkerDot.getDefaultFont()));
 		map().removeMapMarker(myPos);
 
 		myPos = tmp;
@@ -432,7 +408,8 @@ public class JInternalFrameMap extends JInternalFrame implements
 		instance.setVisible(true);
 		try {
 			instance.setMaximum(true);
-		} catch (PropertyVetoException e) {
+		}
+		catch (PropertyVetoException e) {
 			// Vetoed by internalFrame
 			// ... possibly add some handling for this case
 		}
@@ -444,8 +421,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 	private void updateZoomParameters() {
 		if (mperpLabelValue != null)
-			mperpLabelValue.setText(String.format("%s", map()
-					.getMeterPerPixel()));
+			mperpLabelValue.setText(String.format("%s", map().getMeterPerPixel()));
 		if (zoomValue != null)
 			zoomValue.setText(String.format("%s", map().getZoom()));
 	}
@@ -459,8 +435,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		}
 
 		// MapMarkerDot tmp = new MapMarkerDot(coord.getLat(), coord.getLng());
-		MapMarkerDot tmp = new MapMarkerDot(null, null, c, new Style(
-				Color.BLACK, Color.GREEN, null, MapMarkerDot.getDefaultFont()));
+		MapMarkerDot tmp = new MapMarkerDot(null, null, c, new Style(Color.BLACK, Color.GREEN, null, MapMarkerDot.getDefaultFont()));
 
 		if (myPos != null) {
 			map().removeMapMarker(myPos);
@@ -484,8 +459,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			myTrailPath = new MapPathImpl();
 
 		int trailSize = myTrailPath.getPoints().size();
-		if (trailSize >= 1
-				&& myTrailPath.getPoints().get(trailSize - 1) == coord)
+		if (trailSize >= 1 && myTrailPath.getPoints().get(trailSize - 1) == coord)
 			return;
 
 		myTrailPath.AddPoint(coord.convertToCoordinate());
@@ -515,10 +489,8 @@ public class JInternalFrameMap extends JInternalFrame implements
 			map().removeMapMarker(geoFenceMarker);
 
 		double radius = GeoTools.metersTolat(radi);
-		geoFenceMarker = new MapMarkerCircle("GeoFence: " + radi + "m", iCoord,
-				radius);
-		geoFenceMarker.setStyle(new Style(Color.magenta, new Color(200, 200,
-				200, 50), new MyStroke(9), MapObjectImpl.getDefaultFont()));
+		geoFenceMarker = new MapMarkerCircle("GeoFence: " + radi + "m", iCoord, radius);
+		geoFenceMarker.setStyle(new Style(Color.magenta, new Color(200, 200, 200, 50), new MyStroke(9), MapObjectImpl.getDefaultFont()));
 		map().addMapMarker(geoFenceMarker);
 	}
 
@@ -587,9 +559,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (!Dashboard.drone.getGps().isPositionValid()) {
-					JOptionPane
-							.showMessageDialog(null,
-									"Drone must have a GPS connection to use guideness");
+					JOptionPane.showMessageDialog(null,"Drone must have a GPS connection to use guideness");
 					return;
 				}
 				if (!GuidedPoint.isGuidedMode(Dashboard.drone)) {
