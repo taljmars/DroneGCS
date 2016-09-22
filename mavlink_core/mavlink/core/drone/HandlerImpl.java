@@ -1,4 +1,4 @@
-package desktop.logic;
+package mavlink.core.drone;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,11 +7,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class Handler implements
-		mavlink.is.drone.DroneInterfaces.Handler {
+import mavlink.is.drone.DroneInterfaces.Handler;
 
-	private final ScheduledExecutorService scheduler = Executors
-			.newSingleThreadScheduledExecutor();
+public class HandlerImpl implements Handler {
+
+	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 	private final Map<Runnable, ScheduledFuture<?>> futureThreads = new HashMap<Runnable, ScheduledFuture<?>>();
 
 	@Override

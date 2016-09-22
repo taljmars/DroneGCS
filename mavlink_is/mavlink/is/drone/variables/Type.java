@@ -1,5 +1,6 @@
 package mavlink.is.drone.variables;
 
+import logger.Logger;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Drone;
@@ -53,12 +54,9 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 			case MAV_TYPE.MAV_TYPE_TRICOPTER:
 				return FirmwareType.ARDU_COPTER;
 
-			case MAV_TYPE.MAV_TYPE_GROUND_ROVER:
-			case MAV_TYPE.MAV_TYPE_SURFACE_BOAT:
-				return FirmwareType.ARDU_ROVER;
-
 			default:
 				// unsupported - fall thru to offline condition
+				Logger.LogErrorMessege("Unsupported Profile");
 			}
 		}
 		return myDrone.getPreferences().getVehicleType(); // offline or
@@ -90,10 +88,6 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 
     public static boolean isPlane(int type){
         return type == MAV_TYPE.MAV_TYPE_FIXED_WING;
-    }
-
-    public static boolean isRover(int type){
-        return type == MAV_TYPE.MAV_TYPE_GROUND_ROVER;
     }
 
     @SuppressWarnings("incomplete-switch")

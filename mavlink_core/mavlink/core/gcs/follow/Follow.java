@@ -1,9 +1,7 @@
 package mavlink.core.gcs.follow;
 
+import logger.Logger;
 import mavlink.core.gcs.follow.FollowAlgorithm.FollowModes;
-import mavlink.core.gcs.location.Location;
-import mavlink.core.gcs.location.Location.LocationFinder;
-import mavlink.core.gcs.location.Location.LocationReceiver;
 import mavlink.core.gcs.roi.ROIEstimator;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -11,6 +9,9 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.drone.variables.GuidedPoint;
 import mavlink.is.drone.variables.State;
+import mavlink.is.location.Location;
+import mavlink.is.location.LocationFinder;
+import mavlink.is.location.LocationReceiver;
 import mavlink.is.protocol.msgbuilder.MavLinkROI;
 import mavlink.is.utils.units.Length;
 
@@ -32,7 +33,7 @@ public class Follow implements OnDroneListener, LocationReceiver {
 		this.drone = drone;
 		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);
 		this.locationFinder = locationFinder;
-		locationFinder.setLocationListener(this);
+		locationFinder.addLocationListener(this);
 		roiEstimator = new ROIEstimator(handler, drone);
 		drone.addDroneListener(this);
 	}
@@ -107,7 +108,9 @@ public class Follow implements OnDroneListener, LocationReceiver {
 
 	@Override
 	public void onLocationChanged(Location location) {
+		Logger.LogDesignedMessege("Location changed");
 		if (location.isAccurate()) {
+			Logger.LogDesignedMessege("Process new location");
 			state = FollowStates.FOLLOW_RUNNING;
             followAlgorithm.processNewLocation(location);
             roiEstimator.onLocationChanged(location);
@@ -116,7 +119,7 @@ public class Follow implements OnDroneListener, LocationReceiver {
 			state = FollowStates.FOLLOW_START;
 		}
 
-			drone.notifyDroneEvent(DroneEventsType.FOLLOW_UPDATE);
+		drone.notifyDroneEvent(DroneEventsType.FOLLOW_UPDATE);
 	}
 
 	public void setType(FollowModes item) {

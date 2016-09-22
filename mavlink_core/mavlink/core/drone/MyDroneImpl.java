@@ -1,12 +1,14 @@
 package mavlink.core.drone;
 
-import mavlink.core.connection.MyLocationFinder;
 import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.core.gcs.follow.Follow;
+import mavlink.core.location.MyLocationImpl;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneEvents;
 import mavlink.is.drone.DroneInterfaces;
+import mavlink.is.drone.DroneInterfaces.Clock;
+import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.Preferences;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.profiles.Parameters;
@@ -71,8 +73,7 @@ public class MyDroneImpl implements Drone {
 	private final RadioConnection MavClient;
 	private final Preferences preferences;
 
-	public MyDroneImpl(RadioConnection mavClient, DroneInterfaces.Clock clock,
-			DroneInterfaces.Handler handler, Preferences pref) {
+	public MyDroneImpl(RadioConnection mavClient, Clock clock, Handler handler, Preferences pref) {
 		this.MavClient = mavClient;
 		this.preferences = pref;
 
@@ -103,7 +104,7 @@ public class MyDroneImpl implements Drone {
         this.mag = new Magnetometer(this);
         this.footprints = new CameraFootprints(this);
         this.messeges = new Messeges(this);
-        this.follow = new Follow(this, handler, new MyLocationFinder());
+        this.follow = new Follow(this, handler, new MyLocationImpl());
 
         loadVehicleProfile();
 	}

@@ -23,15 +23,14 @@ import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 
 import mavlink.core.connection.RadioConnection;
+import mavlink.core.drone.ClockImpl;
+import mavlink.core.drone.PreferencesFactory;
+import mavlink.core.drone.HandlerImpl;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.protocol.msg_metadata.ApmModes;
-import mavlink.is.protocol.msgbuilder.*;
-import desktop.logic.*;
-import desktop.logic.Clock;
-import desktop.logic.Handler;
 
 public class Dashboard implements OnDroneListener, NotificationsHandler {
 
@@ -44,6 +43,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 	private static final long serialVersionUID = 1L;
 
 	private static final int LOG_BOX_MAX_LINES = 50;//7;
+	private static final String APP_TITLE = "Quad Ground Station";
 	
 	public static Dashboard window = null;
     
@@ -87,8 +87,8 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 		radConn = new RadioConnection();
 		radConn.connect();
 		
-		Handler handler = new desktop.logic.Handler();
-		drone = new MyDroneImpl(radConn, new Clock(), handler,FakeFactory.fakePreferences());
+		HandlerImpl handler = new mavlink.core.drone.HandlerImpl();
+		drone = new MyDroneImpl(radConn, new ClockImpl(), handler, PreferencesFactory.getPreferences());
 		
 		System.out.println("Start Notifications Manager");
 		Timer timer = new Timer();
@@ -155,7 +155,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 	 * Initialize the contents of the frame.
 	 */
 	private void initializeGui() {
-		frame = new JFrame("Quad Ground Station");
+		frame = new JFrame(APP_TITLE);
 		frame.setBounds(100, 100, 450, 300);
         frame.setSize(400, 400);
         frame.getContentPane().setLayout(new BorderLayout());
@@ -270,7 +270,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 				VerifyBattery(drone.getBattery().getBattRemain());
 				return;
 			case MODE:
-				frame.setTitle(frame.getTitle() + "(" + drone.getState().getMode().getName() + ")");
+				frame.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
 				return;
 			case PARAMETER:
 				LoadParameter(drone.getParameters().getExpectedParameterAmount());
@@ -311,7 +311,7 @@ public class Dashboard implements OnDroneListener, NotificationsHandler {
 		if (prc > 95) {
 			System.out.println(getClass().getName() + " Setup stream rate");
 			//MavLinkStreamRates.setupStreamRates(drone.getMavClient(), 1, 1, 1, 1, 1, 1, 1, 1);
-			MavLinkStreamRates.setupStreamRates(drone.getMavClient(), 1, 1, 1, 1, 4, 1, 1, 1);
+			drone.getStreamRates().setupStreamRatesFromPref();
 			tbContorlButton.setButtonControl(true);
 			System.out.println(getClass().getName() + " " + drone.getParameters().getParameter("MOT_SPIN_ARMED"));
 			if (drone.isConnectionAlive()) {

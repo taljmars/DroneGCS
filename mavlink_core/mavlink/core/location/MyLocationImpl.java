@@ -1,39 +1,45 @@
-package mavlink.core.connection;
+package mavlink.core.location;
 
 import gui.core.dashboard.Dashboard;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import json.JSONHelper;
-
-import org.json.simple.JSONObject;
-
 import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.core.gcs.location.Location;
-import mavlink.core.gcs.location.Location.LocationFinder;
-import mavlink.core.gcs.location.Location.LocationReceiver;
+import mavlink.is.location.Location;
+import mavlink.is.location.LocationFinder;
+import mavlink.is.location.LocationReceiver;
 import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.coordinates.Coord3D;
 
-public class MyLocationFinder implements LocationFinder {
+public class MyLocationImpl implements LocationFinder {
 	private static final int UPDATE_INTERVAL = 1000;// TALMA was 500;
 	private static final double SPEED = 3;
-	private LocationReceiver receiver;
 	
-	TimerTask myTimerTask = null;
+	private Set<LocationReceiver> receivers = null;
+	private TimerTask scTimerTask = null;
+	
+	public MyLocationImpl() {
+		receivers = new HashSet<LocationReceiver>();
+	}
 
 	@Override
-	public void setLocationListener(LocationReceiver receiver) {
-		this.receiver = receiver;
+	public void addLocationListener(LocationReceiver receiver) {
+		this.receivers.add(receiver);
+	}
+	
+	@Override
+	public void removeLocationListener(LocationReceiver receiver) {
+		this.receivers.remove(receiver);
 	}
 
 	@Override
 	public void enableLocationUpdates() {
 		Timer timer = new Timer();
 		Logger.LogDesignedMessege(getClass() + " Location updates started!");
-		myTimerTask = new TimerTask() {
+		scTimerTask = new TimerTask() {
 			@Override
 			public void run() {
 				
@@ -45,17 +51,20 @@ public class MyLocationFinder implements LocationFinder {
 				Logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				
 				Coord2D coord = beaconDate.getCoordinate().dot(1);
 				
-				receiver.onLocationChanged(new Location(coord, 0, (float) SPEED, true));
+				for (LocationReceiver lr : receivers)
+					lr.onLocationChanged(new Location(coord, 0, (float) SPEED, true));
 			}
 		};
-		timer.scheduleAtFixedRate(myTimerTask, 0, UPDATE_INTERVAL);
+		timer.scheduleAtFixedRate(scTimerTask, 0, UPDATE_INTERVAL);
 
 	}
 
 	@Override
 	public void disableLocationUpdates() {
-		if (myTimerTask != null)
-			myTimerTask.cancel();
+		if (scTimerTask != null)
+			scTimerTask.cancel();
+		
+		scTimerTask = null;
 		
 		Logger.LogDesignedMessege(getClass() + " Location updates canceled!");
 	}	

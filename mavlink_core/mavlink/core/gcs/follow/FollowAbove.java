@@ -1,7 +1,7 @@
 package mavlink.core.gcs.follow;
 
-import mavlink.core.gcs.location.Location;
 import mavlink.is.drone.Drone;
+import mavlink.is.location.Location;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.units.Length;
 

@@ -1,7 +1,7 @@
 package mavlink.core.firmware;
 
 public enum FirmwareType {
-	ARDU_PLANE("ArduPlane"), ARDU_COPTER("ArduCopter"), ARDU_ROVER("ArduRover");
+	ARDU_PLANE("ArduPlane"), ARDU_COPTER("ArduCopter");
 
 	private final String type;
 
@@ -17,10 +17,6 @@ public enum FirmwareType {
 	public static FirmwareType firmwareFromString(String str) {
 		if (str.equalsIgnoreCase(ARDU_PLANE.type)) {
 			return ARDU_PLANE;
-		}
-
-		if (str.equalsIgnoreCase(ARDU_ROVER.type)) {
-			return ARDU_ROVER;
 		} else {
 			return ARDU_COPTER;
 		}

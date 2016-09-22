@@ -65,10 +65,6 @@ public class GuidedPoint extends DroneVariable implements OnDroneListener {
             return droneMode == ApmModes.FIXED_WING_GUIDED;
         }
 
-        if(Type.isRover(droneType)){
-            return droneMode == ApmModes.ROVER_GUIDED;
-        }
-
         return false;
     }
 
@@ -90,9 +86,6 @@ public class GuidedPoint extends DroneVariable implements OnDroneListener {
             //You have to send a guided point to the plane in order to trigger guided mode.
             forceSendGuidedPoint(drone, drone.getGps().getPosition(),
                     getDroneAltConstrained(drone));
-        }
-        else if(Type.isRover(droneType)){
-            droneState.changeFlightMode(ApmModes.ROVER_GUIDED);
         }
     }
 

@@ -1,20 +1,8 @@
-package mavlink.core.gcs.location;
+package mavlink.is.location;
 
 import mavlink.is.utils.coordinates.Coord2D;
 
 public class Location {
-
-	public interface LocationReceiver {
-		public void onLocationChanged(Location location);
-	}
-
-	public interface LocationFinder {
-		public void enableLocationUpdates();
-
-		public void disableLocationUpdates();
-
-		public void setLocationListener(LocationReceiver receiver);
-	}
 
 	private Coord2D coordinate;
 	private double heading = 0.0;
