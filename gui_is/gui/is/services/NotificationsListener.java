@@ -1,6 +1,6 @@
-package gui.is;
+package gui.is.services;
 
-public interface NotificationsHandler {
+public interface NotificationsListener {
 
 	void ClearNotification();
 

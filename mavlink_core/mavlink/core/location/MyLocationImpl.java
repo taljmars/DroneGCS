@@ -1,6 +1,6 @@
 package mavlink.core.location;
 
-import gui.core.dashboard.Dashboard;
+import gui.is.services.LoggerDisplayerManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class MyLocationImpl implements LocationFinder {
 				
 				BeaconData beaconDate = BeaconData.fetch();
 				if (beaconDate == null) {
-					Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
+					LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
 					return;
 				}
 				Logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				

@@ -1,6 +1,6 @@
 package gui.core.internalPanels;
 
-import gui.core.dashboard.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -40,8 +40,6 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 	private JLabel lblFlightDistanceVal;
 
 	private JLabel keepAliveLabel;
-
-	private LoggerDisplayerManager loggerDisplayerManager; 
 	
 	public JPanelTelemetrySatellite() {
 		pnl = new JPanel();
@@ -178,15 +176,15 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 				SetLblHeight(drone.getAltitude().getAltitude());
 				return;
 			case HEARTBEAT_FIRST:
-				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
 				SetHeartBeat(true);
 				return;
 			case HEARTBEAT_RESTORED:
-				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
 				SetHeartBeat(true);
 				return;
 			case HEARTBEAT_TIMEOUT:
-				loggerDisplayerManager.addErrorMessegeToDisplay("Quad Disconnected");
+				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Disconnected");
 				SetLblHeight(0);
 				SetSignal(0);
 				SetLblBattery(0);
@@ -215,9 +213,5 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 				SetFlightModeLabel(drone.getState().getMode().getName());
 				return;
 		}
-	}
-
-	public void setLoggerDisplayerManager(LoggerDisplayerManager loggerDisplayerManager) {
-		this.loggerDisplayerManager = loggerDisplayerManager;
 	}
 }

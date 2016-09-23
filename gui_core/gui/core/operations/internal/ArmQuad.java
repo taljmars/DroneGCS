@@ -2,6 +2,7 @@ package gui.core.operations.internal;
 
 import gui.core.dashboard.Dashboard;
 import gui.core.operations.OperationHandler;
+import gui.is.services.LoggerDisplayerManager;
 
 import javax.swing.JOptionPane;
 
@@ -10,7 +11,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkArm;
 
 public class ArmQuad extends OperationHandler {
 	
-	Drone drone = null;
+	private Drone drone = null;
 	
 	public ArmQuad(Drone drone) {
 		this.drone = drone;
@@ -19,11 +20,11 @@ public class ArmQuad extends OperationHandler {
 	@Override
 	public boolean go() throws InterruptedException {
 		if (drone.getState().isArmed()) {
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Drone already armed");
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Drone already armed");
 			return super.go();
 		}
 		
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Arming Quad");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Arming Quad");
 		MavLinkArm.sendArmMessage(Dashboard.drone, true);
 		int armed_waiting_time = 5000; // 5 seconds
 		long sleep_time = 1000;
@@ -32,7 +33,7 @@ public class ArmQuad extends OperationHandler {
 			if (drone.getState().isArmed())
 				break;
 			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for arming approval (" + retry + ")");
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for arming approval (" + retry + ")");
 			Thread.sleep(sleep_time);
 			retry--;
 		}
@@ -40,7 +41,7 @@ public class ArmQuad extends OperationHandler {
 		if (retry <= 0) {
 			JOptionPane.showMessageDialog(null, "Failed to arm quadcopter, taking off was canceled");
 			System.out.println(getClass().getName() + "Failed to arm quadcopter, taking off was canceled");
-			Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to arm quad");
+			LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to arm quad");
 			return false;
 		}
 		

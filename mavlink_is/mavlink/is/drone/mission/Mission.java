@@ -17,7 +17,6 @@ import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import mavlink.is.utils.Pair;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import pair.Pair;
 
 /**
  * This implements a mavlink mission. A mavlink mission is a set of

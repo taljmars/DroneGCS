@@ -1,7 +1,7 @@
 package mavlink.is.drone.variables;
 
-import gui.core.dashboard.Dashboard;
 import gui.core.mapObjects.Coordinate;
+import gui.is.services.LoggerDisplayerManager;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.Clock;
@@ -29,12 +29,7 @@ public class State extends DroneVariable {
 	private Clock clock;
 
 	public Handler watchdog;
-	public Runnable watchdogCallback = new Runnable() {
-		@Override
-		public void run() {
-			removeWarning();
-		}
-	};
+	public Runnable watchdogCallback = () -> removeWarning();
 
 	public State(Drone myDrone, Clock clock, Handler handler) {
 		super(myDrone);
@@ -116,7 +111,7 @@ public class State extends DroneVariable {
 
 	public void changeFlightMode(ApmModes mode) {
 		if (ApmModes.isValid(mode)) {
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + mode.getName());
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + mode.getName());
 			System.out.println(getClass().getName() + mode.getName());
 			MavLinkModes.changeFlightMode(myDrone, mode);
 		}

@@ -3,6 +3,7 @@ package flight_controlers;
 import gui.core.dashboard.Dashboard;
 import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.JMapViewerEventListener;
+import gui.is.services.LoggerDisplayerManager;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -204,9 +205,6 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		param_loaded = true;
 		Reset();
 	}
-
-	private KeyBoardControl() {		
-	}
 	
 	static int _MIN_PWM_RANGE = 0;
 	static int _MAX_PWM_RANGE = 0;
@@ -400,14 +398,14 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		    	_TRIM_ANGLE_ROLL = RC_Roll;
 		    	_TRIM_ANGLE_PITCH = RC_Pitch;
 		    	_TRIM_ANGLE_YAW = RC_Yaw;
-		    	Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Calibrating New Center of Keyboard Control");
+		    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Calibrating New Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		    case KeyEvent.VK_BACK_SPACE :
 		    	_TRIM_ANGLE_ROLL = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_PITCH = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_YAW = _TRIM_ANGLE;
-		    	Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Reseting Center of Keyboard Control");
+		    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Reseting Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		}

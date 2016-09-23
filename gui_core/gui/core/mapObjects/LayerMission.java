@@ -3,6 +3,7 @@ package gui.core.mapObjects;
 
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapObject;
+import gui.is.services.LoggerDisplayerManager;
 import gui.core.dashboard.Dashboard;
 import gui.core.internalFrames.helper.ButtonColumn;
 import gui.core.internalPanels.JPanelMissionBox;
@@ -458,7 +459,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 						else if (mi instanceof Takeoff)
 							((Takeoff) mi).setFinishedAlt(new Altitude(Double.parseDouble(missionTable.getValueAt(row, colidx).toString())));
 						else 
-							Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Height was modified to irrelevant type");
+							LoggerDisplayerManager.addErrorMessegeToDisplay("Height was modified to irrelevant type");
 						break;
 					case Delay:
 						((Waypoint) mi).setDelay(Double.parseDouble(missionTable.getValueAt(row, colidx).toString()));

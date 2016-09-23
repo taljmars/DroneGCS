@@ -26,6 +26,7 @@ import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
 import gui.core.dashboard.Dashboard;
+import gui.is.services.LoggerDisplayerManager;
 
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
@@ -36,10 +37,13 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	
 	Drone drone = null;
 	
+	public DroneUpdateListener() {
+	}
+	
 	@Override
 	public void onConnect() {
 		System.err.println(getClass().getName() + " On Connect!!");
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Connected!");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Connected!");
 	}
 
 	@Override
@@ -157,7 +161,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 					break;
 				}
 				
-				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay(message);
+				LoggerDisplayerManager.addGeneralMessegeToDisplay(message);
 				drone.getMessegeQueue().push(message);
 				return;
 				//break;
@@ -175,13 +179,13 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	@Override
 	public void onDisconnect() {
 		System.err.println("Disconnected!");
-		Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Disconnected!");
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Disconnected!");
 	}
 
 	@Override
 	public void onComError(String errMsg) {
 		System.err.println("Communication Error: " + errMsg);
-		Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Communication Error: " + errMsg);
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Communication Error: " + errMsg);
 	}
 	
 	public void processState(msg_heartbeat msg_heart) {
@@ -193,7 +197,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 		boolean failsafe2 = msg_heart.system_status == (byte) MAV_STATE.MAV_STATE_CRITICAL;
 		if (failsafe2) {
 			drone.getState().setWarning("Failsafe");
-			Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("FailSafe procedure started!");
+			LoggerDisplayerManager.addErrorMessegeToDisplay("FailSafe procedure started!");
 		}
 	}
 

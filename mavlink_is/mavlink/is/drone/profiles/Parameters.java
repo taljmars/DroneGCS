@@ -1,6 +1,6 @@
 package mavlink.is.drone.profiles;
 
-import gui.core.dashboard.Dashboard;
+import gui.is.services.LoggerDisplayerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,12 +41,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	private DroneInterfaces.OnParameterManagerListener parameterListener;
 
 	public Handler watchdog;
-	public Runnable watchdogCallback = new Runnable() {
-		@Override
-		public void run() {
-			onParameterStreamStopped();
-		}
-	};
+	public Runnable watchdogCallback = () -> onParameterStreamStopped();
 
 	public final ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
 
@@ -111,7 +106,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 				parameterList.add(parameters.get(key));
 			}
 			killWatchdog();
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Parameters finished!");
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Parameters finished!");
 			myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED_FINISH);
 
 			if (parameterListener != null) {

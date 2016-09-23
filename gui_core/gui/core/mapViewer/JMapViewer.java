@@ -3,12 +3,12 @@ package gui.core.mapViewer;
 
 import gui.core.mapObjects.*;
 import gui.core.mapTileSources.BingAerialTileSource;
-import gui.core.dashboard.Dashboard;
 import gui.core.internalFrames.JInternalFrameMap;
 import gui.is.classes.Tile;
 import gui.is.events.JMVCommandEvent;
 import gui.is.events.JMVCommandEvent.COMMAND;
 import gui.is.interfaces.*;
+import gui.is.services.LoggerDisplayerManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -289,7 +289,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	SetEditModeGUI(true);
     	if (layer != null) {
     		System.out.println(getClass().getName() + " Start Working on exisitng layer:" + layer.getName());
-    		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Editing layer: " + layer.getName());
+    		LoggerDisplayerManager.addGeneralMessegeToDisplay("Editing layer: " + layer.getName());
     		this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
     	}
     }

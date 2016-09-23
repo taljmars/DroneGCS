@@ -1,6 +1,6 @@
 package gui.core.internalPanels;
 
-import gui.is.LoggerDisplayerHandler;
+import gui.is.services.LoggerDisplayerListener;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -15,12 +15,15 @@ import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.text.html.HTMLEditorKit;
 
-public class JPanelLogBox extends JPanel implements LoggerDisplayerHandler {
+public class JPanelLogBox extends JPanel implements LoggerDisplayerListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7668860997050137469L;
+	
+	private static final int LOG_BOX_MAX_LINES = 50;// 7;
+	
 	private JTextPane logBox;
 
 	public JPanelLogBox(LayoutManager layout) {
@@ -72,5 +75,10 @@ public class JPanelLogBox extends JPanel implements LoggerDisplayerHandler {
 		if (logBox == null)
 			System.err.println("LogBox was not created");
 		logBox.setText(text);
+	}
+
+	@Override
+	public int getMaxLoggerDisplayedLines() {
+		return LOG_BOX_MAX_LINES;
 	}
 }

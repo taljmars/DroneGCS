@@ -28,6 +28,8 @@ import gui.is.interfaces.JMapViewerEventListener;
 import gui.is.interfaces.MapLine;
 import gui.is.interfaces.TileLoader;
 import gui.is.interfaces.TileSource;
+import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.NotificationsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,6 +41,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.beans.PropertyVetoException;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -462,12 +465,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 							coord);
 					// Dashboard.drone.getGuidedPoint().newGuidedCoord(coord);
 
-					guidedPoint = new MapMarkerDot(iCoord.getLat(), iCoord
-							.getLon());
+					guidedPoint = new MapMarkerDot(iCoord.getLat(), iCoord.getLon());
 					map().addMapMarker(guidedPoint);
-					Dashboard.loggerDisplayerManager
-							.addGeneralMessegeToDisplay("Flying to guided point "
-									+ guidedPoint.getCoordinate().toString());
+					LoggerDisplayerManager.addGeneralMessegeToDisplay("Flying to guided point " + guidedPoint.getCoordinate().toString());
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -483,7 +483,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 				Dashboard.window.resetProgressBar();
 				Dashboard.drone.getWaypointManager().setWaypointManagerListener(instance);
 				Dashboard.drone.getWaypointManager().getWaypoints();
-				Dashboard.loggerDisplayerManager.addOutgoingMessegeToDisplay("Send Sync Request");
+				LoggerDisplayerManager.addOutgoingMessegeToDisplay("Send Sync Request");
 			}
 		});
 
@@ -517,24 +517,24 @@ public class JInternalFrameMap extends JInternalFrame implements
 					radi = Integer.parseInt(val);
 					KeyBoardControl.get().ReleaseIfNeeded();
 					updateCycleGeoFence(radi, iCoord);
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of manual circle type");
+					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of manual circle type");
 					break;
 				case 1:
 					setGeoFenceByMouse = true;
-					Dashboard.notificationManager.add("Use Ctrl Key and mouse roller to set radius");
-					Dashboard.notificationManager.add("Use Ctrl Key and mouse roller to set radius");
-					Dashboard.notificationManager.add("Use Ctrl Key and mouse roller to set radius");
+					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
+					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
+					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
 					updateCycleGeoFence(radi, iCoord);
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of fixed circle type");
+					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of fixed circle type");
 					break;
 				case 2:
 					setPerimeterByMouse = true;
-					Dashboard.notificationManager.add("Use Ctrl Key and left mouse key to add point");
-					Dashboard.notificationManager.add("Use Ctrl Key and left mouse key to add point");
-					Dashboard.notificationManager.add("Use Ctrl Key and left mouse key to add point");
+					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
+					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
+					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
 					map().removeMapMarker(perimeterBreachPointMarker);
 					perimeterBreachPointMarker = null;
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of perimeter type");
+					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of perimeter type");
 
 					map().SetEditModeGUI(true);
 					if (modifyiedLayerPerimeter == null) {
@@ -762,7 +762,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		map().addMapMarker(myMapCircle75);
 		map().addMapMarker(myMapCircle100);
 
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Setting new Home position");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting new Home position");
 	}
 
 	@Override
@@ -883,11 +883,11 @@ public class JInternalFrameMap extends JInternalFrame implements
 		setGeoFenceByMouse = false;
 		setPerimeterByMouse = false;
 
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is off");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is off");
 	}
 
 	private void EditModeOn() {
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is on");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is on");
 	}
 
 	@Override
@@ -916,41 +916,41 @@ public class JInternalFrameMap extends JInternalFrame implements
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Start Syncing");
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Syncing");
 			return;
 		}
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Start Updloading Waypoints");
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Updloading Waypoints");
 			return;
 		}
 
-		Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Failed to Start Syncing (" + wpEvent.name() + ")");
+		LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to Start Syncing (" + wpEvent.name() + ")");
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Downloading Waypoint " + index + "/" + count);
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Downloading Waypoint " + index + "/" + count);
 			Dashboard.window.setProgressBar(0, index, count);
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Uploading Waypoint " + index + "/" + count);
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Uploading Waypoint " + index + "/" + count);
 			Dashboard.window.setProgressBar(0, index, count);
 			return;
 		}
 
-		Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Unexpected Syncing Failure (" + wpEvent.name() + ")");
 		Dashboard.window.setProgressBar(count, count);
 	}
 
 	@Override
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
 			if (Dashboard.drone.getMission() == null) {
-				Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Failed to find mission");
+				LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to find mission");
 				return;
 			}
 
@@ -962,16 +962,16 @@ public class JInternalFrameMap extends JInternalFrame implements
 			instMission.setMission(Dashboard.drone.getMission());
 			instMission.repaint(map());
 
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			Dashboard.loggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
 			return;
 		}
 
-		Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -1000,7 +1000,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			return;
 		case GCS_LOCATION:
 			if (drone.getGCS().getPosition() == null) {
-				Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("GCS location doesn't exist");
+				LoggerDisplayerManager.addErrorMessegeToDisplay("GCS location doesn't exist");
 				return;
 			}
 			UpdateGCSOnMap(drone.getGCS().getPosition().dot(1));
@@ -1022,7 +1022,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		}
 
 		map().addMapMarker(myGCS);
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("GCS was updated");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("GCS was updated");
 	}
 
 	private void UpdateBeaconOnMap(Coordinate coord) {
@@ -1038,17 +1038,17 @@ public class JInternalFrameMap extends JInternalFrame implements
 		}
 
 		map().addMapMarker(myBeacon);
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Beacon was updated");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon was updated");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == cbLockMyPos) {
 			if (cbLockMyPos.isSelected()) {
-				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
+				LoggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
 				lockMapOnMyPosition = true;
 			} else {
-				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
+				LoggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
 				lockMapOnMyPosition = false;
 			}
 			return;
@@ -1056,11 +1056,11 @@ public class JInternalFrameMap extends JInternalFrame implements
 		
 		if (e.getSource() == cbFollowTrail) {
 			if (cbFollowTrail.isSelected()) {
-				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
+				LoggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
 				myTrailPath = null;
 				paintTrail = true;
 			} else {
-				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
+				LoggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
 				paintTrail = false;
 				map().removeMapPath(myTrailPath);
 				myTrailPath = null;

@@ -1,7 +1,7 @@
 package gui.core.operations.internal;
 
-import gui.core.dashboard.Dashboard;
 import gui.core.operations.OperationHandler;
+import gui.is.services.LoggerDisplayerManager;
 
 import javax.swing.JOptionPane;
 
@@ -20,7 +20,7 @@ public class TakeoffQuad extends OperationHandler {
 	
 	@Override
 	public boolean go() throws InterruptedException {
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Starting Takeoff");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Starting Takeoff");
 		drone.getState().doTakeoff(new Altitude(expectedValue));
 		int takeoff_waiting_time = 15000; // 15 seconds
 		long sleep_time = 1000;
@@ -30,8 +30,8 @@ public class TakeoffQuad extends OperationHandler {
 			if (alt >= expectedValue * 0.95 && alt <= expectedValue * 1.05 )
 				break;
 			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for takeoff to finish (" + retry + ")");
-			Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + expectedValue);
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Waiting for takeoff to finish (" + retry + ")");
+			LoggerDisplayerManager.addGeneralMessegeToDisplay("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + expectedValue);
 			Thread.sleep(sleep_time);
 			retry--;
 		}
@@ -39,11 +39,11 @@ public class TakeoffQuad extends OperationHandler {
 		if (retry <= 0) {
 			JOptionPane.showMessageDialog(null, "Failed to lift quadcopter, taking off was canceled");
 			System.out.println(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
-			Dashboard.loggerDisplayerManager.addErrorMessegeToDisplay("Failed to lift quad");
+			LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to lift quad");
 			return false;
 		}
 		
-		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
+		LoggerDisplayerManager.addGeneralMessegeToDisplay("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
 		
 		return super.go();
 	}
