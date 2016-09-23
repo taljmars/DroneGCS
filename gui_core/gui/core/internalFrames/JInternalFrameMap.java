@@ -14,8 +14,6 @@ import gui.core.mapObjects.MapMarkerCircle;
 import gui.core.mapObjects.MapMarkerDot;
 import gui.core.mapObjects.MapObjectImpl;
 import gui.core.mapObjects.MapPathImpl;
-import gui.core.mapObjects.MapPolygonImpl;
-import gui.core.mapObjects.MapRectangleImpl;
 import gui.core.mapTileSources.BingAerialTileSource;
 import gui.core.mapTileSources.MapQuestOpenAerialTileSource;
 import gui.core.mapTileSources.MapQuestOsmTileSource;
@@ -28,7 +26,6 @@ import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.JMapViewerEventListener;
 import gui.is.interfaces.MapLine;
-import gui.is.interfaces.MapPolygon;
 import gui.is.interfaces.TileLoader;
 import gui.is.interfaces.TileSource;
 
@@ -38,13 +35,10 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -79,15 +73,7 @@ import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
 public class JInternalFrameMap extends JInternalFrame implements
-		JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener {
-
-	/**
-	 * 
-	 */
-
-	private static Coordinate c(double lat, double lon) {
-		return new Coordinate(lat, lon);
-	}
+		JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	static JMapViewerTree treeMap;
@@ -124,10 +110,20 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 	private static JInternalFrameMap instance = null;
 
-	Layer spain = null;
 	private JPanelMissionBox missionBox;
 	private JPanelConfigurationBox conifgurationBox;
 	private JDesktopPane container;
+	private JCheckBox cbLockMyPos;
+	private JCheckBox cbFollowTrail;
+	
+	private TileSource[] mapTilesSources = new TileSource[]
+			{ 
+				new BingAerialTileSource(),
+				new OsmTileSource.CycleMap(),
+				new MapQuestOsmTileSource(),
+				new OsmTileSource.Mapnik(),
+				new MapQuestOpenAerialTileSource()
+			};
 
 	private JInternalFrameMap(String name, boolean resizable, boolean closable,
 			boolean maximizable, boolean iconifiable) {
@@ -149,76 +145,45 @@ public class JInternalFrameMap extends JInternalFrame implements
 		zoomValue = new JLabel(String.format("%s", map().getZoom()));
 
 		JButton btnSetDisplayToFitMarkers = new JButton("setDisplayToFitMapMarkers");
-		btnSetDisplayToFitMarkers.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setDisplayToFitMapMarkers();
-			}
-		});
-		JCheckBox cbLockMyPos = new JCheckBox("Lock On My Position");
-		JCheckBox cbFollowTrail = new JCheckBox("Paint Trail");
+		btnSetDisplayToFitMarkers.addActionListener( e -> map().setDisplayToFitMapMarkers());
+		
+		cbLockMyPos = new JCheckBox("Lock On My Position");
 		cbLockMyPos.setSelected(true);
-		cbFollowTrail.setSelected(true);
 		panelBottom.add(cbLockMyPos);
+		cbLockMyPos.addActionListener(this);
+		
+		cbFollowTrail = new JCheckBox("Paint Trail");
+		cbFollowTrail.setSelected(true);
 		panelBottom.add(cbFollowTrail);
+		cbFollowTrail.addActionListener(this);
 
 		JCheckBox showMapMarker = new JCheckBox("Map markers visible");
 		showMapMarker.setSelected(map().getMapMarkersVisible());
-		showMapMarker.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setMapMarkerVisible(showMapMarker.isSelected());
-			}
-		});
+		showMapMarker.addActionListener( e -> map().setMapMarkerVisible(showMapMarker.isSelected()));
 		panelBottom.add(showMapMarker);
-		// /
+		
 		JCheckBox showTreeLayers = new JCheckBox("Show Zones");
 		showTreeLayers.setSelected(true);
 		treeMap.setTreeVisible(showTreeLayers.isSelected());
-		showTreeLayers.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				treeMap.setTreeVisible(showTreeLayers.isSelected());
-			}
-		});
+		showTreeLayers.addActionListener( e -> treeMap.setTreeVisible(showTreeLayers.isSelected()));
 		panelBottom.add(showTreeLayers);
-		// /
+
 		showToolTip = new JCheckBox("ToolTip visible");
-		showToolTip.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setToolTipText(null);
-			}
-		});
+		showToolTip.addActionListener( e -> map().setToolTipText(null));
 		panelBottom.add(showToolTip);
-		// /
+
 		JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
 		showTileGrid.setSelected(map().isTileGridVisible());
-		showTileGrid.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setTileGridVisible(showTileGrid.isSelected());
-				System.out.println(getClass().getName()
-						+ " Is show grid selected " + showTileGrid.isSelected());
-			}
-		});
+		showTileGrid.addActionListener( e -> map().setTileGridVisible(showTileGrid.isSelected()));
 		panelBottom.add(showTileGrid);
+		
 		final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
 		showZoomControls.setSelected(map().getZoomControlsVisible());
-		showZoomControls.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setZoomContolsVisible(showZoomControls.isSelected());
-			}
-		});
+		showZoomControls.addActionListener( e -> map().setZoomContolsVisible(showZoomControls.isSelected()));
 		panelBottom.add(showZoomControls);
+		
 		final JCheckBox scrollWrapEnabled = new JCheckBox("Scrollwrap enabled");
-		scrollWrapEnabled.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				map().setScrollWrapEnabled(scrollWrapEnabled.isSelected());
-			}
-		});
+		scrollWrapEnabled.addActionListener( e -> map().setScrollWrapEnabled(scrollWrapEnabled.isSelected()));
 		panelBottom.add(scrollWrapEnabled);
 
 		panelTop.add(btnSetDisplayToFitMarkers);
@@ -236,43 +201,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		perimetersGroup = new LayerGroup("Perimeters");
 		generalGroup = new LayerGroup("General Drawings");
 
-		Layer franceLayer = treeMap.addLayer("France");
-		spain = treeMap.addLayer("Spain");
-		Layer wales = treeMap.addLayer("UK");
-		// layerPerimeterGeofence =
-		// treeMap.addLayer("Perimeters and GeoFences");
-
-		LayerGroup germanyGroup = new LayerGroup("Germany");
-		Layer germanyWestLayer = germanyGroup.addLayer("Germany West");
-		Layer germanyEastLayer = germanyGroup.addLayer("Germany East");
-		treeMap.addLayer(germanyWestLayer);
-		treeMap.addLayer(germanyEastLayer);
-		MapMarkerDot eberstadt = new MapMarkerDot(germanyEastLayer,"Eberstadt", 49.814284999, 8.642065999);
-		MapMarkerDot ebersheim = new MapMarkerDot(germanyWestLayer,"Ebersheim", 49.91, 8.24);
-		MapMarkerDot empty = new MapMarkerDot(germanyEastLayer, 49.71, 8.64);
-		MapMarkerDot darmstadt = new MapMarkerDot(germanyEastLayer,"Darmstadt", 49.8588, 8.643);
-
-		map().addMapMarker(eberstadt);
-		map().addMapMarker(ebersheim);
-		map().addMapMarker(empty);
-		map().addMapMarker(new MapMarkerDot(franceLayer, "La Gallerie", 48.71, -1));
-		map().addMapMarker(new MapMarkerDot(43.604, 1.444));
-		map().addMapMarker(new MapMarkerCircle(53.343, -6.267, 0.666));
-		map().addMapRectangle(new MapRectangleImpl(new Coordinate(53.343, -6.267),new Coordinate(43.604, 1.444)));
-		map().addMapMarker(darmstadt);
-
-		MapPolygon bermudas = new MapPolygonImpl(c(49, 1), c(45, 10), c(40, 5));
-		map().addMapPolygon(bermudas);
-		map().addMapPolygon(new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim,darmstadt, eberstadt, empty));
-
-		map().addMapMarker(new MapMarkerCircle(germanyWestLayer, "North of Suisse",new Coordinate(48, 7), .5));
-		map().addMapMarker(new MapMarkerCircle(spain, "La Garena", new Coordinate(40.4838,-3.39), .002));
-		spain.setVisible(Boolean.FALSE);
-		map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35, -4.57), c(51.64,-2.63)));
-
-		// map().setDisplayPosition(new Coordinate(31.918, 35.0244), 5);
 		map().setDisplayPosition(new Coordinate(32.0684, 34.8248), 8);
-		// map.setTileGridVisible(true);
 
 		map().addMouseListener(new MouseAdapter() {
 			@Override
@@ -298,66 +227,16 @@ public class JInternalFrameMap extends JInternalFrame implements
 			}
 		});
 
-		JComboBox<TileSource> tileSourceSelector = new JComboBox<>(
-				new TileSource[] { new BingAerialTileSource(),
-						new OsmTileSource.CycleMap(),
-						new MapQuestOsmTileSource(),
-						new OsmTileSource.Mapnik(),
-						new MapQuestOpenAerialTileSource() });
-		tileSourceSelector.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				map().setTileSource((TileSource) e.getItem());
-			}
-		});
-		// tileSourceSelector.addKeyListener(mapKeyListener);
+		JComboBox<TileSource> tileSourceSelector = new JComboBox<>(mapTilesSources);
+		tileSourceSelector.addItemListener( e -> map().setTileSource((TileSource) e.getItem()));
 
 		JComboBox<TileLoader> tileLoaderSelector;
-		tileLoaderSelector = new JComboBox<>(
-				new TileLoader[] { new OsmTileLoader(map()) });
-		tileLoaderSelector.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				map().setTileLoader((TileLoader) e.getItem());
-			}
-		});
+		tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
+		tileLoaderSelector.addItemListener( e -> map().setTileLoader((TileLoader) e.getItem()));
 		map().setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
 		panelTop.add(tileSourceSelector);
 		panelTop.add(tileLoaderSelector);
 
-		cbLockMyPos.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (cbLockMyPos.isSelected()) {
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
-					lockMapOnMyPosition = true;
-				} else {
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
-					lockMapOnMyPosition = false;
-				}
-			}
-		});
-
-		cbFollowTrail.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (cbFollowTrail.isSelected()) {
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
-					myTrailPath = null;
-					paintTrail = true;
-				} else {
-					Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
-					paintTrail = false;
-					map().removeMapPath(myTrailPath);
-					myTrailPath = null;
-				}
-			}
-		});
-
-		// autoMissionLayer = treeMap.addLayer("Mission");
-		// editLayer = treeMap.addLayer("Edit Layer");
 
 		pack();
 	}
@@ -494,9 +373,6 @@ public class JInternalFrameMap extends JInternalFrame implements
 		map().addMapMarker(geoFenceMarker);
 	}
 
-	Socket socket;
-	PrintWriter out;
-	Scanner sc;
 	private boolean isPerimeterBuildMode = false;
 	private boolean isMissionBuildMode = false;
 
@@ -582,7 +458,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 						guidedPoint.setBackColor(Color.GRAY);
 					}
 
-					ICoordinate iCoord = map().getPosition(e.getPoint());
+					ICoordinate iCoord = getMapPointerCoordinates(e);
 					Coord2D coord = new Coord2D(iCoord.getLat(), iCoord
 							.getLon());
 
@@ -618,39 +494,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		menuItemFindClosest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// run the adb bridge
-				Thread t = new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						Process p;
-						try {
-							p = Runtime.getRuntime().exec("C:\\Program Files (x86)\\Android\\android-sdk\\platform-tools\\adb.exe forward tcp:38300 tcp:38300");
-							@SuppressWarnings("resource")
-							Scanner sc = new Scanner(p.getErrorStream());
-							if (sc.hasNext()) {
-								while (sc.hasNext())
-									System.out.println(sc.next());
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-				t.start();
-
-				System.out.println(getClass().getName() + " Open Socket");
-				try {
-					socket = new Socket("localhost", 38300);
-					out = new PrintWriter(socket.getOutputStream(), true);
-					// in = new BufferedReader(new
-					// InputStreamReader(socket.getInputStream()));
-					sc = new Scanner(socket.getInputStream());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 			}
 		});
 
@@ -658,7 +502,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println(getClass().getName() + " Start GeoFence");
-				Coordinate iCoord = new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+				Coordinate iCoord = getMapPointerCoordinates(e);
 				int radi = 50;
 				String[] options = { "Cycle-Specific", "Cycle-Manuel", "Polygon", "Cancel" };
 				int n = JOptionPane
@@ -731,7 +575,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		menuItemMissionAddWayPoint.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Coordinate iCoord = new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(),new Altitude(20));
 				Mission m = modifyiedLayerMission.getMission();
@@ -748,7 +592,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		menuItemMissionAddCircle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Coordinate iCoord = new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(),new Altitude(20));
 				Mission m = modifyiedLayerMission.getMission();
@@ -765,7 +609,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		menuItemMissionSetLandPoint.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Coordinate iCoord = new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(), new Altitude(20));
 				Mission m = modifyiedLayerMission.getMission();
@@ -1056,6 +900,11 @@ public class JInternalFrameMap extends JInternalFrame implements
 		instance = null;
 		super.dispose();
 	}
+	
+	/* Get the coordinate value of the mouse pointer */
+	private Coordinate getMapPointerCoordinates(MouseEvent e) {
+		return new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+	}
 
 	static Coordinate perimeterBreachPoint = null;
 	static MapMarkerDot perimeterBreachPointMarker = null;
@@ -1194,6 +1043,34 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 		map().addMapMarker(myBeacon);
 		Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Beacon was updated");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == cbLockMyPos) {
+			if (cbLockMyPos.isSelected()) {
+				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
+				lockMapOnMyPosition = true;
+			} else {
+				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
+				lockMapOnMyPosition = false;
+			}
+			return;
+		}
+		
+		if (e.getSource() == cbFollowTrail) {
+			if (cbFollowTrail.isSelected()) {
+				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
+				myTrailPath = null;
+				paintTrail = true;
+			} else {
+				Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
+				paintTrail = false;
+				map().removeMapPath(myTrailPath);
+				myTrailPath = null;
+			}
+			return;
+		}
 	}
 
 }
