@@ -191,7 +191,7 @@ public class MyDroneImpl implements Drone {
 
 	@Override
 	public void notifyDroneEvent(final DroneInterfaces.DroneEventsType event) {
-        events.notifyDroneEvent(event);
+		events.notifyDroneEvent(event);
 	}
 
 	@Override
