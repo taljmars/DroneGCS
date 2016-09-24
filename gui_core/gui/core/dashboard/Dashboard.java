@@ -38,7 +38,6 @@ import mavlink.is.protocol.msg_metadata.ApmModes;
 
 @Configuration
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("mavlink.core.connection")
 @ComponentScan("gui.core.internalPanels")
 @Component("dashboard")
 public class Dashboard implements OnDroneListener, NotificationsListener {

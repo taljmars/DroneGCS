@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import gui.core.mapObjects.Coordinate;
-import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -33,7 +32,7 @@ public class GuidedPoint extends DroneVariable implements OnDroneListener {
 	}
 
 	@Autowired
-	public GuidedPoint(MyDroneImpl myDroneImpl) {
+	public GuidedPoint(Drone myDroneImpl) {
 		super(myDroneImpl);
 		myDroneImpl.addDroneListener(this);
 	}

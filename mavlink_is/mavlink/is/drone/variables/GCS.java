@@ -2,8 +2,7 @@ package mavlink.is.drone.variables;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.coordinates.Coord3D;
@@ -18,7 +17,7 @@ public class GCS extends DroneVariable {
 	private Coord3D pLastPosition = null;
 	
 	@Autowired
-	public GCS(MyDroneImpl myDroneImpl) {
+	public GCS(Drone myDroneImpl) {
 		super(myDroneImpl);
 	}
 

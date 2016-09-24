@@ -3,7 +3,6 @@ package mavlink.core.drone;
 import javax.annotation.Resource;
 
 import mavlink.core.firmware.FirmwareType;
-import mavlink.core.gcs.follow.Follow;
 import mavlink.core.location.MyLocationImpl;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.Drone;
@@ -37,6 +36,7 @@ import mavlink.is.drone.variables.Speed;
 import mavlink.is.drone.variables.State;
 import mavlink.is.drone.variables.StreamRates;
 import mavlink.is.drone.variables.Type;
+import mavlink.is.gcs.follow.Follow;
 import mavlink.is.location.LocationFinder;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
@@ -45,121 +45,122 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+@ComponentScan("mavlink.core.connection")
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
-@ComponentScan("mavlink.core.gcs.follow")
+@ComponentScan("mavlink.is.gcs.follow")
 @ComponentScan("mavlink.is.protocol.msgbuilder")
 @Component("myDroneImpl")
 public class MyDroneImpl implements Drone {
 
-	@Resource(name="state")
-	private  State state;
-	
-	@Resource(name="events")
-	private DroneEvents events;
-	
-	@Resource(name="heartbeat")
-	private  HeartBeat heartbeat;
-	
-	@Resource(name="parameters")
-	private  Parameters parameters;
-	
-	@Resource(name="follow")
-	private  Follow follow;
-	
-	@Resource(name="type")
-	private Type type;
-	
-	@Resource(name="gps")
-	private GPS GPS;
-
-	@Resource(name="rc")
-	private  RC RC;	
-	
-	@Resource(name="beacon")
-	private  Beacon Beacon;
-	
-	@Resource(name="gcs")
-	private  GCS GCS;
-	
-	@Resource(name="speed")
-	private  Speed speed;
-	
-	@Resource(name="battery")
-	private  Battery battery;
-	
-	@Resource(name="radio")
-	private  Radio radio;
-	
-	@Resource(name="home")
-	private  Home home;
-	
-	@Resource(name="mission")
-	private  Mission mission;
-	
-	@Resource(name="missionStats")
-	private  MissionStats missionStats;
-	
-	@Resource(name="streamRates")
-	private  StreamRates streamRates;
-	
-	@Resource(name="altitude")
-	private  Altitude altitude;
-	
-	@Resource(name="orientation")
-	private  Orientation orientation;
-	
-	@Resource(name="navigation")
-	private  Navigation navigation;
-	
-	@Resource(name="guidedPoint")
-	private  GuidedPoint guidedPoint;
-	
-	@Resource(name="calibrationSetup")
-	private  Calibration calibrationSetup;
-	
-	@Resource(name="waypointManager")
-	private  WaypointManager waypointManager;
-	
-	@Resource(name="mag")
-	private  Magnetometer mag;
-	
-	@Resource(name="footprints")
-	private  CameraFootprints footprints;
-	
-	@Resource(name="perimeter")
-	private  Perimeter Perimeter;
-	
-	private  Messeges messeges;
-	
-	@Resource(name="radioConnection")
-	private MavLinkConnection MavClient;
-	
-	@Resource(name="preferencesImpl")
-	private Preferences preferences;
-	
-	@Resource(name="handlerImpl")
-	private Handler handler;
-	
-	@Resource(name="clockImpl")
-	private Clock clock;
-	
-	@Bean 
+	@Bean
 	private LocationFinder myLocationFinderImpl() {
 		return new MyLocationImpl();
 	}
-	
-	@Bean 
+
+	@Bean
 	private VehicleProfile profile() {
 		loadVehicleProfile();
 		return profile;
 	}
-	
+
+	@Resource(name = "radioConnection")
+	private MavLinkConnection MavClient;
+
+	@Resource(name = "state")
+	private State state;
+
+	@Resource(name = "events")
+	private DroneEvents events;
+
+	@Resource(name = "heartbeat")
+	private HeartBeat heartbeat;
+
+	@Resource(name = "parameters")
+	private Parameters parameters;
+
+	@Resource(name = "preferencesImpl")
+	private Preferences preferences;
+
+	@Resource(name = "handlerImpl")
+	private Handler handler;
+
+	@Resource(name = "clockImpl")
+	private Clock clock;
+
+	@Resource(name = "follow")
+	private Follow follow;
+
+	@Resource(name = "type")
+	private Type type;
+
+	@Resource(name = "gps")
+	private GPS GPS;
+
+	@Resource(name = "rc")
+	private RC RC;
+
+	@Resource(name = "beacon")
+	private Beacon Beacon;
+
+	@Resource(name = "gcs")
+	private GCS GCS;
+
+	@Resource(name = "speed")
+	private Speed speed;
+
+	@Resource(name = "battery")
+	private Battery battery;
+
+	@Resource(name = "radio")
+	private Radio radio;
+
+	@Resource(name = "home")
+	private Home home;
+
+	@Resource(name = "mission")
+	private Mission mission;
+
+	@Resource(name = "missionStats")
+	private MissionStats missionStats;
+
+	@Resource(name = "streamRates")
+	private StreamRates streamRates;
+
+	@Resource(name = "altitude")
+	private Altitude altitude;
+
+	@Resource(name = "orientation")
+	private Orientation orientation;
+
+	@Resource(name = "navigation")
+	private Navigation navigation;
+
+	@Resource(name = "guidedPoint")
+	private GuidedPoint guidedPoint;
+
+	@Resource(name = "calibrationSetup")
+	private Calibration calibrationSetup;
+
+	@Resource(name = "waypointManager")
+	private WaypointManager waypointManager;
+
+	@Resource(name = "mag")
+	private Magnetometer mag;
+
+	@Resource(name = "footprints")
+	private CameraFootprints footprints;
+
+	@Resource(name = "perimeter")
+	private Perimeter Perimeter;
+
+	@Resource(name = "messeges")
+	private Messeges messeges;
+
 	private VehicleProfile profile;
 
 	@Override
-	public void setAltitudeGroundAndAirSpeeds(double altitude, double groundSpeed, double airSpeed,
-			double climb) {
+	public void setAltitudeGroundAndAirSpeeds(double altitude, double groundSpeed, double airSpeed, double climb) {
 		this.altitude.setAltitude(altitude);
 		speed.setGroundAndAirSpeeds(groundSpeed, airSpeed, climb);
 	    notifyDroneEvent(DroneInterfaces.DroneEventsType.SPEED);

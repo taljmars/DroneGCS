@@ -1,10 +1,9 @@
-package mavlink.core.gcs.follow;
+package mavlink.is.gcs.follow;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
-import mavlink.core.gcs.follow.FollowAlgorithm.FollowModes;
 import mavlink.core.gcs.roi.ROIEstimator;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -12,6 +11,7 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.drone.variables.GuidedPoint;
 import mavlink.is.drone.variables.State;
+import mavlink.is.gcs.follow.FollowAlgorithm.FollowModes;
 import mavlink.is.location.Location;
 import mavlink.is.location.LocationFinder;
 import mavlink.is.location.LocationReceiver;

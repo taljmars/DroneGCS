@@ -2,8 +2,7 @@ package mavlink.is.drone.variables;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.parameters.Parameter;
@@ -19,7 +18,7 @@ public class Battery extends DroneVariable {
 	private double battCurrent = -1;
 
 	@Autowired
-	public Battery(MyDroneImpl myDroneImpl) {
+	public Battery(Drone myDroneImpl) {
 		super(myDroneImpl);
 	}
 

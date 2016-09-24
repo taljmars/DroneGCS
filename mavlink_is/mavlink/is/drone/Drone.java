@@ -1,7 +1,6 @@
 package mavlink.is.drone;
 
 import mavlink.core.firmware.FirmwareType;
-import mavlink.core.gcs.follow.Follow;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.profiles.Parameters;
@@ -26,6 +25,7 @@ import mavlink.is.drone.variables.Radio;
 import mavlink.is.drone.variables.Speed;
 import mavlink.is.drone.variables.State;
 import mavlink.is.drone.variables.StreamRates;
+import mavlink.is.gcs.follow.Follow;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
 

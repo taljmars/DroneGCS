@@ -2,8 +2,7 @@ package mavlink.is.drone.variables;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -24,7 +23,7 @@ public class Home extends DroneVariable {
 	private Altitude altitude = new Altitude(0);
 
 	@Autowired
-	public Home(MyDroneImpl myDroneImpl) {
+	public Home(Drone myDroneImpl) {
 		super(myDroneImpl);
 	}
 

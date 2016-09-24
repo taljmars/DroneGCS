@@ -1,5 +1,11 @@
-package mavlink.core.gcs.follow;
+package mavlink.is.gcs.follow;
 
+import mavlink.core.gcs.follow.FollowAbove;
+import mavlink.core.gcs.follow.FollowCircle;
+import mavlink.core.gcs.follow.FollowLead;
+import mavlink.core.gcs.follow.FollowLeash;
+import mavlink.core.gcs.follow.FollowLeft;
+import mavlink.core.gcs.follow.FollowRight;
 import mavlink.is.drone.Drone;
 import mavlink.is.location.Location;
 import mavlink.is.utils.units.Length;

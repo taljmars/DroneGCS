@@ -4,8 +4,7 @@ import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
@@ -18,7 +17,7 @@ public class Messeges extends DroneVariable {
 	private Vector<String> messeges;
 	
 	@Autowired
-	public Messeges(MyDroneImpl myDroneImpl) {
+	public Messeges(Drone myDroneImpl) {
 		super(myDroneImpl);
 		messeges = new Vector<String>();
 	}

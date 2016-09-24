@@ -3,7 +3,6 @@ package mavlink.is.drone.variables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;
 import mavlink.is.drone.DroneVariable;
@@ -32,7 +31,7 @@ public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListe
 	private double remnoise = -1;
 
 	@Autowired
-	public Radio(MyDroneImpl myDroneImpl) {
+	public Radio(Drone myDroneImpl) {
 		super(myDroneImpl);
 	}
 

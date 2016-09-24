@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
@@ -29,7 +29,7 @@ public class Beacon extends DroneVariable implements Serializable{
 	private transient SwingWorker<Void, Void> pFollowThread = null;
 
 	@Autowired
-	public Beacon(MyDroneImpl myDroneImpl) {
+	public Beacon(Drone myDroneImpl) {
 		super(myDroneImpl);
 		pIsActive = false;
 		pLastPosition = null;
