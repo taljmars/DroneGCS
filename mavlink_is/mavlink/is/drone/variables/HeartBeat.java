@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -7,6 +10,7 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 
+@Component("heartbeat")
 public class HeartBeat extends DroneVariable implements OnDroneListener {
 
 	/**
@@ -39,6 +43,7 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 		}
 	};
 
+	@Autowired
 	public HeartBeat(Drone myDrone, Handler handler) {
 		super(myDrone);
 		this.watchdog = handler;

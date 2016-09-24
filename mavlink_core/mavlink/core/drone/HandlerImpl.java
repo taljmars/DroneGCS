@@ -7,8 +7,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.DroneInterfaces.Handler;
 
+@Component("handlerImpl")
 public class HandlerImpl implements Handler {
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

@@ -1,9 +1,13 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.parameters.Parameter;
 
+@Component("speed")
 public class Speed extends DroneVariable {
 	/**
 	 * 
@@ -21,6 +25,7 @@ public class Speed extends DroneVariable {
 	private mavlink.is.utils.units.Speed targetSpeed = new mavlink.is.utils.units.Speed(
 			0);
 
+	@Autowired
 	public Speed(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 	}

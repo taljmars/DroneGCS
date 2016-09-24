@@ -1,16 +1,27 @@
 package mavlink.core.drone;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
 import mavlink.core.drone.profile.ArduCopterProfile;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Preferences;
 import mavlink.is.drone.profiles.VehicleProfile;
 
+@Component("preferencesImpl")
 public class PreferencesImpl implements Preferences {
 
 	private FirmwareType type;
 	private VehicleProfile profile;
 	private Rates rates;
+	
+	// Create a factory instead of this
+	@PostConstruct
+	public void TemporaryLoadMe() {
+		loadVehicleProfile(FirmwareType.ARDU_COPTER);
+	}
 
 	@Override
 	public VehicleProfile loadVehicleProfile(FirmwareType firmwareType) {

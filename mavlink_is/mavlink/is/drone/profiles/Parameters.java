@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;
 import mavlink.is.drone.DroneVariable;
@@ -25,6 +28,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkParameters;
  * MAV Message.
  * 
  */
+@Component("parameters")
 public class Parameters extends DroneVariable implements OnDroneListener {
 
 	/**
@@ -45,6 +49,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 
 	public final ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
 
+	@Autowired
 	public Parameters(Drone myDrone, Handler handler) {
 		super(myDrone);
 		this.watchdog = handler;

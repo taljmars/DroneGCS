@@ -15,6 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("toolbarSatellite")
 public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	
 	/**
@@ -29,10 +33,10 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 
 	private JPanelMissionBox missionBox;
 	private JPanelConfigurationBox configurationBox;
-
 	private JDesktopPane container;
 
-	public JPanelToolBarSatellite(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox configurationBox) {
+	@Autowired
+	public JPanelToolBarSatellite(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox configurationBox) {		
 		this.missionBox = missionBox;
 		this.configurationBox = configurationBox;
 		this.container = container;

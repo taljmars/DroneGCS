@@ -1,9 +1,11 @@
 package mavlink.core.drone;
 
-import mavlink.core.connection.RadioConnection;
+import javax.annotation.Resource;
+
 import mavlink.core.firmware.FirmwareType;
 import mavlink.core.gcs.follow.Follow;
 import mavlink.core.location.MyLocationImpl;
+import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneEvents;
 import mavlink.is.drone.DroneInterfaces;
@@ -35,79 +37,125 @@ import mavlink.is.drone.variables.Speed;
 import mavlink.is.drone.variables.State;
 import mavlink.is.drone.variables.StreamRates;
 import mavlink.is.drone.variables.Type;
+import mavlink.is.location.LocationFinder;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+
+@ComponentScan("mavlink.is.drone.variables")
+@ComponentScan("mavlink.is.drone")
+@ComponentScan("mavlink.core.gcs.follow")
+@ComponentScan("mavlink.is.protocol.msgbuilder")
+@Component("myDroneImpl")
 public class MyDroneImpl implements Drone {
 
-	private final DroneEvents events;
-	private final Type type;
-	private VehicleProfile profile;
-	private final GPS GPS;
-
-	private final RC RC;
-	private final Follow follow;
-	private final Perimeter Perimeter;
-	private final Beacon Beacon;
-	private final GCS GCS;
-	private final Speed speed;
-	private final Battery battery;
-	private final Radio radio;
-	private final Home home;
-	private final Mission mission;
-	private final MissionStats missionStats;
-	private final StreamRates streamRates;
-	private final Altitude altitude;
-	private final Orientation orientation;
-	private final Navigation navigation;
-	private final GuidedPoint guidedPoint;
-	private final Calibration calibrationSetup;
-	private final WaypointManager waypointManager;
-	private final Magnetometer mag;
-	private final CameraFootprints footprints;
-	private final State state;
-	private final HeartBeat heartbeat;
-	private final Parameters parameters;
-	private final Messeges messeges;
+	@Resource(name="state")
+	private  State state;
 	
-	private final RadioConnection MavClient;
-	private final Preferences preferences;
+	@Resource(name="events")
+	private DroneEvents events;
+	
+	@Resource(name="heartbeat")
+	private  HeartBeat heartbeat;
+	
+	@Resource(name="parameters")
+	private  Parameters parameters;
+	
+	@Resource(name="follow")
+	private  Follow follow;
+	
+	@Resource(name="type")
+	private Type type;
+	
+	@Resource(name="gps")
+	private GPS GPS;
 
-	public MyDroneImpl(RadioConnection mavClient, Clock clock, Handler handler, Preferences pref) {
-		this.MavClient = mavClient;
-		this.preferences = pref;
-
-        events = new DroneEvents(this, handler);
-		state = new State(this, clock, handler);
-		heartbeat = new HeartBeat(this, handler);
-		parameters = new Parameters(this, handler);
-
-        RC = new RC(this);
-        GPS = new GPS(this);
-        GCS = new GCS(this);
-        Perimeter = new Perimeter(this);
-        Beacon = new Beacon(this);
-        this.type = new Type(this);
-        this.speed = new Speed(this);
-        this.battery = new Battery(this);
-        this.radio = new Radio(this);
-        this.home = new Home(this);
-        this.mission = new Mission(this);
-        this.missionStats = new MissionStats(this);
-        this.streamRates = new StreamRates(this);
-        this.altitude = new Altitude(this);
-        this.orientation = new Orientation(this);
-        this.navigation = new Navigation(this);
-        this.guidedPoint =  new GuidedPoint(this);
-        this.calibrationSetup = new Calibration(this);
-        this.waypointManager = new WaypointManager(this);
-        this.mag = new Magnetometer(this);
-        this.footprints = new CameraFootprints(this);
-        this.messeges = new Messeges(this);
-        this.follow = new Follow(this, handler, new MyLocationImpl());
-
-        loadVehicleProfile();
+	@Resource(name="rc")
+	private  RC RC;	
+	
+	@Resource(name="beacon")
+	private  Beacon Beacon;
+	
+	@Resource(name="gcs")
+	private  GCS GCS;
+	
+	@Resource(name="speed")
+	private  Speed speed;
+	
+	@Resource(name="battery")
+	private  Battery battery;
+	
+	@Resource(name="radio")
+	private  Radio radio;
+	
+	@Resource(name="home")
+	private  Home home;
+	
+	@Resource(name="mission")
+	private  Mission mission;
+	
+	@Resource(name="missionStats")
+	private  MissionStats missionStats;
+	
+	@Resource(name="streamRates")
+	private  StreamRates streamRates;
+	
+	@Resource(name="altitude")
+	private  Altitude altitude;
+	
+	@Resource(name="orientation")
+	private  Orientation orientation;
+	
+	@Resource(name="navigation")
+	private  Navigation navigation;
+	
+	@Resource(name="guidedPoint")
+	private  GuidedPoint guidedPoint;
+	
+	@Resource(name="calibrationSetup")
+	private  Calibration calibrationSetup;
+	
+	@Resource(name="waypointManager")
+	private  WaypointManager waypointManager;
+	
+	@Resource(name="mag")
+	private  Magnetometer mag;
+	
+	@Resource(name="footprints")
+	private  CameraFootprints footprints;
+	
+	@Resource(name="perimeter")
+	private  Perimeter Perimeter;
+	
+	private  Messeges messeges;
+	
+	@Resource(name="radioConnection")
+	private MavLinkConnection MavClient;
+	
+	@Resource(name="preferencesImpl")
+	private Preferences preferences;
+	
+	@Resource(name="handlerImpl")
+	private Handler handler;
+	
+	@Resource(name="clockImpl")
+	private Clock clock;
+	
+	@Bean 
+	private LocationFinder myLocationFinderImpl() {
+		return new MyLocationImpl();
 	}
+	
+	@Bean 
+	private VehicleProfile profile() {
+		loadVehicleProfile();
+		return profile;
+	}
+	
+	private VehicleProfile profile;
 
 	@Override
 	public void setAltitudeGroundAndAirSpeeds(double altitude, double groundSpeed, double airSpeed,
@@ -196,7 +244,7 @@ public class MyDroneImpl implements Drone {
 	}
 
 	@Override
-	public RadioConnection getMavClient() {
+	public MavLinkConnection getMavClient() {
 		return MavClient;
 	}
 

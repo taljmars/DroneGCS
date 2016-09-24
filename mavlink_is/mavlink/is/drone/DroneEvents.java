@@ -5,6 +5,10 @@ import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("events")
 public class DroneEvents extends DroneVariable {
 
 	/**
@@ -31,6 +35,7 @@ public class DroneEvents extends DroneVariable {
 		}
 	};
 
+	@Autowired
 	public DroneEvents(Drone myDrone, DroneInterfaces.Handler handler) {
 		super(myDrone);
 		this.handler = handler;

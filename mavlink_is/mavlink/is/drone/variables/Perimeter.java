@@ -3,18 +3,22 @@ package mavlink.is.drone.variables;
 import java.io.Serializable;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import gui.core.mapObjects.Coordinate;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerManager;
 import logger.Logger;
-import mavlink.core.drone.MyDroneImpl;
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.geoTools.GeoTools;
 
+@Component("perimeter")
 public class Perimeter  extends DroneVariable implements Serializable {
 
 	/**
@@ -29,7 +33,8 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	private ApmModes pMode;
 	private boolean pEnforcePermeterRunning = false;
 	
-	public Perimeter(MyDroneImpl myDroneImpl) {
+	@Autowired
+	public Perimeter(Drone myDroneImpl) {
 		super(myDroneImpl);
 		pEnforce = false;
 		pAlert = false;

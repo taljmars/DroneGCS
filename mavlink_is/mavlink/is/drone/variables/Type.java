@@ -1,7 +1,9 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
-import mavlink.core.drone.MyDroneImpl;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;
@@ -9,6 +11,7 @@ import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 
+@Component("type")
 public class Type extends DroneVariable implements DroneInterfaces.OnDroneListener{
 
     /**
@@ -21,7 +24,8 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 	private int type = DEFAULT_TYPE;
 	private String firmwareVersion = null;
 
-	public Type(MyDroneImpl myDroneImpl) {
+	@Autowired
+	public Type(Drone myDroneImpl) {
 		super(myDroneImpl);
         myDroneImpl.addDroneListener(this);
 	}

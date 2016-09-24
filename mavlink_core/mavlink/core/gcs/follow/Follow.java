@@ -1,5 +1,8 @@
 package mavlink.core.gcs.follow;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
 import mavlink.core.gcs.follow.FollowAlgorithm.FollowModes;
 import mavlink.core.gcs.roi.ROIEstimator;
@@ -15,6 +18,7 @@ import mavlink.is.location.LocationReceiver;
 import mavlink.is.protocol.msgbuilder.MavLinkROI;
 import mavlink.is.utils.units.Length;
 
+@Component("follow")
 public class Follow implements OnDroneListener, LocationReceiver {
 
 	/** Set of return value for the 'toggleFollowMeState' method.*/
@@ -29,6 +33,7 @@ public class Follow implements OnDroneListener, LocationReceiver {
 	private LocationFinder locationFinder;
 	private FollowAlgorithm followAlgorithm;
 
+	@Autowired
 	public Follow(Drone drone, Handler handler, LocationFinder locationFinder) {
 		this.drone = drone;
 		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);

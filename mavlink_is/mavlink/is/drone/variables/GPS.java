@@ -1,11 +1,15 @@
 package mavlink.is.drone.variables;
 
-import mavlink.core.drone.MyDroneImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.geoTools.GeoTools;
 
+@Component("gps")
 public class GPS extends DroneVariable {
 	/**
 	 * 
@@ -20,7 +24,8 @@ public class GPS extends DroneVariable {
 	private Coord2D position;
 	private double distanceTraveled;
 
-	public GPS(MyDroneImpl myDroneImpl) {
+	@Autowired
+	public GPS(Drone myDroneImpl) {
 		super(myDroneImpl);
 		distanceTraveled = 0;
 	}

@@ -3,6 +3,8 @@ package mavlink.core.connection;
 import java.io.File;
 import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import communication_device.TwoWaySerialComm;
@@ -10,6 +12,7 @@ import communication_device.TwoWaySerialComm;
 /**
  * Provides support for mavlink connection via udp.
  */
+@Component("radioConnection")
 public class RadioConnection extends MavLinkConnection {
 
 	private TwoWaySerialComm socket = null;

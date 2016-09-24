@@ -1,7 +1,6 @@
 package gui.core.internalPanels;
 
-import java.awt.LayoutManager;
-
+import java.awt.GridLayout;
 import flight_controlers.KeyBoardControl;
 import gui.core.dashboard.Dashboard;
 import gui.core.operations.internal.ArmQuad;
@@ -17,6 +16,8 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
 import mavlink.core.connection.helper.GCSLocationData;
 import mavlink.is.drone.Drone;
@@ -27,6 +28,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkArm;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
+@Component("buttonBoxSatellite")
 public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener{
 	
 	/**
@@ -56,8 +58,11 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	private boolean motorArmed = false;
 	
 	private Drone drone;
+	
+	private GridLayout gridLayout = new GridLayout(0, 2, 1, 1);
 
-	public JPanelButtonBoxSatellite (LayoutManager gridLayout) {
+	//public JPanelButtonBoxSatellite (LayoutManager gridLayout) {
+	public JPanelButtonBoxSatellite () {
 		pnl = new JPanel();
 		pnl.setLayout(gridLayout);
 		

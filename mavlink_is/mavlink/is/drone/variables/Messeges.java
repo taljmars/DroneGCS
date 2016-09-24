@@ -2,10 +2,14 @@ package mavlink.is.drone.variables;
 
 import java.util.Vector;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
+@Component("messeges")
 public class Messeges extends DroneVariable {
 	/**
 	 * 
@@ -13,6 +17,7 @@ public class Messeges extends DroneVariable {
 	private static final long serialVersionUID = -8178265797887679595L;
 	private Vector<String> messeges;
 	
+	@Autowired
 	public Messeges(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 		messeges = new Vector<String>();

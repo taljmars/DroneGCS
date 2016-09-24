@@ -1,9 +1,13 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
+@Component("orientation")
 public class Orientation extends DroneVariable {
 	/**
 	 * 
@@ -13,6 +17,7 @@ public class Orientation extends DroneVariable {
 	private double pitch = 0;
 	private double yaw = 0;
 
+	@Autowired
 	public Orientation(Drone myDrone) {
 		super(myDrone);
 	}

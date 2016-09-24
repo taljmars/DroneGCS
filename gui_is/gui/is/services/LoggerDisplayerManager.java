@@ -59,7 +59,7 @@ public class LoggerDisplayerManager {
 	}
 	
 	public synchronized static void addMessegeToDisplay(String cmd, Type t, boolean no_date) {
-		
+		LazyInit();
 		String newcontent = Logger.generateDesignedMessege(cmd, t, no_date);
 		
 		for (LoggerDisplayerListener loggerDisplayer : instance.loggerDisplayerListeners) {

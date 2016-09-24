@@ -1,11 +1,15 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
 
+@Component("rc")
 public class RC extends DroneVariable {
 	/**
 	 * 
@@ -14,6 +18,7 @@ public class RC extends DroneVariable {
 	public int in[] = new int[8];
 	public int out[] = new int[8];
 
+	@Autowired
 	public RC(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 	}

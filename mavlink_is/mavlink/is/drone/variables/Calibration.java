@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -7,6 +10,7 @@ import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_statustext;
 import mavlink.is.protocol.msgbuilder.MavLinkCalibration;
 
+@Component("calibrationSetup")
 public class Calibration extends DroneVariable {
 	/**
 	 * 
@@ -16,6 +20,7 @@ public class Calibration extends DroneVariable {
 	private String mavMsg;
 	private boolean calibrating;
 
+	@Autowired
 	public Calibration(Drone drone) {
 		super(drone);
 		this.myDrone = drone;

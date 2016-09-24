@@ -1,10 +1,14 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.units.Length;
 
+@Component("missionStats")
 public class MissionStats extends DroneVariable {
 	/**
 	 * 
@@ -13,6 +17,7 @@ public class MissionStats extends DroneVariable {
 	private double distanceToWp = 0;
 	private short currentWP = -1;
 
+	@Autowired
 	public MissionStats(Drone myDrone) {
 		super(myDrone);
 	}

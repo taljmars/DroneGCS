@@ -1,8 +1,8 @@
 package mavlink.is.drone;
 
-import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.core.gcs.follow.Follow;
+import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.profiles.Parameters;
 import mavlink.is.drone.profiles.VehicleProfile;
@@ -59,7 +59,7 @@ public interface Drone {
 
 	public VehicleProfile getVehicleProfile();
 
-	public RadioConnection getMavClient();
+	public MavLinkConnection getMavClient();
 
 	public Preferences getPreferences();
 

@@ -14,6 +14,10 @@ import mavlink.is.utils.coordinates.Coord3D;
 
 import javax.swing.SwingWorker;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("beacon")
 public class Beacon extends DroneVariable implements Serializable{
 	/**
 	 * 
@@ -24,6 +28,7 @@ public class Beacon extends DroneVariable implements Serializable{
 	private Coord3D pLastPosition;
 	private transient SwingWorker<Void, Void> pFollowThread = null;
 
+	@Autowired
 	public Beacon(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 		pIsActive = false;

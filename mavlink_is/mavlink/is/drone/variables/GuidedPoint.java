@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import gui.core.mapObjects.Coordinate;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.Drone;
@@ -12,6 +15,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkTakeoff;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.units.Altitude;
 
+@Component("guidedPoint")
 public class GuidedPoint extends DroneVariable implements OnDroneListener {
 
 	/**
@@ -28,6 +32,7 @@ public class GuidedPoint extends DroneVariable implements OnDroneListener {
 		UNINITIALIZED, IDLE, ACTIVE
 	}
 
+	@Autowired
 	public GuidedPoint(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 		myDroneImpl.addDroneListener(this);

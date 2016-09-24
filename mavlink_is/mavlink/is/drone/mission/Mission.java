@@ -30,6 +30,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import pair.Pair;
 
 /**
@@ -37,6 +40,7 @@ import pair.Pair;
  * commands/mission items to be carried out by the drone. TODO: rename the
  * 'waypoint' method to 'missionItem' (i.e: addMissionItem)
  */
+@Component("mission")
 public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
 
 	/**
@@ -49,6 +53,7 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	private List<MissionItem> items = new ArrayList<MissionItem>();
 	private Altitude defaultAlt = new Altitude(20.0);
 
+	@Autowired
 	public Mission(Drone myDrone) {
 		super(myDrone);
 	}

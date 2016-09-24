@@ -1,9 +1,13 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;
 import mavlink.is.drone.DroneVariable;
 
+@Component("altitude")
 public class Altitude extends DroneVariable {
 	/**
 	 * 
@@ -16,6 +20,7 @@ public class Altitude extends DroneVariable {
 
 	private boolean isCollisionImminent;
 
+	@Autowired
 	public Altitude(Drone myDrone) {
 		super(myDrone);
 	}

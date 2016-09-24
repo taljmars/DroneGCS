@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -11,6 +14,7 @@ import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 import mavlink.is.utils.units.Length;
 
+@Component("home")
 public class Home extends DroneVariable {
 	/**
 	 * 
@@ -19,6 +23,7 @@ public class Home extends DroneVariable {
 	private Coord2D coordinate;
 	private Altitude altitude = new Altitude(0);
 
+	@Autowired
 	public Home(MyDroneImpl myDroneImpl) {
 		super(myDroneImpl);
 	}

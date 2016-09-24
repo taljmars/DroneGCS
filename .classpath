@@ -10,5 +10,12 @@
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-beans-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-context-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-aspects-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-core-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-expression-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/commons-logging-1.2/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-aop-4.3.3.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

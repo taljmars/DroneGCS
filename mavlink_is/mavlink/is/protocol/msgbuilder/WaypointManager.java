@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.OnTimeout;
@@ -25,6 +28,7 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_request;
  * MAV Message.
  * 
  */
+@Component("waypointManager")
 public class WaypointManager extends DroneVariable implements OnTimeout {
 	/**
 	 * 
@@ -52,6 +56,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	 * waypoint witch is currently being written
 	 */
 
+	@Autowired
 	public WaypointManager(Drone drone) {
 		super(drone);
 		this.timeOut = new TimeOut(this);

@@ -1,6 +1,7 @@
 package mavlink.is.connection;
 
 import logger.Logger;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +12,9 @@ import java.nio.ByteOrder;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.PostConstruct;
+
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
@@ -221,6 +225,7 @@ public abstract class MavLinkConnection {
 	 * Establish a mavlink connection. If the connection is successful, it will
 	 * be reported through the MavLinkConnectionListener interface.
 	 */
+	@PostConstruct
 	public void connect() {
 		if (mConnectionStatus.compareAndSet(MAVLINK_DISCONNECTED, MAVLINK_CONNECTING)) {
 			mTaskThread = new Thread(mConnectingTask, "MavLinkConnection-Connecting Thread");

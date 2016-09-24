@@ -1,9 +1,13 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
+@Component("navigation")
 public class Navigation extends DroneVariable {
 
 	/**
@@ -14,6 +18,7 @@ public class Navigation extends DroneVariable {
 	private double nav_roll;
 	private double nav_bearing;
 
+	@Autowired
 	public Navigation(Drone myDrone) {
 		super(myDrone);
 	}

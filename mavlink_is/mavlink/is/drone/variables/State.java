@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import gui.core.mapObjects.Coordinate;
 import gui.is.services.LoggerDisplayerManager;
 import mavlink.is.drone.Drone;
@@ -11,6 +14,7 @@ import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.utils.units.Altitude;
 
+@Component("state")
 public class State extends DroneVariable {
 	/**
 	 * 
@@ -31,6 +35,7 @@ public class State extends DroneVariable {
 	public Handler watchdog;
 	public Runnable watchdogCallback = () -> removeWarning();
 
+	@Autowired
 	public State(Drone myDrone, Clock clock, Handler handler) {
 		super(myDrone);
 		this.clock = clock;

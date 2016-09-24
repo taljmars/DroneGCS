@@ -11,10 +11,13 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
+@Component("telemetrySatellite")
 public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListener {
 	
 	private static final long serialVersionUID = 486044738229582782L;
