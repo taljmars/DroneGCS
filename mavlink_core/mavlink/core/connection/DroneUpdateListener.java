@@ -25,7 +25,6 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
-import gui.core.dashboard.Dashboard;
 import gui.is.services.LoggerDisplayerManager;
 
 public class DroneUpdateListener implements MavLinkConnectionListener {
@@ -35,9 +34,11 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	byte t_compid = 1;
 	byte t_sysid = 1;
 	
+	
 	Drone drone = null;
 	
-	public DroneUpdateListener() {
+	public DroneUpdateListener(Drone drone) {
+		this.drone = drone;
 	}
 	
 	@Override
@@ -47,9 +48,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	}
 
 	@Override
-	public void onReceiveMessage(MAVLinkMessage msg) {
-		drone = Dashboard.drone;
-		
+	public void onReceiveMessage(MAVLinkMessage msg) {		
 		if (msg == null) {
 			JOptionPane.showMessageDialog(null, "Recieved empty messege from quad, please restart the GCS");
 			System.exit(0);

@@ -3,10 +3,12 @@ package mavlink.core.connection;
 import java.io.File;
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
+import mavlink.is.drone.Drone;
 import communication_device.TwoWaySerialComm;
 
 /**
@@ -16,6 +18,12 @@ import communication_device.TwoWaySerialComm;
 public class RadioConnection extends MavLinkConnection {
 
 	private TwoWaySerialComm socket = null;
+	private Drone drone = null;
+	
+	@Autowired
+	public RadioConnection(Drone drone) {
+		this.drone  = drone;
+	}
 
 	private void getRadioStream() throws IOException {
 		socket = TwoWaySerialComm.get();
@@ -53,7 +61,7 @@ public class RadioConnection extends MavLinkConnection {
 
 	@Override
 	public final void loadPreferences() {
-		addMavLinkConnectionListener("Drone", new DroneUpdateListener());
+		addMavLinkConnectionListener("Drone", new DroneUpdateListener(drone));
 	}
 
 	@Override

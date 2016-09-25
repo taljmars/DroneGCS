@@ -1,8 +1,7 @@
 package flight_controlers;
 
-import gui.core.dashboard.Dashboard;
 import gui.is.events.JMVCommandEvent;
-import gui.is.interfaces.JMapViewerEventListener;
+import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
 
 import java.awt.event.KeyEvent;
@@ -18,17 +17,46 @@ import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.springframework.stereotype.Component;
+
 import communication_device.TwoWaySerialComm;
 import logger.Logger;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
-public class KeyBoardControl implements JMapViewerEventListener {
+@Component("keyBoardControlerImpl")
+public class KeyBoardControlerImpl implements KeyBoardControler {
 	
-	private static KeyBoardControl myKeyBoardControl = null;
+	private static KeyBoardControlerImpl myKeyBoardControl = null;
 	private static boolean param_loaded = false;
 	private static Thread KeyboardStabilizer = null;
+	private Drone drone;
 	
-	public static KeyBoardControl get() {
+	public KeyBoardControlerImpl(Drone drone) {
+		this.drone = drone;
+		LoadParams();
+		
+		KeyboardStabilizer = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
+				while (true) {
+					try {
+						//Thread.sleep(1000);
+						Thread.sleep(100);
+						Update();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		KeyboardStabilizer.start();
+	}
+	
+	/*public static KeyBoardControl get() {
 		if (myKeyBoardControl == null) {
 			myKeyBoardControl = new KeyBoardControl();
 			myKeyBoardControl.LoadParams();
@@ -54,12 +82,13 @@ public class KeyBoardControl implements JMapViewerEventListener {
 		}
 		
 		return myKeyBoardControl;
-	}
+	}*/
 	
 	public boolean bActive = false;
 	private boolean onHold = false;
 	public void Activate() {bActive = true;}
 	public void Deactivate() {bActive = false;}
+	
 	public void HoldIfNeeded() {
 		if (!bActive)
 			return;
@@ -417,7 +446,7 @@ public class KeyBoardControl implements JMapViewerEventListener {
 			System.out.println("Sending '" + val + "'");
 			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
-			MavLinkRC.sendRcOverrideMsg(Dashboard.drone, rcOutputs);
+			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
 		}
 	}
 	
@@ -434,7 +463,7 @@ public class KeyBoardControl implements JMapViewerEventListener {
 			System.out.println("Sending '" + val + "'");
 			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
-			MavLinkRC.sendRcOverrideMsg(Dashboard.drone, rcOutputs);
+			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
 		}
 	}
 

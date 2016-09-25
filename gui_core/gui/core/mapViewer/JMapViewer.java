@@ -119,17 +119,21 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 
     protected EventListenerList evtListenerList = new EventListenerList();
 
+	private JInternalFrameMap jInternalFrameMap;
+
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
      * mouse: hold right mouse button for moving, double click left mouse button
      * or use mouse wheel for zooming. Loaded tiles are stored in a
      * {@link MemoryTileCache} and the tile loader uses 4 parallel threads for
      * retrieving the tiles.
+     * @param jInternalFrameMap 
      */
-    public JMapViewer() {
+    public JMapViewer(JInternalFrameMap jInternalFrameMap) {
         this(new MemoryTileCache());
         new DefaultMapController(this);
         addMouseListener(this);
+        this.jInternalFrameMap = jInternalFrameMap;
     }
 
     /**
@@ -1635,7 +1639,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 
 	public void showPopup(MouseEvent e) {
 		// TODO Auto-generated method stub
-		JInternalFrameMap.get().createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
+		jInternalFrameMap.createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
 	}
 
 	@Override

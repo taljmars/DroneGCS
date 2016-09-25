@@ -4,7 +4,6 @@ package gui.core.mapObjects;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapObject;
 import gui.is.services.LoggerDisplayerManager;
-import gui.core.dashboard.Dashboard;
 import gui.core.internalFrames.helper.ButtonColumn;
 import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapViewer.JMapViewer;
@@ -127,8 +126,9 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
     public LayerMission(LayerMission layer, JPanelMissionBox missionBox) {
     	super(layer);
     	this.missionBox = missionBox;
-    	if (layer.getMission() != null) {
-    		this.mission = new Mission(Dashboard.drone);
+    	Mission mission_in_layer = layer.getMission();
+    	if (mission_in_layer != null) {
+    		this.mission = new Mission(mission_in_layer.getDrone());
     		Iterator<MissionItem> it = layer.getMission().getItems().iterator();
     		while (it.hasNext()) {
     			this.mission.addMissionItem(it.next());
@@ -179,9 +179,9 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 				case SPLINE_WAYPOINT:
 					//return new SplineWaypoint(referenceItem);
 				case TAKEOFF: {
-					if (!Dashboard.drone.getGps().isPositionValid())
+					if (!mission.getDrone().getGps().isPositionValid())
 						return;
-					ICoordinate curr = Dashboard.drone.getGps().getPosition().convertToCoordinate();
+					ICoordinate curr = mission.getDrone().getGps().getPosition().convertToCoordinate();
 					MapMarkerDot m = new MapMarkerDot(this, MissionItemsType.TAKEOFF.getName(), curr.getLat(), curr.getLon());
 					m.setBackColor(Color.GREEN);
 					add(m);
@@ -372,7 +372,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	            }
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow-1);
 	            
-	            Mission tmpMission = new Mission(Dashboard.drone);
+	            Mission tmpMission = new Mission(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
 	            	tmpMission.addMissionItem(mi);
@@ -401,7 +401,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow+1);
 	            
-	            Mission tmpMission = new Mission(Dashboard.drone);
+	            Mission tmpMission = new Mission(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
 	            	tmpMission.addMissionItem(mi);

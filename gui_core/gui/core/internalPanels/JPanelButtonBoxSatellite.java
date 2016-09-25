@@ -1,10 +1,10 @@
 package gui.core.internalPanels;
 
 import java.awt.GridLayout;
-import flight_controlers.KeyBoardControl;
-import gui.core.dashboard.Dashboard;
+
 import gui.core.operations.internal.ArmQuad;
 import gui.core.operations.internal.TakeoffQuad;
+import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
 import gui.is.services.NotificationsManager;
 
@@ -16,6 +16,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
@@ -29,7 +30,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
 @Component("buttonBoxSatellite")
-public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener{
+public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener {
 	
 	/**
 	 * 
@@ -57,12 +58,18 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	private boolean motorArmed = false;
 	
-	private Drone drone;
+	
 	
 	private GridLayout gridLayout = new GridLayout(0, 2, 1, 1);
 
-	//public JPanelButtonBoxSatellite (LayoutManager gridLayout) {
-	public JPanelButtonBoxSatellite () {
+	private Drone drone;
+	private KeyBoardControler keyBoardControler;
+	
+	@Autowired
+	public JPanelButtonBoxSatellite (Drone myDrone, KeyBoardControler myKeyBoardControler) {
+		this.keyBoardControler = myKeyBoardControler;
+		this.drone = myDrone;
+		
 		pnl = new JPanel();
 		pnl.setLayout(gridLayout);
 		
@@ -90,24 +97,25 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         pnl.add(btnSyncDrone);
         
         btnFly = new JButton("Controler: RC");
-        //btnFly.addKeyListener(KeyBoardControl.get());
+        //btnFly.addKeyListener(keyBoardControler);
         btnFly.addActionListener( e -> {
-        	KeyBoardControl.get().HoldIfNeeded();
+        	keyBoardControler.HoldIfNeeded();
         	Object[] options = {"KeyBoard", "RC Controller"};
         	int n = JOptionPane.showOptionDialog(null, "Choose Controler", "",
         		    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
         		    options, options[1]); //default button title
         	if (n == 0) {
-        		KeyBoardControl.get().ReleaseIfNeeded();
-        		KeyBoardControl.get().Activate();
+        		keyBoardControler.ReleaseIfNeeded();
+        		keyBoardControler.Activate();
         		int eAvg = drone.getRC().getAverageThrust();
         		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting Keyboard Thrust starting value to " + eAvg);
-        		KeyBoardControl.get().SetThrust(eAvg);
+        		keyBoardControler.SetThrust(eAvg);
         		btnFly.setText("Controler: Keyboard");
+        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
         	}
-        	else {
-        		KeyBoardControl.get().ReleaseIfNeeded();
-        		KeyBoardControl.get().Deactivate();
+        	else if (n == 1) {
+        		keyBoardControler.ReleaseIfNeeded();
+        		keyBoardControler.Deactivate();
         		int[] rcOutputs = {0, 0, 0, 0, 0, 0, 0, 0};
         		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
         		try {
@@ -119,8 +127,13 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 					e1.printStackTrace();
 				}
         		btnFly.setText("Controler: RC");
+        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
+        		
         	}
-        	LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
+        	else {
+        		Logger.LogGeneralMessege("Skipped modifying fly controller");
+        	}
+
         });
         pnl.add(btnFly);        
         
@@ -161,7 +174,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         
         btnLandRTL = new JButton("Land/RTL");
         btnLandRTL.addActionListener( e -> {
-    		KeyBoardControl.get().HoldIfNeeded();
+    		keyBoardControler.HoldIfNeeded();
     		Object[] options = {"Land", "RTL", "Cancel"};
         	int n = JOptionPane.showOptionDialog(null, "Choose Land Option", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
         		    null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
@@ -175,7 +188,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
         		NotificationsManager.add("Return To Lunch");
         	}
-        	KeyBoardControl.get().ReleaseIfNeeded();
+        	keyBoardControler.ReleaseIfNeeded();
         });
         pnl.add(btnLandRTL);
         
@@ -192,7 +205,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
        			protected Void doInBackground() throws Exception {
     				Logger.LogGeneralMessege("Takeoff thread Stated!");
     				
-	        		if (!Dashboard.drone.getState().isArmed()) {
+	        		if (!drone.getState().isArmed()) {
 						JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
 					}
 	        		
@@ -256,11 +269,11 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
     			FollowBeaconStartThread = new SwingWorker<Void, Void>(){
     				@Override
 	       			protected Void doInBackground() throws Exception {
-		        		if (!Dashboard.drone.getState().isArmed()) {
+		        		if (!drone.getState().isArmed()) {
 							JOptionPane.showMessageDialog(null, "Quad will automatically be armed");
 						}
 		        		
-		        		if (!Dashboard.drone.getState().isFlying()) {
+		        		if (!drone.getState().isFlying()) {
 			        		Object val = JOptionPane.showInputDialog(null, "Choose altitude", "", JOptionPane.OK_CANCEL_OPTION, null, null, 5);
 			        		if (val == null) {
 			        			System.out.println(getClass().getName() + " Takeoff canceled");
@@ -398,10 +411,6 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 		btnFollowBeaconStart.setEnabled(val);
 		btnGCSShow.setEnabled(val);
 		btnStopFollow.setEnabled(val);
-	}
-
-	public void setDrone(Drone drone) {
-		this.drone = drone;
 	}
 
 	@SuppressWarnings("incomplete-switch")

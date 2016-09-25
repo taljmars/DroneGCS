@@ -10,7 +10,8 @@ import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
-import flight_controlers.KeyBoardControl;
+import flight_controlers.KeyBoardControlerImpl;
+import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
 import gui.is.services.NotificationsManager;
 import gui.is.services.NotificationsListener;
@@ -39,14 +40,13 @@ import mavlink.is.protocol.msg_metadata.ApmModes;
 @Configuration
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.core.internalPanels")
+@ComponentScan("flight_controlers")
 @Component("dashboard")
 public class Dashboard implements OnDroneListener, NotificationsListener {
 	
 	private static AbstractApplicationContext context = null;
 	
 	private JFrame frame;
-	
-	public static Drone drone;
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
@@ -54,15 +54,12 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 	private static final String APP_TITLE = "Quad Ground Station";
 
 	public static Dashboard window = null;
-
-	@Resource(name="telemetrySatellite")
-	private JPanelTelemetrySatellite tbTelemtry;
 	
-	@Resource(name="buttonBoxSatellite")
-	private JPanelButtonBoxSatellite tbContorlButton;
+	@Resource(name="myDroneImpl")
+	public Drone drone;
 	
-	@Resource(name="toolbarSatellite")
-	private JPanelToolBarSatellite tbToolBar;
+	@Resource(name="keyBoardControlerImpl")
+	private KeyBoardControler keyBoardControler;
 	
 	@Bean
 	public JDesktopPane desktopPane() {
@@ -83,6 +80,15 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 	public JPanelConfigurationBox areaConfiguration() {
 		return new JPanelConfigurationBox(new JPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, dimention());
 	}
+	
+	@Resource(name="telemetrySatellite")
+	private JPanelTelemetrySatellite tbTelemtry;
+	
+	@Resource(name="buttonBoxSatellite")
+	private JPanelButtonBoxSatellite tbContorlButton;
+	
+	@Resource(name="toolbarSatellite")
+	private JPanelToolBarSatellite tbToolBar;
 	
 	private JTabbedPane tbSouth;
 	private JToolBar toolBar;
@@ -113,7 +119,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		System.out.println("Start Logger Displayer Manager");
 		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox());
 
-		drone = (Drone) context.getBean("myDroneImpl");
+		//drone = (Drone) context.getBean("myDroneImpl");
 
 		System.out.println("Start Notifications Manager");
 		NotificationsManager.addNotificationListener(this);
@@ -122,8 +128,8 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
 		gcs.setActive(true);
 
-		System.out.println("Start Keyboard Stabilizer");
-		KeyBoardControl.get();
+		//System.out.println("Start Keyboard Stabilizer");
+		//keyBoardControler = new KeyBoardControl(drone);
 	}
 
 	protected void refresh() {
@@ -133,13 +139,14 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		drone.addDroneListener(tbContorlButton);
 
 		System.out.println("Setting for button Box");
-		tbContorlButton.setDrone(drone);
+		//tbContorlButton.setDrone(drone);
 		tbContorlButton.setButtonControl(false);
 
 		System.out.println("Setting Configurtaion");
 		areaConfiguration().setDrone(drone);
 
-		JInternalFrameMap.Generate(desktopPane(), areaMission(), areaConfiguration());
+		//JInternalFrameMap.Generate(desktopPane(), areaMission(), areaConfiguration());
+		//JInternalFrameMap ifrm = new JInternalFrameMap("Map View", desktopPane(), areaMission(), areaConfiguration(), drone, KeyBoardControl.get());
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
 			// SetFlightModeLabel(drone.getState().getMode().getName());

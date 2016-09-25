@@ -1,7 +1,7 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.core.mapTree;
 
-import gui.core.dashboard.Dashboard;
+import gui.core.internalFrames.JInternalFrameMap;
 import gui.core.internalPanels.JPanelConfigurationBox;
 import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapObjects.Layer;
@@ -42,6 +42,7 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
 import logger.Logger;
+import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
 
@@ -62,13 +63,16 @@ public class JMapViewerTree extends JPanel {
     private JPanelMissionBox areaMission = null;
 	private JPanelConfigurationBox areaConfiguration = null;
 
-    public JMapViewerTree(String name, JPanelMissionBox areaMission, JPanelConfigurationBox areaConfiguration) {
-        this(name, false);
+	private Drone drone = null;
+
+    public JMapViewerTree(String name, JPanelMissionBox areaMission, JPanelConfigurationBox areaConfiguration, JInternalFrameMap jInternalFrameMap) {
+        this(name, false, jInternalFrameMap);
         this.areaMission = areaMission;
         this.areaConfiguration = areaConfiguration;
+        this.drone = jInternalFrameMap.getDrone();
     }
 
-    public JMapViewerTree(String name, boolean treeVisible) {
+    public JMapViewerTree(String name, boolean treeVisible, JInternalFrameMap jInternalFrameMap) {
         super();
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         
@@ -94,7 +98,7 @@ public class JMapViewerTree extends JPanel {
         
         treePanel = new JPanel(new BorderLayout());
         treePanel.add(tmpButons, BorderLayout.SOUTH);
-        map = new JMapViewer();
+        map = new JMapViewer(jInternalFrameMap);
 
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(150);
@@ -206,11 +210,11 @@ public class JMapViewerTree extends JPanel {
         }
         if (layer instanceof LayerPerimeter) {
         	if (ActiveLayerPerimeter == layer) {
-        		if (Dashboard.drone.getPerimeter().isAlert())
+        		if (drone.getPerimeter().isAlert())
         			popup.add(menuItemDeactivatePerimeterAlarm);
         		else
         			popup.add(menuItemActivatePerimeterAlarm);
-        		if (Dashboard.drone.getPerimeter().isEnforce())
+        		if (drone.getPerimeter().isEnforce())
         			popup.add(menuItemDeactivatePerimeterEnforce);
         		else
         			popup.add(menuItemActivatePerimeterEnforce);
@@ -286,7 +290,7 @@ public class JMapViewerTree extends JPanel {
             			ActiveLayerMission.getMission().sendMissionToAPM();
             			ActiveLayerMission.setName("(ACTIVE) " + ActiveLayerMission.getName());
             			LoggerDisplayerManager.addOutgoingMessegeToDisplay("Change mode to " + ApmModes.ROTOR_AUTO.getName());
-            			Dashboard.drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
+            			drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
             			NotificationsManager.add("Start Mission");
             			NotificationsManager.add("Start Mission");
             			NotificationsManager.add("Start Mission");
@@ -304,7 +308,7 @@ public class JMapViewerTree extends JPanel {
             	if (layer instanceof LayerMission) {
             		ActiveLayerMission.setName(ActiveLayerMission.getName().substring("(ACTIVE) ".length(), ActiveLayerMission.getName().length()));
             		
-            		MavLinkModes.changeFlightMode(Dashboard.drone, ApmModes.ROTOR_RTL);
+            		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
             		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
             		NotificationsManager.add("Return To Lunch");
             		
@@ -344,10 +348,10 @@ public class JMapViewerTree extends JPanel {
         				// means this is a new layer or this is different layer
         				ActiveLayerPerimeter = l;
         				ActiveLayerPerimeter.setName("(ACTIVE) " + ActiveLayerPerimeter.getName());
-        				Dashboard.drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
+        				drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
         			}
         			
-            		Dashboard.drone.getPerimeter().setAlert(true);
+            		drone.getPerimeter().setAlert(true);
             		areaConfiguration.setAlertOn(true);
             		           		
             		tree.repaint();
@@ -360,14 +364,14 @@ public class JMapViewerTree extends JPanel {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	if (layer instanceof LayerPerimeter) {
-            		if (!Dashboard.drone.getPerimeter().isEnforce()) {
+            		if (!drone.getPerimeter().isEnforce()) {
             			ActiveLayerPerimeter.setName(ActiveLayerPerimeter.getName().substring("(ACTIVE) ".length(), ActiveLayerPerimeter.getName().length()));
             			ActiveLayerPerimeter = null;
-            			Dashboard.drone.getPerimeter().setPolygon(null);
+            			drone.getPerimeter().setPolygon(null);
             		}
             		
         			LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Alert");
-            		Dashboard.drone.getPerimeter().setAlert(false);
+            		drone.getPerimeter().setAlert(false);
             		areaConfiguration.setAlertOn(false);
             		           		
             		tree.repaint();
@@ -402,11 +406,11 @@ public class JMapViewerTree extends JPanel {
 
         			if (ActiveLayerPerimeter != l) {
         				ActiveLayerPerimeter = l;
-        				Dashboard.drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
+        				drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
         				ActiveLayerPerimeter.setName("(ACTIVE) " + ActiveLayerPerimeter.getName());
         			}
         			
-            		Dashboard.drone.getPerimeter().setEnforce(true);
+            		drone.getPerimeter().setEnforce(true);
             		areaConfiguration.setEnforceOn(true);            		
             		           		
             		tree.repaint();
@@ -419,14 +423,14 @@ public class JMapViewerTree extends JPanel {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	if (layer instanceof LayerPerimeter) {
-            		if (!Dashboard.drone.getPerimeter().isAlert()) {
+            		if (!drone.getPerimeter().isAlert()) {
             			ActiveLayerPerimeter.setName(ActiveLayerPerimeter.getName().substring("(ACTIVE) ".length(), ActiveLayerPerimeter.getName().length()));
             			ActiveLayerPerimeter = null;
-            			Dashboard.drone.getPerimeter().setPolygon(null);
+            			drone.getPerimeter().setPolygon(null);
             		}
             		
             		LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Enforce");
-                	Dashboard.drone.getPerimeter().setEnforce(false);
+                	drone.getPerimeter().setEnforce(false);
                 	areaConfiguration.setEnforceOn(false);
             		           		
             		tree.repaint();
@@ -441,9 +445,9 @@ public class JMapViewerTree extends JPanel {
 
     protected void DeactivatePerimeter(LayerPerimeter activeLayerPerimeter) {
     	activeLayerPerimeter.setName(activeLayerPerimeter.getName().substring("(ACTIVE) ".length(), activeLayerPerimeter.getName().length()));
-		Dashboard.drone.getPerimeter().setPolygon(null);
-		Dashboard.drone.getPerimeter().setAlert(false);
-		Dashboard.drone.getPerimeter().setEnforce(false);
+		drone.getPerimeter().setPolygon(null);
+		drone.getPerimeter().setAlert(false);
+		drone.getPerimeter().setEnforce(false);
 		areaConfiguration.setAlertOn(false);
 		areaConfiguration.setEnforceOn(false);
 		
@@ -630,7 +634,7 @@ public class JMapViewerTree extends JPanel {
     			map.addMapObject(it.next());
     		}
     		if (layer instanceof LayerMission) { // Any type of layer
-    			((LayerMission) layer).getMission().setDrone(Dashboard.drone);
+    			((LayerMission) layer).getMission().setDrone(drone);
     		}
     		return l;
     	}

@@ -2,11 +2,13 @@ package gui.core.internalPanels;
 
 import gui.core.internalFrames.JInternalFrameActualPWM;
 import gui.core.internalFrames.JInternalFrameMap;
+import gui.is.interfaces.KeyBoardControler;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyVetoException;
 
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -14,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+
+import mavlink.is.drone.Drone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,9 +38,11 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	private JPanelMissionBox missionBox;
 	private JPanelConfigurationBox configurationBox;
 	private JDesktopPane container;
+	
+	JInternalFrameMap internalMapFrame = null;
 
 	@Autowired
-	public JPanelToolBarSatellite(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox configurationBox) {		
+	public JPanelToolBarSatellite(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox configurationBox, KeyBoardControler keyBoardController, Drone drone) {		
 		this.missionBox = missionBox;
 		this.configurationBox = configurationBox;
 		this.container = container;
@@ -58,13 +64,23 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
         pnl.add(lblCriticalMsg);
         
         add(pnl);
+        
+        internalMapFrame = new JInternalFrameMap("Map View", container, missionBox, configurationBox, drone, keyBoardController);
+        container.add(internalMapFrame);
+        try {
+			internalMapFrame.setMaximum(true);
+		} catch (PropertyVetoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == btnMap) {
-			JInternalFrameMap.Generate(container, missionBox, configurationBox);
+			internalMapFrame.setVisible(true);
+			internalMapFrame.moveToFront();
 			return;
 		}
 		

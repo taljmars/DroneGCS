@@ -396,4 +396,8 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 		}
 		return ans;
 	}
+
+	public Drone getDrone() {
+		return myDrone;
+	}
 }

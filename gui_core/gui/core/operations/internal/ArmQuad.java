@@ -1,6 +1,5 @@
 package gui.core.operations.internal;
 
-import gui.core.dashboard.Dashboard;
 import gui.core.operations.OperationHandler;
 import gui.is.services.LoggerDisplayerManager;
 
@@ -25,7 +24,7 @@ public class ArmQuad extends OperationHandler {
 		}
 		
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Arming Quad");
-		MavLinkArm.sendArmMessage(Dashboard.drone, true);
+		MavLinkArm.sendArmMessage(drone, true);
 		int armed_waiting_time = 5000; // 5 seconds
 		long sleep_time = 1000;
 		int retry = (int) (armed_waiting_time / sleep_time);
