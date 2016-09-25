@@ -1,9 +1,6 @@
 package gui.core.internalFrames;
 
-import gui.core.dashboard.Dashboard;
-import gui.core.internalPanels.JPanelConfigurationBox;
 import gui.core.internalPanels.JPanelMissionBox;
-import gui.core.mapObjects.Coordinate;
 import gui.core.mapObjects.Layer;
 import gui.core.mapObjects.LayerGroup;
 import gui.core.mapObjects.LayerMission;
@@ -19,6 +16,7 @@ import gui.core.mapTileSources.MapQuestOsmTileSource;
 import gui.core.mapTileSources.OsmTileSource;
 import gui.core.mapTree.JMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
+import gui.is.Coordinate;
 import gui.is.classes.MyStroke;
 import gui.is.classes.Style;
 import gui.is.events.JMVCommandEvent;
@@ -40,18 +38,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.beans.PropertyVetoException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+
+import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -71,10 +70,22 @@ import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
-public class JInternalFrameMap extends JInternalFrame implements
+@Component("internalFrameMap")
+public class JInternalFrameMap extends AbstractJInternalFrame implements
 		JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	private static final String frameName = "Map View";
+	
+	@Resource(name = "drone")
+	private Drone drone;
+	
+	@Resource(name = "keyBoardControler")
+	private KeyBoardControler keyboardController;
+	
+	@Resource(name = "areaMission")
+	private JPanelMissionBox missionBox;
+	
 	static JMapViewerTree treeMap;
 	JLabel mperpLabelValue;
 	JLabel zoomValue;
@@ -106,18 +117,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 	LayerGroup missionsGroup = null;
 	LayerGroup perimetersGroup = null;
 	LayerGroup generalGroup = null;
-
-	private static JInternalFrameMap instance = null;
-
-	private JPanelMissionBox missionBox;
-	private JPanelConfigurationBox conifgurationBox;
-	private JDesktopPane container;
+	
 	private JCheckBox cbLockMyPos;
 	private JCheckBox cbFollowTrail;
-	
-	private Drone drone = null;
-	
-	private KeyBoardControler keyboardController = null;;
 	
 	private TileSource[] mapTilesSources = new TileSource[]
 			{ 
@@ -128,33 +130,21 @@ public class JInternalFrameMap extends JInternalFrame implements
 				new MapQuestOpenAerialTileSource()
 			};
 	
-	public JInternalFrameMap(String name, JDesktopPane container,
-			JPanelMissionBox missionBox, JPanelConfigurationBox conifgurationBox, Drone drone, KeyBoardControler keyboardController) {
+	private JInternalFrameMap(String name) {
 		this(name, true, true, true, true);
-		this.drone = drone;
-		this.missionBox = missionBox;
-		this.conifgurationBox = conifgurationBox;
-		this.container = container;
-		this.keyboardController = keyboardController;
-		setVisible(true);
-		this.drone.addDroneListener(this);
-		map().addJMVListener(this.keyboardController);
-		//try {
-			//setMaximum(true);
-		//}
-		//catch (PropertyVetoException e) {
-			// Vetoed by internalFrame
-			// ... possibly add some handling for this case
-		//}
+	}
+	
+	public JInternalFrameMap() {
+		this(frameName);
 	}
 
-	public JInternalFrameMap(String name, boolean resizable, boolean closable,
+	private JInternalFrameMap(String name, boolean resizable, boolean closable,
 			boolean maximizable, boolean iconifiable) {
 		super(name, resizable, closable, maximizable, iconifiable);
 		
 		setBounds(25, 25, 800, 400);
 
-		treeMap = new JMapViewerTree("Map Views", missionBox, conifgurationBox, this);
+		treeMap = new JMapViewerTree("Map Views", this);
 
 		getContentPane().add(treeMap, BorderLayout.CENTER);
 
@@ -262,8 +252,13 @@ public class JInternalFrameMap extends JInternalFrame implements
 		panelTop.add(tileSourceSelector);
 		panelTop.add(tileLoaderSelector);
 
-
 		pack();
+	}
+	
+	@PostConstruct
+	public void init() {
+		drone.addDroneListener(this);
+		map().addJMVListener(this.keyboardController);
 	}
 
 	public void SetLastKnownPosition() {
@@ -277,47 +272,6 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 		map().addMapMarker(myPos);
 	}
-
-	public static void Close() {
-		// TODO Auto-generated method stub
-		if (instance != null)
-			instance.dispose();
-
-		instance = null;
-	}
-
-	//public static JInternalFrameMap get() {
-	//	return instance;
-	//}
-
-	/*public static void Generate(JDesktopPane container,
-			JPanelMissionBox missionBox, JPanelConfigurationBox conifgurationBox, Drone drone) {
-		if (instance != null) {
-			instance.missionBox = missionBox;
-			instance.conifgurationBox = conifgurationBox;
-			instance.container = container;
-			instance.moveToFront();
-			return;
-		}
-
-		JInternalFrameMap ifrm = new JInternalFrameMap("Map View");
-		drone.addDroneListener(ifrm);
-		ifrm.setBounds(25, 25, 800, 400);
-		instance = ifrm;
-		instance.missionBox = missionBox;
-		instance.conifgurationBox = conifgurationBox;
-		instance.container = container;
-
-		instance.container.add(ifrm);
-		instance.setVisible(true);
-		try {
-			instance.setMaximum(true);
-		}
-		catch (PropertyVetoException e) {
-			// Vetoed by internalFrame
-			// ... possibly add some handling for this case
-		}
-	}*/
 
 	private static JMapViewer map() {
 		return treeMap.getViewer();
@@ -452,9 +406,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 		popup.add(menuItemSyncMission);
 		popup.add(menuItemFindClosest);
 
-		menuItemFlyTo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemFlyTo.addActionListener( arg -> {
 				if (!drone.getGps().isPositionValid()) {
 					JOptionPane.showMessageDialog(null,"Drone must have a GPS connection to use guideness");
 					return;
@@ -495,19 +447,15 @@ public class JInternalFrameMap extends JInternalFrame implements
 					e1.printStackTrace();
 				}
 			}
-		});
+		);
 
-		menuItemSyncMission.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		menuItemSyncMission.addActionListener( arg -> {
 				System.out.println(getClass().getName() + " Start Sync Mission");
-				Dashboard.window.resetProgressBar();
-				drone.getWaypointManager().setWaypointManagerListener(instance);
+				drone.getWaypointManager().setWaypointManagerListener(this);
 				drone.getWaypointManager().getWaypoints();
 				LoggerDisplayerManager.addOutgoingMessegeToDisplay("Send Sync Request");
 			}
-		});
+		);
 
 		menuItemFindClosest.addActionListener(new ActionListener() {
 			@Override
@@ -516,9 +464,7 @@ public class JInternalFrameMap extends JInternalFrame implements
 			}
 		});
 
-		menuItemGeoFence.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemGeoFence.addActionListener( arg -> {
 				System.out.println(getClass().getName() + " Start GeoFence");
 				Coordinate iCoord = getMapPointerCoordinates(e);
 				int radi = 50;
@@ -572,27 +518,25 @@ public class JInternalFrameMap extends JInternalFrame implements
 				}
 				isPerimeterBuildMode = true;
 			}
-		});
+		);
 
-		menuItemMissionBuild.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemMissionBuild.addActionListener( arg -> {
 				map().SetEditModeGUI(true);
 				if (modifyiedLayerMission == null) {
-					modifyiedLayerMission = new LayerMission("New Mission*", missionBox);
+					modifyiedLayerMission = new LayerMission("New Mission*");
 					modifyiedLayerMission.initialize();
 					missionsGroup.add(modifyiedLayerMission);
 					treeMap.addLayer(modifyiedLayerMission);
 					treeMap.updateUI();
-					modifyiedLayerMission.setMission(new Mission(drone));
+					Mission msn = new Mission();
+					msn.setDrone(drone);
+					modifyiedLayerMission.setMission(msn);
 				}
 				isMissionBuildMode = true;
 			}
-		});
+		);
 
-		menuItemMissionAddWayPoint.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemMissionAddWayPoint.addActionListener( arg -> {
 				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(),new Altitude(20));
@@ -605,11 +549,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 				m.addMissionItem(wp);
 				modifyiedLayerMission.repaint(map());
 			}
-		});
+		);
 
-		menuItemMissionAddCircle.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemMissionAddCircle.addActionListener( arg -> {
 				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(),new Altitude(20));
@@ -622,11 +564,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 				m.addMissionItem(wp);
 				modifyiedLayerMission.repaint(map());
 			}
-		});
+		);
 
-		menuItemMissionSetLandPoint.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemMissionSetLandPoint.addActionListener( arg -> {
 				Coordinate iCoord = getMapPointerCoordinates(e);
 
 				Coord3D c3 = new Coord3D(iCoord.ConvertToCoord2D(), new Altitude(20));
@@ -639,11 +579,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 				m.addMissionItem(lnd);
 				modifyiedLayerMission.repaint(map());
 			}
-		});
+		);
 
-		menuItemMissionSetRTL.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemMissionSetRTL.addActionListener( arg -> {
 				Mission m = modifyiedLayerMission.getMission();
 				if (m.isLastItemLandOrRTL()) {
 					JOptionPane.showMessageDialog(null, "RTL/Land point was already defined");
@@ -653,11 +591,9 @@ public class JInternalFrameMap extends JInternalFrame implements
 				m.addMissionItem(lnd);
 				modifyiedLayerMission.repaint(map());
 			}
-		});
+		);
 
-		menuItemMissionSetTakeOff.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg1) {
+		menuItemMissionSetTakeOff.addActionListener( arg -> {
 
 				Mission m = modifyiedLayerMission.getMission();
 				if (m.isFirstItemTakeoff()) {
@@ -677,15 +613,13 @@ public class JInternalFrameMap extends JInternalFrame implements
 				m.addMissionItem(toff);
 				modifyiedLayerMission.repaint(map());
 			}
-		});
+		);
 
-		menuItemGeoFenceAddPoint.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+		menuItemGeoFenceAddPoint.addActionListener( arg -> {
 				modifyiedLayerPerimeter.add(map().getPosition(e.getPoint()));
 				modifyiedLayerPerimeter.repaint(map());
 			}
-		});
+		);
 
 		return popup;
 	}
@@ -804,7 +738,8 @@ public class JInternalFrameMap extends JInternalFrame implements
 			if (layer instanceof LayerMission) {
 				System.out.println("Working on Mission Layer");
 				modifyiedLayerMission = (LayerMission) layer;
-				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, missionBox);
+				//modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, missionBox);
+				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
 				modifyiedLayerMissionOriginal.initialize();
 				modifyiedLayerMission.buildMissionTable(map());
 				isMissionBuildMode = true;
@@ -912,13 +847,6 @@ public class JInternalFrameMap extends JInternalFrame implements
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is on");
 	}
 
-	@Override
-	public void dispose() {
-		System.out.println(getClass().getName() + " In Finilize");
-		instance = null;
-		super.dispose();
-	}
-	
 	/* Get the coordinate value of the mouse pointer */
 	private Coordinate getMapPointerCoordinates(MouseEvent e) {
 		return new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
@@ -937,63 +865,27 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Syncing");
-			return;
-		}
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Updloading Waypoints");
-			return;
-		}
-
-		LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to Start Syncing (" + wpEvent.name() + ")");
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Downloading Waypoint " + index + "/" + count);
-			Dashboard.window.setProgressBar(0, index, count);
-			return;
-		}
-
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Uploading Waypoint " + index + "/" + count);
-			Dashboard.window.setProgressBar(0, index, count);
-			return;
-		}
-
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Unexpected Syncing Failure (" + wpEvent.name() + ")");
-		Dashboard.window.setProgressBar(count, count);
 	}
 
 	@Override
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
-			if (drone.getMission() == null) {
-				LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to find mission");
-				return;
+			if (drone.getMission() != null) {
+				LayerMission instMission = new LayerMission("Current Installed Mission");
+				instMission.initialize();
+				missionsGroup.add(instMission);
+				treeMap.addLayer(instMission);
+				treeMap.updateUI();
+				instMission.setMission(drone.getMission());
+				instMission.repaint(map());
+
+				LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
 			}
-
-			LayerMission instMission = new LayerMission("Current Installed Mission", missionBox);
-			instMission.initialize();
-			missionsGroup.add(instMission);
-			treeMap.addLayer(instMission);
-			treeMap.updateUI();
-			instMission.setMission(drone.getMission());
-			instMission.repaint(map());
-
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
-			return;
 		}
-
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
-			return;
-		}
-
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -1093,6 +985,10 @@ public class JInternalFrameMap extends JInternalFrame implements
 
 	public Drone getDrone() {
 		return drone;
+	}
+	
+	public static AbstractJInternalFrame generateMyOwn() {
+		return new JInternalFrameMap();
 	}
 
 }

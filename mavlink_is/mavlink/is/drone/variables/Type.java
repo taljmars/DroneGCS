@@ -1,6 +1,5 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
@@ -14,27 +13,21 @@ import mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 @Component("type")
 public class Type extends DroneVariable implements DroneInterfaces.OnDroneListener{
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -6024646665700501198L;
-
 	private static final int DEFAULT_TYPE = MAV_TYPE.MAV_TYPE_GENERIC;
 
 	private int type = DEFAULT_TYPE;
 	private String firmwareVersion = null;
 
-	@Autowired
-	public Type(Drone myDroneImpl) {
-		super(myDroneImpl);
-        myDroneImpl.addDroneListener(this);
+	public void init() {
+		drone.addDroneListener(this);
 	}
 
 	public void setType(int type) {
 		if (this.type != type) {
 			this.type = type;
-			myDrone.notifyDroneEvent(DroneEventsType.TYPE);
-			myDrone.loadVehicleProfile();
+			drone.notifyDroneEvent(DroneEventsType.TYPE);
+			drone.loadVehicleProfile();
 		}
 	}
 
@@ -43,7 +36,7 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 	}
 
 	public FirmwareType getFirmwareType() {
-		if (myDrone.getMavClient().isConnected()) {
+		if (drone.getMavClient().isConnected()) {
 			switch (this.type) {
 
 			case MAV_TYPE.MAV_TYPE_FIXED_WING:
@@ -63,7 +56,7 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 				Logger.LogErrorMessege("Unsupported Profile");
 			}
 		}
-		return myDrone.getPreferences().getVehicleType(); // offline or
+		return drone.getPreferences().getVehicleType(); // offline or
 															// unsupported
 	}
 
@@ -73,7 +66,7 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 
 	public void setFirmwareVersion(String message) {
 		firmwareVersion = message;
-		myDrone.notifyDroneEvent(DroneEventsType.FIRMWARE);
+		drone.notifyDroneEvent(DroneEventsType.FIRMWARE);
 	}
 
     public static boolean isCopter(int type){

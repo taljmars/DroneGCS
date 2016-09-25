@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -60,16 +61,18 @@ public class JMapViewerTree extends JPanel {
     private JSplitPane splitPane = null;
     private LayerMission ActiveLayerMission = null;
     private LayerPerimeter ActiveLayerPerimeter = null;
-    private JPanelMissionBox areaMission = null;
-	private JPanelConfigurationBox areaConfiguration = null;
+    
+    @Resource(name = "areaMission")
+    private JPanelMissionBox areaMission;
+    
+    @Resource(name = "areaConfiguration")
+	private JPanelConfigurationBox areaConfiguration;
 
-	private Drone drone = null;
+	@Resource(name = "drone")
+	private Drone drone;
 
-    public JMapViewerTree(String name, JPanelMissionBox areaMission, JPanelConfigurationBox areaConfiguration, JInternalFrameMap jInternalFrameMap) {
+    public JMapViewerTree(String name, JInternalFrameMap jInternalFrameMap) {
         this(name, false, jInternalFrameMap);
-        this.areaMission = areaMission;
-        this.areaConfiguration = areaConfiguration;
-        this.drone = jInternalFrameMap.getDrone();
     }
 
     public JMapViewerTree(String name, boolean treeVisible, JInternalFrameMap jInternalFrameMap) {

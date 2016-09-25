@@ -1,9 +1,7 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.coordinates.Coord2D;
@@ -24,9 +22,7 @@ public class GPS extends DroneVariable {
 	private Coord2D position;
 	private double distanceTraveled;
 
-	@Autowired
-	public GPS(Drone myDroneImpl) {
-		super(myDroneImpl);
+	public GPS() {
 		distanceTraveled = 0;
 	}
 
@@ -70,20 +66,20 @@ public class GPS extends DroneVariable {
 		if (satCount != satellites_visible) {
 			satCount = satellites_visible;
 			gps_eph = (double) eph / 100; // convert from eph(cm) to gps_eph(m)
-			myDrone.notifyDroneEvent(DroneEventsType.GPS_COUNT);
+			drone.notifyDroneEvent(DroneEventsType.GPS_COUNT);
 		}
 		if (fixType != fix) {
 			fixType = fix;
-			myDrone.notifyDroneEvent(DroneEventsType.GPS_FIX);
+			drone.notifyDroneEvent(DroneEventsType.GPS_FIX);
 		}
 	}
 
 	public void setPosition(Coord2D position) {
 		if (this.position != position) {
-			if (this.position != null && myDrone.getState().isFlying())
+			if (this.position != null && drone.getState().isFlying())
 				distanceTraveled += GeoTools.getDistance(this.position, position).valueInMeters();
 			this.position = position;
-			myDrone.notifyDroneEvent(DroneEventsType.GPS);
+			drone.notifyDroneEvent(DroneEventsType.GPS);
 		}
 	}
 	

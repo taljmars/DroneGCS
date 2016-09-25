@@ -1,7 +1,7 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -12,15 +12,11 @@ import mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 @Component("streamRates")
 public class StreamRates extends DroneVariable implements OnDroneListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4572905995884327453L;
 
-	@Autowired
-	public StreamRates(Drone myDroneImpl) {
-		super(myDroneImpl);
-		myDroneImpl.addDroneListener(this);
+	
+	public void init() {
+		drone.addDroneListener(this);
 	}
 
 	@Override
@@ -36,9 +32,9 @@ public class StreamRates extends DroneVariable implements OnDroneListener {
 	}
 
 	public void setupStreamRatesFromPref() {
-		Rates rates = myDrone.getPreferences().getRates();
+		Rates rates = drone.getPreferences().getRates();
 
-		MavLinkStreamRates.setupStreamRates(myDrone.getMavClient(), rates.extendedStatus,
+		MavLinkStreamRates.setupStreamRates(drone.getMavClient(), rates.extendedStatus,
 				rates.extra1, rates.extra2, rates.extra3, rates.position, rates.rcChannels,
 				rates.rawSensors, rates.rawController);
 	}

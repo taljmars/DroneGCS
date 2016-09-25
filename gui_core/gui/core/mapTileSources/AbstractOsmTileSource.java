@@ -1,7 +1,7 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.core.mapTileSources;
 
-import gui.core.mapObjects.Coordinate;
+import gui.is.Coordinate;
 import gui.is.interfaces.ICoordinate;
 
 import java.awt.Image;

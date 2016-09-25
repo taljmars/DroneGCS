@@ -1,13 +1,17 @@
 package mavlink.is.drone;
 
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+@ComponentScan("mavlink.core.drone")
 @Component("events")
 public class DroneEvents extends DroneVariable {
 
@@ -18,7 +22,8 @@ public class DroneEvents extends DroneVariable {
 
 	private final ConcurrentLinkedQueue<DroneEventsType> eventsQueue = new ConcurrentLinkedQueue<DroneEventsType>();
 
-	private final DroneInterfaces.Handler handler;
+	@Resource(name = "handler")
+	private Handler handler;
 
 	private final Runnable eventsDispatcher = new Runnable() {
 		@Override
@@ -28,17 +33,18 @@ public class DroneEvents extends DroneVariable {
                 final DroneEventsType event = eventsQueue.poll();
                 if (event != null && !droneListeners.isEmpty()) {
                     for (OnDroneListener listener : droneListeners) {
-                        listener.onDroneEvent(event, myDrone);
+                        listener.onDroneEvent(event, drone);
                     }
                 }
             }while(!eventsQueue.isEmpty());
 		}
 	};
 
-	@Autowired
-	public DroneEvents(Drone myDrone, DroneInterfaces.Handler handler) {
-		super(myDrone);
-		this.handler = handler;
+	//@Autowired
+	//public DroneEvents(Drone myDrone, DroneInterfaces.Handler handler) {
+	public DroneEvents() {
+		//super(myDrone);
+		//this.handler = handler;
 	}
 
 	private final ConcurrentLinkedQueue<OnDroneListener> droneListeners = new ConcurrentLinkedQueue<OnDroneListener>();

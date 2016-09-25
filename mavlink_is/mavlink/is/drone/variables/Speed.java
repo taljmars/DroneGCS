@@ -1,33 +1,22 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import mavlink.is.drone.Drone;
+
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.parameters.Parameter;
 
 @Component("speed")
 public class Speed extends DroneVariable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -428837366703590700L;
 	public static final int COLLISION_SECONDS_BEFORE_COLLISION = 2;
 	public static final double COLLISION_DANGEROUS_SPEED_METERS_PER_SECOND = -3.0;
 	public static final double COLLISION_SAFE_ALTITUDE_METERS = 1.0;
-	private mavlink.is.utils.units.Speed verticalSpeed = new mavlink.is.utils.units.Speed(
-			0);
-	private mavlink.is.utils.units.Speed groundSpeed = new mavlink.is.utils.units.Speed(
-			0);
-	private mavlink.is.utils.units.Speed airSpeed = new mavlink.is.utils.units.Speed(
-			0);
-	private mavlink.is.utils.units.Speed targetSpeed = new mavlink.is.utils.units.Speed(
-			0);
+	private mavlink.is.utils.units.Speed verticalSpeed = new mavlink.is.utils.units.Speed(0);
+	private mavlink.is.utils.units.Speed groundSpeed = new mavlink.is.utils.units.Speed(0);
+	private mavlink.is.utils.units.Speed airSpeed = new mavlink.is.utils.units.Speed(0);
+	private mavlink.is.utils.units.Speed targetSpeed = new mavlink.is.utils.units.Speed(0);
 
-	@Autowired
-	public Speed(Drone myDroneImpl) {
-		super(myDroneImpl);
-	}
 
 	public mavlink.is.utils.units.Speed getVerticalSpeed() {
 		return verticalSpeed;
@@ -58,7 +47,7 @@ public class Speed extends DroneVariable {
 	}
 
 	public mavlink.is.utils.units.Speed getSpeedParameter(){
-		Parameter param = myDrone.getParameters().getParameter("WPNAV_SPEED");
+		Parameter param = drone.getParameters().getParameter("WPNAV_SPEED");
 		if (param == null ) {
 			return null;			
 		}else{
@@ -73,13 +62,13 @@ public class Speed extends DroneVariable {
 	 */
 	private void checkCollisionIsImminent() {
 
-		double altitude = myDrone.getAltitude().getAltitude();
+		double altitude = drone.getAltitude().getAltitude();
 		if (altitude + verticalSpeed.valueInMetersPerSecond() * COLLISION_SECONDS_BEFORE_COLLISION < 0
 				&& verticalSpeed.valueInMetersPerSecond() < COLLISION_DANGEROUS_SPEED_METERS_PER_SECOND
 				&& altitude > COLLISION_SAFE_ALTITUDE_METERS) {
-			myDrone.getAltitude().setCollisionImminent(true);
+			drone.getAltitude().setCollisionImminent(true);
 		} else {
-			myDrone.getAltitude().setCollisionImminent(false);
+			drone.getAltitude().setCollisionImminent(false);
 		}
 	}
 

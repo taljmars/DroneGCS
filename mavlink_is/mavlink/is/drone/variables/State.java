@@ -1,11 +1,11 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
 
-import gui.core.mapObjects.Coordinate;
+import gui.is.Coordinate;
 import gui.is.services.LoggerDisplayerManager;
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.Clock;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -30,16 +30,16 @@ public class State extends DroneVariable {
 	// ----------------
 	private long startTime = 0;
 	private long elapsedFlightTime = 0;
+	
+	@Resource(name = "clock")
 	private Clock clock;
 
-	public Handler watchdog;
+	@Resource(name = "handler")
+	public Handler handler;
+	
 	public Runnable watchdogCallback = () -> removeWarning();
-
-	@Autowired
-	public State(Drone myDrone, Clock clock, Handler handler) {
-		super(myDrone);
-		this.clock = clock;
-		this.watchdog = handler;
+	
+	public void init() {
 		resetFlightTimer();
 	}
 
@@ -66,7 +66,7 @@ public class State extends DroneVariable {
 	public void setIsFlying(boolean newState) {
 		if (newState != isFlying) {
 			isFlying = newState;
-			myDrone.notifyDroneEvent(DroneEventsType.STATE);
+			drone.notifyDroneEvent(DroneEventsType.STATE);
 			if (isFlying) {
 				startTimer();
 			} else {
@@ -78,18 +78,18 @@ public class State extends DroneVariable {
 	public void setWarning(String newFailsafe) {
 		if (!this.warning.equals(newFailsafe)) {
 			this.warning = newFailsafe;
-			myDrone.notifyDroneEvent(DroneEventsType.AUTOPILOT_WARNING);
+			drone.notifyDroneEvent(DroneEventsType.AUTOPILOT_WARNING);
 		}
-		watchdog.removeCallbacks(watchdogCallback);
-		this.watchdog.postDelayed(watchdogCallback, failsafeOnScreenTimeout);
+		handler.removeCallbacks(watchdogCallback);
+		handler.postDelayed(watchdogCallback, failsafeOnScreenTimeout);
 	}
 
 	public void setArmed(boolean newState) {
 		if (this.armed != newState) {
 			this.armed = newState;
-			myDrone.notifyDroneEvent(DroneEventsType.ARMING);
+			drone.notifyDroneEvent(DroneEventsType.ARMING);
 			if (newState) {
-				myDrone.getWaypointManager().getWaypoints();
+				drone.getWaypointManager().getWaypoints();
 			}else{
 				if (mode == ApmModes.ROTOR_RTL || mode == ApmModes.ROTOR_LAND) {
 					changeFlightMode(ApmModes.ROTOR_LOITER);  // When disarming set the mode back to loiter so we can do a takeoff in the future.					
@@ -99,18 +99,18 @@ public class State extends DroneVariable {
 	}
 
 	public void doTakeoff(Altitude alt) {
-		myDrone.getGuidedPoint().doGuidedTakeoff(alt);
+		drone.getGuidedPoint().doGuidedTakeoff(alt);
 	}
 	
 	public void doTakeoff(Coordinate coord, Altitude alt) {
-		myDrone.getGuidedPoint().doGuidedTakeoff(coord, alt);
+		drone.getGuidedPoint().doGuidedTakeoff(coord, alt);
 	}
 
 	public void setMode(ApmModes mode) {
 		if (this.mode != mode) {
 			this.mode = mode;
 			System.out.println(getClass().getName() + " New Mode!!");
-			myDrone.notifyDroneEvent(DroneEventsType.MODE);
+			drone.notifyDroneEvent(DroneEventsType.MODE);
 		}
 	}
 
@@ -118,7 +118,7 @@ public class State extends DroneVariable {
 		if (ApmModes.isValid(mode)) {
 			LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + mode.getName());
 			System.out.println(getClass().getName() + mode.getName());
-			MavLinkModes.changeFlightMode(myDrone, mode);
+			MavLinkModes.changeFlightMode(drone, mode);
 		}
 	}
 

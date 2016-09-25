@@ -13,8 +13,8 @@ import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
-import gui.core.mapObjects.Coordinate;
 import gui.core.mapViewer.JMapViewer;
+import gui.is.Coordinate;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

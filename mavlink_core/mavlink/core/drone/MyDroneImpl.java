@@ -1,15 +1,14 @@
 package mavlink.core.drone;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
-import mavlink.core.location.MyLocationImpl;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneEvents;
 import mavlink.is.drone.DroneInterfaces;
-import mavlink.is.drone.DroneInterfaces.Clock;
-import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.Preferences;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.profiles.Parameters;
@@ -37,66 +36,38 @@ import mavlink.is.drone.variables.State;
 import mavlink.is.drone.variables.StreamRates;
 import mavlink.is.drone.variables.Type;
 import mavlink.is.gcs.follow.Follow;
-import mavlink.is.location.LocationFinder;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@ComponentScan("mavlink.core.connection")
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
 @ComponentScan("mavlink.is.protocol.msgbuilder")
-@Component("myDroneImpl")
+@Configuration
 public class MyDroneImpl implements Drone {
 
 	@Bean
-	private LocationFinder myLocationFinderImpl() {
-		return new MyLocationImpl();
-	}
-
-	@Bean
-	private VehicleProfile profile() {
+	public VehicleProfile profile() {
 		loadVehicleProfile();
 		return profile;
 	}
-
-	@Resource(name = "radioConnection")
-	private MavLinkConnection MavClient;
-
-	@Resource(name = "state")
-	private State state;
-
-	@Resource(name = "events")
-	private DroneEvents events;
-
-	@Resource(name = "heartbeat")
-	private HeartBeat heartbeat;
-
-	@Resource(name = "parameters")
-	private Parameters parameters;
-
-	@Resource(name = "preferencesImpl")
-	private Preferences preferences;
-
-	@Resource(name = "handlerImpl")
-	private Handler handler;
-
-	@Resource(name = "clockImpl")
-	private Clock clock;
-
-	@Resource(name = "follow")
-	private Follow follow;
-
-	@Resource(name = "type")
-	private Type type;
-
+	
+	@Override
+	@Bean
+	public MavLinkConnection getMavClient() {
+		return new RadioConnection();
+	}
+	
 	@Resource(name = "gps")
 	private GPS GPS;
-
+	
+	@Resource(name = "preferencesImpl")
+	private Preferences preferences;
+	
 	@Resource(name = "rc")
 	private RC RC;
 
@@ -105,7 +76,7 @@ public class MyDroneImpl implements Drone {
 
 	@Resource(name = "gcs")
 	private GCS GCS;
-
+	
 	@Resource(name = "speed")
 	private Speed speed;
 
@@ -120,7 +91,7 @@ public class MyDroneImpl implements Drone {
 
 	@Resource(name = "mission")
 	private Mission mission;
-
+	
 	@Resource(name = "missionStats")
 	private MissionStats missionStats;
 
@@ -138,7 +109,7 @@ public class MyDroneImpl implements Drone {
 
 	@Resource(name = "guidedPoint")
 	private GuidedPoint guidedPoint;
-
+	
 	@Resource(name = "calibrationSetup")
 	private Calibration calibrationSetup;
 
@@ -153,11 +124,42 @@ public class MyDroneImpl implements Drone {
 
 	@Resource(name = "perimeter")
 	private Perimeter Perimeter;
-
+	
+	@Resource(name = "type")
+	private Type type;
+	
 	@Resource(name = "messeges")
-	private Messeges messeges;
+	private Messeges messeges;	
+	
+	@Resource(name = "parameters")
+	private Parameters parameters;
+
+	@Resource(name = "events")
+	private DroneEvents events;
+	
+	@Resource(name = "heartbeat")
+	private HeartBeat heartbeat;
+	
+	@Resource(name = "state")
+	private State state;
+
+	@Resource(name = "follow")
+	private Follow follow;
 
 	private VehicleProfile profile;
+	
+	@PostConstruct
+	public void init() {
+		heartbeat.init();
+		state.init();
+		follow.init();
+		guidedPoint.init();
+		type.init();
+		streamRates.init();
+		Perimeter.init();
+		parameters.init();
+		messeges.init();
+	}
 
 	@Override
 	public void setAltitudeGroundAndAirSpeeds(double altitude, double groundSpeed, double airSpeed, double climb) {
@@ -244,10 +246,10 @@ public class MyDroneImpl implements Drone {
 		return profile;
 	}
 
-	@Override
-	public MavLinkConnection getMavClient() {
-		return MavClient;
-	}
+//	@Override
+//	public MavLinkConnection getMavClient() {
+//		return MavClient;
+//	}
 
 	@Override
 	public Preferences getPreferences() {

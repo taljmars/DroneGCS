@@ -1,4 +1,4 @@
-package flight_controlers;
+package mavlink.core.flightControlers;
 
 import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.KeyBoardControler;
@@ -14,26 +14,24 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Date;
 
+import javax.annotation.Resource;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
-import org.springframework.stereotype.Component;
 
 import communication_device.TwoWaySerialComm;
 import logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
-@Component("keyBoardControlerImpl")
 public class KeyBoardControlerImpl implements KeyBoardControler {
 	
-	private static KeyBoardControlerImpl myKeyBoardControl = null;
 	private static boolean param_loaded = false;
 	private static Thread KeyboardStabilizer = null;
+	
+	@Resource(name = "drone")
 	private Drone drone;
 	
-	public KeyBoardControlerImpl(Drone drone) {
-		this.drone = drone;
+	public KeyBoardControlerImpl() {
 		LoadParams();
 		
 		KeyboardStabilizer = new Thread(new Runnable() {
@@ -55,34 +53,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		});
 		KeyboardStabilizer.start();
 	}
-	
-	/*public static KeyBoardControl get() {
-		if (myKeyBoardControl == null) {
-			myKeyBoardControl = new KeyBoardControl();
-			myKeyBoardControl.LoadParams();
-			
-			KeyboardStabilizer = new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					Logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
-					while (true) {
-						try {
-							//Thread.sleep(1000);
-							Thread.sleep(100);
-							KeyBoardControl.get().Update();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			});
-			KeyboardStabilizer.start();
-		}
-		
-		return myKeyBoardControl;
-	}*/
 	
 	public boolean bActive = false;
 	private boolean onHold = false;

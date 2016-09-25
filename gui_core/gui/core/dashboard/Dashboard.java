@@ -1,6 +1,5 @@
 package gui.core.dashboard;
 
-import gui.core.internalFrames.*;
 import gui.core.internalPanels.*;
 
 import java.awt.BorderLayout;
@@ -10,8 +9,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
-import flight_controlers.KeyBoardControlerImpl;
-import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
 import gui.is.services.NotificationsManager;
 import gui.is.services.NotificationsListener;
@@ -36,13 +33,13 @@ import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.protocol.msg_metadata.ApmModes;
+import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-@Configuration
-@ComponentScan("mavlink.core.drone")
+@ComponentScan("gui.core.springConfig")
 @ComponentScan("gui.core.internalPanels")
-@ComponentScan("flight_controlers")
 @Component("dashboard")
-public class Dashboard implements OnDroneListener, NotificationsListener {
+@Configuration
+public class Dashboard implements OnDroneListener, NotificationsListener, OnWaypointManagerListener {
 	
 	private static AbstractApplicationContext context = null;
 	
@@ -52,17 +49,12 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 	private static final long serialVersionUID = 1L;
 
 	private static final String APP_TITLE = "Quad Ground Station";
-
-	public static Dashboard window = null;
 	
-	@Resource(name="myDroneImpl")
+	@Resource(name = "drone")
 	public Drone drone;
 	
-	@Resource(name="keyBoardControlerImpl")
-	private KeyBoardControler keyBoardControler;
-	
 	@Bean
-	public JDesktopPane desktopPane() {
+	public JDesktopPane frameContainer() {
 		return new JDesktopPane();
 	}
 	
@@ -104,10 +96,10 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 				try {
 					System.out.println("Start Dashboard");
 					context = new AnnotationConfigApplicationContext(Dashboard.class);
-					window = (Dashboard) context.getBean("dashboard");
-					window.initializeGui();
-					window.initializeComponents();
-					window.refresh();
+					Dashboard dashboard = (Dashboard) context.getBean("dashboard");
+					dashboard.initializeGui();
+					dashboard.initializeComponents();
+					dashboard.refresh();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -119,8 +111,6 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		System.out.println("Start Logger Displayer Manager");
 		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox());
 
-		//drone = (Drone) context.getBean("myDroneImpl");
-
 		System.out.println("Start Notifications Manager");
 		NotificationsManager.addNotificationListener(this);
 
@@ -128,28 +118,23 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
 		gcs.setActive(true);
 
-		//System.out.println("Start Keyboard Stabilizer");
-		//keyBoardControler = new KeyBoardControl(drone);
 	}
 
 	protected void refresh() {
 		System.out.println("Sign Dashboard as drone listener");
-		drone.addDroneListener(window);
+		drone.addDroneListener(this);
 		drone.addDroneListener(tbTelemtry);
 		drone.addDroneListener(tbContorlButton);
+		drone.getWaypointManager().setWaypointManagerListener(this);
 
 		System.out.println("Setting for button Box");
-		//tbContorlButton.setDrone(drone);
 		tbContorlButton.setButtonControl(false);
 
 		System.out.println("Setting Configurtaion");
 		areaConfiguration().setDrone(drone);
 
-		//JInternalFrameMap.Generate(desktopPane(), areaMission(), areaConfiguration());
-		//JInternalFrameMap ifrm = new JInternalFrameMap("Map View", desktopPane(), areaMission(), areaConfiguration(), drone, KeyBoardControl.get());
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
-			// SetFlightModeLabel(drone.getState().getMode().getName());
 			drone.notifyDroneEvent(DroneEventsType.MODE);
 		}
 	}
@@ -179,7 +164,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		// Central Panel
-		frame.getContentPane().add(desktopPane(), BorderLayout.CENTER);
+		frame.getContentPane().add(frameContainer(), BorderLayout.CENTER);
 
 		// South Panel
 		JPanel southPanel = new JPanel(new BorderLayout());
@@ -253,6 +238,59 @@ public class Dashboard implements OnDroneListener, NotificationsListener {
 		}
 		tbTelemtry.repaint();
 
+	}
+	
+	@Override
+	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Syncing");
+			return;
+		}
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Updloading Waypoints");
+			return;
+		}
+
+		LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to Start Syncing (" + wpEvent.name() + ")");
+	}
+
+	@Override
+	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Downloading Waypoint " + index + "/" + count);
+			setProgressBar(0, index, count);
+			return;
+		}
+
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Uploading Waypoint " + index + "/" + count);
+			setProgressBar(0, index, count);
+			return;
+		}
+
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		setProgressBar(count, count);
+	}
+
+	@Override
+	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			if (drone.getMission() == null) {
+				LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to find mission");
+				return;
+			}
+
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
+			return;
+		}
+
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			return;
+		}
+
+		LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 	}
 
 	@SuppressWarnings("incomplete-switch")

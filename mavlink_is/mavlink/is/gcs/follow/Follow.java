@@ -1,11 +1,13 @@
 package mavlink.is.gcs.follow;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
-import mavlink.core.gcs.roi.ROIEstimator;
 import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -18,8 +20,14 @@ import mavlink.is.location.LocationReceiver;
 import mavlink.is.protocol.msgbuilder.MavLinkROI;
 import mavlink.is.utils.units.Length;
 
+@ComponentScan("mavlink.is.gcs.roi")
 @Component("follow")
-public class Follow implements OnDroneListener, LocationReceiver {
+public class Follow extends DroneVariable implements OnDroneListener, LocationReceiver {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 734094933207456020L;
 
 	/** Set of return value for the 'toggleFollowMeState' method.*/
 	public enum FollowStates {
@@ -27,19 +35,21 @@ public class Follow implements OnDroneListener, LocationReceiver {
 	}
 
 	private FollowStates state = FollowStates.FOLLOW_INVALID_STATE;
-	private Drone drone;
-
-	private ROIEstimator roiEstimator;
+	
+	@Resource(name = "handler")
+	private Handler handler;
+	
+	@Resource(name = "locationFinder")
 	private LocationFinder locationFinder;
-	private FollowAlgorithm followAlgorithm;
 
-	@Autowired
-	public Follow(Drone drone, Handler handler, LocationFinder locationFinder) {
-		this.drone = drone;
+	@Resource(name = "roiEstimator")
+	private LocationReceiver roiEstimator;
+	
+	private FollowAlgorithm followAlgorithm;
+	
+	public void init() {
 		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);
-		this.locationFinder = locationFinder;
 		locationFinder.addLocationListener(this);
-		roiEstimator = new ROIEstimator(handler, drone);
 		drone.addDroneListener(this);
 	}
 

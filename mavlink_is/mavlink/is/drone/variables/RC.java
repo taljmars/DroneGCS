@@ -1,8 +1,7 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import mavlink.is.drone.Drone;
+
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
@@ -10,17 +9,10 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
 
 @Component("rc")
 public class RC extends DroneVariable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -6270111560061361734L;
 	public int in[] = new int[8];
 	public int out[] = new int[8];
-
-	@Autowired
-	public RC(Drone myDroneImpl) {
-		super(myDroneImpl);
-	}
 
 	public void setRcInputValues(msg_rc_channels_raw msg) {
 		in[0] = msg.chan1_raw;
@@ -31,7 +23,7 @@ public class RC extends DroneVariable {
 		in[5] = msg.chan6_raw;
 		in[6] = msg.chan7_raw;
 		in[7] = msg.chan8_raw;
-		myDrone.notifyDroneEvent(DroneEventsType.RC_IN);
+		drone.notifyDroneEvent(DroneEventsType.RC_IN);
 	}
 
 	public void setRcOutputValues(msg_servo_output_raw msg) {
@@ -43,7 +35,7 @@ public class RC extends DroneVariable {
 		out[5] = msg.servo6_raw;
 		out[6] = msg.servo7_raw;
 		out[7] = msg.servo8_raw;
-		myDrone.notifyDroneEvent(DroneEventsType.RC_OUT);
+		drone.notifyDroneEvent(DroneEventsType.RC_OUT);
 	}
 	
 	public int getAverageThrust() {

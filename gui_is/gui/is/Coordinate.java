@@ -1,5 +1,5 @@
 // License: GPL. For details, see Readme.txt file.
-package gui.core.mapObjects;
+package gui.is;
 
 import gui.is.interfaces.ICoordinate;
 

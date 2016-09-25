@@ -1,9 +1,7 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;
 import mavlink.is.drone.DroneVariable;
 
@@ -19,11 +17,6 @@ public class Altitude extends DroneVariable {
 	private double previousAltitude = 0;
 
 	private boolean isCollisionImminent;
-
-	@Autowired
-	public Altitude(Drone myDrone) {
-		super(myDrone);
-	}
 
 	public double getAltitude() {
 		return altitude;
@@ -41,7 +34,7 @@ public class Altitude extends DroneVariable {
 		this.altitude = altitude;
 		if (altitude > FOUR_HUNDRED_FEET_IN_METERS
 				&& previousAltitude <= FOUR_HUNDRED_FEET_IN_METERS) {
-			myDrone.notifyDroneEvent(DroneInterfaces.DroneEventsType.WARNING_400FT_EXCEEDED);
+			drone.notifyDroneEvent(DroneInterfaces.DroneEventsType.WARNING_400FT_EXCEEDED);
 		}
 		previousAltitude = altitude;
 	}
@@ -53,7 +46,7 @@ public class Altitude extends DroneVariable {
 	public void setCollisionImminent(boolean isCollisionImminent) {
 		if (this.isCollisionImminent != isCollisionImminent) {
 			this.isCollisionImminent = isCollisionImminent;
-			myDrone.notifyDroneEvent(DroneInterfaces.DroneEventsType.STATE);
+			drone.notifyDroneEvent(DroneInterfaces.DroneEventsType.STATE);
 		}
 	}
 

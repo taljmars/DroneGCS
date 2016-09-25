@@ -4,6 +4,7 @@ package gui.core.mapViewer;
 import gui.core.mapObjects.*;
 import gui.core.mapTileSources.BingAerialTileSource;
 import gui.core.internalFrames.JInternalFrameMap;
+import gui.is.Coordinate;
 import gui.is.classes.Tile;
 import gui.is.events.JMVCommandEvent;
 import gui.is.events.JMVCommandEvent.COMMAND;

@@ -3,9 +3,9 @@ package mavlink.core.connection;
 import java.io.File;
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.annotation.Resource;
 
+import org.springframework.context.annotation.ComponentScan;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import mavlink.is.drone.Drone;
@@ -14,16 +14,13 @@ import communication_device.TwoWaySerialComm;
 /**
  * Provides support for mavlink connection via udp.
  */
-@Component("radioConnection")
+@ComponentScan("gui.core.springConfig")
 public class RadioConnection extends MavLinkConnection {
 
 	private TwoWaySerialComm socket = null;
-	private Drone drone = null;
 	
-	@Autowired
-	public RadioConnection(Drone drone) {
-		this.drone  = drone;
-	}
+	@Resource(name = "drone")
+	private Drone drone;
 
 	private void getRadioStream() throws IOException {
 		socket = TwoWaySerialComm.get();
@@ -71,21 +68,14 @@ public class RadioConnection extends MavLinkConnection {
 
 	protected int loadServerPort(){return 1;}
 
-	/*@Override
-	protected Logger initLogger() {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 
 	@Override
 	protected File getTempTLogFile() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void commitTempTLogFile(File tlogFile) {
-		// TODO Auto-generated method stub
 		
 	}
 }

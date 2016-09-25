@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import pair.Pair;
@@ -43,20 +42,12 @@ import pair.Pair;
 @Component("mission")
 public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8399081979944818494L;
 	/**
 	 * Stores the set of mission items belonging to this mission.
 	 */
 	private List<MissionItem> items = new ArrayList<MissionItem>();
 	private Altitude defaultAlt = new Altitude(20.0);
-
-	@Autowired
-	public Mission(Drone myDrone) {
-		super(myDrone);
-	}
 
 	/**
 	 * @return the mission's default altitude
@@ -129,7 +120,7 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	 * of this class
 	 */
 	public void notifyMissionUpdate() {
-		myDrone.notifyDroneEvent(DroneEventsType.MISSION_UPDATE);
+		drone.notifyDroneEvent(DroneEventsType.MISSION_UPDATE);
 	}
 
 	/**
@@ -199,7 +190,7 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	}
 
 	public void onWriteWaypoints(msg_mission_ack msg) {
-		myDrone.notifyDroneEvent(DroneEventsType.MISSION_SENT);
+		drone.notifyDroneEvent(DroneEventsType.MISSION_SENT);
 	}
 
 	public List<MissionItem> getItems() {
@@ -243,22 +234,22 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 
 	public void onMissionReceived(List<msg_mission_item> msgs) {
 		if (msgs != null) {
-			myDrone.getHome().setHome(msgs.get(0));
+			drone.getHome().setHome(msgs.get(0));
 			msgs.remove(0); // Remove Home waypoint
 			items.clear();
 			items.addAll(processMavLinkMessages(msgs));
-			myDrone.notifyDroneEvent(DroneEventsType.MISSION_RECEIVED);
+			drone.notifyDroneEvent(DroneEventsType.MISSION_RECEIVED);
 			notifyMissionUpdate();
 		}
 	}
 
 	public void onMissionLoaded(List<msg_mission_item> msgs) {
 		if (msgs != null) {
-			myDrone.getHome().setHome(msgs.get(0));
+			drone.getHome().setHome(msgs.get(0));
 			msgs.remove(0); // Remove Home waypoint
 			items.clear();
 			items.addAll(processMavLinkMessages(msgs));
-			myDrone.notifyDroneEvent(DroneEventsType.MISSION_RECEIVED);
+			drone.notifyDroneEvent(DroneEventsType.MISSION_RECEIVED);
 			notifyMissionUpdate();
 		}
 	}
@@ -308,12 +299,12 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	 * Sends the mission to the drone using the mavlink protocol.
 	 */
 	public void sendMissionToAPM() {
-		myDrone.getWaypointManager().writeWaypoints(getMsgMissionItems());
+		drone.getWaypointManager().writeWaypoints(getMsgMissionItems());
 	}
 
 	public List<msg_mission_item> getMsgMissionItems() {
 		final List<msg_mission_item> data = new ArrayList<msg_mission_item>();
-		data.add(myDrone.getHome().packMavlink());
+		data.add(drone.getHome().packMavlink());
 		for (MissionItem item : items) {
 			data.addAll(item.packMissionItem());
 		}
@@ -326,13 +317,13 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	 * @return the bearing in degrees the drone trajectory will take.
 	 */
 	public double makeAndUploadDronie() {
-		Coord2D currentPosition = myDrone.getGps().getPosition();
-		if (currentPosition == null || myDrone.getGps().getSatCount() <= 5) {
-			myDrone.notifyDroneEvent(DroneEventsType.WARNING_NO_GPS);
+		Coord2D currentPosition = drone.getGps().getPosition();
+		if (currentPosition == null || drone.getGps().getSatCount() <= 5) {
+			drone.notifyDroneEvent(DroneEventsType.WARNING_NO_GPS);
 			return -1;
 		}
 
-		final double bearing = 180 + myDrone.getOrientation().getYaw();
+		final double bearing = 180 + drone.getOrientation().getYaw();
 		items.clear();
 		items.addAll(createDronie(currentPosition,
 				GeoTools.newCoordFromBearingAndDistance(currentPosition, bearing, 50.0)));
@@ -347,7 +338,7 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 		final int roiDistance = -8;
 		Coord2D slowDownPoint = GeoTools.pointAlongTheLine(start, end, 5);
 
-		Speed defaultSpeed = myDrone.getSpeed().getSpeedParameter();
+		Speed defaultSpeed = drone.getSpeed().getSpeedParameter();
 		if (defaultSpeed == null) {
 			defaultSpeed = new Speed(5);
 		}
@@ -389,7 +380,8 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	}
 
 	public Mission duplicate() {
-		Mission ans = new Mission(myDrone);
+		Mission ans = new Mission();
+		ans.setDrone(drone);
 		Iterator<MissionItem> it = this.items.iterator();
 		while (it.hasNext()) {
 			ans.addMissionItem(it.next());
@@ -398,6 +390,11 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	}
 
 	public Drone getDrone() {
-		return myDrone;
+		return drone;
+	}
+
+	public void setDrone(Drone drone) {
+		// TODO Auto-generated method stub
+		
 	}
 }

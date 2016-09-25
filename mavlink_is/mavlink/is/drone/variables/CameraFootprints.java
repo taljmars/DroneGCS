@@ -3,11 +3,9 @@ package mavlink.is.drone.variables;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.survey.Footprint;
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.mission.survey.CameraInfo;
@@ -22,14 +20,9 @@ public class CameraFootprints extends DroneVariable {
 	private CameraInfo camera = new CameraInfo();
 	private List<Footprint> footprints = new ArrayList<Footprint>();
 
-	@Autowired
-	public CameraFootprints(Drone myDrone) {
-		super(myDrone);
-	}
-
 	public void newImageLocation(msg_camera_feedback msg) {
 		footprints.add(new Footprint(camera,msg));
-		myDrone.notifyDroneEvent(DroneEventsType.FOOTPRINT);
+		drone.notifyDroneEvent(DroneEventsType.FOOTPRINT);
 	}
 
 	public Footprint getLastFootprint() {

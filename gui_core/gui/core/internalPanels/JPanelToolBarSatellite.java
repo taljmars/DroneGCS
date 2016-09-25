@@ -1,15 +1,18 @@
 package gui.core.internalPanels;
 
+import gui.core.internalFrames.AbstractJInternalFrame;
 import gui.core.internalFrames.JInternalFrameActualPWM;
 import gui.core.internalFrames.JInternalFrameMap;
-import gui.is.interfaces.KeyBoardControler;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.lang.reflect.Method;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
@@ -17,9 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
-import mavlink.is.drone.Drone;
+import logger.Logger;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("toolbarSatellite")
@@ -35,23 +37,18 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	private JButton btnActualPWM;
 	private JLabel lblCriticalMsg;
 
-	private JPanelMissionBox missionBox;
-	private JPanelConfigurationBox configurationBox;
-	private JDesktopPane container;
+	@Resource(name = "frameContainer")
+	private JDesktopPane frameContainer;
 	
-	JInternalFrameMap internalMapFrame = null;
+	private AbstractJInternalFrame internalMapFrame = null;
+	private AbstractJInternalFrame internalActualPWMFrame = null;
 
-	@Autowired
-	public JPanelToolBarSatellite(JDesktopPane container, JPanelMissionBox missionBox, JPanelConfigurationBox configurationBox, KeyBoardControler keyBoardController, Drone drone) {		
-		this.missionBox = missionBox;
-		this.configurationBox = configurationBox;
-		this.container = container;
+	public JPanelToolBarSatellite() {
 		
 		pnl = new JPanel();
 		pnl.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
 		btnMap = new JButton("Map");
-        btnMap.setSelected(true);
         pnl.add(btnMap);
         btnMap.addMouseListener(this);
         
@@ -59,14 +56,20 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
         pnl.add(btnActualPWM);
         btnActualPWM.addMouseListener(this);
         
+        btnMap.setSelected(true);
+        
         lblCriticalMsg = new JLabel("MSG");
         lblCriticalMsg.setHorizontalAlignment(SwingConstants.TRAILING);
         pnl.add(lblCriticalMsg);
         
         add(pnl);
-        
-        internalMapFrame = new JInternalFrameMap("Map View", container, missionBox, configurationBox, drone, keyBoardController);
-        container.add(internalMapFrame);
+	}
+	
+	@PostConstruct
+	public void init() {
+		internalMapFrame = new JInternalFrameMap();
+        frameContainer.add(internalMapFrame);
+        internalMapFrame.setVisible(true);
         try {
 			internalMapFrame.setMaximum(true);
 		} catch (PropertyVetoException e) {
@@ -79,15 +82,35 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == btnMap) {
-			internalMapFrame.setVisible(true);
-			internalMapFrame.moveToFront();
+			internalMapFrame = loadFrame(internalMapFrame, JInternalFrameMap.class);
 			return;
 		}
 		
 		if (e.getSource() == btnActualPWM) {
-			JInternalFrameActualPWM.Generate(container);
+			internalActualPWMFrame = loadFrame(internalActualPWMFrame, JInternalFrameActualPWM.class);
 			return;
 		}
+	}
+	
+	private AbstractJInternalFrame loadFrame(AbstractJInternalFrame internalFrame, Class<? extends AbstractJInternalFrame> classType) {
+		if (internalFrame == null || !internalFrame.isLoaded()) {
+			Method m;
+			try {
+				m = classType.getMethod(AbstractJInternalFrame.generateMyOwnMethodName);
+				internalFrame = (AbstractJInternalFrame) m.invoke(null);
+				frameContainer.add(internalFrame);
+				internalFrame.setVisible(true);
+				internalFrame.setMaximum(true);
+			} 
+			catch (Exception e1) {
+				Logger.LogErrorMessege("Internal Error: Failed to load map frame");
+				Logger.LogErrorMessege(e1.getMessage());
+			}
+		}
+		
+		internalFrame.moveToFront();
+		
+		return internalFrame;
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
@@ -14,7 +13,6 @@ import mavlink.is.utils.coordinates.Coord3D;
 
 import javax.swing.SwingWorker;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("beacon")
@@ -28,16 +26,14 @@ public class Beacon extends DroneVariable implements Serializable{
 	private Coord3D pLastPosition;
 	private transient SwingWorker<Void, Void> pFollowThread = null;
 
-	@Autowired
-	public Beacon(Drone myDroneImpl) {
-		super(myDroneImpl);
+	public Beacon() {
 		pIsActive = false;
 		pLastPosition = null;
 	}
 	
 	public void setPosition(Coord3D coord) {
 		pLastPosition = coord;
-		myDrone.notifyDroneEvent(DroneEventsType.BEACON_BEEP);
+		drone.notifyDroneEvent(DroneEventsType.BEACON_BEEP);
 	}
 	
 	public Coord3D getPosition() {
@@ -47,12 +43,12 @@ public class Beacon extends DroneVariable implements Serializable{
 	public void setActive(boolean should_be_active) {
 		pIsActive = should_be_active;
 		if (pIsActive) {
-			myDrone.notifyDroneEvent(DroneEventsType.BEACON_LOCK_START);
+			drone.notifyDroneEvent(DroneEventsType.BEACON_LOCK_START);
 			RunThread();
 		}
 		else {
 			KillThread();
-			myDrone.notifyDroneEvent(DroneEventsType.BEACON_LOCK_FINISH);
+			drone.notifyDroneEvent(DroneEventsType.BEACON_LOCK_FINISH);
 		}
 	}
 	
@@ -77,7 +73,7 @@ public class Beacon extends DroneVariable implements Serializable{
 				boolean started = false;
 				while (true) {
 					Thread.sleep(1000);
-					if (!myDrone.getGps().isPositionValid()) {
+					if (!drone.getGps().isPositionValid()) {
 						LoggerDisplayerManager.addErrorMessegeToDisplay("Drone doesn't have GPS location, skipp request to follow beacon");
 						continue;
 					}
@@ -85,9 +81,9 @@ public class Beacon extends DroneVariable implements Serializable{
 					syncBeacon();
 
 					// tmpPos != null mark that we are in the first iteration of the loop
-					if (started && !GuidedPoint.isGuidedMode(myDrone)) {
+					if (started && !GuidedPoint.isGuidedMode(drone)) {
 						LoggerDisplayerManager.addErrorMessegeToDisplay("Quad is must be in guided mode to follow beacon, operation canceled");
-						myDrone.notifyDroneEvent(DroneEventsType.FOLLOW_STOP);
+						drone.notifyDroneEvent(DroneEventsType.FOLLOW_STOP);
 						started = false;
 						break;
 					}
@@ -97,7 +93,7 @@ public class Beacon extends DroneVariable implements Serializable{
 						continue;
 					}
 					
-					myDrone.getGuidedPoint().forcedGuidedCoordinate(pLastPosition.dot(1));
+					drone.getGuidedPoint().forcedGuidedCoordinate(pLastPosition.dot(1));
 					tmpPos = pLastPosition;
 					started = true;
 					LoggerDisplayerManager.addGeneralMessegeToDisplay("Update Beacon position was sent to quad");
@@ -122,7 +118,7 @@ public class Beacon extends DroneVariable implements Serializable{
 			pFollowThread.cancel(true);
 		}
 		Logger.LogGeneralMessege("Change mode to Position Hold");
-		myDrone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
+		drone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
 		
 		pFollowThread = null;
 	}

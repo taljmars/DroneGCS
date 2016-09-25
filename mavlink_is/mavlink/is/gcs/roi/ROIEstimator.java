@@ -1,4 +1,8 @@
-package mavlink.core.gcs.roi;
+package mavlink.is.gcs.roi;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.Handler;
@@ -15,29 +19,23 @@ import mavlink.is.utils.units.Altitude;
  * calculates new points at 10Hz based on Last Location and Last Velocity.
  * 
  */
+@Component("roiEstimator")
 public class ROIEstimator implements LocationReceiver {
 
 	private static final int TIMEOUT = 100;
 	private Location realLocation;
 	private long timeOfLastLocation;
 
+	@Resource(name = "drone")
 	private Drone drone;
-	private Handler watchdog;
-	public Runnable watchdogCallback = new Runnable() {
-		@Override
-		public void run() {
-			updateROI();
-		}
-
-	};
-
-	public ROIEstimator(Handler handler, Drone drone) {
-		this.watchdog = handler;
-		this.drone = drone;
-	}
+	
+	@Resource(name = "handler")
+	private Handler handler;
+	
+	public Runnable watchdogCallback = () -> updateROI();
 
 	public void disableLocationUpdates() {
-		watchdog.removeCallbacks(watchdogCallback);
+		handler.removeCallbacks(watchdogCallback);
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class ROIEstimator implements LocationReceiver {
 			MavLinkROI.setROI(drone, new Coord3D(goCoord.getLat(), goCoord.getLng(), new Altitude(
 					1.0)));
 		}
-		watchdog.postDelayed(watchdogCallback, TIMEOUT);
+		handler.postDelayed(watchdogCallback, TIMEOUT);
 
 	}
 }

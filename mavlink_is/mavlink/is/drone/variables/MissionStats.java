@@ -1,26 +1,18 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.units.Length;
 
 @Component("missionStats")
 public class MissionStats extends DroneVariable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8340536929040184879L;
 	private double distanceToWp = 0;
 	private short currentWP = -1;
 
-	@Autowired
-	public MissionStats(Drone myDrone) {
-		super(myDrone);
-	}
 
 	public void setDistanceToWp(double disttowp) {
 		this.distanceToWp = disttowp;
@@ -29,7 +21,7 @@ public class MissionStats extends DroneVariable {
 	public void setWpno(short seq) {
 		if (seq != currentWP) {
 			this.currentWP = seq;
-			myDrone.notifyDroneEvent(DroneEventsType.MISSION_WP_UPDATE);
+			drone.notifyDroneEvent(DroneEventsType.MISSION_WP_UPDATE);
 		}
 	}
 

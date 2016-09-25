@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -44,28 +45,34 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 
 	private DroneInterfaces.OnParameterManagerListener parameterListener;
 
-	public Handler watchdog;
+	@Resource(name = "handler")
+	public Handler handler;
+	
 	public Runnable watchdogCallback = () -> onParameterStreamStopped();
 
 	public final ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
 
-	@Autowired
-	public Parameters(Drone myDrone, Handler handler) {
-		super(myDrone);
-		this.watchdog = handler;
-		myDrone.addDroneListener(this);
+	//@Autowired
+	//public Parameters(Drone drone, Handler handler) {
+	public Parameters() {
+		//super(drone);
+		//this.handler = handler;
+	}
+	
+	public void init() {
+		drone.addDroneListener(this);
 	}
 
 	public void refreshParameters() {
 		parameters.clear();
         parameterList.clear();
         
-        myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOAD_START);
+        drone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOAD_START);
 
 		if (parameterListener != null)
 			parameterListener.onBeginReceivingParameters();
 		
-		MavLinkParameters.requestParametersList(myDrone);
+		MavLinkParameters.requestParametersList(drone);
 		resetWatchdog();
 	}
 
@@ -112,7 +119,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 			}
 			killWatchdog();
 			LoggerDisplayerManager.addGeneralMessegeToDisplay("Parameters finished!");
-			myDrone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED_FINISH);
+			drone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED_FINISH);
 
 			if (parameterListener != null) {
 				parameterListener.onEndReceivingParameters(parameterList);
@@ -120,23 +127,23 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 		} else {
 			resetWatchdog();
 		}
-		myDrone.notifyDroneEvent(DroneEventsType.PARAMETER);
+		drone.notifyDroneEvent(DroneEventsType.PARAMETER);
 	}
 
 	private void reRequestMissingParams(int howManyParams) {
 		for (int i = 0; i < howManyParams; i++) {
 			if (!parameters.containsKey(i)) {
-				MavLinkParameters.readParameter(myDrone, i);
+				MavLinkParameters.readParameter(drone, i);
 			}
 		}
 	}
 
 	public void sendParameter(Parameter parameter) {
-		MavLinkParameters.sendParameter(myDrone, parameter);
+		MavLinkParameters.sendParameter(drone, parameter);
 	}
 
 	public void ReadParameter(String name) {
-		MavLinkParameters.readParameter(myDrone, name);
+		MavLinkParameters.readParameter(drone, name);
 	}
 
 	public Parameter getParameter(String name) {
@@ -160,12 +167,12 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	}
 
 	private void resetWatchdog() {
-		watchdog.removeCallbacks(watchdogCallback);
-		watchdog.postDelayed(watchdogCallback, TIMEOUT);
+		handler.removeCallbacks(watchdogCallback);
+		handler.postDelayed(watchdogCallback, TIMEOUT);
 	}
 
 	private void killWatchdog() {
-		watchdog.removeCallbacks(watchdogCallback);
+		handler.removeCallbacks(watchdogCallback);
 	}
 
 	static int i = 0 ;

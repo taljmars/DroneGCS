@@ -1,6 +1,6 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -11,9 +11,7 @@ import mavlink.is.utils.math.MathUtil;
 
 @Component("radio")
 public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -105254631328673776L;
 	public static final int MAX_FADE_MARGIN = 50;
 	public static final int MIN_FADE_MARGIN = 6;
@@ -29,11 +27,6 @@ public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListe
 	private double remrssi = -1;
 	private double noise = -1;
 	private double remnoise = -1;
-
-	@Autowired
-	public Radio(Drone myDroneImpl) {
-		super(myDroneImpl);
-	}
 
 	public int getRxErrors() {
 		return rxerrors;
@@ -99,11 +92,11 @@ public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListe
 			int currentSignalStrength = getSignalStrength();
 			// if signal strength dips below 10%
 			if (currentSignalStrength < 10.0 && previousSignalStrength >= 10.0) {
-				myDrone.notifyDroneEvent(DroneEventsType.WARNING_SIGNAL_WEAK);
+				drone.notifyDroneEvent(DroneEventsType.WARNING_SIGNAL_WEAK);
 			}
 			previousSignalStrength = currentSignalStrength;
 
-			myDrone.notifyDroneEvent(DroneEventsType.RADIO);
+			drone.notifyDroneEvent(DroneEventsType.RADIO);
 		}
 
 	}

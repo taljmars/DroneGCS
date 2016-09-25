@@ -1,8 +1,8 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
-import mavlink.is.drone.Drone;
+
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -22,10 +22,6 @@ public class Home extends DroneVariable {
 	private Coord2D coordinate;
 	private Altitude altitude = new Altitude(0);
 
-	@Autowired
-	public Home(Drone myDroneImpl) {
-		super(myDroneImpl);
-	}
 
 	public boolean isValid() {
 		return (coordinate != null);
@@ -36,8 +32,8 @@ public class Home extends DroneVariable {
 	}
 
 	public Length getDroneDistanceToHome() {
-		if (isValid() && myDrone.getGps().isPositionValid()) {
-			return GeoTools.getDistance(coordinate, myDrone.getGps().getPosition());
+		if (isValid() && drone.getGps().isPositionValid()) {
+			return GeoTools.getDistance(coordinate, drone.getGps().getPosition());
 		} else {
 			return new Length(0); // TODO fix this
 		}
@@ -54,7 +50,7 @@ public class Home extends DroneVariable {
 	public void setHome(msg_mission_item msg) {
 		this.coordinate = new Coord2D(msg.x, msg.y);
 		this.altitude = new Altitude(msg.z);
-		myDrone.notifyDroneEvent(DroneEventsType.HOME);
+		drone.notifyDroneEvent(DroneEventsType.HOME);
 	}
 
 	public msg_mission_item packMavlink() {

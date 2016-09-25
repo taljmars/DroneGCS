@@ -2,18 +2,23 @@ package mavlink.is.drone;
 
 import java.io.Serializable;
 
+import javax.annotation.Resource;
+
 public class DroneVariable  implements Serializable /*TALMA Serializele*/  {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 191659366278354844L;
-	protected transient Drone myDrone;
+	
+	@Resource(name = "drone")
+	protected transient Drone drone;
 
-	public DroneVariable(Drone myDrone) {
-		this.myDrone = myDrone;
+	//public DroneVariable(Drone myDrone) {
+	public DroneVariable() {
+		//this.myDrone = myDrone;
 	}
 
-	public void setDrone(Drone drone) {
-		myDrone = drone;
+	public void setDrone(Drone myDrone) {
+		drone = myDrone;
 	}
 }

@@ -7,7 +7,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
 import static java.lang.Math.toRadians;
-import gui.core.mapObjects.Coordinate;
+import gui.is.Coordinate;
 
 import java.util.List;
 

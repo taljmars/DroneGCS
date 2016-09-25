@@ -1,6 +1,7 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.core.mapObjects;
 
+import gui.is.Coordinate;
 import gui.is.classes.MyStroke;
 import gui.is.classes.Style;
 import gui.is.interfaces.MapRectangle;

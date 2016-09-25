@@ -3,15 +3,13 @@ package mavlink.is.drone.variables;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.core.mapObjects.Coordinate;
+import gui.is.Coordinate;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerManager;
 import logger.Logger;
-import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
@@ -21,9 +19,6 @@ import mavlink.is.utils.geoTools.GeoTools;
 @Component("perimeter")
 public class Perimeter  extends DroneVariable implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7429107483849276132L;
 	private MapPolygon pPolygon;
 	private boolean pEnforce;
@@ -33,13 +28,11 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	private ApmModes pMode;
 	private boolean pEnforcePermeterRunning = false;
 	
-	@Autowired
-	public Perimeter(Drone myDroneImpl) {
-		super(myDroneImpl);
+	public void init() {
 		pEnforce = false;
 		pAlert = false;
 		pPolygon = null;
-		pMode = myDroneImpl.getState().getMode();
+		pMode = drone.getState().getMode();
 	}
 	
 	public void setPolygon(MapPolygon perimeterPoly) {
@@ -51,14 +44,14 @@ public class Perimeter  extends DroneVariable implements Serializable {
 		
 		if (pEnforce || pAlert) {
 			if (!isContained()) {
-				myDrone.notifyDroneEvent(DroneEventsType.LEFT_PERIMETER);
+				drone.notifyDroneEvent(DroneEventsType.LEFT_PERIMETER);
 				if (pEnforce) {
-					myDrone.notifyDroneEvent(DroneEventsType.ENFORCING_PERIMETER);
+					drone.notifyDroneEvent(DroneEventsType.ENFORCING_PERIMETER);
 					try {
 						if (!pEnforcePermeterRunning) {
-							pMode = myDrone.getState().getMode();							
+							pMode = drone.getState().getMode();							
 							LoggerDisplayerManager.addErrorMessegeToDisplay("Changing flight from " + pMode.getName() + " to " + ApmModes.ROTOR_GUIDED.getName() + " (Enforcing perimeter)");
-							myDrone.getGuidedPoint().forcedGuidedCoordinate(getClosestPointOnPerimeterBorder());
+							drone.getGuidedPoint().forcedGuidedCoordinate(getClosestPointOnPerimeterBorder());
 							pEnforcePermeterRunning = true;
 						}
 					} catch (Exception e) {
@@ -70,7 +63,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 			else {
 				if (pEnforcePermeterRunning) {
 					LoggerDisplayerManager.addErrorMessegeToDisplay("Changing flight from " + ApmModes.ROTOR_GUIDED.getName() + " back to " + pMode.getName());
-					myDrone.getState().changeFlightMode(pMode);
+					drone.getState().changeFlightMode(pMode);
 					pEnforcePermeterRunning = false;
 				}
 				

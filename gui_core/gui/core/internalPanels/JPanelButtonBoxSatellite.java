@@ -8,6 +8,7 @@ import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
 import gui.is.services.NotificationsManager;
 
+import javax.annotation.Resource;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -16,7 +17,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
@@ -29,6 +30,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkArm;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
+@ComponentScan("mavlink.core.drone")
 @Component("buttonBoxSatellite")
 public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener {
 	
@@ -62,13 +64,13 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	private GridLayout gridLayout = new GridLayout(0, 2, 1, 1);
 
+	@Resource(name = "drone")
 	private Drone drone;
+	
+	@Resource(name = "keyBoardControler")
 	private KeyBoardControler keyBoardControler;
 	
-	@Autowired
-	public JPanelButtonBoxSatellite (Drone myDrone, KeyBoardControler myKeyBoardControler) {
-		this.keyBoardControler = myKeyBoardControler;
-		this.drone = myDrone;
+	public JPanelButtonBoxSatellite () {
 		
 		pnl = new JPanel();
 		pnl.setLayout(gridLayout);

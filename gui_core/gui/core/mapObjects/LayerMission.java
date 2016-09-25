@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.annotation.Resource;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JTable;
@@ -41,6 +42,8 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	
 	private static final long serialVersionUID = -1287037956711191751L;
 	private Mission mission;
+	
+	@Resource(name = "areaMission")
 	private JPanelMissionBox missionBox;
 	
 	enum Column {
@@ -118,17 +121,16 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 		}
 	}	
 
-    public LayerMission(String name, JPanelMissionBox missionBox) {
+	public LayerMission(String name) {
         super(name);
-        this.missionBox = missionBox;
     }
     
-    public LayerMission(LayerMission layer, JPanelMissionBox missionBox) {
+    public LayerMission(LayerMission layer) {
     	super(layer);
-    	this.missionBox = missionBox;
     	Mission mission_in_layer = layer.getMission();
     	if (mission_in_layer != null) {
-    		this.mission = new Mission(mission_in_layer.getDrone());
+    		this.mission = new Mission();
+    		this.mission.setDrone(mission_in_layer.getDrone());
     		Iterator<MissionItem> it = layer.getMission().getItems().iterator();
     		while (it.hasNext()) {
     			this.mission.addMissionItem(it.next());
@@ -372,7 +374,8 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	            }
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow-1);
 	            
-	            Mission tmpMission = new Mission(mission.getDrone());
+	            Mission tmpMission = new Mission();
+	            tmpMission.setDrone(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
 	            	tmpMission.addMissionItem(mi);
@@ -401,7 +404,8 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow+1);
 	            
-	            Mission tmpMission = new Mission(mission.getDrone());
+	            Mission tmpMission = new Mission();
+	            tmpMission.setDrone(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
 	            	tmpMission.addMissionItem(mi);

@@ -1,9 +1,9 @@
 package mavlink.is.drone.variables;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
+
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
@@ -16,29 +16,23 @@ public class Calibration extends DroneVariable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8920003037397720341L;
-	private Drone myDrone;
+
 	private String mavMsg;
 	private boolean calibrating;
 
-	@Autowired
-	public Calibration(Drone drone) {
-		super(drone);
-		this.myDrone = drone;
-	}
-
 	public boolean startCalibration() {
-        if(myDrone.getState().isFlying()) {
+        if(drone.getState().isFlying()) {
             calibrating = false;
         }
         else {
             calibrating = true;
-            MavLinkCalibration.sendStartCalibrationMessage(myDrone);
+            MavLinkCalibration.sendStartCalibrationMessage(drone);
         }
         return calibrating;
 	}
 
 	public void sendAckk(int step) {
-		MavLinkCalibration.sendCalibrationAckMessage(step, myDrone);
+		MavLinkCalibration.sendCalibrationAckMessage(step, drone);
 	}
 
 	public void processMessage(MAVLinkMessage msg) {
@@ -49,7 +43,7 @@ public class Calibration extends DroneVariable {
 			if (mavMsg.contains("Calibration"))
 				calibrating = false;
 
-			myDrone.notifyDroneEvent(DroneEventsType.CALIBRATION_IMU);
+			drone.notifyDroneEvent(DroneEventsType.CALIBRATION_IMU);
 		}
 	}
 
