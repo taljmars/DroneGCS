@@ -3,7 +3,6 @@ package gui.core.mapViewer;
 
 import gui.core.mapObjects.*;
 import gui.core.mapTileSources.BingAerialTileSource;
-import gui.core.internalFrames.JInternalFrameMap;
 import gui.is.Coordinate;
 import gui.is.classes.Tile;
 import gui.is.events.JMVCommandEvent;
@@ -120,8 +119,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 
     protected EventListenerList evtListenerList = new EventListenerList();
 
-	private JInternalFrameMap jInternalFrameMap;
-
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
      * mouse: hold right mouse button for moving, double click left mouse button
@@ -130,11 +127,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
      * retrieving the tiles.
      * @param jInternalFrameMap 
      */
-    public JMapViewer(JInternalFrameMap jInternalFrameMap) {
+    //public JMapViewer(JInternalFrameMap jInternalFrameMap) {
+	public JMapViewer() {
         this(new MemoryTileCache());
         new DefaultMapController(this);
         addMouseListener(this);
-        this.jInternalFrameMap = jInternalFrameMap;
     }
 
     /**
@@ -1638,17 +1635,17 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         }
     }
 
-	public void showPopup(MouseEvent e) {
-		// TODO Auto-generated method stub
-		jInternalFrameMap.createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
-	}
+//	public void showPopup(MouseEvent e) {
+//		internalFrameMap.createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
+//	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		switch (e.getButton()) {
 			case MouseEvent.BUTTON3:
-				showPopup(e);
+				//showPopup(e);
+				this.fireJMVEvent(new JMVCommandEvent(COMMAND.POPUP_MAP, e));
 				break;
 			case MouseEvent.BUTTON1:
 				if (e.isControlDown()) this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));

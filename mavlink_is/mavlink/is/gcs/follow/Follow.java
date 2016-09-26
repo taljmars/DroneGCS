@@ -1,6 +1,5 @@
 package mavlink.is.gcs.follow;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.ComponentScan;

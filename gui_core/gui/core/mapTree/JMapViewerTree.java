@@ -1,7 +1,6 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.core.mapTree;
 
-import gui.core.internalFrames.JInternalFrameMap;
 import gui.core.internalPanels.JPanelConfigurationBox;
 import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapObjects.Layer;
@@ -32,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -54,8 +54,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkModes;
 public class JMapViewerTree extends JPanel {
     /** Serial Version UID */
     private static final long serialVersionUID = 3050203054402323972L;
-
-    private JMapViewer map = null;
+    
     private CheckBoxTree tree = null;
     private JPanel treePanel = null;
     private JSplitPane splitPane = null;
@@ -67,15 +66,22 @@ public class JMapViewerTree extends JPanel {
     
     @Resource(name = "areaConfiguration")
 	private JPanelConfigurationBox areaConfiguration;
+    
+    @Resource(name = "map")
+    private JMapViewer map;
 
 	@Resource(name = "drone")
 	private Drone drone;
+	
+	public JMapViewerTree() {
+		this("Map Views");
+	}
 
-    public JMapViewerTree(String name, JInternalFrameMap jInternalFrameMap) {
-        this(name, false, jInternalFrameMap);
+    private JMapViewerTree(String name) {
+        this(name, false);
     }
 
-    public JMapViewerTree(String name, boolean treeVisible, JInternalFrameMap jInternalFrameMap) {
+    private JMapViewerTree(String name, boolean treeVisible) {
         super();
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         
@@ -101,19 +107,24 @@ public class JMapViewerTree extends JPanel {
         
         treePanel = new JPanel(new BorderLayout());
         treePanel.add(tmpButons, BorderLayout.SOUTH);
-        map = new JMapViewer(jInternalFrameMap);
 
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(150);
 
         //Provide minimum sizes for the two components in the split pane
-        Dimension minimumSize = new Dimension(100, 50);
-        //tree.setMinimumSize(minimumSize);
-        map.setMinimumSize(minimumSize);
+       
         setLayout(new BorderLayout());
-        setTreeVisible(treeVisible);
+        //setTreeVisible(treeVisible);
         
         setTree(new CheckBoxTree(name));
+    }
+    
+    @PostConstruct
+    public void init() {
+    	 Dimension minimumSize = new Dimension(100, 50);
+         //tree.setMinimumSize(minimumSize);
+         map.setMinimumSize(minimumSize);
+         setTreeVisible(true);
     }
     
     private void setTree(CheckBoxTree new_tree) {

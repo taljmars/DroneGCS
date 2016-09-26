@@ -1,7 +1,5 @@
 package mavlink.is.drone.variables;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.stereotype.Component;
 
 import logger.Logger;

@@ -19,7 +19,8 @@ public class JMVCommandEvent extends EventObject {
         FLIGHT, 
         EDITMODE_EXISTING_LAYER_START, 
         EDITMODE_PUBLISH,
-        EDITMODE_DISCARD,
+        EDITMODE_DISCARD, 
+        POPUP_MAP,
     }
 
     private COMMAND command;

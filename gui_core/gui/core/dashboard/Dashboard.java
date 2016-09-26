@@ -325,14 +325,11 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		int prc = (int) (((double) (drone.getParameters().getLoadedDownloadedParameters()) / drone.getParameters().getExpectedParameterAmount()) * 100);
 		if (prc > 95) {
 			System.out.println(getClass().getName() + " Setup stream rate");
-			// MavLinkStreamRates.setupStreamRates(drone.getMavClient(), 1, 1,
-			// 1, 1, 1, 1, 1, 1);
 			drone.getStreamRates().setupStreamRatesFromPref();
 			tbContorlButton.setButtonControl(true);
 			System.out.println(getClass().getName() + " " + drone.getParameters().getParameter("MOT_SPIN_ARMED"));
 			if (drone.isConnectionAlive()) {
 				tbTelemtry.SetHeartBeat(true);
-				// SetFlightModeLabel(drone.getState().getMode().getName());
 				drone.notifyDroneEvent(DroneEventsType.MODE);
 			}
 		}

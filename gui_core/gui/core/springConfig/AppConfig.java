@@ -14,6 +14,8 @@ import gui.core.internalFrames.JInternalFrameMap;
 import gui.core.internalPanels.JPanelConfigurationBox;
 import gui.core.internalPanels.JPanelLogBox;
 import gui.core.internalPanels.JPanelMissionBox;
+import gui.core.mapTree.JMapViewerTree;
+import gui.core.mapViewer.JMapViewer;
 import gui.is.interfaces.KeyBoardControler;
 import mavlink.core.drone.ClockImpl;
 import mavlink.core.drone.HandlerImpl;
@@ -106,5 +108,14 @@ public class AppConfig {
 		return new JInternalFrameActualPWM();
 	}
 	
+	@Bean
+	public JMapViewerTree treeMap() {
+		return new JMapViewerTree();
+	}
+	
+	@Bean
+	public JMapViewer map() {
+		return new JMapViewer();
+	}
 	
 }

@@ -86,7 +86,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	@Resource(name = "areaMission")
 	private JPanelMissionBox missionBox;
 	
-	static JMapViewerTree treeMap;
+	@Resource(name = "treeMap")
+	private JMapViewerTree treeMap;
+	
 	JLabel mperpLabelValue;
 	JLabel zoomValue;
 	JCheckBox showToolTip;
@@ -137,14 +139,15 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	public JInternalFrameMap() {
 		this(frameName);
 	}
-
+	
 	private JInternalFrameMap(String name, boolean resizable, boolean closable,
 			boolean maximizable, boolean iconifiable) {
-		super(name, resizable, closable, maximizable, iconifiable);
-		
+		super(name, resizable, closable, maximizable, iconifiable);	
+	}
+	
+	@PostConstruct
+	public void init() {		
 		setBounds(25, 25, 800, 400);
-
-		treeMap = new JMapViewerTree("Map Views", this);
 
 		getContentPane().add(treeMap, BorderLayout.CENTER);
 
@@ -210,7 +213,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		// Listen to the map viewer for user operations so components will
 		// receive events and update
 		map().addJMVListener(this);
-		//map().addJMVListener(KeyBoardControl.get());
+		
 
 		missionsGroup = new LayerGroup("Missions");
 		perimetersGroup = new LayerGroup("Perimeters");
@@ -253,10 +256,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		panelTop.add(tileLoaderSelector);
 
 		pack();
-	}
-	
-	@PostConstruct
-	public void init() {
+
 		drone.addDroneListener(this);
 		map().addJMVListener(this.keyboardController);
 	}
@@ -273,7 +273,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		map().addMapMarker(myPos);
 	}
 
-	private static JMapViewer map() {
+	//private static JMapViewer map() {
+	private JMapViewer map() {
 		return treeMap.getViewer();
 	}
 
@@ -721,62 +722,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting new Home position");
 	}
 
-	@Override
-	public void processCommand(JMVCommandEvent command) {
-		switch (command.getCommand()) {
-		case ZOOM:
-		case MOVE:
-			updateZoomParameters();
-			break;
-		case FLIGHT:
-			break;
-		case CONTORL_KEYBOARD:
-			break;
-		case EDITMODE_EXISTING_LAYER_START:
-			EditModeOn();
-			Layer layer = (Layer) command.getSource();
-			if (layer instanceof LayerMission) {
-				System.out.println("Working on Mission Layer");
-				modifyiedLayerMission = (LayerMission) layer;
-				//modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, missionBox);
-				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
-				modifyiedLayerMissionOriginal.initialize();
-				modifyiedLayerMission.buildMissionTable(map());
-				isMissionBuildMode = true;
-				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + "*");
-			} else if (layer instanceof LayerPerimeter) {
-				System.out.println("Working on Perimeter Layer");
-				modifyiedLayerPerimeter = (LayerPerimeter) layer;
-				modifyiedLayerPerimeterOriginal = new LayerPerimeter(modifyiedLayerPerimeter);
-				modifyiedLayerPerimeterOriginal.initialize();
-				isPerimeterBuildMode = true;
-				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + "*");
-			} else {
-				EditModeOff();
-				return;
-			}
-
-			treeMap.getViewer().repaint();
-			treeMap.getViewer().updateUI();
-			treeMap.getTree().repaint();
-			treeMap.getTree().updateUI();
-
-			break;
-		case EDITMODE_PUBLISH:
-			EditModeSaveChanges();
-			break;
-		case EDITMODE_DISCARD:
-			EditModeUndoChanges();
-			break;
-		case CONTORL_MAP:
-			if (setGeoFenceByMouse)
-				updateGeoFence((MouseWheelEvent) command.getSource());
-			else if (setPerimeterByMouse)
-				updatePerimeter((MouseEvent) command.getSource());
-			break;
-		}
-	}
-
 	private void EditModeUndoChanges() {
 		// Missions
 		if (modifyiedLayerMission != null) {
@@ -987,8 +932,63 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		return drone;
 	}
 	
-	public static AbstractJInternalFrame generateMyOwn() {
-		return new JInternalFrameMap();
-	}
+	@Override
+	public void processCommand(JMVCommandEvent command) {
+		System.out.println("asdasd");
+		switch (command.getCommand()) {
+		case ZOOM:
+		case MOVE:
+			updateZoomParameters();
+			break;
+		case FLIGHT:
+			break;
+		case CONTORL_KEYBOARD:
+			break;
+		case EDITMODE_EXISTING_LAYER_START:
+			EditModeOn();
+			Layer layer = (Layer) command.getSource();
+			if (layer instanceof LayerMission) {
+				System.out.println("Working on Mission Layer");
+				modifyiedLayerMission = (LayerMission) layer;
+				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
+				modifyiedLayerMissionOriginal.initialize();
+				modifyiedLayerMission.buildMissionTable(map());
+				isMissionBuildMode = true;
+				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + "*");
+			} else if (layer instanceof LayerPerimeter) {
+				System.out.println("Working on Perimeter Layer");
+				modifyiedLayerPerimeter = (LayerPerimeter) layer;
+				modifyiedLayerPerimeterOriginal = new LayerPerimeter(modifyiedLayerPerimeter);
+				modifyiedLayerPerimeterOriginal.initialize();
+				isPerimeterBuildMode = true;
+				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + "*");
+			} else {
+				EditModeOff();
+				return;
+			}
 
+			treeMap.getViewer().repaint();
+			treeMap.getViewer().updateUI();
+			treeMap.getTree().repaint();
+			treeMap.getTree().updateUI();
+
+			break;
+		case EDITMODE_PUBLISH:
+			EditModeSaveChanges();
+			break;
+		case EDITMODE_DISCARD:
+			EditModeUndoChanges();
+			break;
+		case CONTORL_MAP:
+			if (setGeoFenceByMouse)
+				updateGeoFence((MouseWheelEvent) command.getSource());
+			else if (setPerimeterByMouse)
+				updatePerimeter((MouseEvent) command.getSource());
+			break;
+		case POPUP_MAP:
+			MouseEvent e = (MouseEvent) command.getSource();
+			createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
+			break;
+		}
+	}
 }
