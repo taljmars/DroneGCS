@@ -247,11 +247,6 @@ public class MyDroneImpl implements Drone {
 		return profile;
 	}
 
-//	@Override
-//	public MavLinkConnection getMavClient() {
-//		return MavClient;
-//	}
-
 	@Override
 	public Preferences getPreferences() {
 		return preferences;

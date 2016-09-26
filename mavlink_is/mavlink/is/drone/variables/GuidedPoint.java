@@ -1,6 +1,5 @@
 package mavlink.is.drone.variables;
 
-
 import org.springframework.stereotype.Component;
 
 import gui.is.Coordinate;
