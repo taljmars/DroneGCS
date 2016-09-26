@@ -1,12 +1,11 @@
 package gui.core.dashboard;
 
 import gui.core.internalPanels.*;
+import gui.core.springConfig.AppConfig;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import gui.is.services.LoggerDisplayerManager;
@@ -16,18 +15,10 @@ import gui.is.services.NotificationsListener;
 import javax.annotation.Resource;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.stereotype.Component;
 
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
@@ -35,13 +26,7 @@ import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-@ComponentScan("gui.core.springConfig")
-@ComponentScan("gui.core.internalPanels")
-@Component("dashboard")
-@Configuration
 public class Dashboard implements OnDroneListener, NotificationsListener, OnWaypointManagerListener {
-	
-	private static AbstractApplicationContext context = null;
 	
 	private JFrame frame;
 
@@ -53,25 +38,17 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	@Resource(name = "drone")
 	public Drone drone;
 	
-	@Bean
-	public JDesktopPane frameContainer() {
-		return new JDesktopPane();
-	}
+	@Resource(name="frameContainer")
+	private JDesktopPane frameContainer;
 	
-	@Bean
-	public JPanelLogBox areaLogBox() {
-		return new JPanelLogBox(new GridBagLayout());
-	}
+	@Resource(name="areaLogBox")
+	private JPanelLogBox areaLogBox;
 
-	@Bean
-	public JPanelMissionBox areaMission() {
-		return new JPanelMissionBox(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, dimention());	
-	}
+	@Resource(name="areaMission")
+	private JPanelMissionBox areaMission;
 	
-	@Bean
-	public JPanelConfigurationBox areaConfiguration() {
-		return new JPanelConfigurationBox(new JPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED, dimention());
-	}
+	@Resource(name="areaConfiguration")
+	private JPanelConfigurationBox areaConfiguration;
 	
 	@Resource(name="telemetrySatellite")
 	private JPanelTelemetrySatellite tbTelemtry;
@@ -85,18 +62,13 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	private JTabbedPane tbSouth;
 	private JToolBar toolBar;
 	private JProgressBar progressBar;
-	
-	private Dimension dimention() {
-		 return new Dimension(1200, 150);
-	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					System.out.println("Start Dashboard");
-					context = new AnnotationConfigApplicationContext(Dashboard.class);
-					Dashboard dashboard = (Dashboard) context.getBean("dashboard");
+					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
 					dashboard.initializeGui();
 					dashboard.initializeComponents();
 					dashboard.refresh();
@@ -109,7 +81,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 
 	private void initializeComponents() {
 		System.out.println("Start Logger Displayer Manager");
-		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox());
+		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox);
 
 		System.out.println("Start Notifications Manager");
 		NotificationsManager.addNotificationListener(this);
@@ -131,7 +103,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		tbContorlButton.setButtonControl(false);
 
 		System.out.println("Setting Configurtaion");
-		areaConfiguration().setDrone(drone);
+		areaConfiguration.setDrone(drone);
 
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
@@ -164,7 +136,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		// Central Panel
-		frame.getContentPane().add(frameContainer(), BorderLayout.CENTER);
+		frame.getContentPane().add(frameContainer, BorderLayout.CENTER);
 
 		// South Panel
 		JPanel southPanel = new JPanel(new BorderLayout());
@@ -179,9 +151,9 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		tbSouth = new JTabbedPane(JTabbedPane.TOP);
 		toolBar.add(tbSouth);
 		
-		tbSouth.addTab("Log Book", null, areaLogBox(), null);
-		tbSouth.addTab("Configuration", null, areaConfiguration(), null);
-		tbSouth.addTab("Mission", null, areaMission(), null);
+		tbSouth.addTab("Log Book", null, areaLogBox, null);
+		tbSouth.addTab("Configuration", null, areaConfiguration, null);
+		tbSouth.addTab("Mission", null, areaMission, null);
 		
 		// North Panel
 		frame.getContentPane().add(tbToolBar, BorderLayout.NORTH);

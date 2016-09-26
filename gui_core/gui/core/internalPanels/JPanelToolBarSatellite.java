@@ -1,15 +1,13 @@
 package gui.core.internalPanels;
 
 import gui.core.internalFrames.AbstractJInternalFrame;
-import gui.core.internalFrames.JInternalFrameActualPWM;
-import gui.core.internalFrames.JInternalFrameMap;
+import gui.core.springConfig.AppConfig;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
-import java.lang.reflect.Method;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -27,9 +25,6 @@ import org.springframework.stereotype.Component;
 @Component("toolbarSatellite")
 public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 763689884103713162L;
 	
 	private JPanel pnl;
@@ -40,7 +35,9 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	@Resource(name = "frameContainer")
 	private JDesktopPane frameContainer;
 	
-	private AbstractJInternalFrame internalMapFrame = null;
+	@Resource(name = "internalFrameMap")
+	private AbstractJInternalFrame internalFrameMap = null;
+	
 	private AbstractJInternalFrame internalActualPWMFrame = null;
 
 	public JPanelToolBarSatellite() {
@@ -67,14 +64,13 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	
 	@PostConstruct
 	public void init() {
-		internalMapFrame = new JInternalFrameMap();
-        frameContainer.add(internalMapFrame);
-        internalMapFrame.setVisible(true);
+        frameContainer.add(internalFrameMap);
+        internalFrameMap.setVisible(true);
         try {
-			internalMapFrame.setMaximum(true);
+        	internalFrameMap.setMaximum(true);
 		} catch (PropertyVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.LogErrorMessege("Internal Error: Failed to load map frame");
+			Logger.LogErrorMessege(e.getMessage());
 		}
 	}
 	
@@ -82,28 +78,26 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == btnMap) {
-			internalMapFrame = loadFrame(internalMapFrame, JInternalFrameMap.class);
+			internalFrameMap = loadFrame(internalFrameMap, "internalFrameMap");
 			return;
 		}
 		
 		if (e.getSource() == btnActualPWM) {
-			internalActualPWMFrame = loadFrame(internalActualPWMFrame, JInternalFrameActualPWM.class);
+			internalActualPWMFrame = loadFrame(internalActualPWMFrame, "internalFrameActualPWM");
 			return;
 		}
 	}
 	
-	private AbstractJInternalFrame loadFrame(AbstractJInternalFrame internalFrame, Class<? extends AbstractJInternalFrame> classType) {
+	private AbstractJInternalFrame loadFrame(AbstractJInternalFrame internalFrame, String beanName) {
 		if (internalFrame == null || !internalFrame.isLoaded()) {
-			Method m;
 			try {
-				m = classType.getMethod(AbstractJInternalFrame.generateMyOwnMethodName);
-				internalFrame = (AbstractJInternalFrame) m.invoke(null);
+				internalFrame = (AbstractJInternalFrame) AppConfig.context.getBean(beanName);
 				frameContainer.add(internalFrame);
 				internalFrame.setVisible(true);
 				internalFrame.setMaximum(true);
 			} 
 			catch (Exception e1) {
-				Logger.LogErrorMessege("Internal Error: Failed to load map frame");
+				Logger.LogErrorMessege("Internal Error: Failed to frame of bean '" + beanName + "'");
 				Logger.LogErrorMessege(e1.getMessage());
 			}
 		}
