@@ -902,7 +902,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == cbLockMyPos) {
+		if (e.getSource().equals(cbLockMyPos)) {
 			if (cbLockMyPos.isSelected()) {
 				LoggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
 				lockMapOnMyPosition = true;
@@ -913,7 +913,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 		}
 		
-		if (e.getSource() == cbFollowTrail) {
+		if (e.getSource().equals(cbFollowTrail)) {
 			if (cbFollowTrail.isSelected()) {
 				LoggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
 				myTrailPath = null;
