@@ -7,6 +7,7 @@ import gui.is.Coordinate;
 import gui.is.classes.Tile;
 import gui.is.events.JMVCommandEvent;
 import gui.is.events.JMVCommandEvent.COMMAND;
+import gui.is.events.JMVEventPublisher;
 import gui.is.interfaces.*;
 import gui.is.services.LoggerDisplayerManager;
 
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -100,6 +102,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     
     protected JButton btnEditSaveMode;
     protected JButton btnEditCancelMode;
+    
+    @Resource(name = "jMVEventPublisher")
+    private JMVEventPublisher jmvEventPublisher; 
 
     /**
      * Apparence of zoom controls.
@@ -292,7 +297,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	if (layer != null) {
     		System.out.println(getClass().getName() + " Start Working on exisitng layer:" + layer.getName());
     		LoggerDisplayerManager.addGeneralMessegeToDisplay("Editing layer: " + layer.getName());
-    		this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
+    		//this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
+    		jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
     	}
     }
     
@@ -300,11 +306,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	SetEditModeGUI(false);
     	if (should_save) {
     		System.out.println(getClass().getName() + " Publish..");
-    		this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_PUBLISH, 1));
+    		//this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_PUBLISH, 1));
+    		jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.EDITMODE_PUBLISH, 1));
     	}
     	else {
     		System.out.println(getClass().getName() + " Discarding..");
-    		this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_DISCARD, 1));
+    		//this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_DISCARD, 1));
+    		jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.EDITMODE_DISCARD, 1));
     	}
     }
 
@@ -1062,7 +1070,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         center.x += x;
         center.y += y;
         repaint();
-        this.fireJMVEvent(new JMVCommandEvent(COMMAND.MOVE, this));
+        //this.fireJMVEvent(new JMVCommandEvent(COMMAND.MOVE, this));
+        jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.MOVE, this));
     }
 
     /**
@@ -1118,7 +1127,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         // requests
         setDisplayPosition(mapPoint, zoomPos, zoom);
 
-        this.fireJMVEvent(new JMVCommandEvent(COMMAND.ZOOM, this));
+        //this.fireJMVEvent(new JMVCommandEvent(COMMAND.ZOOM, this));
+        jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.ZOOM, this));
     }
 
     /**
@@ -1607,34 +1617,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         return attribution;
     }
 
-    /**
-     * @param listener listener to set
-     */
-    public void addJMVListener(JMapViewerEventListener listener) {
-        evtListenerList.add(JMapViewerEventListener.class, listener);
-    }
-
-    /**
-     * @param listener listener to remove
-     */
-    public void removeJMVListener(JMapViewerEventListener listener) {
-        evtListenerList.remove(JMapViewerEventListener.class, listener);
-    }
-
-    /**
-     * Send an update to all objects registered with viewer
-     *
-     * @param evt event to dispatch
-     */
-    private void fireJMVEvent(JMVCommandEvent evt) {
-        Object[] listeners = evtListenerList.getListenerList();
-        for (int i = 0; i < listeners.length; i += 2) {
-            if (listeners[i] == JMapViewerEventListener.class) {
-                ((JMapViewerEventListener) listeners[i + 1]).processCommand(evt);
-            }
-        }
-    }
-
 //	public void showPopup(MouseEvent e) {
 //		internalFrameMap.createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
 //	}
@@ -1645,10 +1627,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 		switch (e.getButton()) {
 			case MouseEvent.BUTTON3:
 				//showPopup(e);
-				this.fireJMVEvent(new JMVCommandEvent(COMMAND.POPUP_MAP, e));
+				//this.fireJMVEvent(new JMVCommandEvent(COMMAND.POPUP_MAP, e));
+				System.out.println("Right Click");
+				jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.POPUP_MAP, e));
 				break;
 			case MouseEvent.BUTTON1:
-				if (e.isControlDown()) this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
+				//if (e.isControlDown()) this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
+				if (e.isControlDown()) jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
 				break;			
 		}
 	}
@@ -1679,7 +1664,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 		
 		// General Keyboard Control commands (ctrl +)
 		if (keyEvent.isControlDown()) {
-			this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_KEYBOARD, keyEvent));
+			//this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_KEYBOARD, keyEvent));
+			jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.CONTORL_KEYBOARD, keyEvent));
 			return;
 		}
 		
@@ -1699,13 +1685,15 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 		
 		System.out.println("FLIGHT");
 		// Flight control
-		this.fireJMVEvent(new JMVCommandEvent(COMMAND.FLIGHT, keyEvent));
+		//this.fireJMVEvent(new JMVCommandEvent(COMMAND.FLIGHT, keyEvent));
+		jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.FLIGHT, keyEvent));
 	}
 
 	public void updateMouseWheelEvent(MouseWheelEvent e) {
 		// General MouseWheel Control commands (ctrl +)
 		if (e.isControlDown()) {
-			this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
+			//this.fireJMVEvent(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
+			jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.CONTORL_MAP, e));
 			return;
 		}
 	}

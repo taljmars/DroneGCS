@@ -9,11 +9,11 @@ import gui.core.mapObjects.LayerMission;
 import gui.core.mapObjects.LayerPerimeter;
 import gui.core.mapObjects.MapPolygonImpl;
 import gui.core.mapViewer.JMapViewer;
+import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.AbstractLayer;
 import gui.is.interfaces.MapObject;
 import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerManager;
-import gui.is.services.NotificationsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -72,6 +72,9 @@ public class JMapViewerTree extends JPanel {
 
 	@Resource(name = "drone")
 	private Drone drone;
+	
+	@Resource(name = "textNotificationPublisher")
+	private TextNotificationPublisher textNotificationPublisher;
 	
 	public JMapViewerTree() {
 		this("Map Views");
@@ -305,9 +308,9 @@ public class JMapViewerTree extends JPanel {
             			ActiveLayerMission.setName("(ACTIVE) " + ActiveLayerMission.getName());
             			LoggerDisplayerManager.addOutgoingMessegeToDisplay("Change mode to " + ApmModes.ROTOR_AUTO.getName());
             			drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
-            			NotificationsManager.add("Start Mission");
-            			NotificationsManager.add("Start Mission");
-            			NotificationsManager.add("Start Mission");
+            			textNotificationPublisher.publish("Start Mission");
+            			textNotificationPublisher.publish("Start Mission");
+            			textNotificationPublisher.publish("Start Mission");
             		}
             		
             		tree.repaint();
@@ -324,7 +327,7 @@ public class JMapViewerTree extends JPanel {
             		
             		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
             		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
-            		NotificationsManager.add("Return To Lunch");
+            		textNotificationPublisher.publish("Return To Lunch");
             		
             		ActiveLayerMission = null;
             		

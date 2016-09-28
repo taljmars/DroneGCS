@@ -4,9 +4,9 @@ import java.awt.GridLayout;
 
 import gui.core.operations.internal.ArmQuad;
 import gui.core.operations.internal.TakeoffQuad;
+import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerManager;
-import gui.is.services.NotificationsManager;
 
 import javax.annotation.Resource;
 import javax.swing.AbstractButton;
@@ -69,6 +69,9 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	@Resource(name = "keyBoardControler")
 	private KeyBoardControler keyBoardControler;
+	
+	@Resource(name = "textNotificationPublisher")
+	private TextNotificationPublisher textNotificationPublisher;
 	
 	public JPanelButtonBoxSatellite () {
 		
@@ -155,12 +158,12 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
                 	if (n == 0) {
                 		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
                 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
-                		NotificationsManager.add("Landing");
+                		textNotificationPublisher.publish("Landing");
                 	}
                 	else if (n == 1) {
                 		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
                 		LoggerDisplayerManager.addGeneralMessegeToDisplay("RTL");
-                		NotificationsManager.add("RTL");
+                		textNotificationPublisher.publish("RTL");
                 	}
                 	else 
                 		btnArm.setSelected(true);
@@ -183,12 +186,12 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         	if (n == 0) {
         		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
         		LoggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
-        		NotificationsManager.add("Landing");
+        		textNotificationPublisher.publish("Landing");
         	}
         	else if(n == 1) {
         		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
         		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
-        		NotificationsManager.add("Return To Lunch");
+        		textNotificationPublisher.publish("Return To Lunch");
         	}
         	keyBoardControler.ReleaseIfNeeded();
         });

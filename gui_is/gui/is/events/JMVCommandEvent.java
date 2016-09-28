@@ -1,7 +1,7 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is.events;
 
-import java.util.EventObject;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * Used for passing events between UI components and other
@@ -10,7 +10,7 @@ import java.util.EventObject;
  * @author Jason Huntley
  *
  */
-public class JMVCommandEvent extends EventObject {
+public class JMVCommandEvent extends ApplicationEvent {
     public enum COMMAND {
         MOVE,
         ZOOM,

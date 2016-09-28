@@ -1,7 +1,6 @@
 package gui.core.internalPanels;
 
 import gui.core.internalFrames.AbstractJInternalFrame;
-import gui.core.springConfig.AppConfig;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -36,9 +35,10 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	private JDesktopPane frameContainer;
 	
 	@Resource(name = "internalFrameMap")
-	private AbstractJInternalFrame internalFrameMap = null;
+	private AbstractJInternalFrame internalFrameMap;
 	
-	private AbstractJInternalFrame internalActualPWMFrame = null;
+	@Resource(name = "internalFrameActualPWM")
+	private AbstractJInternalFrame internalFrameActualPWM;
 
 	public JPanelToolBarSatellite() {
 		
@@ -65,46 +65,34 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	@PostConstruct
 	public void init() {
         frameContainer.add(internalFrameMap);
-        internalFrameMap.setVisible(true);
+        frameContainer.add(internalFrameActualPWM);
+        
         try {
         	internalFrameMap.setMaximum(true);
+        	internalFrameActualPWM.setMaximum(true);
 		} catch (PropertyVetoException e) {
-			Logger.LogErrorMessege("Internal Error: Failed to load map frame");
+			Logger.LogErrorMessege("Internal Error: Failed to load frame");
 			Logger.LogErrorMessege(e.getMessage());
 		}
+        
+        internalFrameActualPWM.setVisible(false);
+        internalFrameMap.setVisible(true);
 	}
 	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == btnMap) {
-			internalFrameMap = loadFrame(internalFrameMap, "internalFrameMap");
+			internalFrameMap.setVisible(true);
+			internalFrameMap.moveToFront();
 			return;
 		}
 		
 		if (e.getSource() == btnActualPWM) {
-			internalActualPWMFrame = loadFrame(internalActualPWMFrame, "internalFrameActualPWM");
+			internalFrameActualPWM.setVisible(true);
+			internalFrameActualPWM.moveToFront();
 			return;
 		}
-	}
-	
-	private AbstractJInternalFrame loadFrame(AbstractJInternalFrame internalFrame, String beanName) {
-		if (internalFrame == null || !internalFrame.isLoaded()) {
-			try {
-				internalFrame = (AbstractJInternalFrame) AppConfig.context.getBean(beanName);
-				frameContainer.add(internalFrame);
-				internalFrame.setVisible(true);
-				internalFrame.setMaximum(true);
-			} 
-			catch (Exception e1) {
-				Logger.LogErrorMessege("Internal Error: Failed to frame of bean '" + beanName + "'");
-				Logger.LogErrorMessege(e1.getMessage());
-			}
-		}
-		
-		internalFrame.moveToFront();
-		
-		return internalFrame;
 	}
 
 	@Override

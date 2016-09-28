@@ -1,6 +1,6 @@
 package gui.is.interfaces;
 
-public interface KeyBoardControler extends JMapViewerEventListener {
+public interface KeyBoardControler {
 
 	void HoldIfNeeded();
 

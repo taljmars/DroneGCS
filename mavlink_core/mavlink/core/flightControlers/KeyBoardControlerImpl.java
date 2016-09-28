@@ -18,6 +18,8 @@ import javax.annotation.Resource;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.springframework.context.event.EventListener;
+
 import communication_device.TwoWaySerialComm;
 import logger.Logger;
 import mavlink.is.drone.Drone;
@@ -449,8 +451,11 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	@Override
-	public void processCommand(JMVCommandEvent command) {
+	//@Override
+	@EventListener
+	//public void processCommand(JMVCommandEvent command) {
+	public void onApplicationEvent(JMVCommandEvent command) {
+		System.out.println("Application Event: " + getClass());
 		switch (command.getCommand()) {
 			case ZOOM:
 			case MOVE:

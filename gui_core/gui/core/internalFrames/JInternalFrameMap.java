@@ -20,14 +20,13 @@ import gui.is.Coordinate;
 import gui.is.classes.MyStroke;
 import gui.is.classes.Style;
 import gui.is.events.JMVCommandEvent;
+import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.ICoordinate;
-import gui.is.interfaces.JMapViewerEventListener;
 import gui.is.interfaces.KeyBoardControler;
 import gui.is.interfaces.MapLine;
 import gui.is.interfaces.TileLoader;
 import gui.is.interfaces.TileSource;
 import gui.is.services.LoggerDisplayerManager;
-import gui.is.services.NotificationsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -49,7 +48,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.WindowConstants;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -72,7 +73,7 @@ import mavlink.is.utils.units.Altitude;
 
 @Component("internalFrameMap")
 public class JInternalFrameMap extends AbstractJInternalFrame implements
-		JMapViewerEventListener, OnDroneListener, OnWaypointManagerListener, ActionListener {
+	OnDroneListener, OnWaypointManagerListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private static final String frameName = "Map View";
@@ -88,6 +89,12 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	
 	@Resource(name = "treeMap")
 	private JMapViewerTree treeMap;
+	
+	@Resource(name = "map")
+	private JMapViewer map;
+	
+	@Resource(name = "textNotificationPublisher")
+	private TextNotificationPublisher textNotificationPublisher;
 	
 	JLabel mperpLabelValue;
 	JLabel zoomValue;
@@ -157,13 +164,13 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		getContentPane().add(panelBottom, BorderLayout.SOUTH);
 
 		JLabel mperpLabelName = new JLabel("Meters/Pixels: ");
-		mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
+		mperpLabelValue = new JLabel(String.format("%s", map.getMeterPerPixel()));
 
 		JLabel zoomLabel = new JLabel("Zoom: ");
-		zoomValue = new JLabel(String.format("%s", map().getZoom()));
+		zoomValue = new JLabel(String.format("%s", map.getZoom()));
 
 		JButton btnSetDisplayToFitMarkers = new JButton("setDisplayToFitMapMarkers");
-		btnSetDisplayToFitMarkers.addActionListener( e -> map().setDisplayToFitMapMarkers());
+		btnSetDisplayToFitMarkers.addActionListener( e -> map.setDisplayToFitMapMarkers());
 		
 		cbLockMyPos = new JCheckBox("Lock On My Position");
 		cbLockMyPos.setSelected(true);
@@ -176,8 +183,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		cbFollowTrail.addActionListener(this);
 
 		JCheckBox showMapMarker = new JCheckBox("Map markers visible");
-		showMapMarker.setSelected(map().getMapMarkersVisible());
-		showMapMarker.addActionListener( e -> map().setMapMarkerVisible(showMapMarker.isSelected()));
+		showMapMarker.setSelected(map.getMapMarkersVisible());
+		showMapMarker.addActionListener( e -> map.setMapMarkerVisible(showMapMarker.isSelected()));
 		panelBottom.add(showMapMarker);
 		
 		JCheckBox showTreeLayers = new JCheckBox("Show Zones");
@@ -187,78 +194,74 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		panelBottom.add(showTreeLayers);
 
 		showToolTip = new JCheckBox("ToolTip visible");
-		showToolTip.addActionListener( e -> map().setToolTipText(null));
+		showToolTip.addActionListener( e -> map.setToolTipText(null));
 		panelBottom.add(showToolTip);
 
 		JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
-		showTileGrid.setSelected(map().isTileGridVisible());
-		showTileGrid.addActionListener( e -> map().setTileGridVisible(showTileGrid.isSelected()));
+		showTileGrid.setSelected(map.isTileGridVisible());
+		showTileGrid.addActionListener( e -> map.setTileGridVisible(showTileGrid.isSelected()));
 		panelBottom.add(showTileGrid);
 		
 		final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
-		showZoomControls.setSelected(map().getZoomControlsVisible());
-		showZoomControls.addActionListener( e -> map().setZoomContolsVisible(showZoomControls.isSelected()));
+		showZoomControls.setSelected(map.getZoomControlsVisible());
+		showZoomControls.addActionListener( e -> map.setZoomContolsVisible(showZoomControls.isSelected()));
 		panelBottom.add(showZoomControls);
 		
 		final JCheckBox scrollWrapEnabled = new JCheckBox("Scrollwrap enabled");
-		scrollWrapEnabled.addActionListener( e -> map().setScrollWrapEnabled(scrollWrapEnabled.isSelected()));
+		scrollWrapEnabled.addActionListener( e -> map.setScrollWrapEnabled(scrollWrapEnabled.isSelected()));
 		panelBottom.add(scrollWrapEnabled);
 
 		panelTop.add(btnSetDisplayToFitMarkers);
 		panelTop.add(zoomLabel);
 		panelTop.add(zoomValue);
 		panelTop.add(mperpLabelName);
-		panelTop.add(mperpLabelValue);
-
-		// Listen to the map viewer for user operations so components will
-		// receive events and update
-		map().addJMVListener(this);
-		
+		panelTop.add(mperpLabelValue);		
 
 		missionsGroup = new LayerGroup("Missions");
 		perimetersGroup = new LayerGroup("Perimeters");
 		generalGroup = new LayerGroup("General Drawings");
 
-		map().setDisplayPosition(new Coordinate(32.0684, 34.8248), 8);
+		map.setDisplayPosition(new Coordinate(32.0684, 34.8248), 8);
 
-		map().addMouseListener(new MouseAdapter() {
+		map.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					map().getAttribution().handleAttribution(e.getPoint(), true);
+					map.getAttribution().handleAttribution(e.getPoint(), true);
 				}
 			}
 		});
 
-		map().addMouseMotionListener(new MouseAdapter() {
+		map.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				Point p = e.getPoint();
-				boolean cursorHand = map().getAttribution().handleAttributionCursor(p);
+				boolean cursorHand = map.getAttribution().handleAttributionCursor(p);
 				if (cursorHand) {
-					map().setCursor(new Cursor(Cursor.HAND_CURSOR));
+					map.setCursor(new Cursor(Cursor.HAND_CURSOR));
 				} else {
-					map().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					map.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				}
 				if (showToolTip.isSelected())
-					map().setToolTipText(map().getPosition(p).toString());
+					map.setToolTipText(map.getPosition(p).toString());
 			}
 		});
 
 		JComboBox<TileSource> tileSourceSelector = new JComboBox<>(mapTilesSources);
-		tileSourceSelector.addItemListener( e -> map().setTileSource((TileSource) e.getItem()));
+		tileSourceSelector.addItemListener( e -> map.setTileSource((TileSource) e.getItem()));
 
 		JComboBox<TileLoader> tileLoaderSelector;
-		tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
-		tileLoaderSelector.addItemListener( e -> map().setTileLoader((TileLoader) e.getItem()));
-		map().setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
+		tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map) });
+		tileLoaderSelector.addItemListener( e -> map.setTileLoader((TileLoader) e.getItem()));
+		map.setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
 		panelTop.add(tileSourceSelector);
 		panelTop.add(tileLoaderSelector);
 
 		pack();
+		
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		drone.addDroneListener(this);
-		map().addJMVListener(this.keyboardController);
 	}
 
 	public void SetLastKnownPosition() {
@@ -266,23 +269,23 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 
 		MapMarkerDot tmp = new MapMarkerDot(null, null, myPos.getCoordinate(), new Style(Color.BLACK, Color.RED, null, MapMarkerDot.getDefaultFont()));
-		map().removeMapMarker(myPos);
+		map.removeMapMarker(myPos);
 
 		myPos = tmp;
 
-		map().addMapMarker(myPos);
+		map.addMapMarker(myPos);
 	}
 
 	//private static JMapViewer map() {
-	private JMapViewer map() {
-		return treeMap.getViewer();
-	}
+//	private JMapViewer map() {
+//		return treeMap.getViewer();
+//	}
 
 	private void updateZoomParameters() {
 		if (mperpLabelValue != null)
-			mperpLabelValue.setText(String.format("%s", map().getMeterPerPixel()));
+			mperpLabelValue.setText(String.format("%s", map.getMeterPerPixel()));
 		if (zoomValue != null)
-			zoomValue.setText(String.format("%s", map().getZoom()));
+			zoomValue.setText(String.format("%s", map.getZoom()));
 	}
 
 	public void SetMyPositionMarker(Coord2D coord) {
@@ -297,16 +300,16 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		MapMarkerDot tmp = new MapMarkerDot(null, null, c, new Style(Color.BLACK, Color.GREEN, null, MapMarkerDot.getDefaultFont()));
 
 		if (myPos != null) {
-			map().removeMapMarker(myPos);
+			map.removeMapMarker(myPos);
 		} else {
 			// During the first time we have a GPS lock
-			map().setDisplayPosition(c, 17);
+			map.setDisplayPosition(c, 17);
 		}
-		map().addMapMarker(tmp);
+		map.addMapMarker(tmp);
 		myPos = tmp;
 
 		if (lockMapOnMyPosition)
-			map().setDisplayPosition(myPos, map().getZoom());
+			map.setDisplayPosition(myPos, map.getZoom());
 	}
 
 	public void SetMyPositionTrail(Coord2D coord) {
@@ -324,8 +327,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		myTrailPath.AddPoint(coord.convertToCoordinate());
 
 		if (trailSize >= 2) {
-			map().removeMapPath(myTrailPath);
-			map().addMapPath(myTrailPath);
+			map.removeMapPath(myTrailPath);
+			map.addMapPath(myTrailPath);
 		}
 	}
 
@@ -341,12 +344,12 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 	void updateCycleGeoFence(double radi, Coordinate iCoord) {
 		if (geoFenceMarker != null)
-			map().removeMapMarker(geoFenceMarker);
+			map.removeMapMarker(geoFenceMarker);
 
 		double radius = GeoTools.metersTolat(radi);
 		geoFenceMarker = new MapMarkerCircle("GeoFence: " + radi + "m", iCoord, radius);
 		geoFenceMarker.setStyle(new Style(Color.magenta, new Color(200, 200, 200, 50), new MyStroke(9), MapObjectImpl.getDefaultFont()));
-		map().addMapMarker(geoFenceMarker);
+		map.addMapMarker(geoFenceMarker);
 	}
 
 	private boolean isPerimeterBuildMode = false;
@@ -381,7 +384,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		menuItemGeoFenceAddPoint.setVisible(isPerimeterBuildMode);
 
 		if (drone.getGps().isPositionValid()) {
-			ICoordinate iCoord = map().getPosition(e.getPoint());
+			ICoordinate iCoord = map.getPosition(e.getPoint());
 			Coord2D to = new Coord2D(iCoord.getLat(), iCoord.getLon());
 			Coord2D from = drone.getGps().getPosition();
 			int dist = (int) GeoTools.getDistance(from, to).valueInMeters();
@@ -441,7 +444,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					// drone.getGuidedPoint().newGuidedCoord(coord);
 
 					guidedPoint = new MapMarkerDot(iCoord.getLat(), iCoord.getLon());
-					map().addMapMarker(guidedPoint);
+					map.addMapMarker(guidedPoint);
 					LoggerDisplayerManager.addGeneralMessegeToDisplay("Flying to guided point " + guidedPoint.getCoordinate().toString());
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -490,22 +493,22 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					break;
 				case 1:
 					setGeoFenceByMouse = true;
-					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
-					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
-					NotificationsManager.add("Use Ctrl Key and mouse roller to set radius");
+					textNotificationPublisher.publish("Use Ctrl Key and mouse roller to set radius");
+					textNotificationPublisher.publish("Use Ctrl Key and mouse roller to set radius");
+					textNotificationPublisher.publish("Use Ctrl Key and mouse roller to set radius");
 					updateCycleGeoFence(radi, iCoord);
 					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of fixed circle type");
 					break;
 				case 2:
 					setPerimeterByMouse = true;
-					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
-					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
-					NotificationsManager.add("Use Ctrl Key and left mouse key to add point");
-					map().removeMapMarker(perimeterBreachPointMarker);
+					textNotificationPublisher.publish("Use Ctrl Key and left mouse key to add point");
+					textNotificationPublisher.publish("Use Ctrl Key and left mouse key to add point");
+					textNotificationPublisher.publish("Use Ctrl Key and left mouse key to add point");
+					map.removeMapMarker(perimeterBreachPointMarker);
 					perimeterBreachPointMarker = null;
 					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of perimeter type");
 
-					map().SetEditModeGUI(true);
+					map.SetEditModeGUI(true);
 					if (modifyiedLayerPerimeter == null) {
 						modifyiedLayerPerimeter = new LayerPerimeter("New Perimeter*");
 						perimetersGroup.add(modifyiedLayerPerimeter);
@@ -522,7 +525,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		);
 
 		menuItemMissionBuild.addActionListener( arg -> {
-				map().SetEditModeGUI(true);
+				map.SetEditModeGUI(true);
 				if (modifyiedLayerMission == null) {
 					modifyiedLayerMission = new LayerMission("New Mission*");
 					modifyiedLayerMission.initialize();
@@ -548,7 +551,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				}
 				Waypoint wp = new Waypoint(m, c3);
 				m.addMissionItem(wp);
-				modifyiedLayerMission.repaint(map());
+				modifyiedLayerMission.repaint(map);
 			}
 		);
 
@@ -563,7 +566,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				}
 				Circle wp = new Circle(m, c3);
 				m.addMissionItem(wp);
-				modifyiedLayerMission.repaint(map());
+				modifyiedLayerMission.repaint(map);
 			}
 		);
 
@@ -578,7 +581,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				}
 				Land lnd = new Land(m, c3);
 				m.addMissionItem(lnd);
-				modifyiedLayerMission.repaint(map());
+				modifyiedLayerMission.repaint(map);
 			}
 		);
 
@@ -590,7 +593,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				}
 				ReturnToHome lnd = new ReturnToHome(m);
 				m.addMissionItem(lnd);
-				modifyiedLayerMission.repaint(map());
+				modifyiedLayerMission.repaint(map);
 			}
 		);
 
@@ -612,13 +615,13 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 				Takeoff toff = new Takeoff(m, new Altitude(altitude));
 				m.addMissionItem(toff);
-				modifyiedLayerMission.repaint(map());
+				modifyiedLayerMission.repaint(map);
 			}
 		);
 
 		menuItemGeoFenceAddPoint.addActionListener( arg -> {
-				modifyiedLayerPerimeter.add(map().getPosition(e.getPoint()));
-				modifyiedLayerPerimeter.repaint(map());
+				modifyiedLayerPerimeter.add(map.getPosition(e.getPoint()));
+				modifyiedLayerPerimeter.repaint(map);
 			}
 		);
 
@@ -633,13 +636,13 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 
 		if (bearing != null)
-			map().removeMapLine(bearing);
+			map.removeMapLine(bearing);
 
 		Coord2D origin = drone.getGps().getPosition();
 		Coord2D target = GeoTools.newCoordFromBearingAndDistance(origin, deg /* + 180 */, 300);
 
 		bearing = new MapLineImpl(new Coordinate(origin.getLat(),origin.getLng()), new Coordinate(target.getLat(),target.getLng()));
-		map().addMapLine(bearing);
+		map.addMapLine(bearing);
 	}
 
 	void updateGeoFence(MouseWheelEvent e) {
@@ -654,21 +657,21 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		MapMarkerCircle tmp = new MapMarkerCircle("GeoFence: " + radi + "m",geoFenceMarker.getCoordinate(), radius);
 		tmp.setStyle(geoFenceMarker.getStyle());
 
-		map().removeMapMarker(geoFenceMarker);
+		map.removeMapMarker(geoFenceMarker);
 		geoFenceMarker = tmp;
-		map().addMapMarker(geoFenceMarker);
+		map.addMapMarker(geoFenceMarker);
 	}
 
 	void updatePerimeter(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			modifyiedLayerPerimeter.add(map().getPosition(e.getPoint()));
-			modifyiedLayerPerimeter.repaint(map());
+			modifyiedLayerPerimeter.add(map.getPosition(e.getPoint()));
+			modifyiedLayerPerimeter.repaint(map);
 		}
 	}
 
 	public void removeBearing() {
 		if (bearing != null) {
-			map().removeMapLine(bearing);
+			map.removeMapLine(bearing);
 			bearing = null;
 		}
 	}
@@ -686,23 +689,23 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 
 		if (myHome != null)
-			map().removeMapMarker(myHome);
+			map.removeMapMarker(myHome);
 
 		if (myMapCircle25 != null)
-			map().removeMapMarker(myMapCircle25);
+			map.removeMapMarker(myMapCircle25);
 
 		if (myMapCircle50 != null)
-			map().removeMapMarker(myMapCircle50);
+			map.removeMapMarker(myMapCircle50);
 
 		if (myMapCircle75 != null)
-			map().removeMapMarker(myMapCircle75);
+			map.removeMapMarker(myMapCircle75);
 
 		if (myMapCircle100 != null)
-			map().removeMapMarker(myMapCircle100);
+			map.removeMapMarker(myMapCircle100);
 
 		myHome = new MapMarkerDot(home.getCoord().convertToCoordinate());
 		myHome.setBackColor(Color.BLUE);
-		map().addMapMarker(myHome);
+		map.addMapMarker(myHome);
 
 		myMapCircle25 = new MapMarkerCircle(myHome.getCoordinate(), GeoTools.metersTolat(25));
 		myMapCircle50 = new MapMarkerCircle(myHome.getCoordinate(), GeoTools.metersTolat(50));
@@ -714,10 +717,10 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		myMapCircle50.setStyle(s);
 		myMapCircle75.setStyle(s);
 		myMapCircle100.setStyle(s);
-		map().addMapMarker(myMapCircle25);
-		map().addMapMarker(myMapCircle50);
-		map().addMapMarker(myMapCircle75);
-		map().addMapMarker(myMapCircle100);
+		map.addMapMarker(myMapCircle25);
+		map.addMapMarker(myMapCircle50);
+		map.addMapMarker(myMapCircle75);
+		map.addMapMarker(myMapCircle100);
 
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting new Home position");
 	}
@@ -729,7 +732,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			modifyiedLayerMission = null;
 		}
 		if (modifyiedLayerMissionOriginal != null) {
-			modifyiedLayerMissionOriginal.loadToMap(map());
+			modifyiedLayerMissionOriginal.loadToMap(map);
 			modifyiedLayerMissionOriginal.setName(modifyiedLayerMissionOriginal.getName().substring(0, modifyiedLayerMissionOriginal.getName().length()));
 			treeMap.addLayer(modifyiedLayerMissionOriginal);
 			modifyiedLayerMissionOriginal = null;
@@ -741,7 +744,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			modifyiedLayerPerimeter = null;
 		}
 		if (modifyiedLayerPerimeterOriginal != null) {
-			modifyiedLayerPerimeterOriginal.loadToMap(map());
+			modifyiedLayerPerimeterOriginal.loadToMap(map);
 			modifyiedLayerPerimeterOriginal.setName(modifyiedLayerPerimeterOriginal.getName().substring(0,modifyiedLayerPerimeterOriginal.getName().length()));
 			treeMap.addLayer(modifyiedLayerPerimeterOriginal);
 			modifyiedLayerPerimeterOriginal = null;
@@ -794,7 +797,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 	/* Get the coordinate value of the mouse pointer */
 	private Coordinate getMapPointerCoordinates(MouseEvent e) {
-		return new Coordinate(map().getPosition(e.getPoint()).getLat(), map().getPosition(e.getPoint()).getLon());
+		return new Coordinate(map.getPosition(e.getPoint()).getLat(), map.getPosition(e.getPoint()).getLon());
 	}
 
 	static Coordinate perimeterBreachPoint = null;
@@ -804,7 +807,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		if (perimeterBreachPointMarker == null) {
 			perimeterBreachPoint = drone.getPerimeter().getClosestPointOnPerimeterBorder().convertToCoordinate();
 			perimeterBreachPointMarker = new MapMarkerDot(perimeterBreachPoint.getLat(),perimeterBreachPoint.getLon());
-			map().addMapMarker(perimeterBreachPointMarker);
+			map.addMapMarker(perimeterBreachPointMarker);
 		}
 	}
 
@@ -826,7 +829,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				treeMap.addLayer(instMission);
 				treeMap.updateUI();
 				instMission.setMission(drone.getMission());
-				instMission.repaint(map());
+				instMission.repaint(map);
 
 				LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
 			}
@@ -876,11 +879,11 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 		} 
 		else {
-			map().removeMapMarker(myGCS);
+			map.removeMapMarker(myGCS);
 			myGCS = new MapMarkerDot(Color.magenta, coord.getLat(),coord.getLng());
 		}
 
-		map().addMapMarker(myGCS);
+		map.addMapMarker(myGCS);
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("GCS was updated");
 	}
 
@@ -892,11 +895,11 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 		}
 		else {
-			map().removeMapMarker(myBeacon);
+			map.removeMapMarker(myBeacon);
 			myBeacon = new MapMarkerDot(Color.magenta, coord.getLat(),coord.getLon());
 		}
 
-		map().addMapMarker(myBeacon);
+		map.addMapMarker(myBeacon);
 		LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon was updated");
 	}
 
@@ -921,7 +924,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			} else {
 				LoggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
 				paintTrail = false;
-				map().removeMapPath(myTrailPath);
+				map.removeMapPath(myTrailPath);
 				myTrailPath = null;
 			}
 			return;
@@ -932,9 +935,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		return drone;
 	}
 	
-	@Override
-	public void processCommand(JMVCommandEvent command) {
-		System.out.println("asdasd");
+	@EventListener
+	public void onApplicationEvent(JMVCommandEvent command) {
+		System.out.println("Application Event: " + getClass());
 		switch (command.getCommand()) {
 		case ZOOM:
 		case MOVE:
@@ -952,7 +955,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				modifyiedLayerMission = (LayerMission) layer;
 				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
 				modifyiedLayerMissionOriginal.initialize();
-				modifyiedLayerMission.buildMissionTable(map());
+				modifyiedLayerMission.buildMissionTable(map);
 				isMissionBuildMode = true;
 				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + "*");
 			} else if (layer instanceof LayerPerimeter) {
@@ -967,8 +970,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				return;
 			}
 
-			treeMap.getViewer().repaint();
-			treeMap.getViewer().updateUI();
+			map.repaint();
+			map.updateUI();
 			treeMap.getTree().repaint();
 			treeMap.getTree().updateUI();
 

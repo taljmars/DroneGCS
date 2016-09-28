@@ -3,6 +3,8 @@ package gui.core.internalFrames;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.WindowConstants;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -34,6 +36,8 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 		loadChart();
 		
 		setBounds(25, 25, 800, 400);
+		
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 	}
 
 	private JInternalFrameActualPWM(String name) {

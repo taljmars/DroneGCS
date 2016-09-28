@@ -8,9 +8,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 
+import gui.is.events.TextNotificationPublisher;
 import gui.is.services.LoggerDisplayerManager;
-import gui.is.services.NotificationsManager;
-import gui.is.services.NotificationsListener;
 
 import javax.annotation.Resource;
 import javax.swing.JFrame;
@@ -20,13 +19,15 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 
+import org.springframework.context.event.EventListener;
+
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-public class Dashboard implements OnDroneListener, NotificationsListener, OnWaypointManagerListener {
+public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	
 	private JFrame frame;
 
@@ -59,6 +60,9 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	@Resource(name="toolbarSatellite")
 	private JPanelToolBarSatellite tbToolBar;
 	
+	@Resource(name = "textNotificationPublisher")
+	private TextNotificationPublisher textNotificationPublisher;
+	
 	private JTabbedPane tbSouth;
 	private JToolBar toolBar;
 	private JProgressBar progressBar;
@@ -82,9 +86,6 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	private void initializeComponents() {
 		System.out.println("Start Logger Displayer Manager");
 		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox);
-
-		System.out.println("Start Notifications Manager");
-		NotificationsManager.addNotificationListener(this);
 
 		System.out.println("Start GCS Heartbeat");
 		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
@@ -115,10 +116,10 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
 			// if (drone.getGuidedPoint().isIdle()) {
 			if (d == 0) {
-				NotificationsManager.add("In Position");
+				textNotificationPublisher.publish("In Position");
 				LoggerDisplayerManager.addGeneralMessegeToDisplay("Guided: In Position");
 			} else {
-				NotificationsManager.add("Flying to destination");
+				textNotificationPublisher.publish("Flying to destination");
 				LoggerDisplayerManager.addGeneralMessegeToDisplay("Guided: Fly to distination");
 			}
 		}
@@ -188,7 +189,7 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 		if (drone.getState().isFlying() && bat < 100) {
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			// PaintAllWindow(Color.RED);
-			NotificationsManager.add("Low Battery");
+			textNotificationPublisher.publish("Low Battery");
 		} else {
 			// lblBattery.setForeground(Color.BLACK);
 			// Color c = new Color(238, 238 ,238);
@@ -270,12 +271,12 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
 		case LEFT_PERIMETER:
-			NotificationsManager.add("Outside Perimeter");
+			textNotificationPublisher.publish("Outside Perimeter");
 			LoggerDisplayerManager.addErrorMessegeToDisplay("Quad left the perimeter");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case ENFORCING_PERIMETER:
-			NotificationsManager.add("Enforcing Perimeter");
+			textNotificationPublisher.publish("Enforcing Perimeter");
 			LoggerDisplayerManager.addErrorMessegeToDisplay("Enforcing Perimeter");
 			return;
 		case ORIENTATION:
@@ -357,15 +358,9 @@ public class Dashboard implements OnDroneListener, NotificationsListener, OnWayp
 	public void resetProgressBar() {
 		progressBar.setValue(0);
 	}
-
-	@Override
-	public void ClearNotification() {
-		tbToolBar.ClearNotification();
-	}
-
-	@Override
-	public void SetNotification(String notification) {
+	
+	@EventListener
+	public void onApplicationEvent(String notification) {
 		tbToolBar.SetNotification(notification);
 	}
-
 }

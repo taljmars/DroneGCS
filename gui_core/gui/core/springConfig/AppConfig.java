@@ -17,6 +17,8 @@ import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapTree.JMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
 import gui.is.interfaces.KeyBoardControler;
+import gui.is.events.JMVEventPublisher;
+import gui.is.events.TextNotificationPublisher;
 import mavlink.core.drone.ClockImpl;
 import mavlink.core.drone.HandlerImpl;
 import mavlink.core.drone.MyDroneImpl;
@@ -32,7 +34,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.AbstractApplicationContext;
 
 @ComponentScan("gui.core.internalPanels")
@@ -41,7 +42,17 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class AppConfig {
 	
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-
+	
+	@Bean
+	public JMVEventPublisher jMVEventPublisher() {
+		return new JMVEventPublisher();
+	}
+	
+	@Bean
+	public TextNotificationPublisher textNotificationPublisher() {
+		return new TextNotificationPublisher();
+	}
+	
 	@Bean
 	public LocationFinder locationFinder() {
 		return new MyLocationImpl();
@@ -97,20 +108,13 @@ public class AppConfig {
 	}
 	
 	@Bean
-	@Scope("prototype")
 	public AbstractJInternalFrame internalFrameMap() {
 		return new JInternalFrameMap();
 	}
 	
 	@Bean
-	@Scope("prototype")
 	public AbstractJInternalFrame internalFrameActualPWM() {
 		return new JInternalFrameActualPWM();
-	}
-	
-	@Bean
-	public JMapViewerTree treeMap() {
-		return new JMapViewerTree();
 	}
 	
 	@Bean
@@ -118,4 +122,8 @@ public class AppConfig {
 		return new JMapViewer();
 	}
 	
+	@Bean
+	public JMapViewerTree treeMap() {
+		return new JMapViewerTree();
+	}	
 }
