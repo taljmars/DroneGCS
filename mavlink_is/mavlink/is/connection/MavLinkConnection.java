@@ -362,11 +362,9 @@ public abstract class MavLinkConnection {
 	 * connection.
 	 */
 	private void reportConnect() {
-		System.out.println(getClass() + " Listerns amont " + mListeners.size());
 		for (MavLinkConnectionListener listener : mListeners.values()) {
 			listener.onConnect();
 		}
-		System.out.println(getClass() + " Listerns amont " + mListeners.size());
 	}
 
 	/**

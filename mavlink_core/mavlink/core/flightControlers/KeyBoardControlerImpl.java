@@ -2,7 +2,6 @@ package mavlink.core.flightControlers;
 
 import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.KeyBoardControler;
-import gui.is.services.LogGeneralDisplayerEvent;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.event.KeyEvent;

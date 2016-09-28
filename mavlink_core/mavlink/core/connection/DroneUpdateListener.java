@@ -3,10 +3,6 @@ package mavlink.core.connection;
 import javax.annotation.Resource;
 import javax.swing.JOptionPane;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Component;
-
 import logger.Logger;
 import mavlink.is.connection.MavLinkConnectionListener;
 import mavlink.is.drone.Drone;
@@ -30,11 +26,8 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
-import gui.core.dashboard.Dashboard;
-import gui.core.springConfig.AppConfig;
 import gui.is.services.LoggerDisplayerSvc;
 
-@DependsOn("RepositoryConfig")
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
 	private static final byte SEVERITY_HIGH = 3;
@@ -47,17 +40,11 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	
 	@Resource(name = "drone")
 	private Drone drone;
-
 	
 	@Override
 	public void onConnect() {
-//		loggerDisplayerSvc.logGeneral("Connected!");
-		System.err.println(getClass() + " On Connect!!");
-		System.err.println(getClass() + (loggerDisplayerSvc == null ? " null" : " value!"));
-		//loggerDisplayerSvc = (LoggerDisplayerSvc) AppConfig.context.getBean("loggerDisplayerSvc");
-		System.err.println(getClass() + (loggerDisplayerSvc == null ? " null" : " value!"));
 		loggerDisplayerSvc.logGeneral("Connected!");
-		System.err.println(getClass() + " Done!!");
+		System.err.println(getClass() + " On Connect!!");
 	}
 
 	@Override

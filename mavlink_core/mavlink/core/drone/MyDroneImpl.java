@@ -1,8 +1,6 @@
 package mavlink.core.drone;
 
 
-import gui.is.services.LoggerDisplayerSvc;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -45,13 +43,11 @@ import mavlink.is.protocol.msgbuilder.WaypointManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
 @ComponentScan("mavlink.is.protocol.msgbuilder")
-@Import(LoggerDisplayerSvc.class)
 @Configuration
 public class MyDroneImpl implements Drone {
 

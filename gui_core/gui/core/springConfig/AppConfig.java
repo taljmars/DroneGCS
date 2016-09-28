@@ -21,6 +21,7 @@ import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.events.JMVEventPublisher;
 import gui.is.events.TextNotificationPublisher;
+import mavlink.core.connection.DroneUpdateListener;
 import mavlink.core.drone.ClockImpl;
 import mavlink.core.drone.HandlerImpl;
 import mavlink.core.drone.MyDroneImpl;
@@ -32,7 +33,6 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.location.LocationFinder;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -48,6 +48,11 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class AppConfig {
 	
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+	
+	@Bean
+	public DroneUpdateListener droneUpdateListener() {
+		return new DroneUpdateListener();
+	}
 	
 	@Bean
 	public LoggerDisplayerSvc loggerDisplayerSvc(){

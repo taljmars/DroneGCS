@@ -75,7 +75,6 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			public void run() {
 				try {
 					System.out.println("Start Dashboard");
-					LoggerDisplayerSvc loggerDisplayerSvc = (LoggerDisplayerSvc) AppConfig.context.getBean("loggerDisplayerSvc");
 					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
 					dashboard.initializeGui();
 					dashboard.initializeComponents();

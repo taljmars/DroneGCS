@@ -7,8 +7,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
-import org.springframework.context.annotation.DependsOn;
-
+import org.springframework.context.annotation.Configuration;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import mavlink.is.drone.Drone;
@@ -18,9 +17,13 @@ import communication_device.TwoWaySerialComm;
  * Provides support for mavlink connection via udp.
  */
 
+@Configuration
 public class RadioConnection extends MavLinkConnection {
 
 	private TwoWaySerialComm socket = null;
+	
+	@Resource(name = "droneUpdateListener")
+	private DroneUpdateListener droneUpdateListener;
 	
 	@Resource(name = "drone")
 	private Drone drone;
@@ -64,7 +67,7 @@ public class RadioConnection extends MavLinkConnection {
 
 	@Override
 	public final void loadPreferences() {
-		addMavLinkConnectionListener("Drone", new DroneUpdateListener());
+		addMavLinkConnectionListener("Drone", droneUpdateListener);
 	}
 
 	@Override

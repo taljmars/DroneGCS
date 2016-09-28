@@ -1,6 +1,5 @@
 package mavlink.core.location;
 
-import gui.is.services.LogErrorDisplayerEvent;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.util.HashSet;
