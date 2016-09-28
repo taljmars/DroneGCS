@@ -1,10 +1,11 @@
 package gui.core.internalPanels;
 
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.annotation.Resource;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +44,9 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 	private JLabel lblFlightDistanceVal;
 
 	private JLabel keepAliveLabel;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public JPanelTelemetrySatellite() {
 		pnl = new JPanel();
@@ -179,15 +183,15 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 				SetLblHeight(drone.getAltitude().getAltitude());
 				return;
 			case HEARTBEAT_FIRST:
-				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				loggerDisplayerSvc.logError("Quad Connected");
 				SetHeartBeat(true);
 				return;
 			case HEARTBEAT_RESTORED:
-				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Connected");
+				loggerDisplayerSvc.logError("Quad Connected");
 				SetHeartBeat(true);
 				return;
 			case HEARTBEAT_TIMEOUT:
-				LoggerDisplayerManager.addErrorMessegeToDisplay("Quad Disconnected");
+				loggerDisplayerSvc.logError("Quad Disconnected");
 				SetLblHeight(0);
 				SetSignal(0);
 				SetLblBattery(0);

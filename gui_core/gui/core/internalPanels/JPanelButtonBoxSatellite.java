@@ -6,7 +6,7 @@ import gui.core.operations.internal.ArmQuad;
 import gui.core.operations.internal.TakeoffQuad;
 import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.KeyBoardControler;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import javax.annotation.Resource;
 import javax.swing.AbstractButton;
@@ -31,6 +31,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
 @ComponentScan("mavlink.core.drone")
+@ComponentScan("gui.core.operations.internal")
 @Component("buttonBoxSatellite")
 public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener {
 	
@@ -38,6 +39,9 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	 * 
 	 */
 	private static final long serialVersionUID = -2419085692095415348L;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	private JPanel pnl;
 	
@@ -73,6 +77,12 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	@Resource(name = "textNotificationPublisher")
 	private TextNotificationPublisher textNotificationPublisher;
 	
+	@Resource(name = "armQuad")
+	private ArmQuad armQuad;
+	
+	@Resource(name = "takeoffQuad")
+	private TakeoffQuad takeoffQuad;
+	
 	public JPanelButtonBoxSatellite () {
 		
 		pnl = new JPanel();
@@ -96,7 +106,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         btnSyncDrone = new JButton("Sync Drone");
         btnSyncDrone.addActionListener( e -> {
         	System.out.println("Sync");
-        	LoggerDisplayerManager.addGeneralMessegeToDisplay("Syncing Drone parameters");
+        	loggerDisplayerSvc.logGeneral("Syncing Drone parameters");
     		drone.getParameters().refreshParameters();
         });
         pnl.add(btnSyncDrone);
@@ -113,10 +123,10 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         		keyBoardControler.ReleaseIfNeeded();
         		keyBoardControler.Activate();
         		int eAvg = drone.getRC().getAverageThrust();
-        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting Keyboard Thrust starting value to " + eAvg);
+        		loggerDisplayerSvc.logGeneral("Setting Keyboard Thrust starting value to " + eAvg);
         		keyBoardControler.SetThrust(eAvg);
         		btnFly.setText("Controler: Keyboard");
-        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
+        		loggerDisplayerSvc.logGeneral("Start Fly '" + options[n] + "'");
         	}
         	else if (n == 1) {
         		keyBoardControler.ReleaseIfNeeded();
@@ -132,7 +142,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 					e1.printStackTrace();
 				}
         		btnFly.setText("Controler: RC");
-        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Fly '" + options[n] + "'");
+        		loggerDisplayerSvc.logGeneral("Start Fly '" + options[n] + "'");
         		
         	}
         	else {
@@ -146,7 +156,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         btnArm.addActionListener( e -> {
         	if (btnArm.isSelected()) {
         		motorArmed = true;
-        		LoggerDisplayerManager.addOutgoingMessegeToDisplay("arm");
+        		loggerDisplayerSvc.logOutgoing("arm");
         		MavLinkArm.sendArmMessage(drone, true);
         	}
         	else {
@@ -157,12 +167,12 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
                 		    null, options, options[0]);
                 	if (n == 0) {
                 		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
-                		LoggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
+                		loggerDisplayerSvc.logGeneral("Landing");
                 		textNotificationPublisher.publish("Landing");
                 	}
                 	else if (n == 1) {
                 		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-                		LoggerDisplayerManager.addGeneralMessegeToDisplay("RTL");
+                		loggerDisplayerSvc.logGeneral("RTL");
                 		textNotificationPublisher.publish("RTL");
                 	}
                 	else 
@@ -170,7 +180,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         		}
         		else {
         			motorArmed = false;
-        			LoggerDisplayerManager.addOutgoingMessegeToDisplay("disarm");
+        			loggerDisplayerSvc.logOutgoing("disarm");
         			MavLinkArm.sendArmMessage(drone, false);
         		}
         	}
@@ -185,12 +195,12 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         		    null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
         	if (n == 0) {
         		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
-        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Landing");
+        		loggerDisplayerSvc.logGeneral("Landing");
         		textNotificationPublisher.publish("Landing");
         	}
         	else if(n == 1) {
         		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-        		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
+        		loggerDisplayerSvc.logGeneral("Comming back to lunch position");
         		textNotificationPublisher.publish("Return To Lunch");
         	}
         	keyBoardControler.ReleaseIfNeeded();
@@ -228,9 +238,8 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	        				return null;
 	        			}
 	        			
-	        			ArmQuad armQuad = new ArmQuad(drone);
-						TakeoffQuad toff = new TakeoffQuad(drone, real_value);
-						armQuad.setNext(toff);
+						armQuad.setNext(takeoffQuad);
+						takeoffQuad.setNext(null);
 	        			armQuad.go();
 	        		}
 	        		catch (NumberFormatException e) {
@@ -295,14 +304,17 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 			        				return null;
 			        			}
 			        			
-			        			ArmQuad armQuad = new ArmQuad(drone);
+			        			//ArmQuad armQuad = new ArmQuad(drone);
+			        			armQuad.setNext(null);
 	        					if (!armQuad.go()) {
 	        						btnFollowBeaconStart.setSelected(false);
 	        						return null;
 	        					}
 			        			
-			        			TakeoffQuad toff = new TakeoffQuad(drone, real_value);
-			        			if (!toff.go()) {
+			        			//TakeoffQuad toff = new TakeoffQuad(drone, real_value);
+	        					takeoffQuad.setTargetHeight(real_value);
+	        					takeoffQuad.setNext(null);
+			        			if (!takeoffQuad.go()) {
         							btnFollowBeaconStart.setSelected(false);
         							return null;
         						}
@@ -333,7 +345,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
     			// Not selected
     			//DeactivateBeacon();
     			drone.getFollow().toggleFollowMeState();
-    			LoggerDisplayerManager.addErrorMessegeToDisplay("Not Selected");
+    			loggerDisplayerSvc.logError("Not Selected");
         		if (FollowBeaconStartThread != null)
         			FollowBeaconStartThread.cancel(true);
         		
@@ -350,7 +362,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
        			protected Void doInBackground() throws Exception {
 					GCSLocationData gcslocation = GCSLocationData.fetch();
 					if (gcslocation == null) {
-						LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
+						loggerDisplayerSvc.logError("Failed to get beacon point from the web");
 						return null;
 					}
 					drone.getGCS().setPosition(gcslocation.getCoordinate());
@@ -381,17 +393,17 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         btnHoldPosition = new JButton("Hold Position");
         btnHoldPosition.addActionListener( e -> {
     		if (!drone.getState().isArmed()) {
-    			LoggerDisplayerManager.addErrorMessegeToDisplay("Quad must be armed in order to change this mode");
+    			loggerDisplayerSvc.logError("Quad must be armed in order to change this mode");
     			return;
     		}
     		
     		if (drone.getGps().isPositionValid()) {
     			drone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
-    			LoggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Position Hold' - GPS");
+    			loggerDisplayerSvc.logGeneral("Flight Mode set to 'Position Hold' - GPS");
     		}
     		else {
     			drone.getState().changeFlightMode(ApmModes.ROTOR_ALT_HOLD);
-    			LoggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode set to 'Altitude Hold' - Barometer");
+    			loggerDisplayerSvc.logGeneral("Flight Mode set to 'Altitude Hold' - Barometer");
     		}
         });
         btnHoldPosition.setEnabled(false);

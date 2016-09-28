@@ -9,7 +9,7 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 
 import gui.is.events.TextNotificationPublisher;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import javax.annotation.Resource;
 import javax.swing.JFrame;
@@ -35,6 +35,9 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	private static final long serialVersionUID = 1L;
 
 	private static final String APP_TITLE = "Quad Ground Station";
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
 	public Drone drone;
@@ -72,6 +75,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			public void run() {
 				try {
 					System.out.println("Start Dashboard");
+					LoggerDisplayerSvc loggerDisplayerSvc = (LoggerDisplayerSvc) AppConfig.context.getBean("loggerDisplayerSvc");
 					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
 					dashboard.initializeGui();
 					dashboard.initializeComponents();
@@ -84,8 +88,8 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	}
 
 	private void initializeComponents() {
-		System.out.println("Start Logger Displayer Manager");
-		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox);
+//		System.out.println("Start Logger Displayer Manager");
+//		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox);
 
 		System.out.println("Start GCS Heartbeat");
 		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
@@ -117,10 +121,10 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			// if (drone.getGuidedPoint().isIdle()) {
 			if (d == 0) {
 				textNotificationPublisher.publish("In Position");
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Guided: In Position");
+				loggerDisplayerSvc.logGeneral("Guided: In Position");
 			} else {
 				textNotificationPublisher.publish("Flying to destination");
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Guided: Fly to distination");
+				loggerDisplayerSvc.logGeneral("Guided: Fly to distination");
 			}
 		}
 	}
@@ -180,7 +184,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 
 	/*
 	 * private void DeactivateBeacon() {
-	 * loggerDisplayerManager.addGeneralMessegeToDisplay("Stopping Follow");
+	 * loggerDisplayerSvc.logGeneral("Stopping Follow");
 	 * drone.getBeacon().setActive(false); }
 	 */
 
@@ -216,54 +220,54 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Syncing");
+			loggerDisplayerSvc.logIncoming("Start Syncing");
 			return;
 		}
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Start Updloading Waypoints");
+			loggerDisplayerSvc.logIncoming("Start Updloading Waypoints");
 			return;
 		}
 
-		LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to Start Syncing (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logIncoming("Failed to Start Syncing (" + wpEvent.name() + ")");
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Downloading Waypoint " + index + "/" + count);
+			loggerDisplayerSvc.logIncoming("Downloading Waypoint " + index + "/" + count);
 			setProgressBar(0, index, count);
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Uploading Waypoint " + index + "/" + count);
+			loggerDisplayerSvc.logIncoming("Uploading Waypoint " + index + "/" + count);
 			setProgressBar(0, index, count);
 			return;
 		}
 
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
 		setProgressBar(count, count);
 	}
 
 	@Override
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			loggerDisplayerSvc.logIncoming("Waypoints Synced");
 			if (drone.getMission() == null) {
-				LoggerDisplayerManager.addIncommingMessegeToDisplay("Failed to find mission");
+				loggerDisplayerSvc.logIncoming("Failed to find mission");
 				return;
 			}
 
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
+			loggerDisplayerSvc.logIncoming("Current mission was loaded to a new view");
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			LoggerDisplayerManager.addIncommingMessegeToDisplay("Waypoints Synced");
+			loggerDisplayerSvc.logIncoming("Waypoints Synced");
 			return;
 		}
 
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -272,12 +276,12 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		switch (event) {
 		case LEFT_PERIMETER:
 			textNotificationPublisher.publish("Outside Perimeter");
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Quad left the perimeter");
+			loggerDisplayerSvc.logError("Quad left the perimeter");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case ENFORCING_PERIMETER:
 			textNotificationPublisher.publish("Enforcing Perimeter");
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Enforcing Perimeter");
+			loggerDisplayerSvc.logError("Enforcing Perimeter");
 			return;
 		case ORIENTATION:
 			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP().valueInMeters());
@@ -292,31 +296,31 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			LoadParameter(drone.getParameters().getExpectedParameterAmount());
 			return;
 		case PARAMETERS_DOWNLOAD_START:
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Parameters Downloading begin");
+			loggerDisplayerSvc.logGeneral("Parameters Downloading begin");
 			resetProgressBar();
 			return;
 		case PARAMETERS_DOWNLOADED_FINISH:
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Parameters Downloaded succussfully");
+			loggerDisplayerSvc.logGeneral("Parameters Downloaded succussfully");
 			return;
 		case TEXT_MESSEGE:
-			LoggerDisplayerManager.addIncommingMessegeToDisplay(drone.getMessegeQueue().pop());
+			loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
 			return;
 		case WARNING_SIGNAL_WEAK:
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Warning: Weak signal");
+			loggerDisplayerSvc.logError("Warning: Weak signal");
+			loggerDisplayerSvc.logError("Warning: Weak signal");
+			loggerDisplayerSvc.logError("Warning: Weak signal");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case FOLLOW_START:
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Started");
+			loggerDisplayerSvc.logGeneral("Follow Me Started");
 			return;
 		case FOLLOW_UPDATE:
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Updated");
+			loggerDisplayerSvc.logGeneral("Follow Me Updated");
 			return;
 		case FOLLOW_STOP:
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Follow Me Ended");
+			loggerDisplayerSvc.logGeneral("Follow Me Ended");
 			return;
 		}
 	}

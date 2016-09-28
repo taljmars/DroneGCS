@@ -14,9 +14,11 @@ import gui.core.internalFrames.JInternalFrameMap;
 import gui.core.internalPanels.JPanelConfigurationBox;
 import gui.core.internalPanels.JPanelLogBox;
 import gui.core.internalPanels.JPanelMissionBox;
+import gui.core.mapObjects.LayerMission;
 import gui.core.mapTree.JMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
 import gui.is.interfaces.KeyBoardControler;
+import gui.is.services.LoggerDisplayerSvc;
 import gui.is.events.JMVEventPublisher;
 import gui.is.events.TextNotificationPublisher;
 import mavlink.core.drone.ClockImpl;
@@ -27,16 +29,20 @@ import mavlink.core.location.MyLocationImpl;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.Clock;
 import mavlink.is.drone.DroneInterfaces.Handler;
+import mavlink.is.drone.mission.Mission;
 import mavlink.is.location.LocationFinder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.AbstractApplicationContext;
 
 @ComponentScan("gui.core.internalPanels")
+@ComponentScan("gui.is.services")
 @Import(MyDroneImpl.class)
 @Configuration
 public class AppConfig {
@@ -44,13 +50,8 @@ public class AppConfig {
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 	
 	@Bean
-	public JMVEventPublisher jMVEventPublisher() {
-		return new JMVEventPublisher();
-	}
-	
-	@Bean
-	public TextNotificationPublisher textNotificationPublisher() {
-		return new TextNotificationPublisher();
+	public LoggerDisplayerSvc loggerDisplayerSvc(){
+		return new LoggerDisplayerSvc();
 	}
 	
 	@Bean
@@ -125,5 +126,27 @@ public class AppConfig {
 	@Bean
 	public JMapViewerTree treeMap() {
 		return new JMapViewerTree();
-	}	
+	}
+	
+	@Bean
+	public JMVEventPublisher jMVEventPublisher() {
+		return new JMVEventPublisher();
+	}
+	
+	@Bean
+	public TextNotificationPublisher textNotificationPublisher() {
+		return new TextNotificationPublisher();
+	}
+	
+	@Bean
+	@Scope("prototype")
+	public Mission mission() {
+		return new Mission();
+	}
+	
+	@Bean
+	@Scope("prototype")
+	public LayerMission layerMission() {
+		return new LayerMission();
+	}
 }

@@ -1,11 +1,14 @@
 package mavlink.core.location;
 
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LogErrorDisplayerEvent;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.annotation.Resource;
 
 import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
@@ -15,8 +18,12 @@ import mavlink.is.location.LocationReceiver;
 import mavlink.is.utils.coordinates.Coord2D;
 
 public class MyLocationImpl implements LocationFinder {
+	
 	private static final int UPDATE_INTERVAL = 1000;// TALMA was 500;
 	private static final double SPEED = 3;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	private Set<LocationReceiver> receivers = null;
 	private TimerTask scTimerTask = null;
@@ -45,7 +52,7 @@ public class MyLocationImpl implements LocationFinder {
 				
 				BeaconData beaconDate = BeaconData.fetch();
 				if (beaconDate == null) {
-					LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
+					loggerDisplayerSvc.logError("Failed to get beacon point from the web");
 					return;
 				}
 				Logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				

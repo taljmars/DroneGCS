@@ -9,7 +9,7 @@ import gui.is.events.JMVCommandEvent;
 import gui.is.events.JMVCommandEvent.COMMAND;
 import gui.is.events.JMVEventPublisher;
 import gui.is.interfaces.*;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -51,6 +51,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	/** whether debug mode is enabled or not */
     public static boolean debug;
@@ -296,7 +299,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	SetEditModeGUI(true);
     	if (layer != null) {
     		System.out.println(getClass().getName() + " Start Working on exisitng layer:" + layer.getName());
-    		LoggerDisplayerManager.addGeneralMessegeToDisplay("Editing layer: " + layer.getName());
+    		loggerDisplayerSvc.logGeneral("Editing layer: " + layer.getName());
     		//this.fireJMVEvent(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
     		jmvEventPublisher.publish(new JMVCommandEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layer));
     	}

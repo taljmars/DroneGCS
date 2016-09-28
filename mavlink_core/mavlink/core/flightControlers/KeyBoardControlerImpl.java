@@ -2,7 +2,8 @@ package mavlink.core.flightControlers;
 
 import gui.is.events.JMVCommandEvent;
 import gui.is.interfaces.KeyBoardControler;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LogGeneralDisplayerEvent;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -32,6 +33,9 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	
 	@Resource(name = "drone")
 	private Drone drone;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public KeyBoardControlerImpl() {
 		LoadParams();
@@ -399,14 +403,14 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	_TRIM_ANGLE_ROLL = RC_Roll;
 		    	_TRIM_ANGLE_PITCH = RC_Pitch;
 		    	_TRIM_ANGLE_YAW = RC_Yaw;
-		    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Calibrating New Center of Keyboard Control");
+		    	loggerDisplayerSvc.logGeneral("Calibrating New Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		    case KeyEvent.VK_BACK_SPACE :
 		    	_TRIM_ANGLE_ROLL = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_PITCH = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_YAW = _TRIM_ANGLE;
-		    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Reseting Center of Keyboard Control");
+		    	loggerDisplayerSvc.logGeneral("Reseting Center of Keyboard Control");
 		    	event.consume();
 		    	break;
 		}

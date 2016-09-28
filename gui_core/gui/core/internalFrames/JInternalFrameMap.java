@@ -16,6 +16,7 @@ import gui.core.mapTileSources.MapQuestOsmTileSource;
 import gui.core.mapTileSources.OsmTileSource;
 import gui.core.mapTree.JMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
+import gui.core.springConfig.AppConfig;
 import gui.is.Coordinate;
 import gui.is.classes.MyStroke;
 import gui.is.classes.Style;
@@ -26,7 +27,8 @@ import gui.is.interfaces.KeyBoardControler;
 import gui.is.interfaces.MapLine;
 import gui.is.interfaces.TileLoader;
 import gui.is.interfaces.TileSource;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
+
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,6 +39,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -50,8 +53,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.WindowConstants;
 
+
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
 
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -95,6 +100,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	
 	@Resource(name = "textNotificationPublisher")
 	private TextNotificationPublisher textNotificationPublisher;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	JLabel mperpLabelValue;
 	JLabel zoomValue;
@@ -422,7 +430,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 							JOptionPane.YES_NO_OPTION);
 					if (n == JOptionPane.YES_OPTION) {
 						// GuidedPoint.changeToGuidedMode(drone);
-						// Dashboard.loggerDisplayerManager.addGeneralMessegeToDisplay("Flight Mode changed to '"
+						// Dashboard.loggerDisplayerSvc.logGeneral("Flight Mode changed to '"
 						// + drone.getState().getMode().getName() +
 						// "'");
 					} else {
@@ -445,7 +453,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 					guidedPoint = new MapMarkerDot(iCoord.getLat(), iCoord.getLon());
 					map.addMapMarker(guidedPoint);
-					LoggerDisplayerManager.addGeneralMessegeToDisplay("Flying to guided point " + guidedPoint.getCoordinate().toString());
+					loggerDisplayerSvc.logGeneral("Flying to guided point " + guidedPoint.getCoordinate().toString());
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -457,7 +465,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				System.out.println(getClass().getName() + " Start Sync Mission");
 				drone.getWaypointManager().setWaypointManagerListener(this);
 				drone.getWaypointManager().getWaypoints();
-				LoggerDisplayerManager.addOutgoingMessegeToDisplay("Send Sync Request");
+				loggerDisplayerSvc.logOutgoing("Send Sync Request");
 			}
 		);
 
@@ -489,7 +497,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					radi = Integer.parseInt(val);
 					keyboardController.ReleaseIfNeeded();
 					updateCycleGeoFence(radi, iCoord);
-					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of manual circle type");
+					loggerDisplayerSvc.logGeneral("Start GeoFence of manual circle type");
 					break;
 				case 1:
 					setGeoFenceByMouse = true;
@@ -497,7 +505,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					textNotificationPublisher.publish("Use Ctrl Key and mouse roller to set radius");
 					textNotificationPublisher.publish("Use Ctrl Key and mouse roller to set radius");
 					updateCycleGeoFence(radi, iCoord);
-					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of fixed circle type");
+					loggerDisplayerSvc.logGeneral("Start GeoFence of fixed circle type");
 					break;
 				case 2:
 					setPerimeterByMouse = true;
@@ -506,7 +514,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					textNotificationPublisher.publish("Use Ctrl Key and left mouse key to add point");
 					map.removeMapMarker(perimeterBreachPointMarker);
 					perimeterBreachPointMarker = null;
-					LoggerDisplayerManager.addGeneralMessegeToDisplay("Start GeoFence of perimeter type");
+					loggerDisplayerSvc.logGeneral("Start GeoFence of perimeter type");
 
 					map.SetEditModeGUI(true);
 					if (modifyiedLayerPerimeter == null) {
@@ -527,12 +535,15 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		menuItemMissionBuild.addActionListener( arg -> {
 				map.SetEditModeGUI(true);
 				if (modifyiedLayerMission == null) {
-					modifyiedLayerMission = new LayerMission("New Mission*");
+					//modifyiedLayerMission = new LayerMission("New Mission*");
+					modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
+					modifyiedLayerMission.setName("New Mission*");
 					modifyiedLayerMission.initialize();
 					missionsGroup.add(modifyiedLayerMission);
 					treeMap.addLayer(modifyiedLayerMission);
 					treeMap.updateUI();
-					Mission msn = new Mission();
+					//Mission msn = new Mission();
+					Mission msn = (Mission) AppConfig.context.getBean("mission");
 					msn.setDrone(drone);
 					modifyiedLayerMission.setMission(msn);
 				}
@@ -722,7 +733,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		map.addMapMarker(myMapCircle75);
 		map.addMapMarker(myMapCircle100);
 
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Setting new Home position");
+		loggerDisplayerSvc.logGeneral("Setting new Home position");
 	}
 
 	private void EditModeUndoChanges() {
@@ -788,11 +799,11 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		setGeoFenceByMouse = false;
 		setPerimeterByMouse = false;
 
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is off");
+		loggerDisplayerSvc.logGeneral("Edit mode is off");
 	}
 
 	private void EditModeOn() {
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Edit mode is on");
+		loggerDisplayerSvc.logGeneral("Edit mode is on");
 	}
 
 	/* Get the coordinate value of the mouse pointer */
@@ -823,7 +834,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
 			if (drone.getMission() != null) {
-				LayerMission instMission = new LayerMission("Current Installed Mission");
+				//LayerMission instMission = new LayerMission("Current Installed Mission");
+				LayerMission instMission = (LayerMission) AppConfig.context.getBean("layerMission");
+				instMission.setName("Current Installed Mission");
 				instMission.initialize();
 				missionsGroup.add(instMission);
 				treeMap.addLayer(instMission);
@@ -831,7 +844,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				instMission.setMission(drone.getMission());
 				instMission.repaint(map);
 
-				LoggerDisplayerManager.addIncommingMessegeToDisplay("Current mission was loaded to a new view");
+				loggerDisplayerSvc.logIncoming("Current mission was loaded to a new view");
 			}
 		}
 	}
@@ -862,7 +875,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 		case GCS_LOCATION:
 			if (drone.getGCS().getPosition() == null) {
-				LoggerDisplayerManager.addErrorMessegeToDisplay("GCS location doesn't exist");
+				loggerDisplayerSvc.logError("GCS location doesn't exist");
 				return;
 			}
 			UpdateGCSOnMap(drone.getGCS().getPosition().dot(1));
@@ -884,7 +897,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		}
 
 		map.addMapMarker(myGCS);
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("GCS was updated");
+		loggerDisplayerSvc.logGeneral("GCS was updated");
 	}
 
 	private void UpdateBeaconOnMap(Coordinate coord) {
@@ -900,17 +913,17 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		}
 
 		map.addMapMarker(myBeacon);
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon was updated");
+		loggerDisplayerSvc.logGeneral("Beacon was updated");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(cbLockMyPos)) {
 			if (cbLockMyPos.isSelected()) {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Lock on my position");
+				loggerDisplayerSvc.logGeneral("Lock on my position");
 				lockMapOnMyPosition = true;
 			} else {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Release lock on my position");
+				loggerDisplayerSvc.logGeneral("Release lock on my position");
 				lockMapOnMyPosition = false;
 			}
 			return;
@@ -918,11 +931,11 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		
 		if (e.getSource().equals(cbFollowTrail)) {
 			if (cbFollowTrail.isSelected()) {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Paint My Trail");
+				loggerDisplayerSvc.logGeneral("Paint My Trail");
 				myTrailPath = null;
 				paintTrail = true;
 			} else {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Stop Paint My Trail");
+				loggerDisplayerSvc.logGeneral("Stop Paint My Trail");
 				paintTrail = false;
 				map.removeMapPath(myTrailPath);
 				myTrailPath = null;

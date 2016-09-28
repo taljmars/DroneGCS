@@ -13,7 +13,7 @@ import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.AbstractLayer;
 import gui.is.interfaces.MapObject;
 import gui.is.interfaces.MapPolygon;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -75,6 +75,9 @@ public class JMapViewerTree extends JPanel {
 	
 	@Resource(name = "textNotificationPublisher")
 	private TextNotificationPublisher textNotificationPublisher;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public JMapViewerTree() {
 		this("Map Views");
@@ -303,10 +306,10 @@ public class JMapViewerTree extends JPanel {
             		}
         			ActiveLayerMission = (LayerMission) layer;
             		if (ActiveLayerMission.getMission() != null) {
-            			LoggerDisplayerManager.addOutgoingMessegeToDisplay("Sending Mission To APM");
+            			loggerDisplayerSvc.logOutgoing("Sending Mission To APM");
             			ActiveLayerMission.getMission().sendMissionToAPM();
             			ActiveLayerMission.setName("(ACTIVE) " + ActiveLayerMission.getName());
-            			LoggerDisplayerManager.addOutgoingMessegeToDisplay("Change mode to " + ApmModes.ROTOR_AUTO.getName());
+            			loggerDisplayerSvc.logOutgoing("Change mode to " + ApmModes.ROTOR_AUTO.getName());
             			drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
             			textNotificationPublisher.publish("Start Mission");
             			textNotificationPublisher.publish("Start Mission");
@@ -326,7 +329,7 @@ public class JMapViewerTree extends JPanel {
             		ActiveLayerMission.setName(ActiveLayerMission.getName().substring("(ACTIVE) ".length(), ActiveLayerMission.getName().length()));
             		
             		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-            		LoggerDisplayerManager.addGeneralMessegeToDisplay("Comming back to lunch position");
+            		loggerDisplayerSvc.logGeneral("Comming back to lunch position");
             		textNotificationPublisher.publish("Return To Lunch");
             		
             		ActiveLayerMission = null;
@@ -342,7 +345,7 @@ public class JMapViewerTree extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
             	if (layer instanceof LayerPerimeter) {
             		if (ActiveLayerPerimeter != null && ActiveLayerPerimeter != layer) {
-            			LoggerDisplayerManager.addGeneralMessegeToDisplay("Stopping current perimeter");
+            			loggerDisplayerSvc.logGeneral("Stopping current perimeter");
             			DeactivatePerimeter(ActiveLayerPerimeter);
             			ActiveLayerPerimeter = null;
             		}
@@ -355,11 +358,11 @@ public class JMapViewerTree extends JPanel {
             		LayerPerimeter l = (LayerPerimeter) layer;
             		
         			if (l.getElements().size() != 1 || !(l.getElements().get(0) instanceof MapPolygonImpl)) {
-        				LoggerDisplayerManager.addErrorMessegeToDisplay("Missing Perimeter in Layer");
+        				loggerDisplayerSvc.logError("Missing Perimeter in Layer");
         				ActiveLayerPerimeter = null;
         			}
         			
-        			LoggerDisplayerManager.addGeneralMessegeToDisplay("Enable Perimeter Alert");
+        			loggerDisplayerSvc.logGeneral("Enable Perimeter Alert");
         			
         			if (ActiveLayerPerimeter != l) {
         				// means this is a new layer or this is different layer
@@ -387,7 +390,7 @@ public class JMapViewerTree extends JPanel {
             			drone.getPerimeter().setPolygon(null);
             		}
             		
-        			LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Alert");
+        			loggerDisplayerSvc.logGeneral("Disable Perimeter Alert");
             		drone.getPerimeter().setAlert(false);
             		areaConfiguration.setAlertOn(false);
             		           		
@@ -414,12 +417,12 @@ public class JMapViewerTree extends JPanel {
             		LayerPerimeter l = (LayerPerimeter) layer;
             		
         			if (l.getElements().size() != 1 || !(l.getElements().get(0) instanceof MapPolygonImpl)) {
-        				LoggerDisplayerManager.addErrorMessegeToDisplay("Missing Perimeter in Layer");
+        				loggerDisplayerSvc.logError("Missing Perimeter in Layer");
         				ActiveLayerPerimeter = null;
         				return;
         			}
         			
-        			LoggerDisplayerManager.addGeneralMessegeToDisplay("Enable Perimeter Enforce");
+        			loggerDisplayerSvc.logGeneral("Enable Perimeter Enforce");
 
         			if (ActiveLayerPerimeter != l) {
         				ActiveLayerPerimeter = l;
@@ -446,7 +449,7 @@ public class JMapViewerTree extends JPanel {
             			drone.getPerimeter().setPolygon(null);
             		}
             		
-            		LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter Enforce");
+            		loggerDisplayerSvc.logGeneral("Disable Perimeter Enforce");
                 	drone.getPerimeter().setEnforce(false);
                 	areaConfiguration.setEnforceOn(false);
             		           		
@@ -554,7 +557,7 @@ public class JMapViewerTree extends JPanel {
     }
     
     public void SaveLayersTree() {
-    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Saving Map Views");
+    	loggerDisplayerSvc.logGeneral("Saving Map Views");
     	String settingsFilePath = "LayersData.ini";
     	Path fFilePath = Paths.get(settingsFilePath);
 		/*if (fFilePath.toFile().exists() == false) {
@@ -585,12 +588,12 @@ public class JMapViewerTree extends JPanel {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to save map view to " + fFilePath.toString());
+			loggerDisplayerSvc.logError("Failed to save map view to " + fFilePath.toString());
 		}
     }
     
     public void LoadLayersTree() {
-    	LoggerDisplayerManager.addGeneralMessegeToDisplay("Loading Map Views");
+    	loggerDisplayerSvc.logGeneral("Loading Map Views");
     	String settingsFilePath = "LayersData.ini";
     	Path fFilePath = Paths.get(settingsFilePath);
 		/*if (fFilePath.toFile().exists() == false) {
@@ -617,10 +620,10 @@ public class JMapViewerTree extends JPanel {
 			CheckBoxTree tmp = (CheckBoxTree) file.readObject();
 			file.close();
 			fOut.close();
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Map View were successfully loaded to " + fFilePath.toString());
+			loggerDisplayerSvc.logGeneral("Map View were successfully loaded to " + fFilePath.toString());
 			tree.removeAll();
 			setTree(tmp);
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Reresh tree");
+			loggerDisplayerSvc.logGeneral("Reresh tree");
 			
 			LayerGroup root = tree.rootLayer();
 			reloadLayerGroup(root);
@@ -628,7 +631,7 @@ public class JMapViewerTree extends JPanel {
 		catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to load map view to " + fFilePath.toString());
+			loggerDisplayerSvc.logError("Failed to load map view to " + fFilePath.toString());
 		}
     }
     

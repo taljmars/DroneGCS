@@ -1,11 +1,14 @@
 package mavlink.core.connection;
 
+import gui.is.services.LoggerDisplayerSvc;
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Resource;
 
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.DependsOn;
+
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import mavlink.is.drone.Drone;
@@ -14,13 +17,16 @@ import communication_device.TwoWaySerialComm;
 /**
  * Provides support for mavlink connection via udp.
  */
-@ComponentScan("gui.core.springConfig")
+
 public class RadioConnection extends MavLinkConnection {
 
 	private TwoWaySerialComm socket = null;
 	
 	@Resource(name = "drone")
 	private Drone drone;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	private void getRadioStream() throws IOException {
 		socket = TwoWaySerialComm.get();
@@ -58,7 +64,7 @@ public class RadioConnection extends MavLinkConnection {
 
 	@Override
 	public final void loadPreferences() {
-		addMavLinkConnectionListener("Drone", new DroneUpdateListener(drone));
+		addMavLinkConnectionListener("Drone", new DroneUpdateListener());
 	}
 
 	@Override

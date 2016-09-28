@@ -1,6 +1,6 @@
 package mavlink.is.drone.variables;
 
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.io.Serializable;
 
@@ -11,6 +11,7 @@ import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.utils.coordinates.Coord3D;
 
+import javax.annotation.Resource;
 import javax.swing.SwingWorker;
 
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class Beacon extends DroneVariable implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -9030954282536999192L;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	private boolean pIsActive;
 	private Coord3D pLastPosition;
@@ -67,14 +71,14 @@ public class Beacon extends DroneVariable implements Serializable{
 			
 			@Override
    			protected Void doInBackground() throws Exception {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon Started");
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon Mainloop Started");
+				loggerDisplayerSvc.logGeneral("Beacon Started");
+				loggerDisplayerSvc.logGeneral("Beacon Mainloop Started");
 				Coord3D tmpPos = null;
 				boolean started = false;
 				while (true) {
 					Thread.sleep(1000);
 					if (!drone.getGps().isPositionValid()) {
-						LoggerDisplayerManager.addErrorMessegeToDisplay("Drone doesn't have GPS location, skipp request to follow beacon");
+						loggerDisplayerSvc.logError("Drone doesn't have GPS location, skipp request to follow beacon");
 						continue;
 					}
 					
@@ -82,29 +86,29 @@ public class Beacon extends DroneVariable implements Serializable{
 
 					// tmpPos != null mark that we are in the first iteration of the loop
 					if (started && !GuidedPoint.isGuidedMode(drone)) {
-						LoggerDisplayerManager.addErrorMessegeToDisplay("Quad is must be in guided mode to follow beacon, operation canceled");
+						loggerDisplayerSvc.logError("Quad is must be in guided mode to follow beacon, operation canceled");
 						drone.notifyDroneEvent(DroneEventsType.FOLLOW_STOP);
 						started = false;
 						break;
 					}
 					
 					if (tmpPos == pLastPosition) {
-						LoggerDisplayerManager.addGeneralMessegeToDisplay("Same beacon position");
+						loggerDisplayerSvc.logGeneral("Same beacon position");
 						continue;
 					}
 					
 					drone.getGuidedPoint().forcedGuidedCoordinate(pLastPosition.dot(1));
 					tmpPos = pLastPosition;
 					started = true;
-					LoggerDisplayerManager.addGeneralMessegeToDisplay("Update Beacon position was sent to quad");
+					loggerDisplayerSvc.logGeneral("Update Beacon position was sent to quad");
 				}
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon Mainloop Finished");
+				loggerDisplayerSvc.logGeneral("Beacon Mainloop Finished");
 				return null;
 			}
 			
 			@Override
             protected void done() {
-				LoggerDisplayerManager.addGeneralMessegeToDisplay("Beacon Thread Finish");
+				loggerDisplayerSvc.logGeneral("Beacon Thread Finish");
 			}
 		};
 		
@@ -124,10 +128,10 @@ public class Beacon extends DroneVariable implements Serializable{
 	}
 
 	public void syncBeacon() {
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Sync Beacon");
+		loggerDisplayerSvc.logGeneral("Sync Beacon");
 		BeaconData beaconData = BeaconData.fetch();
 		if (beaconData == null) {
-			LoggerDisplayerManager.addErrorMessegeToDisplay("Failed to get beacon point from the web");
+			loggerDisplayerSvc.logError("Failed to get beacon point from the web");
 			return;
 		}
 		setPosition(beaconData.getCoordinate());

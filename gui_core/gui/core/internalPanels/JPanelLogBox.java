@@ -1,6 +1,6 @@
 package gui.core.internalPanels;
 
-import gui.is.services.LoggerDisplayerListener;
+import gui.is.services.LogDisplayerEvent;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -15,7 +15,12 @@ import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.text.html.HTMLEditorKit;
 
-public class JPanelLogBox extends JPanel implements LoggerDisplayerListener {
+import org.springframework.context.event.EventListener;
+
+import logger.Logger;
+import logger.Logger.Type;
+
+public class JPanelLogBox extends JPanel {
 
 	/**
 	 * 
@@ -63,22 +68,89 @@ public class JPanelLogBox extends JPanel implements LoggerDisplayerListener {
         add(pnlLogBox);
 	}
 	
-	@Override
-	public String getDisplayedLoggerText() {
+	private String getDisplayedLoggerText() {
 		if (logBox == null)
 			System.err.println("LogBox was not created");
 		return logBox.getText();
 	}   
 	
-	@Override
-	public void setDisplayedLoggerText(String text) {
+	
+	private void setDisplayedLoggerText(String text) {
 		if (logBox == null)
 			System.err.println("LogBox was not created");
 		logBox.setText(text);
 	}
 
-	@Override
-	public int getMaxLoggerDisplayedLines() {
+	private int getMaxLoggerDisplayedLines() {
 		return LOG_BOX_MAX_LINES;
+	}
+	
+	private void addGeneralMessegeToDisplay(String cmd) {
+		addMessegeToDisplay(cmd, Type.GENERAL);
+	}
+	
+	private void addErrorMessegeToDisplay(String cmd) {
+		addMessegeToDisplay(cmd, Type.ERROR);
+	}
+	
+	private void addOutgoingMessegeToDisplay(String cmd) {
+		addMessegeToDisplay(cmd, Type.OUTGOING);
+	}
+	
+	private void addIncommingMessegeToDisplay(String cmd) {
+		addMessegeToDisplay(cmd, Type.INCOMING);
+	}
+	
+	private void addMessegeToDisplay(String cmd, Type t) {
+		addMessegeToDisplay(cmd, t, false);
+	}
+	
+	private synchronized void addMessegeToDisplay(String cmd, Type t, boolean no_date) {
+		String newcontent = Logger.generateDesignedMessege(cmd, t, no_date);
+		
+		String alltext = getDisplayedLoggerText();
+		String content = "";
+		if (!alltext.isEmpty())
+			content = alltext.substring(alltext.indexOf("<body>") + "<body>".length(), alltext.indexOf("</body>"));
+		int idx = content.indexOf("<font");
+		if (idx == -1) {
+			content = "";
+		}
+		else {
+			content = content.substring(idx);
+		}
+		
+		content = (newcontent + content);
+
+		// To Screen
+		String futureText = "<html>";
+		int maxDisplayerLines = getMaxLoggerDisplayedLines();
+		String[] sz = content.split("</font>", maxDisplayerLines);
+		for (int i = 0 ; i < Math.min(maxDisplayerLines - 1, sz.length) ; i++) {
+			futureText += (sz[i] + "</font>");
+		}
+		
+		futureText += "</html>";
+		setDisplayedLoggerText(futureText);
+		
+		Logger.LogDesignedMessege(newcontent);
+	}
+	
+	@EventListener
+	public void onLogDisplayerEvent(LogDisplayerEvent event) {
+		switch (event.getType()) {
+		case ERROR:
+			addErrorMessegeToDisplay(event.getEntry());
+			break;
+		case GENERAL:
+			addGeneralMessegeToDisplay(event.getEntry());
+			break;
+		case INCOMING:
+			addIncommingMessegeToDisplay(event.getEntry());
+			break;
+		case OUTGOING:
+			addOutgoingMessegeToDisplay(event.getEntry());
+			break;
+		}
 	}
 }

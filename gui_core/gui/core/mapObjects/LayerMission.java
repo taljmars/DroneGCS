@@ -3,10 +3,11 @@ package gui.core.mapObjects;
 
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapObject;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 import gui.core.internalFrames.helper.ButtonColumn;
 import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapViewer.JMapViewer;
+import gui.core.springConfig.AppConfig;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -36,15 +37,16 @@ import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
 public class LayerMission extends Layer implements Serializable /*TALMA add serilizebae*/ {    
-    /**
-	 * 
-	 */
-	
+
 	private static final long serialVersionUID = -1287037956711191751L;
+	
 	private Mission mission;
 	
 	@Resource(name = "areaMission")
 	private JPanelMissionBox missionBox;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	enum Column {
 		Order ("Order"), 
@@ -121,15 +123,16 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 		}
 	}	
 
-	public LayerMission(String name) {
-        super(name);
+	public LayerMission() {
+        super("Unnamed Mission");
     }
     
     public LayerMission(LayerMission layer) {
     	super(layer);
     	Mission mission_in_layer = layer.getMission();
     	if (mission_in_layer != null) {
-    		this.mission = new Mission();
+    		//this.mission = new Mission();
+    		this.mission = (Mission) AppConfig.context.getBean("mission");
     		this.mission.setDrone(mission_in_layer.getDrone());
     		Iterator<MissionItem> it = layer.getMission().getItems().iterator();
     		while (it.hasNext()) {
@@ -374,7 +377,8 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	            }
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow-1);
 	            
-	            Mission tmpMission = new Mission();
+	            //Mission tmpMission = new Mission();
+	            Mission tmpMission = (Mission) AppConfig.context.getBean("mission");
 	            tmpMission.setDrone(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
@@ -404,7 +408,8 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 
 	            ((DefaultTableModel) table.getModel()).moveRow(modelRow, modelRow, modelRow+1);
 	            
-	            Mission tmpMission = new Mission();
+	            //Mission tmpMission = new Mission();
+	            Mission tmpMission = (Mission) AppConfig.context.getBean("mission");
 	            tmpMission.setDrone(mission.getDrone());
 	            for (int i = 0 ; i < table.getRowCount() ; i++) {
 	            	mi = (MissionItem)table.getModel().getValueAt(i, Column.PTR.ordinal());
@@ -463,7 +468,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 						else if (mi instanceof Takeoff)
 							((Takeoff) mi).setFinishedAlt(new Altitude(Double.parseDouble(missionTable.getValueAt(row, colidx).toString())));
 						else 
-							LoggerDisplayerManager.addErrorMessegeToDisplay("Height was modified to irrelevant type");
+							loggerDisplayerSvc.logError("Height was modified to irrelevant type");
 						break;
 					case Delay:
 						((Waypoint) mi).setDelay(Double.parseDouble(missionTable.getValueAt(row, colidx).toString()));

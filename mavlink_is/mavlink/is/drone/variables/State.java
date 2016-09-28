@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import gui.is.Coordinate;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.Clock;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -36,6 +36,9 @@ public class State extends DroneVariable {
 
 	@Resource(name = "handler")
 	public Handler handler;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public Runnable watchdogCallback = () -> removeWarning();
 	
@@ -116,7 +119,7 @@ public class State extends DroneVariable {
 
 	public void changeFlightMode(ApmModes mode) {
 		if (ApmModes.isValid(mode)) {
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Start Mission - Change to " + mode.getName());
+			loggerDisplayerSvc.logGeneral("Start Mission - Change to " + mode.getName());
 			System.out.println(getClass().getName() + mode.getName());
 			MavLinkModes.changeFlightMode(drone, mode);
 		}

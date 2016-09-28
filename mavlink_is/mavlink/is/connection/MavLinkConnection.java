@@ -73,6 +73,7 @@ public abstract class MavLinkConnection {
 
 		@Override
 		public void run() {
+			System.out.println("Starting Connection Tasks Thread");
 			Thread sendingThread = null, loggingThread = null;
 
 			// Load the connection specific preferences
@@ -83,6 +84,8 @@ public abstract class MavLinkConnection {
 				openConnection();
 				mConnectionStatus.set(MAVLINK_CONNECTED);
 				reportConnect();
+				
+				System.out.println("Connected in Thread");
 
 				// Launch the 'Sending', and 'Logging' threads
 				sendingThread = new Thread(mSendingTask, "MavLinkConnection-Sending Thread");
@@ -141,6 +144,7 @@ public abstract class MavLinkConnection {
 	private final Runnable mSendingTask = new Runnable() {
 		@Override
 		public void run() {
+			System.out.println("Starting Sending Tasks Thread");
 			int msgSeqNumber = 0;
 
 			try {
@@ -180,6 +184,7 @@ public abstract class MavLinkConnection {
 	private final Runnable mLoggingTask = new Runnable() {
 		@Override
 		public void run() {
+			System.out.println("Starting Logging Tasks Thread");
 			final File tmpLogFile = getTempTLogFile();
 			final ByteBuffer logBuffer = ByteBuffer.allocate(Long.SIZE / Byte.SIZE);
 			logBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -357,9 +362,11 @@ public abstract class MavLinkConnection {
 	 * connection.
 	 */
 	private void reportConnect() {
+		System.out.println(getClass() + " Listerns amont " + mListeners.size());
 		for (MavLinkConnectionListener listener : mListeners.values()) {
 			listener.onConnect();
 		}
+		System.out.println(getClass() + " Listerns amont " + mListeners.size());
 	}
 
 	/**

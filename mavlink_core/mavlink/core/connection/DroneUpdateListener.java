@@ -1,6 +1,11 @@
 package mavlink.core.connection;
 
+import javax.annotation.Resource;
 import javax.swing.JOptionPane;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import mavlink.is.connection.MavLinkConnectionListener;
@@ -25,8 +30,11 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
-import gui.is.services.LoggerDisplayerManager;
+import gui.core.dashboard.Dashboard;
+import gui.core.springConfig.AppConfig;
+import gui.is.services.LoggerDisplayerSvc;
 
+@DependsOn("RepositoryConfig")
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
 	private static final byte SEVERITY_HIGH = 3;
@@ -34,17 +42,22 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	byte t_compid = 1;
 	byte t_sysid = 1;
 	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	Drone drone = null;
-	
-	public DroneUpdateListener(Drone drone) {
-		this.drone = drone;
-	}
+	@Resource(name = "drone")
+	private Drone drone;
+
 	
 	@Override
 	public void onConnect() {
-		System.err.println(getClass().getName() + " On Connect!!");
-		LoggerDisplayerManager.addGeneralMessegeToDisplay("Connected!");
+//		loggerDisplayerSvc.logGeneral("Connected!");
+		System.err.println(getClass() + " On Connect!!");
+		System.err.println(getClass() + (loggerDisplayerSvc == null ? " null" : " value!"));
+		//loggerDisplayerSvc = (LoggerDisplayerSvc) AppConfig.context.getBean("loggerDisplayerSvc");
+		System.err.println(getClass() + (loggerDisplayerSvc == null ? " null" : " value!"));
+		loggerDisplayerSvc.logGeneral("Connected!");
+		System.err.println(getClass() + " Done!!");
 	}
 
 	@Override
@@ -160,7 +173,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 					break;
 				}
 				
-				LoggerDisplayerManager.addGeneralMessegeToDisplay(message);
+				loggerDisplayerSvc.logGeneral(message);
 				drone.getMessegeQueue().push(message);
 				return;
 				//break;
@@ -177,14 +190,14 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 
 	@Override
 	public void onDisconnect() {
-		System.err.println("Disconnected!");
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Disconnected!");
+		System.err.println(getClass() + " Disconnected!");
+		loggerDisplayerSvc.logError("Disconnected!");
 	}
 
 	@Override
 	public void onComError(String errMsg) {
 		System.err.println("Communication Error: " + errMsg);
-		LoggerDisplayerManager.addErrorMessegeToDisplay("Communication Error: " + errMsg);
+		loggerDisplayerSvc.logError("Communication Error: " + errMsg);
 	}
 	
 	public void processState(msg_heartbeat msg_heart) {
@@ -196,7 +209,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 		boolean failsafe2 = msg_heart.system_status == (byte) MAV_STATE.MAV_STATE_CRITICAL;
 		if (failsafe2) {
 			drone.getState().setWarning("Failsafe");
-			LoggerDisplayerManager.addErrorMessegeToDisplay("FailSafe procedure started!");
+			loggerDisplayerSvc.logError("FailSafe procedure started!");
 		}
 	}
 

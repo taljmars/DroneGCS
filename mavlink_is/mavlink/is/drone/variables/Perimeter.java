@@ -3,12 +3,14 @@ package mavlink.is.drone.variables;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
 
 import gui.is.Coordinate;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapPolygon;
-import gui.is.services.LoggerDisplayerManager;
+import gui.is.services.LoggerDisplayerSvc;
 import logger.Logger;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -27,6 +29,9 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	private Coord2D pLastPositionInPerimeter = null;
 	private ApmModes pMode;
 	private boolean pEnforcePermeterRunning = false;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public void init() {
 		pEnforce = false;
@@ -50,7 +55,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 					try {
 						if (!pEnforcePermeterRunning) {
 							pMode = drone.getState().getMode();							
-							LoggerDisplayerManager.addErrorMessegeToDisplay("Changing flight from " + pMode.getName() + " to " + ApmModes.ROTOR_GUIDED.getName() + " (Enforcing perimeter)");
+							loggerDisplayerSvc.logError("Changing flight from " + pMode.getName() + " to " + ApmModes.ROTOR_GUIDED.getName() + " (Enforcing perimeter)");
 							drone.getGuidedPoint().forcedGuidedCoordinate(getClosestPointOnPerimeterBorder());
 							pEnforcePermeterRunning = true;
 						}
@@ -62,7 +67,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 			}
 			else {
 				if (pEnforcePermeterRunning) {
-					LoggerDisplayerManager.addErrorMessegeToDisplay("Changing flight from " + ApmModes.ROTOR_GUIDED.getName() + " back to " + pMode.getName());
+					loggerDisplayerSvc.logError("Changing flight from " + ApmModes.ROTOR_GUIDED.getName() + " back to " + pMode.getName());
 					drone.getState().changeFlightMode(pMode);
 					pEnforcePermeterRunning = false;
 				}
@@ -73,17 +78,17 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	
 	public void setEnforce(boolean enforce) {
 		if (enforce)
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Enable Perimeter enforcement");
+			loggerDisplayerSvc.logGeneral("Enable Perimeter enforcement");
 		else
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable Perimeter enforcement");
+			loggerDisplayerSvc.logGeneral("Disable Perimeter enforcement");
 		pEnforce = enforce;
 	}
 	
 	public void setAlert(boolean alert) {
 		if (alert)
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Enable perimeter alert");
+			loggerDisplayerSvc.logGeneral("Enable perimeter alert");
 		else
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Disable perimeter alert");
+			loggerDisplayerSvc.logGeneral("Disable perimeter alert");
 		pAlert = alert;
 	}
 	
@@ -100,7 +105,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	
 	public Coord2D getClosestPointOnPerimeterBorder() {
 		if (pLastPositionInPerimeter == null) {
-			LoggerDisplayerManager.addGeneralMessegeToDisplay("Last position not exist, return closest corner in it");
+			loggerDisplayerSvc.logGeneral("Last position not exist, return closest corner in it");
 			return getClosestCornerInPoligon();
 		}
 		

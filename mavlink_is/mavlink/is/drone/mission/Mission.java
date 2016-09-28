@@ -23,6 +23,7 @@ import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 import mavlink.is.utils.units.Length;
 import mavlink.is.utils.units.Speed;
+import gui.core.springConfig.AppConfig;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ import pair.Pair;
  * commands/mission items to be carried out by the drone. TODO: rename the
  * 'waypoint' method to 'missionItem' (i.e: addMissionItem)
  */
-@Component("mission")
 public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
 
 	private static final long serialVersionUID = 8399081979944818494L;
@@ -48,6 +48,10 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	 */
 	private List<MissionItem> items = new ArrayList<MissionItem>();
 	private Altitude defaultAlt = new Altitude(20.0);
+	
+	public Mission(){
+		super();
+	}
 
 	/**
 	 * @return the mission's default altitude
@@ -380,7 +384,8 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	}
 
 	public Mission duplicate() {
-		Mission ans = new Mission();
+		//Mission ans = new Mission();
+		Mission ans = (Mission) AppConfig.context.getBean("mission");
 		ans.setDrone(drone);
 		Iterator<MissionItem> it = this.items.iterator();
 		while (it.hasNext()) {
