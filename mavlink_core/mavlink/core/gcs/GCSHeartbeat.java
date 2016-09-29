@@ -4,23 +4,30 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkHeartbeat;
 
 /**
  * This class is used to send periodic heartbeat messages to the drone.
  */
+
+@Component("gcsHeartbeat")
 public class GCSHeartbeat {
 
 	/**
 	 * This is the drone to send the heartbeat message to.
 	 */
-	private final Drone drone;
+	@Resource(name = "drone")
+	private Drone drone;
 
 	/**
 	 * This is the heartbeat period in seconds.
 	 */
-	private final int period;
+	private int period;
 
 	/**
 	 * ScheduledExecutorService used to periodically schedule the heartbeat.
@@ -34,13 +41,12 @@ public class GCSHeartbeat {
 		@Override
 		public void run() {
 			System.out.println(getClass() + " Sending HB");
+			drone.getMavClient();
 			MavLinkHeartbeat.sendMavHeartbeat(drone);
 		}
 	};
 
-	public GCSHeartbeat(Drone drone, int freqHz) {
-		this.drone = drone;
-		this.period = freqHz;
+	public GCSHeartbeat() {
 	}
 
 	/**
@@ -58,5 +64,9 @@ public class GCSHeartbeat {
 			heartbeatExecutor.shutdownNow();
 			heartbeatExecutor = null;
 		}
+	}
+
+	public void setFrq(int i) {
+		period = i;
 	}
 }

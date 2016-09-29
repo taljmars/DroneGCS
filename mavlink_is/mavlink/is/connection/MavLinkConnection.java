@@ -1,6 +1,7 @@
 package mavlink.is.connection;
 
 import logger.Logger;
+import gui.is.services.LoggerDisplayerSvc;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
@@ -27,6 +29,9 @@ public abstract class MavLinkConnection {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = MavLinkConnection.class.getSimpleName();
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	/*
 	 * MavLink connection states
@@ -168,7 +173,7 @@ public abstract class MavLinkConnection {
 
 					msgSeqNumber = (msgSeqNumber + 1) % (MAX_PACKET_SEQUENCE + 1);
 				}
-				System.err.println("Not connected yet");
+				loggerDisplayerSvc.logError("Mavlink was not connected");
 			} catch (InterruptedException e) {
 				//mLogger.logVerbose(TAG, e.getMessage());
 			} finally {
@@ -266,9 +271,8 @@ public abstract class MavLinkConnection {
 	}
 
 	public void sendMavPacket(MAVLinkPacket packet) {
-		if (!mPacketsToSend.offer(packet)) {
-			//mLogger.logErr(TAG, "Unable to send mavlink packet. Packet queue is full!");
-		}
+		if (!mPacketsToSend.offer(packet))
+			loggerDisplayerSvc.logError("Unable to send mavlink packet. Packet queue is full!");
 	}
 
 	/**

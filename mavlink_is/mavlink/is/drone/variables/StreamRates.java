@@ -1,5 +1,9 @@
 package mavlink.is.drone.variables;
 
+import gui.is.services.LoggerDisplayerSvc;
+
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -13,7 +17,9 @@ import mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 public class StreamRates extends DroneVariable implements OnDroneListener {
 
 	private static final long serialVersionUID = -4572905995884327453L;
-
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	public void init() {
 		drone.addDroneListener(this);
@@ -32,6 +38,7 @@ public class StreamRates extends DroneVariable implements OnDroneListener {
 	}
 
 	public void setupStreamRatesFromPref() {
+		loggerDisplayerSvc.logGeneral("Setting up stream rates");
 		Rates rates = drone.getPreferences().getRates();
 
 		MavLinkStreamRates.setupStreamRates(drone.getMavClient(), rates.extendedStatus,

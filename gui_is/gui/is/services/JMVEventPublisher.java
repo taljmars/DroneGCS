@@ -1,4 +1,6 @@
-package gui.is.events;
+package gui.is.services;
+
+import gui.is.events.JMVCommandEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,7 +11,6 @@ public class JMVEventPublisher {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	public void publish(JMVCommandEvent event) {
-		System.out.println("Publishing event " + event);
 		applicationEventPublisher.publishEvent(event);
 	}
 }

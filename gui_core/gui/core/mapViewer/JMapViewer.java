@@ -7,8 +7,8 @@ import gui.is.Coordinate;
 import gui.is.classes.Tile;
 import gui.is.events.JMVCommandEvent;
 import gui.is.events.JMVCommandEvent.COMMAND;
-import gui.is.events.JMVEventPublisher;
 import gui.is.interfaces.*;
+import gui.is.services.JMVEventPublisher;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.Color;

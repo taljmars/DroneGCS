@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 
 import communication_device.TwoWaySerialComm;
@@ -25,10 +26,17 @@ import logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
+@ComponentScan("communication_device")
+@ComponentScan("mavlink.core.drone")
+@ComponentScan("communication_device")
+@ComponentScan("gui.is.services")
 public class KeyBoardControlerImpl implements KeyBoardControler {
 	
 	private static boolean param_loaded = false;
 	private static Thread KeyboardStabilizer = null;
+	
+	@Resource(name = "twoWaySerialComm")
+	private TwoWaySerialComm twoWaySerialComm;
 	
 	@Resource(name = "drone")
 	private Drone drone;
@@ -50,7 +58,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 						Thread.sleep(100);
 						Update();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -228,9 +235,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	
 	static int _THR_STEP = 0;
 	static int _INIT_THR = 0;
-	//static int RC_Initial_Thr = 1100;
-	
-		
 	
 	private static int constrain(int val, int min, int max){
 		if (val < min) {
@@ -417,9 +421,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		String val = GetRCSet();
 		
 		if (! val.isEmpty()) {
-			TwoWaySerialComm.get().write(val);
+			twoWaySerialComm.write(val);
 			System.out.println("Sending '" + val + "'");
-			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
 		}
@@ -434,9 +437,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		String val = GetRCSet();
 		
 		if (param_loaded && ! val.isEmpty()) {
-			TwoWaySerialComm.get().write(val);
+			twoWaySerialComm.write(val);
 			System.out.println("Sending '" + val + "'");
-			//Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
 		}
@@ -445,8 +447,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	public void Reset() {
 		System.out.println("Reseting RC Set");
 		ResetRCSet();
-		//if (Dashboard.window != null)
-		//	Dashboard.window.ShowEngine(RC_Roll, RC_Pitch, RC_Thr, RC_Yaw);
 	}
 
 	public void SetThrust(int parseInt) {
@@ -454,11 +454,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	//@Override
 	@EventListener
-	//public void processCommand(JMVCommandEvent command) {
 	public void onApplicationEvent(JMVCommandEvent command) {
-		System.out.println("Application Event: " + getClass());
 		switch (command.getCommand()) {
 			case ZOOM:
 			case MOVE:

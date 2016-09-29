@@ -18,9 +18,9 @@ import gui.core.mapObjects.LayerMission;
 import gui.core.mapTree.JMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
 import gui.is.interfaces.KeyBoardControler;
+import gui.is.services.JMVEventPublisher;
 import gui.is.services.LoggerDisplayerSvc;
-import gui.is.events.JMVEventPublisher;
-import gui.is.events.TextNotificationPublisher;
+import gui.is.services.TextNotificationPublisher;
 import mavlink.core.connection.DroneUpdateListener;
 import mavlink.core.drone.ClockImpl;
 import mavlink.core.drone.HandlerImpl;
@@ -41,13 +41,20 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import communication_device.TwoWaySerialComm;
+
 @ComponentScan("gui.core.internalPanels")
 @ComponentScan("gui.is.services")
+@ComponentScan("mavlink.core.gcs")
 @Import(MyDroneImpl.class)
 @Configuration
 public class AppConfig {
 	
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+	
+	@Bean TwoWaySerialComm twoWaySerialComm() {
+		return new TwoWaySerialComm();
+	}
 	
 	@Bean
 	public DroneUpdateListener droneUpdateListener() {

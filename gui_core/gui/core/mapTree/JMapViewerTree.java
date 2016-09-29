@@ -9,11 +9,11 @@ import gui.core.mapObjects.LayerMission;
 import gui.core.mapObjects.LayerPerimeter;
 import gui.core.mapObjects.MapPolygonImpl;
 import gui.core.mapViewer.JMapViewer;
-import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.AbstractLayer;
 import gui.is.interfaces.MapObject;
 import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.services.TextNotificationPublisher;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

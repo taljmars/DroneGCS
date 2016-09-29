@@ -7,7 +7,8 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import mavlink.is.drone.Drone;
@@ -16,11 +17,11 @@ import communication_device.TwoWaySerialComm;
 /**
  * Provides support for mavlink connection via udp.
  */
-
-@Configuration
+@Component("radioConnection")
 public class RadioConnection extends MavLinkConnection {
 
-	private TwoWaySerialComm socket = null;
+	@Resource(name = "twoWaySerialComm")
+	private TwoWaySerialComm socket;
 	
 	@Resource(name = "droneUpdateListener")
 	private DroneUpdateListener droneUpdateListener;
@@ -31,19 +32,14 @@ public class RadioConnection extends MavLinkConnection {
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 
-	private void getRadioStream() throws IOException {
-		socket = TwoWaySerialComm.get();
-	}
-
 	@Override
 	public final void closeConnection() throws IOException {
-		
 	}
 
 	@Override
 	public final void openConnection() throws IOException {
 		System.err.println("openConnection");
-		getRadioStream();
+		socket.connect();
 	}
 
 	@Override

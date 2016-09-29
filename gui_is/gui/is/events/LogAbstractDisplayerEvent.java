@@ -1,14 +1,14 @@
-package gui.is.services;
+package gui.is.events;
 
 import logger.Logger.Type;
 
-public abstract class LogDisplayerEvent {
+public abstract class LogAbstractDisplayerEvent {
 	
 	private Type type;
 	
 	private String entry;
 	
-	public LogDisplayerEvent(Type type, String entry) {
+	public LogAbstractDisplayerEvent(Type type, String entry) {
 		this.type = type;
 		this.entry = entry;
 	}

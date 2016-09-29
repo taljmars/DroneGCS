@@ -1,5 +1,11 @@
 package gui.is.services;
 
+import gui.is.events.LogAbstractDisplayerEvent;
+import gui.is.events.LogErrorDisplayerEvent;
+import gui.is.events.LogGeneralDisplayerEvent;
+import gui.is.events.LogIncomingDisplayerEvent;
+import gui.is.events.LogOutgoingDisplayerEvent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -8,8 +14,7 @@ public class LoggerDisplayerSvc {
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
-	private void publish(LogDisplayerEvent event) {
-		System.out.println("Publishing event " + event);
+	private void publish(LogAbstractDisplayerEvent event) {
 		applicationEventPublisher.publishEvent(event);
 	}
 

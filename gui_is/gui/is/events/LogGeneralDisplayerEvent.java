@@ -1,14 +1,14 @@
-package gui.is.services;
+package gui.is.events;
 
 import logger.Logger.Type;
 
-public class LogGeneralDisplayerEvent extends LogDisplayerEvent {
+public class LogGeneralDisplayerEvent extends LogAbstractDisplayerEvent {
 	
 	public LogGeneralDisplayerEvent(String entry) {
 		super(Type.GENERAL, entry);
 	}
 	
-	public static LogDisplayerEvent log(String entry) {
+	public static LogAbstractDisplayerEvent log(String entry) {
 		return new LogGeneralDisplayerEvent(entry);
 	}
 	

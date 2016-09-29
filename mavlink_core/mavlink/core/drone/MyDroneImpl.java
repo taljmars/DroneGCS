@@ -4,7 +4,6 @@ package mavlink.core.drone;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import mavlink.core.connection.RadioConnection;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.Drone;
@@ -48,6 +47,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
 @ComponentScan("mavlink.is.protocol.msgbuilder")
+@ComponentScan("mavlink.core.connection")
 @Configuration
 public class MyDroneImpl implements Drone {
 
@@ -55,12 +55,6 @@ public class MyDroneImpl implements Drone {
 	public VehicleProfile profile() {
 		loadVehicleProfile();
 		return profile;
-	}
-	
-	@Override
-	@Bean
-	public MavLinkConnection getMavClient() {
-		return new RadioConnection();
 	}
 	
 	@Resource(name = "gps")
@@ -146,6 +140,9 @@ public class MyDroneImpl implements Drone {
 
 	@Resource(name = "follow")
 	private Follow follow;
+	
+	@Resource(name = "radioConnection")
+	private MavLinkConnection mavlinkConnection;
 
 	private VehicleProfile profile;
 	
@@ -364,5 +361,10 @@ public class MyDroneImpl implements Drone {
 	@Override
 	public Follow getFollow() {
 		return follow;
+	}
+	
+	@Override
+	public MavLinkConnection getMavClient() {
+		return mavlinkConnection;
 	}
 }

@@ -1,6 +1,6 @@
 package gui.core.internalPanels;
 
-import gui.is.services.LogDisplayerEvent;
+import gui.is.events.LogAbstractDisplayerEvent;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -137,7 +137,7 @@ public class JPanelLogBox extends JPanel {
 	}
 	
 	@EventListener
-	public void onLogDisplayerEvent(LogDisplayerEvent event) {
+	public void onLogDisplayerEvent(LogAbstractDisplayerEvent event) {
 		switch (event.getType()) {
 		case ERROR:
 			addErrorMessegeToDisplay(event.getEntry());

@@ -54,13 +54,6 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	public Runnable watchdogCallback = () -> onParameterStreamStopped();
 
 	public final ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
-
-	//@Autowired
-	//public Parameters(Drone drone, Handler handler) {
-	public Parameters() {
-		//super(drone);
-		//this.handler = handler;
-	}
 	
 	public void init() {
 		drone.addDroneListener(this);
@@ -69,12 +62,13 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	public void refreshParameters() {
 		parameters.clear();
         parameterList.clear();
-        
-        drone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOAD_START);
 
-		if (parameterListener != null)
-			parameterListener.onBeginReceivingParameters();
+		if (parameterListener == null) {
+			loggerDisplayerSvc.logError("Error: There are not listeners signed");
+			return;
+		}
 		
+		parameterListener.onBeginReceivingParameters();
 		MavLinkParameters.requestParametersList(drone);
 		resetWatchdog();
 	}
@@ -105,7 +99,6 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	private void processReceivedParam(msg_param_value m_value) {
 		// collect params in parameter list
 		Parameter param = new Parameter(m_value);
-		//System.err.println("Param Name: " + param.name + "id " + parameters.size() + " total " + m_value.param_count);
 		parameters.put((int) m_value.param_index, param);
 
 		expectedParams = m_value.param_count;
@@ -122,7 +115,6 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 			}
 			killWatchdog();
 			loggerDisplayerSvc.logGeneral("Parameters finished!");
-			drone.notifyDroneEvent(DroneEventsType.PARAMETERS_DOWNLOADED_FINISH);
 
 			if (parameterListener != null) {
 				parameterListener.onEndReceivingParameters(parameterList);
@@ -176,16 +168,15 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 
 	private void killWatchdog() {
 		handler.removeCallbacks(watchdogCallback);
-	}
-
-	static int i = 0 ;
+	}	
+	
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
 		case HEARTBEAT_FIRST:
 			if (!drone.getState().isFlying()) {
 				System.out.println(getClass().getName() + " First HB Packet");
-				refreshParameters();
+				//refreshParameters();
 			}
 			break;
 		case DISCONNECTED:
@@ -203,6 +194,11 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 	}
 
 	public void setParameterListener(DroneInterfaces.OnParameterManagerListener parameterListener) {
+		System.out.println(getClass().getName() + " Setting new paramter listener " + parameterListener.getClass());
 		this.parameterListener = parameterListener;
+	}
+
+	public int getPrecentageComplete() {
+		return (int) (((double) (getLoadedDownloadedParameters()) / getExpectedParameterAmount()) * 100);
 	}
 }

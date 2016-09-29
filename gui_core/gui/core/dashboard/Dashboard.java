@@ -4,12 +4,12 @@ import gui.core.internalPanels.*;
 import gui.core.springConfig.AppConfig;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.util.List;
 
-import gui.is.events.TextNotificationPublisher;
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.services.TextNotificationPublisher;
 
 import javax.annotation.Resource;
 import javax.swing.JFrame;
@@ -23,11 +23,13 @@ import org.springframework.context.event.EventListener;
 
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
 import mavlink.is.drone.DroneInterfaces.*;
+import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
+public class Dashboard implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
 	
 	private JFrame frame;
 
@@ -66,6 +68,9 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	@Resource(name = "textNotificationPublisher")
 	private TextNotificationPublisher textNotificationPublisher;
 	
+	@Resource(name = "gcsHeartbeat")
+	public GCSHeartbeat gcsHeartbeat;
+	
 	private JTabbedPane tbSouth;
 	private JToolBar toolBar;
 	private JProgressBar progressBar;
@@ -77,7 +82,6 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 					System.out.println("Start Dashboard");
 					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
 					dashboard.initializeGui();
-					dashboard.initializeComponents();
 					dashboard.refresh();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -85,23 +89,18 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			}
 		});
 	}
-
-	private void initializeComponents() {
-//		System.out.println("Start Logger Displayer Manager");
-//		LoggerDisplayerManager.addLoggerDisplayerListener(areaLogBox);
-
-		System.out.println("Start GCS Heartbeat");
-		GCSHeartbeat gcs = new GCSHeartbeat(drone, 1);
-		gcs.setActive(true);
-
-	}
-
-	protected void refresh() {
+	
+	private void refresh() {		
 		System.out.println("Sign Dashboard as drone listener");
 		drone.addDroneListener(this);
 		drone.addDroneListener(tbTelemtry);
 		drone.addDroneListener(tbContorlButton);
 		drone.getWaypointManager().setWaypointManagerListener(this);
+		drone.getParameters().setParameterListener(this);
+		
+		System.out.println("Start GCS Heartbeat");
+		gcsHeartbeat.setFrq(1);
+		gcsHeartbeat.setActive(true);
 
 		System.out.println("Setting for button Box");
 		tbContorlButton.setButtonControl(false);
@@ -115,7 +114,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		}
 	}
 
-	public void SetDistanceToWaypoint(double d) {
+	private void SetDistanceToWaypoint(double d) {
 		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
 			// if (drone.getGuidedPoint().isIdle()) {
 			if (d == 0) {
@@ -187,7 +186,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 	 * drone.getBeacon().setActive(false); }
 	 */
 
-	public void VerifyBattery(double bat) {
+	private void VerifyBattery(double bat) {
 		// final Color orig_color = lblBattery.getBackground();
 		if (drone.getState().isFlying() && bat < 100) {
 			java.awt.Toolkit.getDefaultToolkit().beep();
@@ -201,23 +200,25 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		// lblBattery.setText((bat < 0 ? 0 : bat) + "%");
 	}
 
-	public void PaintAllWindow(Color c) {
-		if (c == tbTelemtry.getBackground()) {
-			System.out.println("Same Color");
-			return;
-		}
-		tbTelemtry.setBackground(c);
-		int cnt = tbTelemtry.getComponentCount();
-		for (int i = 0; i < cnt; i++) {
-			tbTelemtry.getComponent(i).setBackground(c);
-			tbTelemtry.getComponent(i).repaint();
-		}
-		tbTelemtry.repaint();
-
-	}
+//	private void PaintAllWindow(Color c) {
+//		if (c == tbTelemtry.getBackground()) {
+//			System.out.println("Same Color");
+//			return;
+//		}
+//		tbTelemtry.setBackground(c);
+//		int cnt = tbTelemtry.getComponentCount();
+//		for (int i = 0; i < cnt; i++) {
+//			tbTelemtry.getComponent(i).setBackground(c);
+//			tbTelemtry.getComponent(i).repaint();
+//		}
+//		tbTelemtry.repaint();
+//
+//	}
 	
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
+		initProgressBar();
+		
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
 			loggerDisplayerSvc.logIncoming("Start Syncing");
 			return;
@@ -227,25 +228,29 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			return;
 		}
 
-		loggerDisplayerSvc.logIncoming("Failed to Start Syncing (" + wpEvent.name() + ")");
+		System.out.println("Failed to Start Syncing (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
+		
+		finiProgressBar();
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
 			loggerDisplayerSvc.logIncoming("Downloading Waypoint " + index + "/" + count);
-			setProgressBar(0, index, count);
+			incProgressBar(count);
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
 			loggerDisplayerSvc.logIncoming("Uploading Waypoint " + index + "/" + count);
-			setProgressBar(0, index, count);
+			incProgressBar(count);
 			return;
 		}
 
+		System.out.println("Unexpected Syncing Failure (" + wpEvent.name() + ")");
 		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
-		setProgressBar(count, count);
+		finiProgressBar();
 	}
 
 	@Override
@@ -253,11 +258,11 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
 			loggerDisplayerSvc.logIncoming("Waypoints Synced");
 			if (drone.getMission() == null) {
-				loggerDisplayerSvc.logIncoming("Failed to find mission");
+				loggerDisplayerSvc.logError("Failed to find mission");
 				return;
 			}
 
-			loggerDisplayerSvc.logIncoming("Current mission was loaded to a new view");
+			loggerDisplayerSvc.logGeneral("Current mission was loaded to a new view");
 			return;
 		}
 
@@ -266,7 +271,9 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 			return;
 		}
 
+		System.out.println("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+		finiProgressBar();
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -291,16 +298,6 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		case MODE:
 			frame.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
 			return;
-		case PARAMETER:
-			LoadParameter(drone.getParameters().getExpectedParameterAmount());
-			return;
-		case PARAMETERS_DOWNLOAD_START:
-			loggerDisplayerSvc.logGeneral("Parameters Downloading begin");
-			resetProgressBar();
-			return;
-		case PARAMETERS_DOWNLOADED_FINISH:
-			loggerDisplayerSvc.logGeneral("Parameters Downloaded succussfully");
-			return;
 		case TEXT_MESSEGE:
 			loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
 			return;
@@ -324,46 +321,67 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener {
 		}
 	}
 
-	private void LoadParameter(int expectedParameterAmount) {
-		setProgressBar(0, drone.getParameters().getLoadedDownloadedParameters(), drone.getParameters().getExpectedParameterAmount());
-		int prc = (int) (((double) (drone.getParameters().getLoadedDownloadedParameters()) / drone.getParameters().getExpectedParameterAmount()) * 100);
-		if (prc > 95) {
-			System.out.println(getClass().getName() + " Setup stream rate");
-			drone.getStreamRates().setupStreamRatesFromPref();
-			tbContorlButton.setButtonControl(true);
-			System.out.println(getClass().getName() + " " + drone.getParameters().getParameter("MOT_SPIN_ARMED"));
-			if (drone.isConnectionAlive()) {
-				tbTelemtry.SetHeartBeat(true);
-				drone.notifyDroneEvent(DroneEventsType.MODE);
-			}
-		}
+	public synchronized void initProgressBar() {
+		System.out.println("Init progress bar");
+		progressBar.setMinimum(0);
+		progressBar.setValue(0);
+		progressBar.setVisible(true);
 	}
-
-	public void setProgressBar(int min, int current, int max) {
-		if (!progressBar.isVisible() || progressBar.getMaximum() != max) {
-			progressBar.setMinimum(min);
-			progressBar.setValue(current);
+	
+	public synchronized void incProgressBar(int max) {
+		int value = progressBar.getValue();
+		if (progressBar.getMaximum() != max) {
 			progressBar.setMaximum(max);
-			progressBar.setVisible(true);
 		}
-		progressBar.setValue(current);
+		progressBar.setValue(value + 1);
 
 		if (progressBar.getValue() == progressBar.getMaximum()) {
-			progressBar.setVisible(false);
-			progressBar.setValue(0);
+			finiProgressBar();
 		}
 	}
-
-	public void setProgressBar(int min, int max) {
-		setProgressBar(min, progressBar.getValue() + 1, max);
-	}
-
-	public void resetProgressBar() {
-		progressBar.setValue(0);
+	
+	public synchronized void finiProgressBar() {
+		System.out.println("Fini progress bar");
+		progressBar.setValue(progressBar.getMaximum());
+		progressBar.setVisible(false);
 	}
 	
 	@EventListener
 	public void onApplicationEvent(String notification) {
 		tbToolBar.SetNotification(notification);
+	}
+
+	@Override
+	public void onBeginReceivingParameters() {
+		System.out.println("Start Receiving parameters");
+		initProgressBar();
+	}
+
+	@Override
+	public void onParameterReceived(Parameter parameter, int index, int count) {
+		System.out.println("received paramter " + index + " out of " + count);
+		incProgressBar(count);
+//		int prc = drone.getParameters().getPrecentageComplete();
+//		if (prc > 95) {
+//			drone.getStreamRates().setupStreamRatesFromPref();
+//			tbContorlButton.setButtonControl(true);
+//			if (drone.isConnectionAlive()) {
+//				tbTelemtry.SetHeartBeat(true);
+//				drone.notifyDroneEvent(DroneEventsType.MODE);
+//			}
+//		}
+	}
+
+	@Override
+	public void onEndReceivingParameters(List<Parameter> parameter) {
+		System.out.println("Finish receiving parameters");
+		finiProgressBar();
+		
+		drone.getStreamRates().setupStreamRatesFromPref();
+		tbContorlButton.setButtonControl(true);
+		if (drone.isConnectionAlive()) {
+			tbTelemtry.SetHeartBeat(true);
+			drone.notifyDroneEvent(DroneEventsType.MODE);
+		}
 	}
 }

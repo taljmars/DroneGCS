@@ -1,9 +1,13 @@
 package mavlink.is.protocol.msgbuilder;
 
+import gui.is.services.LoggerDisplayerSvc;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
@@ -32,6 +36,9 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	 * 
 	 */
 	private static final long serialVersionUID = -3068901627632028791L;
+	
+	@Resource(name = "loggerDisplayerSvc")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	enum WaypointStates {
 		IDLE, READ_REQUEST, READING_WP, WRITING_WP_COUNT, WRITING_WP, WAITING_WRITE_ACK
@@ -59,6 +66,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	}
 
 	public void setWaypointManagerListener(OnWaypointManagerListener wpEventListener) {
+		System.out.println(getClass() + " new waypoints listener " + wpEventListener.getClass());
 		this.wpEventListener = wpEventListener;
 	}
 
@@ -79,6 +87,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 		timeOut.setTimeOutRetry(maxRetry);
 		state = WaypointStates.READ_REQUEST;
 		timeOut.setTimeOut();
+		loggerDisplayerSvc.logOutgoing("Sending Sync Waypoint request");
 		MavLinkWaypoint.requestWaypointsList(drone);
 	}
 
@@ -181,6 +190,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 			if (msg.msgid == msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM) {
 				timeOut.setTimeOut();
 				processReceivedWaypoint((msg_mission_item) msg);
+				loggerDisplayerSvc.logIncoming("Got point" + (readIndex + 1));
 				doWaypointEvent(WaypointEvent_Type.WP_DOWNLOAD, readIndex + 1, waypointCount);
 				if (mission.size() < waypointCount) {
 					MavLinkWaypoint.requestWayPoint(drone, mission.size());

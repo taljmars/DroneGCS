@@ -4,9 +4,9 @@ import java.awt.GridLayout;
 
 import gui.core.operations.internal.ArmQuad;
 import gui.core.operations.internal.TakeoffQuad;
-import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.services.TextNotificationPublisher;
 
 import javax.annotation.Resource;
 import javax.swing.AbstractButton;
@@ -63,9 +63,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
     private AbstractButton btnFollowBeaconShow;
 	
 	private boolean motorArmed = false;
-	
-	
-	
+
 	private GridLayout gridLayout = new GridLayout(0, 2, 1, 1);
 
 	@Resource(name = "drone")

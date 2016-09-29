@@ -21,7 +21,6 @@ import gui.is.Coordinate;
 import gui.is.classes.MyStroke;
 import gui.is.classes.Style;
 import gui.is.events.JMVCommandEvent;
-import gui.is.events.TextNotificationPublisher;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.KeyBoardControler;
 import gui.is.interfaces.MapLine;
@@ -29,6 +28,8 @@ import gui.is.interfaces.TileLoader;
 import gui.is.interfaces.TileSource;
 import gui.is.services.LoggerDisplayerSvc;
 
+
+import gui.is.services.TextNotificationPublisher;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,6 +40,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
 
 
 import javax.annotation.PostConstruct;
@@ -54,8 +56,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.WindowConstants;
 
 
+
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
 
 
 import mavlink.is.drone.Drone;
@@ -283,11 +287,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 		map.addMapMarker(myPos);
 	}
-
-	//private static JMapViewer map() {
-//	private JMapViewer map() {
-//		return treeMap.getViewer();
-//	}
 
 	private void updateZoomParameters() {
 		if (mperpLabelValue != null)
@@ -943,14 +942,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			return;
 		}
 	}
-
-	public Drone getDrone() {
-		return drone;
-	}
 	
 	@EventListener
 	public void onApplicationEvent(JMVCommandEvent command) {
-		System.out.println("Application Event: " + getClass());
 		switch (command.getCommand()) {
 		case ZOOM:
 		case MOVE:

@@ -14,8 +14,10 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
- 
+
 public class TwoWaySerialComm {
 	
 	private SerialPort serialPort = null;
@@ -26,19 +28,18 @@ public class TwoWaySerialComm {
     private static String portName = "COM9";
     //private static String portName = "COM8";
     
-    private static TwoWaySerialComm myTwoWaySerialComm = null;
+    public TwoWaySerialComm() {
     
-    public synchronized static TwoWaySerialComm get() {
+    }
+    
+    public void connect() {
     	boolean portSelected = false;
-    	if (myTwoWaySerialComm != null)
-    		return myTwoWaySerialComm;
     	
     	Logger.LogGeneralMessege("Radio communication manager created");
-    	myTwoWaySerialComm = new TwoWaySerialComm();
     	
     	while (!portSelected) {
     		try {
-				myTwoWaySerialComm.connect(portName);
+				connect(portName);
 				Logger.LogGeneralMessege("Radio communication manager started successfully");
 			}
     		catch (NoSuchPortException e) {
@@ -87,12 +88,6 @@ public class TwoWaySerialComm {
 	    	
 	    	portSelected = true;
     	}
-    	
-    	return myTwoWaySerialComm;
-    }
-    
-    private TwoWaySerialComm() {
-    	
     }
  
     public void connect( String portName ) throws Exception {
