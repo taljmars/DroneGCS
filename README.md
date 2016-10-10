@@ -15,4 +15,7 @@ Holds all the files needed to run the GCS application, it is a compilation resul
 The project is based on Spring framework (4.3.3), a good info about the release can be found in this link
 http://repo.spring.io/release/org/springframework/spring/4.3.3.RELEASE/
 
+The map resource and main code section are being supported using JMapViewer project of OSM (OpenStreetMap)
+http://wiki.openstreetmap.org/wiki/JMapViewer
+
 Tal.
