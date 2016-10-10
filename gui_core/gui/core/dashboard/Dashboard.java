@@ -93,9 +93,9 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	private void refresh() {		
 		System.out.println("Sign Dashboard as drone listener");
 		drone.addDroneListener(this);
-		drone.addDroneListener(tbTelemtry);
-		drone.addDroneListener(tbContorlButton);
-		drone.addDroneListener(tbToolBar);
+		//drone.addDroneListener(tbTelemtry);
+		//drone.addDroneListener(tbContorlButton);
+		//drone.addDroneListener(tbToolBar);
 		drone.getWaypointManager().setWaypointManagerListener(this);
 		drone.getParameters().setParameterListener(this);
 		

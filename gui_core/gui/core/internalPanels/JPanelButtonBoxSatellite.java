@@ -8,6 +8,7 @@ import gui.is.interfaces.KeyBoardControler;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisher;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -343,7 +344,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
     			// Not selected
     			//DeactivateBeacon();
     			drone.getFollow().toggleFollowMeState();
-    			loggerDisplayerSvc.logError("Not Selected");
+    			loggerDisplayerSvc.logError("Lock On Beacon is not selected");
         		if (FollowBeaconStartThread != null)
         			FollowBeaconStartThread.cancel(true);
         		
@@ -413,6 +414,11 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         pnl.add(btnStartMission);
         
         add(pnl);
+	}
+	
+	@PostConstruct
+	public void init() {
+		drone.addDroneListener(this);
 	}
 	
 	public void setButtonControl(boolean val) {

@@ -5,6 +5,7 @@ import gui.is.services.LoggerDisplayerSvc;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -47,6 +48,9 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Resource(name = "drone")
+	public Drone drone;
 	
 	public JPanelTelemetrySatellite() {
 		pnl = new JPanel();
@@ -124,6 +128,11 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
         pnlStatisticsDistanceTraveled.add(lblFlightDistanceVal);
         
         add(pnl);
+	}
+	
+	@PostConstruct
+	public void init() {
+		drone.addDroneListener(this);
 	}
 	
 	protected void SetFlightModeLabel(String name) {

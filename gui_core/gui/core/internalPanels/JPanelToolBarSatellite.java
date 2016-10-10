@@ -115,6 +115,8 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
         
         internalFrameActualPWM.setVisible(false);
         internalFrameMap.setVisible(true);
+        
+        drone.addDroneListener(this);
 	}
 	
 

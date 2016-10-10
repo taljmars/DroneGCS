@@ -86,18 +86,22 @@ public class JPanelLogBox extends JPanel {
 	}
 	
 	private void addGeneralMessegeToDisplay(String cmd) {
+		System.out.println(cmd);
 		addMessegeToDisplay(cmd, Type.GENERAL);
 	}
 	
 	private void addErrorMessegeToDisplay(String cmd) {
+		System.err.println(cmd);
 		addMessegeToDisplay(cmd, Type.ERROR);
 	}
 	
 	private void addOutgoingMessegeToDisplay(String cmd) {
+		System.out.println(cmd);
 		addMessegeToDisplay(cmd, Type.OUTGOING);
 	}
 	
 	private void addIncommingMessegeToDisplay(String cmd) {
+		System.out.println(cmd);
 		addMessegeToDisplay(cmd, Type.INCOMING);
 	}
 	

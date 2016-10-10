@@ -156,7 +156,7 @@ public abstract class MavLinkConnection {
 				while (mConnectionStatus.get() == MAVLINK_CONNECTED) {
 					final MAVLinkPacket packet = mPacketsToSend.take();
 					if (packet.unpack().msgid != msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT) {
-						System.err.println("[SND] " + packet.unpack().toString());
+//						System.err.println("[SND] " + packet.unpack().toString());
 						String log_entry = Logger.generateDesignedMessege(packet.unpack().toString(), Logger.Type.OUTGOING, false);
 						Logger.LogDesignedMessege(log_entry);
 					}

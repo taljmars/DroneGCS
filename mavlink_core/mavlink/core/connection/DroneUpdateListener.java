@@ -147,7 +147,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 				msg_statustext msg_statustext = (msg_statustext) msg;
 				String message = msg_statustext.getText();
 				
-				System.err.println(message);
+//				System.err.println(message);
 	
 				if (msg_statustext.severity == SEVERITY_HIGH || msg_statustext.severity == SEVERITY_CRITICAL) {
 					drone.getState().setWarning(message);
@@ -160,7 +160,6 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 					break;
 				}
 				
-				loggerDisplayerSvc.logGeneral(message);
 				drone.getMessegeQueue().push(message);
 				return;
 				//break;
