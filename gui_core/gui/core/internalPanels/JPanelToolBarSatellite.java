@@ -7,28 +7,36 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.util.Vector;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import logger.Logger;
-
+import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import mavlink.is.protocol.msg_metadata.ApmModes;
 import org.springframework.stereotype.Component;
 
 @Component("toolbarSatellite")
-public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
+public class JPanelToolBarSatellite extends JToolBar implements MouseListener, OnDroneListener {
 	
 	private static final long serialVersionUID = 763689884103713162L;
 	
 	private JPanel pnl;
+	private JButton btnSetMode;
 	private JButton btnMap;
 	private JButton btnActualPWM;
+	JComboBox<ApmModes> flightModesCombo;
 	private JLabel lblCriticalMsg;
 
 	@Resource(name = "frameContainer")
@@ -39,6 +47,9 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 	
 	@Resource(name = "internalFrameActualPWM")
 	private AbstractJInternalFrame internalFrameActualPWM;
+	
+	@Resource(name = "drone")
+	public Drone drone;
 
 	public JPanelToolBarSatellite() {
 		
@@ -55,9 +66,36 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
         
         btnMap.setSelected(true);
         
-        lblCriticalMsg = new JLabel("MSG");
+        lblCriticalMsg = new JLabel("");
         lblCriticalMsg.setHorizontalAlignment(SwingConstants.TRAILING);
         pnl.add(lblCriticalMsg);
+        
+        
+        JPanel pnlMode = new JPanel();
+		pnlMode.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		pnlMode.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+        Vector<ApmModes> flightModes = new Vector<ApmModes>();
+        flightModes.add(ApmModes.ROTOR_STABILIZE);
+        flightModes.add(ApmModes.ROTOR_ACRO);
+        flightModes.add(ApmModes.ROTOR_ALT_HOLD);
+        flightModes.add(ApmModes.ROTOR_AUTO);
+        flightModes.add(ApmModes.ROTOR_GUIDED);
+        flightModes.add(ApmModes.ROTOR_LOITER);
+        flightModes.add(ApmModes.ROTOR_RTL);
+        flightModes.add(ApmModes.ROTOR_CIRCLE);
+        flightModes.add(ApmModes.ROTOR_LAND);
+        flightModes.add(ApmModes.ROTOR_TOY);
+        flightModes.add(ApmModes.ROTOR_SPORT);
+        flightModes.add(ApmModes.ROTOR_AUTOTUNE);
+        flightModes.add(ApmModes.ROTOR_POSHOLD);
+
+        flightModesCombo = new JComboBox<>(flightModes);
+        pnlMode.add(flightModesCombo);
+        btnSetMode = new JButton("Set Mode");
+        btnSetMode.addMouseListener(this);
+        pnlMode.add(btnSetMode);
+        pnl.add(pnlMode);
         
         add(pnl);
 	}
@@ -93,6 +131,11 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 			internalFrameActualPWM.moveToFront();
 			return;
 		}
+		
+		if (e.getSource() == btnSetMode) {
+			drone.getState().changeFlightMode((ApmModes) flightModesCombo.getSelectedItem());
+			return;
+		}
 	}
 
 	@Override
@@ -123,6 +166,16 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener {
 		}
 		lblCriticalMsg.setOpaque(true);
 		lblCriticalMsg.setText(notification);
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	@Override
+	public void onDroneEvent(DroneEventsType event, Drone drone) {
+		switch (event) {
+		case MODE:
+			flightModesCombo.setSelectedItem(drone.getState().getMode());
+			return;
+		}
 	}
 
 }

@@ -95,6 +95,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		drone.addDroneListener(this);
 		drone.addDroneListener(tbTelemtry);
 		drone.addDroneListener(tbContorlButton);
+		drone.addDroneListener(tbToolBar);
 		drone.getWaypointManager().setWaypointManagerListener(this);
 		drone.getParameters().setParameterListener(this);
 		
@@ -355,21 +356,22 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	public void onBeginReceivingParameters() {
 		System.out.println("Start Receiving parameters");
 		initProgressBar();
+		drone.getStreamRates().prepareStreamRates();
 	}
 
 	@Override
 	public void onParameterReceived(Parameter parameter, int index, int count) {
 		System.out.println("received paramter " + index + " out of " + count);
 		incProgressBar(count);
-//		int prc = drone.getParameters().getPrecentageComplete();
-//		if (prc > 95) {
-//			drone.getStreamRates().setupStreamRatesFromPref();
-//			tbContorlButton.setButtonControl(true);
-//			if (drone.isConnectionAlive()) {
-//				tbTelemtry.SetHeartBeat(true);
-//				drone.notifyDroneEvent(DroneEventsType.MODE);
-//			}
-//		}
+		int prc = drone.getParameters().getPrecentageComplete();
+		if (prc > 95) {
+			drone.getStreamRates().setupStreamRatesFromPref();
+			tbContorlButton.setButtonControl(true);
+			if (drone.isConnectionAlive()) {
+				tbTelemtry.SetHeartBeat(true);
+				drone.notifyDroneEvent(DroneEventsType.MODE);
+			}
+		}
 	}
 
 	@Override
@@ -377,6 +379,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		System.out.println("Finish receiving parameters");
 		finiProgressBar();
 		
+		drone.getStreamRates().prepareStreamRates();
 		drone.getStreamRates().setupStreamRatesFromPref();
 		tbContorlButton.setButtonControl(true);
 		if (drone.isConnectionAlive()) {

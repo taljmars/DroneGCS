@@ -113,6 +113,7 @@ public class State extends DroneVariable {
 		if (this.mode != mode) {
 			this.mode = mode;
 			System.out.println(getClass().getName() + " New Mode!!");
+			System.out.println(getClass().getName() + " " + mode.getName());
 			drone.notifyDroneEvent(DroneEventsType.MODE);
 		}
 	}

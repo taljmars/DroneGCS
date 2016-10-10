@@ -24,7 +24,7 @@ public class TakeoffQuad extends OperationHandler {
 	
 	@Override
 	public boolean go() throws InterruptedException {
-		loggerDisplayerSvc.logGeneral("Starting Takeoff");
+		loggerDisplayerSvc.logGeneral("Start Takeoff Phase");
 		drone.getState().doTakeoff(new Altitude(expectedValue));
 		int takeoff_waiting_time = 15000; // 15 seconds
 		long sleep_time = 1000;

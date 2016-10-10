@@ -21,6 +21,8 @@ public class StreamRates extends DroneVariable implements OnDroneListener {
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
+	private boolean streamRatesWasSet = false;
+	
 	public void init() {
 		drone.addDroneListener(this);
 	}
@@ -38,12 +40,21 @@ public class StreamRates extends DroneVariable implements OnDroneListener {
 	}
 
 	public void setupStreamRatesFromPref() {
+		if (streamRatesWasSet)
+			return;
+		
 		loggerDisplayerSvc.logGeneral("Setting up stream rates");
 		Rates rates = drone.getPreferences().getRates();
 
 		MavLinkStreamRates.setupStreamRates(drone.getMavClient(), rates.extendedStatus,
 				rates.extra1, rates.extra2, rates.extra3, rates.position, rates.rcChannels,
 				rates.rawSensors, rates.rawController);
+		
+		streamRatesWasSet = true;
+	}
+	
+	public void prepareStreamRates() {
+		streamRatesWasSet = false;
 	}
 
 }

@@ -54,7 +54,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 			System.exit(0);
 		}
 		
-		System.err.println("[RCV] " + msg.toString());
+		//System.err.println("[RCV] " + msg.toString());
 		
 		if (drone.getParameters().processMessage(msg)) {
 			return;

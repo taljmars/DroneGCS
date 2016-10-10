@@ -22,6 +22,8 @@ public class ArmQuad extends OperationHandler {
 	
 	@Override
 	public boolean go() throws InterruptedException {
+		loggerDisplayerSvc.logGeneral("Start Arm Phase");
+		
 		if (drone.getState().isArmed()) {
 			loggerDisplayerSvc.logGeneral("Drone already armed");
 			return super.go();
