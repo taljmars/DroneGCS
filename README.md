@@ -20,4 +20,5 @@ http://wiki.openstreetmap.org/wiki/JMapViewer
 
 Contact:
 taljmars@gmail.com
+
 Tal.
