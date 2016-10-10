@@ -18,4 +18,5 @@ http://repo.spring.io/release/org/springframework/spring/4.3.3.RELEASE/
 The map resource and main code section are being supported using JMapViewer project of OSM (OpenStreetMap)
 http://wiki.openstreetmap.org/wiki/JMapViewer
 
+@Tal
 Tal.
