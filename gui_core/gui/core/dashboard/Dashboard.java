@@ -75,7 +75,11 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	
 	@NotNull
 	private JTabbedPane tbSouth;
+	
+	@NotNull
 	private JToolBar toolBar;
+	
+	@NotNull
 	private JProgressBar progressBar;
 
 	public static void main(String[] args) {
