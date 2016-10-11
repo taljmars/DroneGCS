@@ -3,7 +3,7 @@ package gui.is.interfaces;
 
 public interface ICoordinate {
 
-    double getLat();
+	double getLat();
 
     void setLat(double lat);
 

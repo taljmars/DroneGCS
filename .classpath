@@ -17,5 +17,8 @@
 	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-expression-4.3.3.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/commons-logging-1.2/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-aop-4.3.3.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/javax.el-api-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/javax.el-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

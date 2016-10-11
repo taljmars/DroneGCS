@@ -31,22 +31,22 @@ public class Coordinate implements ICoordinate ,Serializable /*TALMA add seriliz
     }
 
     @Override
-    public double getLat() {
+    public synchronized double getLat() {
         return data.y;
     }
 
     @Override
-    public void setLat(double lat) {
+    public synchronized void setLat(double lat) {
         data.y = lat;
     }
 
     @Override
-    public double getLon() {
+    public synchronized double getLon() {
         return data.x;
     }
 
     @Override
-    public void setLon(double lon) {
+    public synchronized void setLon(double lon) {
         data.x = lon;
     }
 

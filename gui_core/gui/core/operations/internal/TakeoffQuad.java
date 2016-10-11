@@ -2,6 +2,7 @@ package gui.core.operations.internal;
 
 import gui.core.operations.OperationHandler;
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.validations.QuadIsArmed;
 
 import javax.annotation.Resource;
 import javax.swing.JOptionPane;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import mavlink.is.drone.Drone;
 import mavlink.is.utils.units.Altitude;
 
+@QuadIsArmed
 @Component("takeoffQuad")
 public class TakeoffQuad extends OperationHandler {
 	

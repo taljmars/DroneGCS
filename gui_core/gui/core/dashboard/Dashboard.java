@@ -20,10 +20,12 @@ import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.validation.Validator;
+
+import javax.validation.constraints.NotNull;
 
 import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
-import mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
@@ -71,6 +73,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@Resource(name = "gcsHeartbeat")
 	public GCSHeartbeat gcsHeartbeat;
 	
+	@NotNull
 	private JTabbedPane tbSouth;
 	private JToolBar toolBar;
 	private JProgressBar progressBar;
