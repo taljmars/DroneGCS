@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -23,8 +25,6 @@ import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListener {
 	
 	private static final long serialVersionUID = 486044738229582782L;
-	
-	private JPanel pnl;
 	
 	private JLabel lblHeightVal;
 	private JLabel lblSignalVal;
@@ -46,14 +46,22 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 
 	private JLabel keepAliveLabel;
 	
+	@Autowired
+	@Qualifier("emptyPanel")
+	private JPanel pnl;
+	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
 	public Drone drone;
 	
-	public JPanelTelemetrySatellite() {
-		pnl = new JPanel();
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
 		pnl.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		pnl.setLayout(new BoxLayout(pnl, BoxLayout.PAGE_AXIS));
 		
@@ -128,10 +136,7 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
         pnlStatisticsDistanceTraveled.add(lblFlightDistanceVal);
         
         add(pnl);
-	}
-	
-	@PostConstruct
-	public void init() {
+        
 		drone.addDroneListener(this);
 	}
 	

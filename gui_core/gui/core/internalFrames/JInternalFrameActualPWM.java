@@ -33,6 +33,10 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	private static TimeSeries seriesThr;
 	private static TimeSeries seriesYaw;
 	
+	public JInternalFrameActualPWM() {
+		this(frameName, true, true, true, true);
+	}
+	
 	private JInternalFrameActualPWM(String name, boolean resizable, boolean closable,
 			boolean maximizable, boolean iconifiable) {
 		super(name, resizable, closable, maximizable, iconifiable);
@@ -48,14 +52,6 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-	}
-
-	private JInternalFrameActualPWM(String name) {
-		this(name, true, true, true, true);
-	}
-	
-	public JInternalFrameActualPWM() {
-		this(frameName);
 	}
 	
 	private JFreeChart createChart(final XYDataset dataset) {

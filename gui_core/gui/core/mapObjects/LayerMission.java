@@ -26,8 +26,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.commands.ReturnToHome;
@@ -40,7 +38,6 @@ import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
 @Scope("prototype")
-@Component("layerMission")
 public class LayerMission extends Layer implements Serializable /*TALMA add serilizebae*/ {    
 
 	private static final long serialVersionUID = -1287037956711191751L;
@@ -126,7 +123,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 				return TAKEOFF;
 			return UNKNOWN;
 		}
-	}	
+	}
 
 	public LayerMission() {
         super("Unnamed Mission");

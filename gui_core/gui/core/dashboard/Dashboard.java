@@ -90,18 +90,11 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@NotNull(message = "Internal Error: Missing panel")
 	private JProgressBar progressBar;
 	
-	public void initializeDefinitions() {		
+	public void initializeDefinitions() {
 		System.out.println("Sign Dashboard as drone listener");
 		drone.addDroneListener(this);
-		drone.getWaypointManager().setWaypointManagerListener(this);
+		drone.getWaypointManager().addWaypointManagerListener(this);
 		drone.getParameters().addParameterListener(this);
-		
-//		System.out.println("Start GCS Heartbeat");
-//		gcsHeartbeat.setFrq(1);
-//		gcsHeartbeat.setActive(true);
-
-//		System.out.println("Setting Configurtaion");
-//		areaConfiguration.setDrone(drone);
 
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
@@ -213,61 +206,23 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
 		initProgressBar();
-		
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			loggerDisplayerSvc.logIncoming("Start Syncing");
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD) || wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
 			return;
 		}
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Start Updloading Waypoints");
-			return;
-		}
-
-		System.out.println("Failed to Start Syncing (" + wpEvent.name() + ")");
-		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
-		
 		finiProgressBar();
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			loggerDisplayerSvc.logIncoming("Downloading Waypoint " + index + "/" + count);
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD) || wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
 			incProgressBar(count);
 			return;
 		}
-
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Uploading Waypoint " + index + "/" + count);
-			incProgressBar(count);
-			return;
-		}
-
-		System.out.println("Unexpected Syncing Failure (" + wpEvent.name() + ")");
-		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
 		finiProgressBar();
 	}
 
 	@Override
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			loggerDisplayerSvc.logIncoming("Waypoints Synced");
-			if (drone.getMission() == null) {
-				loggerDisplayerSvc.logError("Failed to find mission");
-				return;
-			}
-
-			loggerDisplayerSvc.logGeneral("Current mission was loaded to a new view");
-			return;
-		}
-
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Waypoints Synced");
-			return;
-		}
-
-		System.out.println("Failed to Sync Waypoints (" + wpEvent.name() + ")");
-		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 		finiProgressBar();
 	}
 

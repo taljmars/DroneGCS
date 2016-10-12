@@ -2,7 +2,6 @@ package gui.core.internalFrames;
 
 import gui.core.internalPanels.JPanelMissionBox;
 import gui.core.mapObjects.Layer;
-import gui.core.mapObjects.LayerGroup;
 import gui.core.mapObjects.LayerMission;
 import gui.core.mapObjects.LayerPerimeter;
 import gui.core.mapObjects.MapLineImpl;
@@ -75,7 +74,6 @@ import org.springframework.stereotype.Component;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.commands.ReturnToHome;
 import mavlink.is.drone.mission.commands.Takeoff;
@@ -84,7 +82,6 @@ import mavlink.is.drone.mission.waypoints.Land;
 import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.drone.variables.GuidedPoint;
 import mavlink.is.drone.variables.Home;
-import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
@@ -92,9 +89,10 @@ import mavlink.is.utils.units.Altitude;
 
 @ComponentScan("gui.core.mapViewer")
 @ComponentScan("gui.core.mapTree")
+@ComponentScan("gui.is.services")
 @Component("internalFrameMap")
 public class JInternalFrameMap extends AbstractJInternalFrame implements
-	OnDroneListener, OnWaypointManagerListener, ActionListener {
+	OnDroneListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private static final String frameName = "Map View";
@@ -146,10 +144,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	// Perimeter Builder
 	LayerPerimeter modifyiedLayerPerimeter = null;
 	LayerPerimeter modifyiedLayerPerimeterOriginal = null;
-
-	LayerGroup missionsGroup = null;
-	LayerGroup perimetersGroup = null;
-	LayerGroup generalGroup = null;
 	
 	private JCheckBox cbLockMyPos;
 	private JCheckBox cbFollowTrail;
@@ -244,10 +238,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		panelTop.add(zoomValue);
 		panelTop.add(mperpLabelName);
 		panelTop.add(mperpLabelValue);		
-
-		missionsGroup = new LayerGroup("Missions");
-		perimetersGroup = new LayerGroup("Perimeters");
-		generalGroup = new LayerGroup("General Drawings");
 
 		map.setDisplayPosition(new Coordinate(32.0684, 34.8248), 8);
 
@@ -388,8 +378,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		JMenuItem menuItemMissionSetRTL = new JMenuItem("Set RTL");
 		JMenuItem menuItemMissionSetTakeOff = new JMenuItem("Set Takeoff");
 		JMenuItem menuItemDist = new JMenuItem("Distance -m");
-		JMenuItem menuItemGeoFence = new JMenuItem("GeoFence Here");
-		JMenuItem menuItemGeoFenceAddPoint = new JMenuItem("Add Point");
+		JMenuItem menuItemPerimeterBuild = new JMenuItem("Build Perimeter");
+		JMenuItem menuItemPerimeterAddPoint = new JMenuItem("Add Point");
 		JMenuItem menuItemSyncMission = new JMenuItem("Sync Mission");
 		JMenuItem menuItemFindClosest = new JMenuItem("Find closest Here");
 
@@ -402,9 +392,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		menuItemMissionSetRTL.setVisible(isMissionBuildMode);
 		menuItemMissionSetTakeOff.setVisible(isMissionBuildMode);
 		menuItemMissionBuild.setEnabled(!isMissionBuildMode && !isPerimeterBuildMode);
-		menuItemGeoFence.setEnabled(!isMissionBuildMode && !isPerimeterBuildMode);
+		menuItemPerimeterBuild.setEnabled(!isMissionBuildMode && !isPerimeterBuildMode);
 		menuItemSyncMission.setEnabled(!isMissionBuildMode && !isPerimeterBuildMode);
-		menuItemGeoFenceAddPoint.setVisible(isPerimeterBuildMode);
+		menuItemPerimeterAddPoint.setVisible(isPerimeterBuildMode);
 
 		if (drone.getGps().isPositionValid()) {
 			ICoordinate iCoord = map.getPosition(e.getPoint());
@@ -420,7 +410,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		popup.add(menuItemDist);
 		popup.addSeparator();
 		popup.add(menuItemMissionBuild);
-		popup.add(menuItemGeoFence);
+		popup.add(menuItemPerimeterBuild);
 		popup.addSeparator();
 		popup.add(menuItemMissionAddWayPoint);
 		popup.add(menuItemMissionAddCircle);
@@ -428,7 +418,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		popup.add(menuItemMissionSetRTL);
 		popup.add(menuItemMissionSetHome);
 		popup.add(menuItemMissionSetTakeOff);
-		popup.add(menuItemGeoFenceAddPoint);
+		popup.add(menuItemPerimeterAddPoint);
 		popup.addSeparator();
 		popup.add(menuItemSyncMission);
 		popup.add(menuItemFindClosest);
@@ -478,7 +468,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 
 		menuItemSyncMission.addActionListener( arg -> {
 				System.out.println(getClass().getName() + " Start Sync Mission");
-				drone.getWaypointManager().setWaypointManagerListener(this);
 				drone.getWaypointManager().getWaypoints();
 				loggerDisplayerSvc.logOutgoing("Send Sync Request");
 			}
@@ -491,7 +480,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			}
 		});
 
-		menuItemGeoFence.addActionListener( arg -> {
+		menuItemPerimeterBuild.addActionListener( arg -> {
 				System.out.println(getClass().getName() + " Start GeoFence");
 				Coordinate iCoord = getMapPointerCoordinates(e);
 				int radi = 50;
@@ -534,7 +523,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					map.SetEditModeGUI(true);
 					if (modifyiedLayerPerimeter == null) {
 						modifyiedLayerPerimeter = new LayerPerimeter("New Perimeter*");
-						perimetersGroup.add(modifyiedLayerPerimeter);
+						treeMap.getPerimetersGroup().add(modifyiedLayerPerimeter);
 						treeMap.addLayer(modifyiedLayerPerimeter);
 						treeMap.updateUI();
 					}
@@ -554,7 +543,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					modifyiedLayerMission.setName("New Mission*");
 					modifyiedLayerMission.initialize();
-					missionsGroup.add(modifyiedLayerMission);
+					treeMap.getMissionsGroup().add(modifyiedLayerMission);
 					treeMap.addLayer(modifyiedLayerMission);
 					treeMap.updateUI();
 					//Mission msn = new Mission();
@@ -645,7 +634,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			}
 		);
 
-		menuItemGeoFenceAddPoint.addActionListener( arg -> {
+		menuItemPerimeterAddPoint.addActionListener( arg -> {
 				modifyiedLayerPerimeter.add(map.getPosition(e.getPoint()));
 				modifyiedLayerPerimeter.repaint(map);
 			}
@@ -834,33 +823,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			perimeterBreachPoint = drone.getPerimeter().getClosestPointOnPerimeterBorder().convertToCoordinate();
 			perimeterBreachPointMarker = new MapMarkerDot(perimeterBreachPoint.getLat(),perimeterBreachPoint.getLon());
 			map.addMapMarker(perimeterBreachPointMarker);
-		}
-	}
-
-	@Override
-	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {
-	}
-
-	@Override
-	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
-	}
-
-	@Override
-	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			if (drone.getMission() != null) {
-				//LayerMission instMission = new LayerMission("Current Installed Mission");
-				LayerMission instMission = (LayerMission) AppConfig.context.getBean("layerMission");
-				instMission.setName("Current Installed Mission");
-				instMission.initialize();
-				missionsGroup.add(instMission);
-				treeMap.addLayer(instMission);
-				treeMap.updateUI();
-				instMission.setMission(drone.getMission());
-				instMission.repaint(map);
-
-				loggerDisplayerSvc.logIncoming("Current mission was loaded to a new view");
-			}
 		}
 	}
 

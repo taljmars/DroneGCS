@@ -32,9 +32,9 @@ public class OpStartMissionQuad extends OperationHandler {
 	@MissionCanBeActivated
 	private Mission mission;
 	
-	static int called;
+	private static int called;
 	@PostConstruct
-	public void init() {
+	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 	}

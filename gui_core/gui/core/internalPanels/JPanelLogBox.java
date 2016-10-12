@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 
+import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,22 +17,22 @@ import javax.swing.JToggleButton;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import logger.Logger.Type;
 
+@Component("areaLogBox")
 public class JPanelLogBox extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7668860997050137469L;
 	
 	private static final int LOG_BOX_MAX_LINES = 50;// 7;
 	
 	private JTextPane logBox;
 
-	public JPanelLogBox(LayoutManager layout) {
+	public JPanelLogBox() {
+		LayoutManager layout = new GridBagLayout();
 		setLayout(layout);
 		
 		JPanel pnlLogBox = new JPanel(new GridBagLayout());
@@ -66,6 +67,13 @@ public class JPanelLogBox extends JPanel {
         pnlLogBox.add(pnlLogToolBox, c);
         
         add(pnlLogBox);
+	}
+	
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 	}
 	
 	private String getDisplayedLoggerText() {

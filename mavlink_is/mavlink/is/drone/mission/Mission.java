@@ -24,8 +24,6 @@ import mavlink.is.utils.units.Altitude;
 import mavlink.is.utils.units.Length;
 import mavlink.is.utils.units.Speed;
 import gui.core.springConfig.AppConfig;
-import gui.is.validations.MissionCanBeActivated;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import pair.Pair;
 
 /**
@@ -44,7 +40,6 @@ import pair.Pair;
  */
 
 @Scope("prototype")
-@Component("mission")
 public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
 
 	private static final long serialVersionUID = 8399081979944818494L;

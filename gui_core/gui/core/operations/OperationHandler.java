@@ -2,7 +2,6 @@ package gui.core.operations;
 
 import gui.is.services.LoggerDisplayerSvc;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 public abstract class OperationHandler

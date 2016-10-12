@@ -37,6 +37,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
@@ -48,6 +49,7 @@ import logger.Logger;
  * @author Jan Peter Stotz
  * @author Jason Huntley
  */
+@ComponentScan("gui.is.services")
 @Component("map")
 public class JMapViewer extends JPanel implements TileLoaderListener, MouseListener {
 

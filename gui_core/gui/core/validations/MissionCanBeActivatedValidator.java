@@ -42,8 +42,13 @@ public class MissionCanBeActivatedValidator  implements ConstraintValidator<Miss
 		Coordinate coord = wp.getCoordinate().convertToCoordinate();
 		Length dist_between_drone_and_mission = GeoTools.getDistance(coord.ConvertToCoord2D(), mission.getDrone().getGps().getPosition());
 		
-		if (dist_between_drone_and_mission.valueInMeters() > MAX_DISTANCE_BETWEEN_MISSION_AND_DRONE)
+		if (dist_between_drone_and_mission.valueInMeters() > MAX_DISTANCE_BETWEEN_MISSION_AND_DRONE) {
+			//disable existing violation message
+			arg1.disableDefaultConstraintViolation();
+		    //build new violation message and add it
+			arg1.buildConstraintViolationWithTemplate("Mission is to far from drone position (" + ((int) dist_between_drone_and_mission.valueInMeters()) + "m)").addConstraintViolation();
 			return false;
+		}
 			
 		return true;
 	}

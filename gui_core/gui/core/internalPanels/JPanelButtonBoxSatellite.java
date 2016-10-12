@@ -38,6 +38,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkModes;
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.core.operations.internal")
 @ComponentScan("mavlink.core.drone")
+@ComponentScan("gui.is.services")
 @Component("buttonBoxSatellite")
 public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListener, OnParameterManagerListener {
 	

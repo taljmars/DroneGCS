@@ -3,10 +3,13 @@ package mavlink.is.protocol.msgbuilder;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
@@ -53,7 +56,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	private int retryIndex;
 	final private int maxRetry = 3;
 	private TimeOut timeOut;
-	private OnWaypointManagerListener wpEventListener;
+	private Set<OnWaypointManagerListener> wpEventListeners;
 
 	WaypointStates state = WaypointStates.IDLE;
 
@@ -64,10 +67,19 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	public WaypointManager(TimeOut timeOut) {
 		this.timeOut = timeOut;
 	}
+	
+	private static int called;    
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
+		wpEventListeners = new HashSet<OnWaypointManagerListener>();
+	}
 
-	public void setWaypointManagerListener(OnWaypointManagerListener wpEventListener) {
+	public void addWaypointManagerListener(OnWaypointManagerListener wpEventListener) {
 		System.out.println(getClass() + " new waypoints listener " + wpEventListener.getClass());
-		this.wpEventListener = wpEventListener;
+		this.wpEventListeners.add(wpEventListener);
 	}
 
 	/**
@@ -313,10 +325,11 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	private void doBeginWaypointEvent(WaypointEvent_Type wpEvent) {
 		retryIndex = 0;
 
-		if (wpEventListener == null)
+		if (wpEventListeners == null)
 			return;
 
-		wpEventListener.onBeginWaypointEvent(wpEvent);
+		for (OnWaypointManagerListener wpEventListener : wpEventListeners)
+			wpEventListener.onBeginWaypointEvent(wpEvent);
 	}
 
 	private void doEndWaypointEvent(WaypointEvent_Type wpEvent) {
@@ -325,19 +338,21 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 
 		retryIndex = 0;
 
-		if (wpEventListener == null)
+		if (wpEventListeners == null)
 			return;
-
-		wpEventListener.onEndWaypointEvent(wpEvent);
+		
+		for (OnWaypointManagerListener wpEventListener : wpEventListeners)
+			wpEventListener.onEndWaypointEvent(wpEvent);
 	}
 
 	private void doWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		retryIndex = 0;
 
-		if (wpEventListener == null)
+		if (wpEventListeners == null)
 			return;
 
-		wpEventListener.onWaypointEvent(wpEvent, index, count);
+		for (OnWaypointManagerListener wpEventListener : wpEventListeners)
+			wpEventListener.onWaypointEvent(wpEvent, index, count);
 	}
 
 	private class TimeOut {
@@ -414,5 +429,4 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 		}
 
 	}
-
 }

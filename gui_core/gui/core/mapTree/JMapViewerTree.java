@@ -8,6 +8,7 @@ import gui.core.mapObjects.LayerGroup;
 import gui.core.mapObjects.LayerMission;
 import gui.core.mapObjects.LayerPerimeter;
 import gui.core.mapViewer.JMapViewer;
+import gui.core.springConfig.AppConfig;
 import gui.is.interfaces.AbstractLayer;
 import gui.is.interfaces.MapObject;
 import gui.is.services.LoggerDisplayerSvc;
@@ -45,20 +46,26 @@ import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import mavlink.is.drone.Drone;
+import mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
+import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
 /**
  * Tree of layers for JMapViewer component
  * @author galo
  */
 @ComponentScan("gui.core.mapViewer")
+@ComponentScan("gui.is.services")
 @Component("treeMap")
-public class JMapViewerTree extends JPanel {
-    /** Serial Version UID */
+public class JMapViewerTree extends JPanel implements OnWaypointManagerListener {
+
     private static final long serialVersionUID = 3050203054402323972L;
+
+	private static final CharSequence UPLOADED_PREFIX = "(CURR) ";
     
     private CheckBoxTree tree = null;
     private JPanel treePanel = null;
     private JSplitPane splitPane = null;
+    private LayerMission uploadedLayerMissionCandidate = null;
     private LayerMission uploadedLayerMission = null;
     private LayerPerimeter uploadedLayerPerimeter = null;
     
@@ -79,6 +86,10 @@ public class JMapViewerTree extends JPanel {
 	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	private LayerGroup missionsGroup = null;
+	private LayerGroup perimetersGroup = null;
+	private LayerGroup generalGroup = null;
 	
 	public JMapViewerTree() {
 		this("Map Views");
@@ -136,6 +147,15 @@ public class JMapViewerTree extends JPanel {
 		//tree.setMinimumSize(minimumSize);
 		map.setMinimumSize(minimumSize);
 		setTreeVisible(true);
+		
+		missionsGroup = new LayerGroup("Missions");
+		perimetersGroup = new LayerGroup("Perimeters");
+		generalGroup = new LayerGroup("General Drawings");
+		tree.addLayer(missionsGroup);
+		tree.addLayer(perimetersGroup);
+		tree.addLayer(generalGroup);
+		
+		drone.getWaypointManager().addWaypointManagerListener(this);
 	}
     
     private void setTree(CheckBoxTree new_tree) {
@@ -227,46 +247,23 @@ public class JMapViewerTree extends JPanel {
         	popup.add(menuItemUploadPerimeter);
         }
 
-        menuItemShow.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        menuItemShow.addActionListener( e -> {
                 setVisibleTexts(layer, true);
                 if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
                 map.repaint();
-            }
         });
-        menuItemHide.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        
+        menuItemHide.addActionListener( e -> {
                 setVisibleTexts(layer, false);
                 if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
                 map.repaint();
-            }
         });
         
-        menuItemDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                //setVisibleTexts(layer, false);
-                removeLayer(layer);
-            }
-        });
+        menuItemDelete.addActionListener( e -> removeLayer(layer));
         
-        menuItemEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // Notify JInternalFrameMap that we are requesting to edit our layer
-                map.LayerEditorStart(layer);
-                //layer.setName(layer.getName() + "*");
-                //tree.repaint();
-        		//tree.updateUI();
-            }
-        });
+        menuItemEdit.addActionListener( e -> map.LayerEditorStart(layer));
         
-        menuItemRename.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // Notify JInternalFrameMap that we are requesting to edit our layer
+        menuItemRename.addActionListener( e -> {
             	String val = (String) JOptionPane.showInputDialog(null, "Please choose a new name for the layer", "Rename layer", JOptionPane.PLAIN_MESSAGE, null, null, layer.getName());
             	if (val.isEmpty()) {
             		JOptionPane.showMessageDialog(null, "Name cannot be empty");
@@ -276,33 +273,23 @@ public class JMapViewerTree extends JPanel {
             		tree.repaint();
             		tree.updateUI();
             	}
-            }
         });
         
-        menuItemUploadMission.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        menuItemUploadMission.addActionListener( e -> {
             	if (layer instanceof LayerMission) {
-            		if (uploadedLayerMission != null) {
-            			uploadedLayerMission.setName(uploadedLayerMission.getName().substring("(CURR) ".length(), uploadedLayerMission.getName().length()));
-            		}
-            		uploadedLayerMission = (LayerMission) layer;
-            		if (uploadedLayerMission.getMission() != null) {
+            		uploadedLayerMissionCandidate = (LayerMission) layer;
+            		if (uploadedLayerMissionCandidate.getMission() != null) {
             			loggerDisplayerSvc.logOutgoing("Uploading Mission To APM");
-            			uploadedLayerMission.getMission().sendMissionToAPM();
-            			uploadedLayerMission.setName("(CURR) " + uploadedLayerMission.getName());
+            			uploadedLayerMissionCandidate.getMission().sendMissionToAPM();
             			textNotificationPublisher.publish("Uploading Mission");
             		}
             		
             		tree.repaint();
             		tree.updateUI();
             	}
-            }
         });
         
-        menuItemUploadPerimeter.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        menuItemUploadPerimeter.addActionListener( e -> {
             	if (layer instanceof LayerPerimeter) {
             		if (uploadedLayerPerimeter != null) {
             			uploadedLayerPerimeter.setName(uploadedLayerPerimeter.getName().substring("(CURR) ".length(), uploadedLayerPerimeter.getName().length()));
@@ -319,23 +306,10 @@ public class JMapViewerTree extends JPanel {
             		tree.repaint();
             		tree.updateUI();
             	}
-            }
         });        
 
         return popup;
     }
-
-//    protected void DeactivatePerimeter(LayerPerimeter activeLayerPerimeter) {
-//    	activeLayerPerimeter.setName(activeLayerPerimeter.getName().substring("(ACTIVE) ".length(), activeLayerPerimeter.getName().length()));
-//		drone.getPerimeter().setPolygon(null);
-//		drone.getPerimeter().setAlert(false);
-//		drone.getPerimeter().setEnforce(false);
-//		areaConfiguration.setAlertOn(false);
-//		areaConfiguration.setEnforceOn(false);
-//		
-//		tree.repaint();
-//		tree.updateUI();
-//	}
 
 	private static void setVisibleTexts(AbstractLayer layer, boolean visible) {
         layer.setVisibleTexts(visible);
@@ -561,5 +535,123 @@ public class JMapViewerTree extends JPanel {
         tree.removeLayer(layer);
         tree.repaint();
         //tree.updateUI();
+	}
+
+	public void setCurrentMissionLayer(LayerMission layer) {
+		if (layer.equals(uploadedLayerMission)) {
+			loggerDisplayerSvc.logGeneral("Current mission layer is updated");
+			return;
+		}
+			
+		if (uploadedLayerMission != null) {
+			// Means the GUI is updated with old uploaded mission
+			CurrentPrefixRemove(uploadedLayerMission);
+			loggerDisplayerSvc.logGeneral("Previous mission prefix was removed");
+			uploadedLayerMission = layer;
+		}
+		else {
+			// Means we are not aware of any uploaded mission
+			uploadedLayerMission = layer;
+			getMissionsGroup().add(uploadedLayerMission);
+			addLayer(uploadedLayerMission);
+			updateUI();
+			uploadedLayerMission.repaint(map);
+			loggerDisplayerSvc.logGeneral("A new layer was created for current mission");
+		}
+		
+		CurrentPrefixAdd(uploadedLayerMission);
+	
+		tree.repaint();
+		tree.updateUI();
+	}
+
+	@Override
+	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {		
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			loggerDisplayerSvc.logIncoming("Start Downloading Waypoints");
+			return;
+		}
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			loggerDisplayerSvc.logIncoming("Start Updloading Waypoints");
+			return;
+		}
+
+		System.out.println("Failed to Start Syncing (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
+	}
+
+	@Override
+	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			loggerDisplayerSvc.logIncoming("Downloading Waypoint " + index + "/" + count);
+			return;
+		}
+
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			loggerDisplayerSvc.logIncoming("Uploading Waypoint " + index + "/" + count);
+			return;
+		}
+
+		System.out.println("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+	}
+
+	@Override
+	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			loggerDisplayerSvc.logIncoming("Waypoints downloaded");
+			if (drone.getMission() == null) {
+				loggerDisplayerSvc.logError("Failed to find mission");
+				return;
+			}
+			
+			LayerMission lm = (LayerMission) AppConfig.context.getBean("layerMission");
+			lm.setName("UnnamedMission");
+			lm.setMission(drone.getMission());
+			lm.initialize();
+			setCurrentMissionLayer(lm);
+
+			loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
+			textNotificationPublisher.publish("Mission successfully downloaded");
+			return;
+		}
+
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			loggerDisplayerSvc.logIncoming("Waypoints uploaded");
+			if (drone.getMission() == null) {
+				loggerDisplayerSvc.logError("Failed to find mission");
+				return;
+			}
+			setCurrentMissionLayer(uploadedLayerMissionCandidate);
+			uploadedLayerMissionCandidate = null;
+			loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
+			textNotificationPublisher.publish("Mission successfully uploaded");
+			return;
+		}
+		
+		System.out.println("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+	}
+	
+	private void CurrentPrefixRemove(LayerMission layerMission) {
+		if (layerMission.getName().contains(UPLOADED_PREFIX))
+			layerMission.setName(layerMission.getName().substring(UPLOADED_PREFIX.length(), layerMission.getName().length()));
+	}
+
+	private void CurrentPrefixAdd(LayerMission layerMission) {
+		if (!layerMission.getName().contains(UPLOADED_PREFIX))
+			layerMission.setName(UPLOADED_PREFIX + layerMission.getName());
+	}
+
+	public LayerGroup getMissionsGroup() {
+		return missionsGroup;
+	}
+
+	public LayerGroup getPerimetersGroup() {
+		return perimetersGroup;
+	}
+
+	public LayerGroup getGeneralGroup() {
+		return generalGroup;
 	}
 }
