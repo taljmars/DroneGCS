@@ -39,7 +39,7 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
 	private JButton btnSetMode;
 	private JButton btnMap;
 	private JButton btnActualPWM;
-	JComboBox<ApmModes> flightModesCombo;
+	private JComboBox<ApmModes> flightModesCombo;
 	private JLabel lblCriticalMsg;
 
 	@Resource(name = "frameContainer")
@@ -67,12 +67,7 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
         pnl.add(btnActualPWM);
         btnActualPWM.addMouseListener(this);
         
-        btnMap.setSelected(true);
-        
-        lblCriticalMsg = new JLabel("");
-        lblCriticalMsg.setHorizontalAlignment(SwingConstants.TRAILING);
-        pnl.add(lblCriticalMsg);
-        
+        btnMap.setSelected(true);        
         
         JPanel pnlMode = new JPanel();
 		pnlMode.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
@@ -99,6 +94,10 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
         btnSetMode.addMouseListener(this);
         pnlMode.add(btnSetMode);
         pnl.add(pnlMode);
+        
+        lblCriticalMsg = new JLabel("");
+        lblCriticalMsg.setHorizontalAlignment(SwingConstants.TRAILING);
+        pnl.add(lblCriticalMsg);
         
         add(pnl);
 	}

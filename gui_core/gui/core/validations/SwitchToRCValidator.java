@@ -10,7 +10,7 @@ import mavlink.core.flightControlers.FlightControler;
 
 public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpChangeFlightControllerQuad> {
 
-	public int MIN_AVG_THRUST_TO_SWITCH_TO_RC = 1000;
+	public int MIN_THRUST_TO_SWITCH_TO_RC = 1100;
 	
 	@Override
 	public void initialize(SwitchToRC arg0) {
@@ -30,12 +30,14 @@ public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpCh
 		if (changeFlightControllerQuad.getRequiredControler() != FlightControler.REMOTE)
 			return true;
 		
-		if (!changeFlightControllerQuad.getDrone().getState().isFlying())
-			return true;
-		
-		int avgThrust = changeFlightControllerQuad.getDrone().getRC().getAverageThrust();
-		if (avgThrust < MIN_AVG_THRUST_TO_SWITCH_TO_RC)
+		int avgThrust = changeFlightControllerQuad.getDrone().getRC().getThrust();
+		if (avgThrust < MIN_THRUST_TO_SWITCH_TO_RC) {
+			//disable existing violation message
+			arg1.disableDefaultConstraintViolation();
+		    //build new violation message and add it
+			arg1.buildConstraintViolationWithTemplate("Thrust from the radio is too low").addConstraintViolation();
 			return false;
+		}
 			
 		return true;
 	}

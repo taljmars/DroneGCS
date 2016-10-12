@@ -49,4 +49,8 @@ public class RC extends DroneVariable {
 		return eAvg;
 	}
 
+	public int getThrust() {
+		return out[2];
+	}
+
 }

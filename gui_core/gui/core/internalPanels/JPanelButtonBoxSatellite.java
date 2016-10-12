@@ -65,7 +65,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	private boolean takeOffThreadRunning = false;
     private SwingWorker<Void, Void> takeOffThread = null;
-    public JToggleButton btnFollowBeaconStart;
+    private JToggleButton btnFollowBeaconStart;
     private SwingWorker<Void, Void> FollowBeaconStartThread = null;
     private AbstractButton btnFollowBeaconShow;
 
@@ -152,7 +152,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         	else {
         		// Not selected
         		if (drone.getState().isFlying()) {
-                	JOptionPane.showMessageDialog(null, "Drone is flying, dis-arming motor is dangeures");
+                	JOptionPane.showMessageDialog(null, "Drone is flying, dis-arming motor is dangerous");
                 	if (!TryLand())
                 		btnArm.setSelected(true);
         		}
