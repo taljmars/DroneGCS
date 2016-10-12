@@ -1,7 +1,7 @@
 # DroneGCS
 
 The following directory hold the DroneGCS project files. It consist of code, drivers and executable jars directory.
-In order to have a better understanding of the code simply go to my JavaDoc page https://taljmars.github.io/DroneGCS/index.html.
+In order to have a better understanding of the code simply go to my JavaDoc page https://taljmars.github.io/DroneGCS/.
 
 ### Important Folder
 #### ExTool
