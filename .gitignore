@@ -10,6 +10,7 @@ $RECYCLE.BIN/
 
 # Igone bin directory - talma
 bin/
+logs/
 
 # Windows Installer files
 *.cab
@@ -22,9 +23,6 @@ bin/
 
 # Java compliation file - talma
 *.class
-
-# Logs file - talma
-*.html
 
 # My Saved file - talma
 *.ini
@@ -58,4 +56,3 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.class
-*.html

@@ -1,5 +1,6 @@
 package logger;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -21,9 +22,13 @@ public class Logger {
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM_dd_hhmmss");
 				String dateAsString = simpleDateFormat.format(date);
 				System.out.println(dateAsString);
+				
+				File logDir = new File(System.getProperty("user.dir") + "\\logs");
+				if (!logDir.exists())
+					logDir.mkdir();
 		
-				writer = new PrintWriter(System.getProperty("user.dir") + "\\quadlog_" + dateAsString + ".html", "UTF-8");
-				System.out.println(System.getProperty("user.dir") + "\\quadlog_" + dateAsString + ".html");
+				writer = new PrintWriter(logDir + "\\quadlog_" + dateAsString + ".html", "UTF-8");
+				System.out.println(logDir + "\\quadlog_" + dateAsString + ".html");
 		} catch (FileNotFoundException e) {
 				e.printStackTrace();
 				System.err.println(getClass().getName() + " Failed to open log file, log will not be available");
