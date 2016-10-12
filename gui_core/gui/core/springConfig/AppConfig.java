@@ -52,45 +52,6 @@ public class AppConfig {
 	
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 	
-	@Bean TwoWaySerialComm twoWaySerialComm() {
-		return new TwoWaySerialComm();
-	}
-	
-	@Bean
-	public DroneUpdateListener droneUpdateListener() {
-		return new DroneUpdateListener();
-	}
-	
-	@Bean
-	public LoggerDisplayerSvc loggerDisplayerSvc(){
-		return new LoggerDisplayerSvc();
-	}
-	
-	@Bean
-	public LocationFinder locationFinder() {
-		return new MyLocationImpl();
-	}
-	
-	@Bean
-	public Clock clock() {
-		return new ClockImpl();
-	}
-	
-	@Bean
-	public Handler handler() {
-		return new HandlerImpl();
-	}
-	
-	@Bean
-	public Drone drone() {
-		return new MyDroneImpl();
-	}
-	
-	@Bean
-	public KeyBoardControler keyBoardControler() {
-		return new KeyBoardControlerImpl();
-	}
-	
 	@Bean
 	public JDesktopPane frameContainer() {
 		return new JDesktopPane();
@@ -121,26 +82,6 @@ public class AppConfig {
 	}
 	
 	@Bean
-	public AbstractJInternalFrame internalFrameMap() {
-		return new JInternalFrameMap();
-	}
-	
-	@Bean
-	public AbstractJInternalFrame internalFrameActualPWM() {
-		return new JInternalFrameActualPWM();
-	}
-	
-	@Bean
-	public JMapViewer map() {
-		return new JMapViewer();
-	}
-	
-	@Bean
-	public JMapViewerTree treeMap() {
-		return new JMapViewerTree();
-	}
-	
-	@Bean
 	public JMVEventPublisher jMVEventPublisher() {
 		return new JMVEventPublisher();
 	}
@@ -150,15 +91,15 @@ public class AppConfig {
 		return new TextNotificationPublisher();
 	}
 	
-	@Bean
-	@Scope("prototype")
-	public Mission mission() {
-		return new Mission();
-	}
+//	@Bean
+//	@Scope("prototype")
+//	public Mission mission() {
+//		return new Mission();
+//	}
 	
-	@Bean
-	@Scope("prototype")
-	public LayerMission layerMission() {
-		return new LayerMission();
-	}
+//	@Bean
+//	@Scope("prototype")
+//	public LayerMission layerMission() {
+//		return new LayerMission();
+//	}
 }

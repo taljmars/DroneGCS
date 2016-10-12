@@ -4,7 +4,9 @@ import gui.is.services.LoggerDisplayerSvc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -43,7 +45,7 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 
 	private final HashMap<Integer, Parameter> parameters = new HashMap<Integer, Parameter>();
 
-	private DroneInterfaces.OnParameterManagerListener parameterListener;
+	private Set<DroneInterfaces.OnParameterManagerListener> parameterListeners;
 
 	@Resource(name = "handler")
 	public Handler handler;
@@ -55,7 +57,11 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 
 	public final ArrayList<Parameter> parameterList = new ArrayList<Parameter>();
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		parameterListeners = new HashSet<DroneInterfaces.OnParameterManagerListener>();
 		drone.addDroneListener(this);
 	}
 
@@ -63,12 +69,14 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 		parameters.clear();
         parameterList.clear();
 
-		if (parameterListener == null) {
+		if (parameterListeners == null) {
 			loggerDisplayerSvc.logError("Error: There are not listeners signed");
 			return;
 		}
 		
-		parameterListener.onBeginReceivingParameters();
+		for (DroneInterfaces.OnParameterManagerListener parameterListener : parameterListeners)
+			parameterListener.onBeginReceivingParameters();
+		
 		MavLinkParameters.requestParametersList(drone);
 		resetWatchdog();
 	}
@@ -104,8 +112,9 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 		expectedParams = m_value.param_count;
 
 		// update listener
-		if (parameterListener != null)
-			parameterListener.onParameterReceived(param, m_value.param_index, m_value.param_count);
+		if (parameterListeners != null)
+			for (DroneInterfaces.OnParameterManagerListener parameterListener : parameterListeners)
+				parameterListener.onParameterReceived(param, m_value.param_index, m_value.param_count);
 		
 		// Are all parameters here? Notify the listener with the parameters
 		if (parameters.size() >= m_value.param_count) {
@@ -116,8 +125,9 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 			killWatchdog();
 			loggerDisplayerSvc.logGeneral("Parameters finished!");
 
-			if (parameterListener != null) {
-				parameterListener.onEndReceivingParameters(parameterList);
+			if (parameterListeners != null) {
+				for (DroneInterfaces.OnParameterManagerListener parameterListener : parameterListeners)
+					parameterListener.onEndReceivingParameters(parameterList);
 			}
 		} else {
 			resetWatchdog();
@@ -193,9 +203,9 @@ public class Parameters extends DroneVariable implements OnDroneListener {
 		return expectedParams;
 	}
 
-	public void setParameterListener(DroneInterfaces.OnParameterManagerListener parameterListener) {
+	public void addParameterListener(DroneInterfaces.OnParameterManagerListener parameterListener) {
 		System.out.println(getClass().getName() + " Setting new paramter listener " + parameterListener.getClass());
-		this.parameterListener = parameterListener;
+		this.parameterListeners.add(parameterListener);
 	}
 
 	public int getPrecentageComplete() {

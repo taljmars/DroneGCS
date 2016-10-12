@@ -1,5 +1,7 @@
 package gui.is.services;
 
+import javax.annotation.PostConstruct;
+
 import gui.is.events.LogAbstractDisplayerEvent;
 import gui.is.events.LogErrorDisplayerEvent;
 import gui.is.events.LogGeneralDisplayerEvent;
@@ -8,11 +10,20 @@ import gui.is.events.LogOutgoingDisplayerEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
 
+@Component("loggerDisplayerSvc")
 public class LoggerDisplayerSvc {
 	
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 
 	private void publish(LogAbstractDisplayerEvent event) {
 		applicationEventPublisher.publishEvent(event);

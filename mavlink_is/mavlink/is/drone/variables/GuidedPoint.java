@@ -28,7 +28,10 @@ public class GuidedPoint extends DroneVariable implements OnDroneListener {
 		UNINITIALIZED, IDLE, ACTIVE
 	}
 
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		drone.addDroneListener(this);
 	}
 

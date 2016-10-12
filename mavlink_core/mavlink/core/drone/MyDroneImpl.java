@@ -42,12 +42,15 @@ import mavlink.is.protocol.msgbuilder.WaypointManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
 @ComponentScan("mavlink.is.protocol.msgbuilder")
 @ComponentScan("mavlink.core.connection")
+@ComponentScan("mavlink.core.location")
+@Component("drone")
 @Configuration
 public class MyDroneImpl implements Drone {
 
@@ -146,8 +149,12 @@ public class MyDroneImpl implements Drone {
 
 	private VehicleProfile profile;
 	
+	static int called = 0;
 	@PostConstruct
-	public void init() {
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
 		heartbeat.init();
 		state.init();
 		follow.init();

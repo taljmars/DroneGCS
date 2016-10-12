@@ -5,8 +5,10 @@ import gui.is.services.LoggerDisplayerSvc;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import mavlink.is.connection.MavLinkConnection;
@@ -17,6 +19,7 @@ import communication_device.TwoWaySerialComm;
 /**
  * Provides support for mavlink connection via udp.
  */
+@ComponentScan("communication_device")
 @Component("radioConnection")
 public class RadioConnection extends MavLinkConnection {
 
@@ -31,6 +34,13 @@ public class RadioConnection extends MavLinkConnection {
 	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 
 	@Override
 	public final void closeConnection() throws IOException {

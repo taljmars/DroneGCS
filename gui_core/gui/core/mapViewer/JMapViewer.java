@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,6 +36,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
+
+import org.springframework.stereotype.Component;
 
 import logger.Logger;
 
@@ -45,6 +48,7 @@ import logger.Logger;
  * @author Jan Peter Stotz
  * @author Jason Huntley
  */
+@Component("map")
 public class JMapViewer extends JPanel implements TileLoaderListener, MouseListener {
 
     /**
@@ -180,6 +184,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         setPreferredSize(new Dimension(400, 400));
         setDisplayPosition(new Coordinate(50, 9), 3);
     }
+    
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 
     @Override
     public String getToolTipText(MouseEvent event) {

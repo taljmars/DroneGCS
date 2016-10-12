@@ -7,7 +7,10 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
@@ -16,6 +19,7 @@ import mavlink.is.location.LocationFinder;
 import mavlink.is.location.LocationReceiver;
 import mavlink.is.utils.coordinates.Coord2D;
 
+@Component("locationFinder")
 public class MyLocationImpl implements LocationFinder {
 	
 	private static final int UPDATE_INTERVAL = 1000;// TALMA was 500;
@@ -73,5 +77,12 @@ public class MyLocationImpl implements LocationFinder {
 		scTimerTask = null;
 		
 		Logger.LogDesignedMessege(getClass() + " Location updates canceled!");
-	}	
+	}
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 }

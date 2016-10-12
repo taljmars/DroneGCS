@@ -15,8 +15,7 @@ public class JPanelConfigurationBox extends JScrollPane {
 	 */
 	private static final long serialVersionUID = 8111843990697031411L;
 	
-	private JCheckBox cbActiveGeofencePerimeterAlert;
-	private JCheckBox cbActiveGeofencePerimeterEnforce;
+	private JCheckBox cbActiveGeofencePerimeterAlertOnly;
 	private Drone drone;
 	
 	public JPanelConfigurationBox(JPanel pnl, int verticalScrollbarAsNeeded, int horizontalScrollbarAsNeeded, Dimension panelDimension) {
@@ -24,27 +23,17 @@ public class JPanelConfigurationBox extends JScrollPane {
 		
         setPreferredSize(panelDimension);
         
-        cbActiveGeofencePerimeterAlert = new JCheckBox("Active GeoFence/Perimeter Alert");
-        cbActiveGeofencePerimeterAlert.addActionListener( e -> drone.getPerimeter().setAlert(cbActiveGeofencePerimeterAlert.isSelected() ? true : false));
-        cbActiveGeofencePerimeterAlert.setSelected(false);
-        pnl.add(cbActiveGeofencePerimeterAlert);
-        
-        cbActiveGeofencePerimeterEnforce = new JCheckBox("Active GeoFence/Perimeter Enforcement");
-        cbActiveGeofencePerimeterEnforce.addActionListener( e -> drone.getPerimeter().setEnforce(cbActiveGeofencePerimeterEnforce.isSelected() ? true : false));
-        cbActiveGeofencePerimeterEnforce.setSelected(false);
-        pnl.add(cbActiveGeofencePerimeterEnforce);
+        cbActiveGeofencePerimeterAlertOnly = new JCheckBox("Active GeoFence/Perimeter Alert Only");
+        cbActiveGeofencePerimeterAlertOnly.addActionListener( e -> drone.getPerimeter().setAlertOnly(cbActiveGeofencePerimeterAlertOnly.isSelected() ? true : false));
+        cbActiveGeofencePerimeterAlertOnly.setSelected(false);
+        pnl.add(cbActiveGeofencePerimeterAlertOnly);
 	}
 
 	public void setDrone(Drone drone) {
 		this.drone = drone;
 	}
 	
-	public void setAlertOn(boolean isOn) {
-		cbActiveGeofencePerimeterAlert.setSelected(isOn);
-	}
-	
-	public void setEnforceOn(boolean isOn) {
-		cbActiveGeofencePerimeterEnforce.setSelected(isOn);		
-	}
-
+//	public void setAlertOn(boolean isOn) {
+//		cbActiveGeofencePerimeterAlertOnly.setSelected(isOn);
+//	}
 }

@@ -15,7 +15,10 @@ public class Messeges extends DroneVariable {
 	private static final long serialVersionUID = -8178265797887679595L;
 	private Vector<String> messeges;
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		messeges = new Vector<String>();
 	}
 	

@@ -42,7 +42,10 @@ public class State extends DroneVariable {
 	
 	public Runnable watchdogCallback = () -> removeWarning();
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		resetFlightTimer();
 	}
 

@@ -2,31 +2,51 @@ package gui.core.operations.internal;
 
 import gui.core.operations.OperationHandler;
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.validations.RuntimeValidator;
 import gui.is.validations.QuadIsArmed;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JOptionPane;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
 import mavlink.is.utils.units.Altitude;
 
-@QuadIsArmed
-@Component("takeoffQuad")
-public class TakeoffQuad extends OperationHandler {
-	
-	@Resource(name = "drone")
-	private Drone drone;
+@Component("opTakeoffQuad")
+public class OpTakeoffQuad extends OperationHandler {
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
+	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
+	@QuadIsArmed
+	private Drone drone;
+	
+	@Min(value=1, message="Expected height must be above 1m")
+    @Max(value=50, message="Expected height must be less than 50m")
 	private double expectedValue;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 	
 	@Override
 	public boolean go() throws InterruptedException {
 		loggerDisplayerSvc.logGeneral("Start Takeoff Phase");
+	
+		if (!RuntimeValidator.validate(this))
+			return false;
+		
 		drone.getState().doTakeoff(new Altitude(expectedValue));
 		int takeoff_waiting_time = 15000; // 15 seconds
 		long sleep_time = 1000;
@@ -55,6 +75,7 @@ public class TakeoffQuad extends OperationHandler {
 	}
 
 	public void setTargetHeight(double real_value) {
+		System.out.println(getClass().getName() + " Required height is " + real_value);
 		expectedValue = real_value;
 	}
 }

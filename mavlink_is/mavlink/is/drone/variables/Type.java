@@ -19,7 +19,10 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 	private int type = DEFAULT_TYPE;
 	private String firmwareVersion = null;
 
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		drone.addDroneListener(this);
 	}
 

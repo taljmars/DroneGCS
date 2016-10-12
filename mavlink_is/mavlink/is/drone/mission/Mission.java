@@ -24,12 +24,16 @@ import mavlink.is.utils.units.Altitude;
 import mavlink.is.utils.units.Length;
 import mavlink.is.utils.units.Speed;
 import gui.core.springConfig.AppConfig;
+import gui.is.validations.MissionCanBeActivated;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import pair.Pair;
 
@@ -38,6 +42,9 @@ import pair.Pair;
  * commands/mission items to be carried out by the drone. TODO: rename the
  * 'waypoint' method to 'missionItem' (i.e: addMissionItem)
  */
+
+@Scope("prototype")
+@Component("mission")
 public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
 
 	private static final long serialVersionUID = 8399081979944818494L;
@@ -46,7 +53,7 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	 */
 	private List<MissionItem> items = new ArrayList<MissionItem>();
 	private Altitude defaultAlt = new Altitude(20.0);
-	
+
 	public Mission(){
 		super();
 	}
@@ -394,10 +401,5 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 
 	public Drone getDrone() {
 		return drone;
-	}
-
-	public void setDrone(Drone drone) {
-		// TODO Auto-generated method stub
-		
 	}
 }

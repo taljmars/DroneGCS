@@ -24,7 +24,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	private static final long serialVersionUID = -7429107483849276132L;
 	private MapPolygon pPolygon;
 	private boolean pEnforce;
-	private boolean pAlert;
+	private boolean pAlertOnly;
 	private Coord2D pLastPosition = null;
 	private Coord2D pLastPositionInPerimeter = null;
 	private ApmModes pMode;
@@ -33,24 +33,28 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		pEnforce = false;
-		pAlert = false;
+		pAlertOnly = false;
 		pPolygon = null;
 		pMode = drone.getState().getMode();
 	}
 	
 	public void setPolygon(MapPolygon perimeterPoly) {
 		pPolygon = perimeterPoly;
+		drone.notifyDroneEvent(DroneEventsType.PERIMETER_RECEIVED);
 	}
 	
 	public void setPosition(Coord2D position) {
 		pLastPosition = position;
 		
-		if (pEnforce || pAlert) {
+		if (pEnforce) {
 			if (!isContained()) {
 				drone.notifyDroneEvent(DroneEventsType.LEFT_PERIMETER);
-				if (pEnforce) {
+				if (!pAlertOnly && drone.getState().isFlying()) {
 					drone.notifyDroneEvent(DroneEventsType.ENFORCING_PERIMETER);
 					try {
 						if (!pEnforcePermeterRunning) {
@@ -84,12 +88,12 @@ public class Perimeter  extends DroneVariable implements Serializable {
 		pEnforce = enforce;
 	}
 	
-	public void setAlert(boolean alert) {
+	public void setAlertOnly(boolean alert) {
 		if (alert)
-			loggerDisplayerSvc.logGeneral("Enable perimeter alert");
+			loggerDisplayerSvc.logGeneral("Enable perimeter alert only");
 		else
-			loggerDisplayerSvc.logGeneral("Disable perimeter alert");
-		pAlert = alert;
+			loggerDisplayerSvc.logGeneral("Disable perimeter alert only");
+		pAlertOnly = alert;
 	}
 	
 	public boolean isContained() {
@@ -130,8 +134,8 @@ public class Perimeter  extends DroneVariable implements Serializable {
 		return closestPoint.ConvertToCoord2D();
 	}
 
-	public boolean isAlert() {
-		return pAlert;
+	public boolean isAlertOnly() {
+		return pAlertOnly;
 	}
 
 	public boolean isEnforce() {

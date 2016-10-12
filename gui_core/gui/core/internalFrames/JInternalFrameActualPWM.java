@@ -3,6 +3,7 @@ package gui.core.internalFrames;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.annotation.PostConstruct;
 import javax.swing.WindowConstants;
 
 import mavlink.is.drone.Drone;
@@ -18,7 +19,9 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.springframework.stereotype.Component;
 
+@Component("internalFrameActualPWM")
 public class JInternalFrameActualPWM extends AbstractJInternalFrame implements OnDroneListener {
 
 	private static final long serialVersionUID = 1L;
@@ -38,6 +41,13 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 		setBounds(25, 25, 800, 400);
 		
 		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+	}
+	
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 	}
 
 	private JInternalFrameActualPWM(String name) {

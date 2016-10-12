@@ -47,7 +47,10 @@ public class Follow extends DroneVariable implements OnDroneListener, LocationRe
 	
 	private FollowAlgorithm followAlgorithm;
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);
 		locationFinder.addLocationListener(this);
 		drone.addDroneListener(this);

@@ -1,7 +1,10 @@
 package mavlink.core.connection;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JOptionPane;
+
+import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import mavlink.is.connection.MavLinkConnectionListener;
@@ -28,6 +31,7 @@ import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
 import gui.is.services.LoggerDisplayerSvc;
 
+@Component("droneUpdateListener")
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
 	private static final byte SEVERITY_HIGH = 3;
@@ -40,6 +44,13 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	
 	@Resource(name = "drone")
 	private Drone drone;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 	
 	@Override
 	public void onConnect() {

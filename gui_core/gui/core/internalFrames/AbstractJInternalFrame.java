@@ -9,4 +9,5 @@ public abstract class AbstractJInternalFrame extends JInternalFrame {
 	public AbstractJInternalFrame(String name, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 		super(name, resizable, closable, maximizable, iconifiable);
 	}
+	
 }

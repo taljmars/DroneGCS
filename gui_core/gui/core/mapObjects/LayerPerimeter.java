@@ -5,6 +5,7 @@ import gui.core.mapViewer.JMapViewer;
 import gui.is.classes.Style;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapObject;
+import gui.is.interfaces.MapPolygon;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,5 +88,9 @@ public class LayerPerimeter extends Layer implements Serializable /*TALMA add se
 
 	public void add(ICoordinate position) {
 		points.add(position);
+	}
+	
+	public MapPolygon getPerimeter() {
+		return (MapPolygon) getElements().get(0);
 	}
 }

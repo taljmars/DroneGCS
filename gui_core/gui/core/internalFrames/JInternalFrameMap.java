@@ -43,6 +43,9 @@ import java.awt.event.MouseWheelEvent;
 
 
 
+
+
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JButton;
@@ -57,8 +60,15 @@ import javax.swing.WindowConstants;
 
 
 
+
+
+
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+
+
 
 
 
@@ -80,6 +90,8 @@ import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
+@ComponentScan("gui.core.mapViewer")
+@ComponentScan("gui.core.mapTree")
 @Component("internalFrameMap")
 public class JInternalFrameMap extends AbstractJInternalFrame implements
 	OnDroneListener, OnWaypointManagerListener, ActionListener {
@@ -164,8 +176,12 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		super(name, resizable, closable, maximizable, iconifiable);	
 	}
 	
+	private static int called;
 	@PostConstruct
-	public void init() {		
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
 		setBounds(25, 25, 800, 400);
 
 		getContentPane().add(treeMap, BorderLayout.CENTER);

@@ -8,14 +8,14 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import gui.core.validations.QuadIsArmedValidator;
+import gui.core.validations.SwitchToRCValidator;
 
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { QuadIsArmedValidator.class })
-public @interface QuadIsArmed {
+@Constraint(validatedBy = { SwitchToRCValidator.class })
+public @interface SwitchToRC {
 	
-	String message() default "Quad is not armed";
+	String message() default "Verify RC is activated and have some thrust";
 
     Class<?>[] groups() default {};
 

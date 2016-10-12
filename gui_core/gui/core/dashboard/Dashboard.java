@@ -1,13 +1,10 @@
 package gui.core.dashboard;
 
 import gui.core.internalPanels.*;
-import gui.core.springConfig.AppConfig;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.util.List;
-
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisher;
 
@@ -20,7 +17,6 @@ import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.validation.Validator;
 
 import javax.validation.constraints.NotNull;
 
@@ -33,6 +29,7 @@ import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
 public class Dashboard implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
 	
+	@NotNull(message = "Internal Error: Failed to get main frame")
 	private JFrame frame;
 
 	@SuppressWarnings("unused")
@@ -41,80 +38,70 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	private static final String APP_TITLE = "Quad Ground Station";
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
 	public Drone drone;
 	
 	@Resource(name="frameContainer")
+	@NotNull(message = "Internal Error: Missing panel")
 	private JDesktopPane frameContainer;
 	
 	@Resource(name="areaLogBox")
+	@NotNull(message = "Internal Error: Missing tab")
 	private JPanelLogBox areaLogBox;
 
 	@Resource(name="areaMission")
+	@NotNull(message = "Internal Error: Missing tab")
 	private JPanelMissionBox areaMission;
 	
 	@Resource(name="areaConfiguration")
+	@NotNull(message = "Internal Error: Missing tab")
 	private JPanelConfigurationBox areaConfiguration;
 	
 	@Resource(name="telemetrySatellite")
+	@NotNull(message = "Internal Error: Missing panel")
 	private JPanelTelemetrySatellite tbTelemtry;
 	
 	@Resource(name="buttonBoxSatellite")
+	@NotNull(message = "Internal Error: Missing panel")
 	private JPanelButtonBoxSatellite tbContorlButton;
 	
 	@Resource(name="toolbarSatellite")
+	@NotNull(message = "Internal Error: Missing panel")
 	private JPanelToolBarSatellite tbToolBar;
 	
 	@Resource(name = "textNotificationPublisher")
+	@NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisher textNotificationPublisher;
 	
 	@Resource(name = "gcsHeartbeat")
+	@NotNull(message = "Internal Error: Failed to get HB mechanism")
 	public GCSHeartbeat gcsHeartbeat;
 	
-	@NotNull
+	@NotNull(message = "Internal Error: Missing panel")
 	private JTabbedPane tbSouth;
 	
-	@NotNull
+	@NotNull(message = "Internal Error: Missing panel")
 	private JToolBar toolBar;
 	
-	@NotNull
+	@NotNull(message = "Internal Error: Missing panel")
 	private JProgressBar progressBar;
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					System.out.println("Start Dashboard");
-					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
-					dashboard.initializeGui();
-					dashboard.refresh();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 	
-	private void refresh() {		
+	public void initializeDefinitions() {		
 		System.out.println("Sign Dashboard as drone listener");
 		drone.addDroneListener(this);
-		//drone.addDroneListener(tbTelemtry);
-		//drone.addDroneListener(tbContorlButton);
-		//drone.addDroneListener(tbToolBar);
 		drone.getWaypointManager().setWaypointManagerListener(this);
-		drone.getParameters().setParameterListener(this);
+		drone.getParameters().addParameterListener(this);
 		
-		System.out.println("Start GCS Heartbeat");
-		gcsHeartbeat.setFrq(1);
-		gcsHeartbeat.setActive(true);
+//		System.out.println("Start GCS Heartbeat");
+//		gcsHeartbeat.setFrq(1);
+//		gcsHeartbeat.setActive(true);
 
-		System.out.println("Setting for button Box");
-		tbContorlButton.setButtonControl(false);
-
-		System.out.println("Setting Configurtaion");
-		areaConfiguration.setDrone(drone);
+//		System.out.println("Setting Configurtaion");
+//		areaConfiguration.setDrone(drone);
 
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
@@ -138,7 +125,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initializeGui() {
+	public void initializeGui() {
 		frame = new JFrame(APP_TITLE);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setSize(400, 400);
@@ -373,7 +360,6 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		int prc = drone.getParameters().getPrecentageComplete();
 		if (prc > 95) {
 			drone.getStreamRates().setupStreamRatesFromPref();
-			tbContorlButton.setButtonControl(true);
 			if (drone.isConnectionAlive()) {
 				tbTelemtry.SetHeartBeat(true);
 				drone.notifyDroneEvent(DroneEventsType.MODE);
@@ -388,7 +374,6 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		
 		drone.getStreamRates().prepareStreamRates();
 		drone.getStreamRates().setupStreamRatesFromPref();
-		tbContorlButton.setButtonControl(true);
 		if (drone.isConnectionAlive()) {
 			tbTelemtry.SetHeartBeat(true);
 			drone.notifyDroneEvent(DroneEventsType.MODE);

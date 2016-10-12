@@ -3,6 +3,7 @@ package gui.core.operations.internal;
 import gui.core.operations.OperationHandler;
 import gui.is.services.LoggerDisplayerSvc;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JOptionPane;
 
@@ -11,14 +12,21 @@ import org.springframework.stereotype.Component;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkArm;
 
-@Component("armQuad")
-public class ArmQuad extends OperationHandler {
+@Component("opArmQuad")
+public class OpArmQuad extends OperationHandler {
 	
 	@Resource(name = "drone")
 	private Drone drone;
 	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
 	
 	@Override
 	public boolean go() throws InterruptedException {

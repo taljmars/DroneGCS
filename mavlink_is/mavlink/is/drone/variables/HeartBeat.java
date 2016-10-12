@@ -43,7 +43,10 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 		}
 	};
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		drone.addDroneListener(this);
 	}
 

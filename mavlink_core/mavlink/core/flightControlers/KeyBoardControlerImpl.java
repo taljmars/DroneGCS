@@ -14,12 +14,14 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import communication_device.TwoWaySerialComm;
 import logger.Logger;
@@ -28,8 +30,8 @@ import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
 @ComponentScan("communication_device")
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("communication_device")
 @ComponentScan("gui.is.services")
+@Component("keyBoardControler")
 public class KeyBoardControlerImpl implements KeyBoardControler {
 	
 	private static boolean param_loaded = false;
@@ -64,6 +66,13 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			}
 		});
 		KeyboardStabilizer.start();
+	}
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 	}
 	
 	public boolean bActive = false;

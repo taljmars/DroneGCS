@@ -12,12 +12,14 @@ import java.net.PortUnreachableException;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 
+import javax.annotation.PostConstruct;
 import javax.swing.JOptionPane;
 
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
 
+@Component("twoWaySerialComm")
 public class TwoWaySerialComm {
 	
 	private SerialPort serialPort = null;
@@ -28,9 +30,12 @@ public class TwoWaySerialComm {
     private static String portName = "COM9";
     //private static String portName = "COM8";
     
-    public TwoWaySerialComm() {
-    
-    }
+    static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
     
     public void connect() {
     	boolean portSelected = false;

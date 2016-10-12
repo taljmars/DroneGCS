@@ -7,11 +7,9 @@ import gui.core.mapObjects.Layer;
 import gui.core.mapObjects.LayerGroup;
 import gui.core.mapObjects.LayerMission;
 import gui.core.mapObjects.LayerPerimeter;
-import gui.core.mapObjects.MapPolygonImpl;
 import gui.core.mapViewer.JMapViewer;
 import gui.is.interfaces.AbstractLayer;
 import gui.is.interfaces.MapObject;
-import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisher;
 
@@ -42,15 +40,18 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+
 import logger.Logger;
 import mavlink.is.drone.Drone;
-import mavlink.is.protocol.msg_metadata.ApmModes;
-import mavlink.is.protocol.msgbuilder.MavLinkModes;
 
 /**
  * Tree of layers for JMapViewer component
  * @author galo
  */
+@ComponentScan("gui.core.mapViewer")
+@Component("treeMap")
 public class JMapViewerTree extends JPanel {
     /** Serial Version UID */
     private static final long serialVersionUID = 3050203054402323972L;
@@ -58,8 +59,8 @@ public class JMapViewerTree extends JPanel {
     private CheckBoxTree tree = null;
     private JPanel treePanel = null;
     private JSplitPane splitPane = null;
-    private LayerMission ActiveLayerMission = null;
-    private LayerPerimeter ActiveLayerPerimeter = null;
+    private LayerMission uploadedLayerMission = null;
+    private LayerPerimeter uploadedLayerPerimeter = null;
     
     @Resource(name = "areaMission")
     private JPanelMissionBox areaMission;
@@ -125,13 +126,17 @@ public class JMapViewerTree extends JPanel {
         setTree(new CheckBoxTree(name));
     }
     
-    @PostConstruct
-    public void init() {
-    	 Dimension minimumSize = new Dimension(100, 50);
-         //tree.setMinimumSize(minimumSize);
-         map.setMinimumSize(minimumSize);
-         setTreeVisible(true);
-    }
+	
+	private static int called;    
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		Dimension minimumSize = new Dimension(100, 50);
+		//tree.setMinimumSize(minimumSize);
+		map.setMinimumSize(minimumSize);
+		setTreeVisible(true);
+	}
     
     private void setTree(CheckBoxTree new_tree) {
     	if (tree != null) {
@@ -197,13 +202,8 @@ public class JMapViewerTree extends JPanel {
         JMenuItem menuItemRename = new JMenuItem("Rename");
         JMenuItem menuItemDelete = new JMenuItem("Delete");
         
-        JMenuItem menuItemActivateMission = new JMenuItem("Activate Mission");
-        JMenuItem menuItemDeactivateMission = new JMenuItem("Deactivate Mission");
-        
-        JMenuItem menuItemActivatePerimeterAlarm = new JMenuItem("Activate Perimeter Alarm");
-        JMenuItem menuItemActivatePerimeterEnforce = new JMenuItem("Activate Perimeter Enforcement");
-        JMenuItem menuItemDeactivatePerimeterAlarm = new JMenuItem("Deactivate Perimeter Alarm");
-        JMenuItem menuItemDeactivatePerimeterEnforce = new JMenuItem("Deactivate Perimeter Enforcement");
+        JMenuItem menuItemUploadMission = new JMenuItem("Upload Mission");
+        JMenuItem menuItemUploadPerimeter = new JMenuItem("Upload Perimeter");
 
         //Create the popup menu.
         JPopupMenu popup = new JPopupMenu();
@@ -220,29 +220,11 @@ public class JMapViewerTree extends JPanel {
         popup.add(menuItemEdit);
         popup.add(menuItemRename);
         popup.add(menuItemDelete);
-        if (layer instanceof LayerMission) {
-        	if (ActiveLayerMission == layer) {
-        		popup.add(menuItemDeactivateMission);
-        	}
-        	else {
-        		popup.add(menuItemActivateMission);
-        	}
+        if (layer instanceof LayerMission && drone.isConnectionAlive()) {
+        	popup.add(menuItemUploadMission);
         }
-        if (layer instanceof LayerPerimeter) {
-        	if (ActiveLayerPerimeter == layer) {
-        		if (drone.getPerimeter().isAlert())
-        			popup.add(menuItemDeactivatePerimeterAlarm);
-        		else
-        			popup.add(menuItemActivatePerimeterAlarm);
-        		if (drone.getPerimeter().isEnforce())
-        			popup.add(menuItemDeactivatePerimeterEnforce);
-        		else
-        			popup.add(menuItemActivatePerimeterEnforce);
-        	}
-        	else {
-        		popup.add(menuItemActivatePerimeterAlarm);
-           		popup.add(menuItemActivatePerimeterEnforce);
-        	}
+        if (layer instanceof LayerPerimeter && drone.isConnectionAlive()) {
+        	popup.add(menuItemUploadPerimeter);
         }
 
         menuItemShow.addActionListener(new ActionListener() {
@@ -297,23 +279,19 @@ public class JMapViewerTree extends JPanel {
             }
         });
         
-        menuItemActivateMission.addActionListener(new ActionListener() {
+        menuItemUploadMission.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	if (layer instanceof LayerMission) {
-            		if (ActiveLayerMission != null) {
-            			ActiveLayerMission.setName(ActiveLayerMission.getName().substring("(ACTIVE) ".length(), ActiveLayerMission.getName().length()));
+            		if (uploadedLayerMission != null) {
+            			uploadedLayerMission.setName(uploadedLayerMission.getName().substring("(CURR) ".length(), uploadedLayerMission.getName().length()));
             		}
-        			ActiveLayerMission = (LayerMission) layer;
-            		if (ActiveLayerMission.getMission() != null) {
-            			loggerDisplayerSvc.logOutgoing("Sending Mission To APM");
-            			ActiveLayerMission.getMission().sendMissionToAPM();
-            			ActiveLayerMission.setName("(ACTIVE) " + ActiveLayerMission.getName());
-            			loggerDisplayerSvc.logOutgoing("Change mode to " + ApmModes.ROTOR_AUTO.getName());
-            			drone.getState().changeFlightMode(ApmModes.ROTOR_AUTO);
-            			textNotificationPublisher.publish("Start Mission");
-            			textNotificationPublisher.publish("Start Mission");
-            			textNotificationPublisher.publish("Start Mission");
+            		uploadedLayerMission = (LayerMission) layer;
+            		if (uploadedLayerMission.getMission() != null) {
+            			loggerDisplayerSvc.logOutgoing("Uploading Mission To APM");
+            			uploadedLayerMission.getMission().sendMissionToAPM();
+            			uploadedLayerMission.setName("(CURR) " + uploadedLayerMission.getName());
+            			textNotificationPublisher.publish("Uploading Mission");
             		}
             		
             		tree.repaint();
@@ -322,158 +300,42 @@ public class JMapViewerTree extends JPanel {
             }
         });
         
-        menuItemDeactivateMission.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	if (layer instanceof LayerMission) {
-            		ActiveLayerMission.setName(ActiveLayerMission.getName().substring("(ACTIVE) ".length(), ActiveLayerMission.getName().length()));
-            		
-            		MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_RTL);
-            		loggerDisplayerSvc.logGeneral("Comming back to lunch position");
-            		textNotificationPublisher.publish("Return To Lunch");
-            		
-            		ActiveLayerMission = null;
-            		
-            		tree.repaint();
-            		tree.updateUI();
-            	}
-            }
-        });
-        
-        menuItemActivatePerimeterAlarm.addActionListener(new ActionListener() {
+        menuItemUploadPerimeter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	if (layer instanceof LayerPerimeter) {
-            		if (ActiveLayerPerimeter != null && ActiveLayerPerimeter != layer) {
-            			loggerDisplayerSvc.logGeneral("Stopping current perimeter");
-            			DeactivatePerimeter(ActiveLayerPerimeter);
-            			ActiveLayerPerimeter = null;
+            		if (uploadedLayerPerimeter != null) {
+            			uploadedLayerPerimeter.setName(uploadedLayerPerimeter.getName().substring("(CURR) ".length(), uploadedLayerPerimeter.getName().length()));
+            		}            		
+            		
+            		uploadedLayerPerimeter = (LayerPerimeter) layer;        			
+        			if (uploadedLayerPerimeter.getPerimeter() != null) {
+            			loggerDisplayerSvc.logOutgoing("Uploading Perimeter To APM");
+            			uploadedLayerPerimeter.setName("(CURR) " + uploadedLayerPerimeter.getName());
+            			drone.getPerimeter().setPolygon(uploadedLayerPerimeter.getPerimeter());
+            			textNotificationPublisher.publish("Uploading Perimeter");
             		}
-            		
-            		// If we reached here we can be:
-            		// 1) new layer, ActiveLayerPerimeter=null
-            		// 2) different layer, ActiveLayerPerimeter=null
-            		// 3) same layer
-            		
-            		LayerPerimeter l = (LayerPerimeter) layer;
-            		
-        			if (l.getElements().size() != 1 || !(l.getElements().get(0) instanceof MapPolygonImpl)) {
-        				loggerDisplayerSvc.logError("Missing Perimeter in Layer");
-        				ActiveLayerPerimeter = null;
-        			}
-        			
-        			loggerDisplayerSvc.logGeneral("Enable Perimeter Alert");
-        			
-        			if (ActiveLayerPerimeter != l) {
-        				// means this is a new layer or this is different layer
-        				ActiveLayerPerimeter = l;
-        				ActiveLayerPerimeter.setName("(ACTIVE) " + ActiveLayerPerimeter.getName());
-        				drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
-        			}
-        			
-            		drone.getPerimeter().setAlert(true);
-            		areaConfiguration.setAlertOn(true);
             		           		
             		tree.repaint();
             		tree.updateUI();
             	}
             }
-        });
-        
-        menuItemDeactivatePerimeterAlarm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	if (layer instanceof LayerPerimeter) {
-            		if (!drone.getPerimeter().isEnforce()) {
-            			ActiveLayerPerimeter.setName(ActiveLayerPerimeter.getName().substring("(ACTIVE) ".length(), ActiveLayerPerimeter.getName().length()));
-            			ActiveLayerPerimeter = null;
-            			drone.getPerimeter().setPolygon(null);
-            		}
-            		
-        			loggerDisplayerSvc.logGeneral("Disable Perimeter Alert");
-            		drone.getPerimeter().setAlert(false);
-            		areaConfiguration.setAlertOn(false);
-            		           		
-            		tree.repaint();
-            		tree.updateUI();
-            	}
-            }
-        });
-        
-        menuItemActivatePerimeterEnforce.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	if (layer instanceof LayerPerimeter) {
-            		if (ActiveLayerPerimeter != null && ActiveLayerPerimeter != layer) {
-            			DeactivatePerimeter(ActiveLayerPerimeter);
-            			ActiveLayerPerimeter = null;
-            		}
-            		
-            		// If we reached here we can be:
-            		// 1) new layer, ActiveLayerPerimeter=null
-            		// 2) different layer, ActiveLayerPerimeter=null
-            		// 3) same layer
-            		
-            		LayerPerimeter l = (LayerPerimeter) layer;
-            		
-        			if (l.getElements().size() != 1 || !(l.getElements().get(0) instanceof MapPolygonImpl)) {
-        				loggerDisplayerSvc.logError("Missing Perimeter in Layer");
-        				ActiveLayerPerimeter = null;
-        				return;
-        			}
-        			
-        			loggerDisplayerSvc.logGeneral("Enable Perimeter Enforce");
-
-        			if (ActiveLayerPerimeter != l) {
-        				ActiveLayerPerimeter = l;
-        				drone.getPerimeter().setPolygon((MapPolygon)ActiveLayerPerimeter.getElements().get(0));
-        				ActiveLayerPerimeter.setName("(ACTIVE) " + ActiveLayerPerimeter.getName());
-        			}
-        			
-            		drone.getPerimeter().setEnforce(true);
-            		areaConfiguration.setEnforceOn(true);            		
-            		           		
-            		tree.repaint();
-            		tree.updateUI();
-            	}
-            }
-        });
-        
-        menuItemDeactivatePerimeterEnforce.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-            	if (layer instanceof LayerPerimeter) {
-            		if (!drone.getPerimeter().isAlert()) {
-            			ActiveLayerPerimeter.setName(ActiveLayerPerimeter.getName().substring("(ACTIVE) ".length(), ActiveLayerPerimeter.getName().length()));
-            			ActiveLayerPerimeter = null;
-            			drone.getPerimeter().setPolygon(null);
-            		}
-            		
-            		loggerDisplayerSvc.logGeneral("Disable Perimeter Enforce");
-                	drone.getPerimeter().setEnforce(false);
-                	areaConfiguration.setEnforceOn(false);
-            		           		
-            		tree.repaint();
-            		tree.updateUI();
-            	}
-            }
-        });
-        
+        });        
 
         return popup;
     }
 
-    protected void DeactivatePerimeter(LayerPerimeter activeLayerPerimeter) {
-    	activeLayerPerimeter.setName(activeLayerPerimeter.getName().substring("(ACTIVE) ".length(), activeLayerPerimeter.getName().length()));
-		drone.getPerimeter().setPolygon(null);
-		drone.getPerimeter().setAlert(false);
-		drone.getPerimeter().setEnforce(false);
-		areaConfiguration.setAlertOn(false);
-		areaConfiguration.setEnforceOn(false);
-		
-		tree.repaint();
-		tree.updateUI();
-	}
+//    protected void DeactivatePerimeter(LayerPerimeter activeLayerPerimeter) {
+//    	activeLayerPerimeter.setName(activeLayerPerimeter.getName().substring("(ACTIVE) ".length(), activeLayerPerimeter.getName().length()));
+//		drone.getPerimeter().setPolygon(null);
+//		drone.getPerimeter().setAlert(false);
+//		drone.getPerimeter().setEnforce(false);
+//		areaConfiguration.setAlertOn(false);
+//		areaConfiguration.setEnforceOn(false);
+//		
+//		tree.repaint();
+//		tree.updateUI();
+//	}
 
 	private static void setVisibleTexts(AbstractLayer layer, boolean visible) {
         layer.setVisibleTexts(visible);

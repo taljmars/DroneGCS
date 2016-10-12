@@ -23,7 +23,10 @@ public class StreamRates extends DroneVariable implements OnDroneListener {
 	
 	private boolean streamRatesWasSet = false;
 	
+	static int called;
 	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		drone.addDroneListener(this);
 	}
 

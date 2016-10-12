@@ -223,6 +223,8 @@ public class DroneInterfaces {
 		/**
 		 * the drone left the perimeter
 		 */
+		PERIMETER_RECEIVED,
+		
 		LEFT_PERIMETER,
 		
 		ENFORCING_PERIMETER,

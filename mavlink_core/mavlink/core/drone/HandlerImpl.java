@@ -7,8 +7,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
+
 import mavlink.is.drone.DroneInterfaces.Handler;
 
+@Component("handler")
 public class HandlerImpl implements Handler {
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -32,5 +37,12 @@ public class HandlerImpl implements Handler {
 		ScheduledFuture<?> future = scheduler.schedule(thread, timeout,
 				TimeUnit.MILLISECONDS);
 		futureThreads.put(thread, future);
+	}
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 	}
 }
