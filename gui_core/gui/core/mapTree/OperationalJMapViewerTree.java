@@ -239,8 +239,8 @@ public class OperationalJMapViewerTree extends JMapViewerTree implements OnWaypo
 			return;
 		}
 
-		System.out.println("Failed to Start Syncing (" + wpEvent.name() + ")");
 		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
+		textNotificationPublisher.publish("Mission Sync failed");
 	}
 
 	@Override
@@ -255,8 +255,8 @@ public class OperationalJMapViewerTree extends JMapViewerTree implements OnWaypo
 			return;
 		}
 
-		System.out.println("Unexpected Syncing Failure (" + wpEvent.name() + ")");
 		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		textNotificationPublisher.publish("Mission Sync failed");
 	}
 
 	@Override
@@ -292,8 +292,8 @@ public class OperationalJMapViewerTree extends JMapViewerTree implements OnWaypo
 			return;
 		}
 		
-		System.out.println("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+		textNotificationPublisher.publish("Mission Sync failed");
 	}
 	
 	private void CurrentPrefixRemove(LayerMission layerMission) {

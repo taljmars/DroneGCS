@@ -45,10 +45,10 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	private Mission mission;
 	
 	@Resource(name = "areaMission")
-	private JPanelMissionBox missionBox;
+	private transient JPanelMissionBox missionBox;
 	
 	@Resource(name = "loggerDisplayerSvc")
-	private LoggerDisplayerSvc loggerDisplayerSvc;
+	private transient LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	enum Column {
 		Order ("Order"), 
