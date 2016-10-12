@@ -19,13 +19,14 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component("internalFrameActualPWM")
 public class JInternalFrameActualPWM extends AbstractJInternalFrame implements OnDroneListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String frameName = "Actual PWM";
 
 	/** The time series data. */
 	private static TimeSeries seriesRoll;
@@ -33,8 +34,9 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	private static TimeSeries seriesThr;
 	private static TimeSeries seriesYaw;
 	
-	public JInternalFrameActualPWM() {
-		this(frameName, true, true, true, true);
+	@Autowired
+	public JInternalFrameActualPWM(@Value("Actual PWM") String title) {
+		this(title, true, true, true, true);
 	}
 	
 	private JInternalFrameActualPWM(String name, boolean resizable, boolean closable,
@@ -109,9 +111,5 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 			addRCActual(drone.getRC().out[0], drone.getRC().out[1], drone.getRC().out[2], drone.getRC().out[3]);
 			return;
 		}
-	}
-
-	public static AbstractJInternalFrame generateMyOwn() {
-		return new JInternalFrameActualPWM();
 	}
 }

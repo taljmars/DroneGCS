@@ -5,9 +5,11 @@ import gui.core.internalPanels.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.List;
+
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisher;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -90,7 +92,17 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@NotNull(message = "Internal Error: Missing panel")
 	private JProgressBar progressBar;
 	
-	public void initializeDefinitions() {
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
+		initializeDefinitions();
+		initializeGui();
+	}
+	
+	private void initializeDefinitions() {
 		System.out.println("Sign Dashboard as drone listener");
 		drone.addDroneListener(this);
 		drone.getWaypointManager().addWaypointManagerListener(this);
@@ -102,23 +114,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		}
 	}
 
-	private void SetDistanceToWaypoint(double d) {
-		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
-			// if (drone.getGuidedPoint().isIdle()) {
-			if (d == 0) {
-				textNotificationPublisher.publish("In Position");
-				loggerDisplayerSvc.logGeneral("Guided: In Position");
-			} else {
-				textNotificationPublisher.publish("Flying to destination");
-				loggerDisplayerSvc.logGeneral("Guided: Fly to distination");
-			}
-		}
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	public void initializeGui() {
+	private void initializeGui() {
 		frame = new JFrame(APP_TITLE);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setSize(400, 400);
@@ -202,6 +198,19 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 //		tbTelemtry.repaint();
 //
 //	}
+	
+	private void SetDistanceToWaypoint(double d) {
+		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
+			// if (drone.getGuidedPoint().isIdle()) {
+			if (d == 0) {
+				textNotificationPublisher.publish("In Position");
+				loggerDisplayerSvc.logGeneral("Guided: In Position");
+			} else {
+				textNotificationPublisher.publish("Flying to destination");
+				loggerDisplayerSvc.logGeneral("Guided: Fly to distination");
+			}
+		}
+	}
 	
 	@Override
 	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {

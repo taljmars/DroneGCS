@@ -13,7 +13,7 @@ import gui.core.mapTileSources.BingAerialTileSource;
 import gui.core.mapTileSources.MapQuestOpenAerialTileSource;
 import gui.core.mapTileSources.MapQuestOsmTileSource;
 import gui.core.mapTileSources.OsmTileSource;
-import gui.core.mapTree.JMapViewerTree;
+import gui.core.mapTree.OperationalJMapViewerTree;
 import gui.core.mapViewer.JMapViewer;
 import gui.core.springConfig.AppConfig;
 import gui.is.Coordinate;
@@ -45,6 +45,9 @@ import java.awt.event.MouseWheelEvent;
 
 
 
+
+
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JButton;
@@ -62,9 +65,17 @@ import javax.swing.WindowConstants;
 
 
 
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+
+
 
 
 
@@ -95,7 +106,6 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	OnDroneListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String frameName = "Map View";
 	
 	@Resource(name = "drone")
 	private Drone drone;
@@ -107,7 +117,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	private JPanelMissionBox missionBox;
 	
 	@Resource(name = "treeMap")
-	private JMapViewerTree treeMap;
+	private OperationalJMapViewerTree treeMap;
 	
 	@Resource(name = "map")
 	private JMapViewer map;
@@ -157,12 +167,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				new MapQuestOpenAerialTileSource()
 			};
 	
-	private JInternalFrameMap(String name) {
-		this(name, true, true, true, true);
-	}
-	
-	public JInternalFrameMap() {
-		this(frameName);
+	@Autowired
+	private JInternalFrameMap(@Value("Map Views") String title) {
+		this(title, true, true, true, true);
 	}
 	
 	private JInternalFrameMap(String name, boolean resizable, boolean closable,
