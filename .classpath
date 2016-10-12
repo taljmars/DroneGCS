@@ -18,9 +18,9 @@
 	<classpathentry kind="lib" path="C:/commons-logging-1.2/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="C:/spring-framework-4.3.3.RELEASE/libs/spring-aop-4.3.3.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/dist/lib/required/javax.el-api-2.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/dist/hibernate-validator-5.2.4.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/dist/lib/required/jboss-logging-3.2.1.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/dist/lib/required/classmate-1.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/classmate-1.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/hibernate-validator-5.2.4.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/javax.el-api-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jboss-logging-3.2.1.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
