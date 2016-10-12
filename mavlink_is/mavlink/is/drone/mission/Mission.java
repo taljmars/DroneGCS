@@ -397,4 +397,11 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 	public Drone getDrone() {
 		return drone;
 	}
+	
+	public boolean equals(Mission mission) {
+		if (mission == null)
+			return false;
+		
+		return mission.getItems().equals(this.getItems());
+	}
 }

@@ -93,4 +93,11 @@ public class LayerPerimeter extends Layer implements Serializable /*TALMA add se
 	public MapPolygon getPerimeter() {
 		return (MapPolygon) getElements().get(0);
 	}
+	
+	public boolean equals(LayerPerimeter layerPerimeter) {
+		if (layerPerimeter == null)
+			return false;
+		
+		return getPerimeter().equals(layerPerimeter);
+	}
 }

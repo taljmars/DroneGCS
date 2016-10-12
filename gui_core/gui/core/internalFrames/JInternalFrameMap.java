@@ -394,7 +394,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		menuItemDist.setEnabled(drone.getGps().isPositionValid());
 		menuItemMissionAddWayPoint.setVisible(isMissionBuildMode);
 		menuItemMissionAddCircle.setVisible(isMissionBuildMode);
-		menuItemMissionSetHome.setVisible(drone.getGps().isPositionValid());
+		menuItemMissionSetHome.setVisible(drone.getGps().isPositionValid() && !isMissionBuildMode && !isPerimeterBuildMode);
 		menuItemMissionSetLandPoint.setVisible(isMissionBuildMode);
 		menuItemMissionSetRTL.setVisible(isMissionBuildMode);
 		menuItemMissionSetTakeOff.setVisible(isMissionBuildMode);
@@ -440,12 +440,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 							"Drone Mode must be changed to GUIDED inorder to set point.\n"
 									+ "Would you like to change mode?", "",
 							JOptionPane.YES_NO_OPTION);
-					if (n == JOptionPane.YES_OPTION) {
-						// GuidedPoint.changeToGuidedMode(drone);
-						// Dashboard.loggerDisplayerSvc.logGeneral("Flight Mode changed to '"
-						// + drone.getState().getMode().getName() +
-						// "'");
-					} else {
+					if (n == JOptionPane.NO_OPTION) {
 						return;
 					}
 				}
@@ -456,12 +451,9 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 					}
 
 					ICoordinate iCoord = getMapPointerCoordinates(e);
-					Coord2D coord = new Coord2D(iCoord.getLat(), iCoord
-							.getLon());
+					Coord2D coord = new Coord2D(iCoord.getLat(), iCoord.getLon());
 
-					drone.getGuidedPoint().forcedGuidedCoordinate(
-							coord);
-					// drone.getGuidedPoint().newGuidedCoord(coord);
+					drone.getGuidedPoint().forcedGuidedCoordinate(coord);
 
 					guidedPoint = new MapMarkerDot(iCoord.getLat(), iCoord.getLon());
 					map.addMapMarker(guidedPoint);

@@ -98,6 +98,7 @@ public class JMapViewerTree extends JPanel {
     
     protected void setTree(CheckBoxTree new_tree) {
     	if (tree != null) {
+    		Logger.LogGeneralMessege("Cleaning old tree");
     		//map.removeAll();
     		map.removeAllMapLines();
     		map.removeAllMapMarkers();
@@ -111,6 +112,7 @@ public class JMapViewerTree extends JPanel {
     		tree.repaint();
     		tree.updateUI();
     	}
+    	
     	tree = new_tree;
     	
     	treePanel.add(tree, BorderLayout.CENTER);
@@ -328,7 +330,7 @@ public class JMapViewerTree extends JPanel {
 			loggerDisplayerSvc.logGeneral("Refresh tree");
 			
 			LayerGroup root = tree.rootLayer();
-			reloadLayerGroup(root);
+			reloadRoot(root);
 		} 
 		catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -337,8 +339,14 @@ public class JMapViewerTree extends JPanel {
 		}
     }
     
+    protected void reloadRoot(LayerGroup root) {
+    	reloadLayerGroup(root);
+    }
+    
     protected AbstractLayer reloadLayerGroup(AbstractLayer layer) {
 		LayerGroup lg = (LayerGroup) layer;
+		if (lg.getLayers() == null)
+			return null;
 		Iterator<AbstractLayer> it = lg.getLayers().iterator();
 		while (it.hasNext()) {
 			lg.add(reloadLayerGroup(it.next()));

@@ -502,4 +502,10 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	public void initialize() {
 		super.initialize();
 	}
+	
+	public boolean equals(LayerMission layer) {
+		if (layer == null)
+			return false;
+		return this.getMission().equals(layer.getMission());
+	}
 }

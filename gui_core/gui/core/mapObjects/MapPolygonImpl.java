@@ -158,4 +158,12 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon, Seriali
 		}
 		return result;
 	}
+
+    @Override
+    public boolean equals(MapPolygon mapPolygon) {
+    	if (mapPolygon == null)
+    		return false;
+
+    	return getPoints().equals(mapPolygon.getPoints());
+    }
 }

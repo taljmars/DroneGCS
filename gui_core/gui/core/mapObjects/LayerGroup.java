@@ -53,8 +53,8 @@ public class LayerGroup extends AbstractLayer implements Serializable /*TALMA ad
     }
 
     public LayerGroup add(AbstractLayer layer) {
-        layer.setParent(this);
-        layers = add(layers, layer);
+		layer.setParent(this);
+		layers = add(layers, layer);
         return this;
     }
     
@@ -81,4 +81,8 @@ public class LayerGroup extends AbstractLayer implements Serializable /*TALMA ad
         }
         return Boolean.FALSE;
     }
+
+	public boolean hasLayers() {
+		return (getLayers() != null && getLayers().size() != 0);
+	}
 }

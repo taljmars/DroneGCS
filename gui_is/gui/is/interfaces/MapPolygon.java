@@ -37,4 +37,6 @@ public interface MapPolygon extends MapObject {
     void paint(Graphics g, Polygon polygon);
 
 	boolean contains(ICoordinate p);
+	
+	boolean equals(MapPolygon mapPolygon);
 }
