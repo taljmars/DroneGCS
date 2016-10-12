@@ -11,8 +11,7 @@ import gui.is.services.TextNotificationPublisher;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +25,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -62,24 +62,18 @@ public class JMapViewerTree extends JPanel {
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         
         JButton btnSave = new JButton("Save");
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SaveLayersTree();
-            }
-        });
+        btnSave.addActionListener( e -> SaveLayersTree());
         
         JButton btnLoad = new JButton("Load");
-        btnLoad.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LoadLayersTree();
-            }
-        });
+        btnLoad.addActionListener( e -> LoadLayersTree());
+        
+        JButton btnImport = new JButton("Import");
+        btnImport.addActionListener( e -> ImportLayersTree());
         
         JPanel tmpButons = new JPanel(new BorderLayout());
         tmpButons.add(btnSave, BorderLayout.CENTER);
         tmpButons.add(btnLoad, BorderLayout.SOUTH);
+        tmpButons.add(btnImport, BorderLayout.NORTH);
         
         treePanel = new JPanel(new BorderLayout());
         treePanel.add(tmpButons, BorderLayout.SOUTH);
@@ -87,15 +81,10 @@ public class JMapViewerTree extends JPanel {
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(150);
 
-        //Provide minimum sizes for the two components in the split pane
-       
-        setLayout(new BorderLayout());
-        //setTreeVisible(treeVisible);
-        
+        setLayout(new BorderLayout());        
         setTree(new CheckBoxTree(name));
     }
-    
-	
+
 	private static int called;    
 	@PostConstruct
 	private void init() {
@@ -301,29 +290,33 @@ public class JMapViewerTree extends JPanel {
 		}
     }
     
-    public void LoadLayersTree() {
+    private void ImportLayersTree() {
+    	Path fFilePath = null;
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		fileChooser.setDialogTitle("Choose Configuration File");
+		
+		int result = fileChooser.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+		    File selectedFile = fileChooser.getSelectedFile();
+		    String settingsFilePath = selectedFile.getAbsolutePath();
+		    fFilePath = Paths.get(settingsFilePath);
+		    loadLayersFromFile(fFilePath);
+		}
+		else {
+			loggerDisplayerSvc.logError("Failed to read layers configuration file");
+		}
+	}
+    
+    private void LoadLayersTree() {
     	loggerDisplayerSvc.logGeneral("Loading Map Views");
     	String settingsFilePath = "LayersData.ini";
     	Path fFilePath = Paths.get(settingsFilePath);
-		/*if (fFilePath.toFile().exists() == false) {
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-			fileChooser.setDialogTitle("Choose Configuration File");
-			
-			int result = fileChooser.showOpenDialog(null);
-			if (result == JFileChooser.APPROVE_OPTION) {
-			    File selectedFile = fileChooser.getSelectedFile();
-			    settingsFilePath = selectedFile.getAbsolutePath();
-			    fFilePath = Paths.get(settingsFilePath);
-			}
-			else {
-				Dashboard.addErrorMessegeToDisplay("Failed to read layers configurations, invalid line");
-		    	Logger.close();
-		    	System.err.println(getClass().getName() + " Failed to read layers configurations, invalid line");
-		    	return;
-			}
-		}*/
-		try {
+    	loadLayersFromFile(fFilePath);
+    }
+    
+    private void loadLayersFromFile(Path fFilePath) {
+    	try {
 			FileInputStream fOut = new FileInputStream(fFilePath.toFile());
 			ObjectInputStream file = new ObjectInputStream(fOut);
 			CheckBoxTree tmp = (CheckBoxTree) file.readObject();
@@ -332,7 +325,7 @@ public class JMapViewerTree extends JPanel {
 			loggerDisplayerSvc.logGeneral("Map View were successfully loaded to " + fFilePath.toString());
 			tree.removeAll();
 			setTree(tmp);
-			loggerDisplayerSvc.logGeneral("Reresh tree");
+			loggerDisplayerSvc.logGeneral("Refresh tree");
 			
 			LayerGroup root = tree.rootLayer();
 			reloadLayerGroup(root);
@@ -344,7 +337,7 @@ public class JMapViewerTree extends JPanel {
 		}
     }
     
-    public AbstractLayer reloadLayerGroup(AbstractLayer layer) {
+    protected AbstractLayer reloadLayerGroup(AbstractLayer layer) {
 		LayerGroup lg = (LayerGroup) layer;
 		Iterator<AbstractLayer> it = lg.getLayers().iterator();
 		while (it.hasNext()) {
@@ -353,7 +346,7 @@ public class JMapViewerTree extends JPanel {
 		return lg;
     }
 
-	public void removeLayer(AbstractLayer layer) {
+    public void removeLayer(AbstractLayer layer) {
 		if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
         if (layer instanceof Layer) {
         	int i = 0;
