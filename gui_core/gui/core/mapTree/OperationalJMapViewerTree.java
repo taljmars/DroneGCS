@@ -114,13 +114,13 @@ public class OperationalJMapViewerTree extends JMapViewerTree implements OnWaypo
 		new_tree.addNodeListener(new MouseAdapter() {
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(e.getButton() == MouseEvent.BUTTON1) {
+			public void mouseClicked(MouseEvent e) {				
+				if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
 					AbstractLayer layer = ((CheckBoxNodePanel) e.getComponent()).getData().getAbstractLayer();
 					if (layer instanceof LayerMission) {
+						loggerDisplayerSvc.logGeneral("Loading Mission Table");
 						LayerMission lm = (LayerMission) layer;
-						lm.buildMissionTable(map);
-						areaMission.setEnabled(false);
+						lm.buildMissionTable(map, false);
 					}
 					else {
 						areaMission.clear();
@@ -224,19 +224,24 @@ public class OperationalJMapViewerTree extends JMapViewerTree implements OnWaypo
 				return super.reloadLayerGroup(layer);
 			return layer;
 		}
-		else {
-			Layer l = (Layer) layer;
-			if (l.getElements() == null)
-				return l;
-
-			Iterator<MapObject> it = l.getElements().iterator();
-			while (it.hasNext()) {
-				map.addMapObject(it.next());
-			}
-			if (layer instanceof LayerMission) { // Any type of layer
-				((LayerMission) layer).getMission().setDrone(drone);
-			}
-			return l;
+		
+		LoadOnMap((Layer) layer);
+		
+		if (layer instanceof LayerMission) {
+			LayerMission layerMission = (LayerMission) layer;
+			layerMission.getMission().setDrone(drone);
+			layerMission.setMissionBox(areaMission);
+			layerMission.setLoggerDisplayer(loggerDisplayerSvc);
+			return layerMission;
+		}
+		
+		return layer;		
+	}
+	
+	private void LoadOnMap(Layer layer) {
+		Iterator<MapObject> it = layer.getElements().iterator();
+		while (it.hasNext()) {
+			map.addMapObject(it.next());
 		}
 	}
 

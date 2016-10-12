@@ -69,8 +69,6 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
     private SwingWorker<Void, Void> FollowBeaconStartThread = null;
     private AbstractButton btnFollowBeaconShow;
 
-	private GridLayout gridLayout = new GridLayout(0, 2, 1, 1);
-
 	@Resource(name = "drone")
 	private Drone drone;
 	
@@ -91,7 +89,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	public JPanelButtonBoxSatellite () {		
 		pnl = new JPanel();
-		pnl.setLayout(gridLayout);
+		pnl.setLayout(new GridLayout(0, 2, 1, 1));
 		
 		btnExit = new JButton("Exit");
         btnExit.addActionListener( e -> {

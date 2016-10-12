@@ -17,8 +17,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -33,8 +31,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import org.springframework.context.annotation.ComponentScan;
@@ -209,12 +205,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
         zoomSlider.setOrientation(JSlider.VERTICAL);
         zoomSlider.setBounds(10, 10, 30, 150);
         zoomSlider.setOpaque(false);
-        zoomSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                setZoom(zoomSlider.getValue());
-            }
-        });
+        zoomSlider.addChangeListener( e -> setZoom(zoomSlider.getValue()));
         zoomSlider.setFocusable(false);
         add(zoomSlider);
         int size = 18;
@@ -227,13 +218,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
             zoomInButton.setMargin(new Insets(0, 0, 0, 0));
         }
         zoomInButton.setBounds(4, 155, size, size);
-        zoomInButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                zoomIn();
-            }
-        });
+        zoomInButton.addActionListener( e -> zoomIn());
         zoomInButton.setFocusable(false);
         add(zoomInButton);
         try {
@@ -245,13 +230,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
             zoomOutButton.setMargin(new Insets(0, 0, 0, 0));
         }
         zoomOutButton.setBounds(8 + size, 155, size, size);
-        zoomOutButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                zoomOut();
-            }
-        });
+        zoomOutButton.addActionListener( e -> zoomOut());
         zoomOutButton.setFocusable(false);
         add(zoomOutButton);
     }
@@ -265,13 +244,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	btnEditSaveMode.setFocusable(false);
     	btnEditSaveMode.setVisible(false);
     	btnEditSaveMode.setEnabled(false);
-    	btnEditSaveMode.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				LayerEditorEnd(true);
-			}
-		});
+    	btnEditSaveMode.addActionListener( e -> LayerEditorEnd(true));
     	add(btnEditSaveMode);
     	
     	btnEditCancelMode = new JButton("Cancel");
@@ -282,13 +255,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener, MouseListe
     	btnEditCancelMode.setFocusable(false);
     	btnEditCancelMode.setVisible(false);
     	btnEditCancelMode.setEnabled(false);
-    	btnEditCancelMode.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				LayerEditorEnd(false);
-			}
-		});
+    	btnEditCancelMode.addActionListener( e -> LayerEditorEnd(false));
     	add(btnEditCancelMode);
     }
     

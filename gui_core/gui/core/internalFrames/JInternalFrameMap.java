@@ -939,7 +939,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 				modifyiedLayerMission = (LayerMission) layer;
 				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission);
 				modifyiedLayerMissionOriginal.initialize();
-				modifyiedLayerMission.buildMissionTable(map);
+				modifyiedLayerMission.buildMissionTable(map, true);
 				isMissionBuildMode = true;
 				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + "*");
 			} else if (layer instanceof LayerPerimeter) {

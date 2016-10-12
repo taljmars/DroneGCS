@@ -25,7 +25,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
+
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.commands.ReturnToHome;
@@ -37,6 +39,7 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.utils.geoTools.GeoTools;
 import mavlink.is.utils.units.Altitude;
 
+@ComponentScan("gui.core.internalPanels")
 @Scope("prototype")
 public class LayerMission extends Layer implements Serializable /*TALMA add serilizebae*/ {    
 
@@ -238,7 +241,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 		
 		route = new MapPathImpl(this, points);
 		add(route);
-		buildMissionTable(map);
+		buildMissionTable(map, true);
 	}
 	
 	class MissionItemTableEntry
@@ -297,7 +300,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	
 	
 	static JTable missionTable = null;
-	public void buildMissionTable(JMapViewer map) {
+	public void buildMissionTable(JMapViewer map, boolean editmode) {
 		if (mission == null)
 			return;
 		
@@ -393,9 +396,6 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	    
 	    Action downMissionItem = new AbstractAction()
 	    {
-	        /**
-			 * 
-			 */
 			private static final long serialVersionUID = 5678821170249360874L;
 
 			public void actionPerformed(ActionEvent e)
@@ -424,9 +424,6 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	    
 	    Action deleteMissionItem = new AbstractAction()
 	    {
-	        /**
-			 * 
-			 */
 			private static final long serialVersionUID = 5678821170249360874L;
 
 			public void actionPerformed(ActionEvent e)
@@ -487,6 +484,7 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 	    new ButtonColumn(missionTable, upMissionItem, Column.SetUp.ordinal());	    
 	    new ButtonColumn(missionTable, downMissionItem, Column.SetDown.ordinal());
 	    new ButtonColumn(missionTable, deleteMissionItem, Column.Remove.ordinal());
+	    missionTable.setEnabled(editmode);
 	    missionBox.updateTable(missionTable);
 	    
 	}
@@ -507,5 +505,13 @@ public class LayerMission extends Layer implements Serializable /*TALMA add seri
 		if (layer == null)
 			return false;
 		return this.getMission().equals(layer.getMission());
+	}
+
+	public void setMissionBox(JPanelMissionBox missionBox) {
+		this.missionBox = missionBox;
+	}
+
+	public void setLoggerDisplayer(LoggerDisplayerSvc loggerDisplayer) {
+		this.loggerDisplayerSvc = loggerDisplayer;
 	}
 }

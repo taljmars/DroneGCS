@@ -1,8 +1,9 @@
 package gui.core.internalPanels;
 
 import java.awt.Dimension;
-
 import javax.annotation.PostConstruct;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -29,6 +30,10 @@ public class JPanelMissionBox extends JScrollPane {
 
 	public void clear() {
 		setViewportView(null);
+		JLabel lbll = new JLabel("Double Right-Click on mission to see details, Or, Left-Click to edit a mission and see details in table");
+		JPanel pnl = new JPanel();
+		pnl.add(lbll);
+		setViewportView(pnl);
 	}
 
 	public void updateTable(JTable missionTable) {
