@@ -67,7 +67,7 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 		return result;
 	}
 
-	public void addRCActual(int roll, int pitch, int thr, int yaw) {
+	private void addRCActual(int roll, int pitch, int thr, int yaw) {
 		if (seriesRoll != null)
 			seriesRoll.add(new Millisecond(), roll);
 		if (seriesPitch != null)
@@ -79,7 +79,7 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	}
 
 	@SuppressWarnings("deprecation")
-	public void loadChart() {
+	private void loadChart() {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 
 		seriesRoll = new TimeSeries("E1", Millisecond.class);

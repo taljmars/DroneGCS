@@ -128,32 +128,32 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	JLabel mperpLabelValue;
-	JLabel zoomValue;
-	JCheckBox showToolTip;
-	boolean lockMapOnMyPosition = true;
-	boolean paintTrail = true;
-	MapPathImpl myTrailPath = null;
+	private JLabel mperpLabelValue;
+	private JLabel zoomValue;
+	private JCheckBox showToolTip;
+	private boolean lockMapOnMyPosition = true;
+	private boolean paintTrail = true;
+	private MapPathImpl myTrailPath = null;
 
-	protected MapMarkerDot guidedPoint = null;
-	MapMarkerDot myPos = null;
-	MapLine bearing = null;
-	MapMarkerDot myHome = null;
-	MapMarkerDot myBeacon = null;
-	MapMarkerDot myGCS = null;
+	private MapMarkerDot guidedPoint = null;
+	private MapMarkerDot myPos = null;
+	private MapLine bearing = null;
+	private MapMarkerDot myHome = null;
+	private MapMarkerDot myBeacon = null;
+	private MapMarkerDot myGCS = null;
 
 	// GeoFence and perimeters
-	MapMarkerCircle geoFenceMarker = null;
-	boolean setGeoFenceByMouse = false;
-	boolean setPerimeterByMouse = false;
+	private MapMarkerCircle geoFenceMarker = null;
+	private boolean setGeoFenceByMouse = false;
+	private boolean setPerimeterByMouse = false;
 
 	// Mission Builder
-	LayerMission modifyiedLayerMission = null;
-	LayerMission modifyiedLayerMissionOriginal = null;
+	private LayerMission modifyiedLayerMission = null;
+	private LayerMission modifyiedLayerMissionOriginal = null;
 
 	// Perimeter Builder
-	LayerPerimeter modifyiedLayerPerimeter = null;
-	LayerPerimeter modifyiedLayerPerimeterOriginal = null;
+	private LayerPerimeter modifyiedLayerPerimeter = null;
+	private LayerPerimeter modifyiedLayerPerimeterOriginal = null;
 	
 	private JCheckBox cbLockMyPos;
 	private JCheckBox cbFollowTrail;
@@ -289,7 +289,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		drone.addDroneListener(this);
 	}
 
-	public void SetLastKnownPosition() {
+	private void SetLastKnownPosition() {
 		if (myPos == null || myPos.getColor() == Color.RED)
 			return;
 
@@ -308,7 +308,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			zoomValue.setText(String.format("%s", map.getZoom()));
 	}
 
-	public void SetMyPositionMarker(Coord2D coord) {
+	private void SetMyPositionMarker(Coord2D coord) {
 		Coordinate c = new Coordinate(coord.getLat(), coord.getLng());
 		if (myPos != null && myPos.getCoordinate().getLat() == c.getLat()
 				&& myPos.getCoordinate().getLon() == c.getLon()) {
@@ -332,7 +332,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			map.setDisplayPosition(myPos, map.getZoom());
 	}
 
-	public void SetMyPositionTrail(Coord2D coord) {
+	private void SetMyPositionTrail(Coord2D coord) {
 		if (!paintTrail)
 			return;
 
@@ -352,7 +352,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		}
 	}
 
-	public void SetMyPosition(Coord2D coord) {
+	private void SetMyPosition(Coord2D coord) {
 		if (coord == null) {
 			System.err.println("No Positions");
 			return;
@@ -362,7 +362,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		SetMyPositionTrail(coord);
 	}
 
-	void updateCycleGeoFence(double radi, Coordinate iCoord) {
+	private void updateCycleGeoFence(double radi, Coordinate iCoord) {
 		if (geoFenceMarker != null)
 			map.removeMapMarker(geoFenceMarker);
 
@@ -375,7 +375,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 	private boolean isPerimeterBuildMode = false;
 	private boolean isMissionBuildMode = false;
 
-	public JPopupMenu createPopupMenu(MouseEvent e) {
+	private JPopupMenu createPopupMenu(MouseEvent e) {
 		JMenuItem menuItemFlyTo = new JMenuItem("Fly to Position");
 		JMenuItem menuItemMissionBuild = new JMenuItem("Build Mission");
 		JMenuItem menuItemMissionAddWayPoint = new JMenuItem("Add Way Point");
@@ -642,7 +642,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		return popup;
 	}
 
-	public void SetBearing(double deg) {
+	private void SetBearing(double deg) {
 		if (!drone.getGps().isPositionValid())
 			return;
 
@@ -659,7 +659,7 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		map.addMapLine(bearing);
 	}
 
-	void updateGeoFence(MouseWheelEvent e) {
+	private void updateGeoFence(MouseWheelEvent e) {
 		int rotation = JMapViewer.zoomReverseWheel ? e.getWheelRotation() : -e.getWheelRotation();
 
 		int radi = GeoTools.latToMeters(geoFenceMarker.getRadius()).intValue();
@@ -676,26 +676,26 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		map.addMapMarker(geoFenceMarker);
 	}
 
-	void updatePerimeter(MouseEvent e) {
+	private void updatePerimeter(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			modifyiedLayerPerimeter.add(map.getPosition(e.getPoint()));
 			modifyiedLayerPerimeter.repaint(map);
 		}
 	}
 
-	public void removeBearing() {
+	private void removeBearing() {
 		if (bearing != null) {
 			map.removeMapLine(bearing);
 			bearing = null;
 		}
 	}
 
-	MapMarkerCircle myMapCircle25 = null;
-	MapMarkerCircle myMapCircle50 = null;
-	MapMarkerCircle myMapCircle75 = null;
-	MapMarkerCircle myMapCircle100 = null;
+	private MapMarkerCircle myMapCircle25 = null;
+	private MapMarkerCircle myMapCircle50 = null;
+	private MapMarkerCircle myMapCircle75 = null;
+	private MapMarkerCircle myMapCircle100 = null;
 
-	public void SetHome(Home home) {
+	private void SetHome(Home home) {
 		if (home == null || !home.isValid())
 			return;
 
@@ -814,8 +814,8 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 		return new Coordinate(map.getPosition(e.getPoint()).getLat(), map.getPosition(e.getPoint()).getLon());
 	}
 
-	static Coordinate perimeterBreachPoint = null;
-	static MapMarkerDot perimeterBreachPointMarker = null;
+	private static Coordinate perimeterBreachPoint = null;
+	private static MapMarkerDot perimeterBreachPointMarker = null;
 
 	private void SetPerimeterBreachPoint() {
 		if (perimeterBreachPointMarker == null) {

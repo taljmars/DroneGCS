@@ -31,13 +31,13 @@ import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
 public class Dashboard implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
 	
-	@NotNull(message = "Internal Error: Failed to get main frame")
-	private JFrame frame;
-
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	private static final String APP_TITLE = "Quad Ground Station";
+	
+	@NotNull(message = "Internal Error: Failed to get main frame")
+	private JFrame frame;
 	
 	@Resource(name = "loggerDisplayerSvc")
 	@NotNull(message = "Internal Error: Failed to get logger displayer")
@@ -45,7 +45,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	
 	@Resource(name = "drone")
 	@NotNull(message = "Internal Error: Failed to get drone")
-	public Drone drone;
+	private Drone drone;
 	
 	@Resource(name="frameContainer")
 	@NotNull(message = "Internal Error: Missing panel")
@@ -81,7 +81,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	
 	@Resource(name = "gcsHeartbeat")
 	@NotNull(message = "Internal Error: Failed to get HB mechanism")
-	public GCSHeartbeat gcsHeartbeat;
+	private GCSHeartbeat gcsHeartbeat;
 	
 	@NotNull(message = "Internal Error: Missing panel")
 	private JTabbedPane tbSouth;
@@ -280,14 +280,14 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		}
 	}
 
-	public synchronized void initProgressBar() {
+	private synchronized void initProgressBar() {
 		System.out.println("Init progress bar");
 		progressBar.setMinimum(0);
 		progressBar.setValue(0);
 		progressBar.setVisible(true);
 	}
 	
-	public synchronized void incProgressBar(int max) {
+	private synchronized void incProgressBar(int max) {
 		int value = progressBar.getValue();
 		if (progressBar.getMaximum() != max) {
 			progressBar.setMaximum(max);
@@ -299,7 +299,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		}
 	}
 	
-	public synchronized void finiProgressBar() {
+	private synchronized void finiProgressBar() {
 		System.out.println("Fini progress bar");
 		progressBar.setValue(progressBar.getMaximum());
 		progressBar.setVisible(false);
