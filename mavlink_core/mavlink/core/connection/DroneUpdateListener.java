@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 import mavlink.is.connection.MavLinkConnectionListener;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ApmModes;

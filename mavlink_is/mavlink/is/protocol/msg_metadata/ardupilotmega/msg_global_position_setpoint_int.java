@@ -79,6 +79,7 @@ public class msg_global_position_setpoint_int extends MAVLinkMessage{
      * Constructor for a new message, initializes the message with the payload
      * from a mavlink packet
      * 
+     * @param mavLinkPacket
      */
     public msg_global_position_setpoint_int(MAVLinkPacket mavLinkPacket){
         this.sysid = mavLinkPacket.sysid;

@@ -1,4 +1,4 @@
-package logger;
+package tools.logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;

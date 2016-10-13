@@ -7,11 +7,11 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import tools.logger.Logger;
 import gui.is.Coordinate;
 import gui.is.interfaces.ICoordinate;
 import gui.is.interfaces.MapPolygon;
 import gui.is.services.LoggerDisplayerSvc;
-import logger.Logger;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;

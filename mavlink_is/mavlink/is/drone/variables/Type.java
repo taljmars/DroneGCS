@@ -2,7 +2,7 @@ package mavlink.is.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces;

@@ -12,36 +12,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+/**
+ * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.
+ * 
+ * @author taljmars
+ *
+ */
 @Component("loggerDisplayerSvc")
 public class LoggerDisplayerSvc {
 	
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 	
-	static int called;
+	private static int called;
+	/**
+	 * Safety method that verify that the object is indeed a singletone
+	 */
 	@PostConstruct
-	public void init() {
+	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 	}
 
+	/**
+	 * basic publisher of any base type of message event
+	 * 
+	 * @param event
+	 */
 	private void publish(LogAbstractDisplayerEvent event) {
 		applicationEventPublisher.publishEvent(event);
 	}
 
-	public void logError(String txt) {
-		publish(new LogErrorDisplayerEvent(txt));		
+	/**
+	 * public error message event
+	 * 
+	 * @param message
+	 */
+	public void logError(String message) {
+		publish(new LogErrorDisplayerEvent(message));		
 	}
 	
-	public void logGeneral(String txt) {
-		publish(new LogGeneralDisplayerEvent(txt));		
+	/**
+	 * public general message event
+	 * 
+	 * @param message
+	 */
+	public void logGeneral(String message) {
+		publish(new LogGeneralDisplayerEvent(message));		
 	}
 	
-	public void logOutgoing(String txt) {
-		publish(new LogOutgoingDisplayerEvent(txt));		
+	/**
+	 * publish outgoing message event
+	 * 
+	 * @param message
+	 */
+	public void logOutgoing(String message) {
+		publish(new LogOutgoingDisplayerEvent(message));		
 	}
 	
-	public void logIncoming(String txt) {
-		publish(new LogIncomingDisplayerEvent(txt));		
+	/**
+	 * public incoming message event
+	 * 
+	 * @param message
+	 */
+	public void logIncoming(String message) {
+		publish(new LogIncomingDisplayerEvent(message));		
 	}
 }

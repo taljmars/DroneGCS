@@ -66,7 +66,8 @@ public class msg_gps2_raw extends MAVLinkMessage{
 
 	/**
 	 * Generates the payload for a mavlink message for a message of this type
-	 * @return
+	 * 
+	 * @return mavlink packet
 	 */
 	public MAVLinkPacket pack(){
 		MAVLinkPacket packet = new MAVLinkPacket();
@@ -121,6 +122,7 @@ public class msg_gps2_raw extends MAVLinkMessage{
      * Constructor for a new message, initializes the message with the payload
      * from a mavlink packet
      * 
+     * @param mavLinkPacket - mavlink packet
      */
     public msg_gps2_raw(MAVLinkPacket mavLinkPacket){
         this.sysid = mavLinkPacket.sysid;

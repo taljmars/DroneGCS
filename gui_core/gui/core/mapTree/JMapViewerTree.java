@@ -34,7 +34,7 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 
-import logger.Logger;
+import tools.logger.Logger;
 
 /**
  * Tree of layers for JMapViewer component

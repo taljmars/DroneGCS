@@ -30,7 +30,7 @@ public class msg_autopilot_version extends MAVLinkMessage{
 
 	/**
 	 * Generates the payload for a mavlink message for a message of this type
-	 * @return
+	 * @return mavlink packet
 	 */
 	public MAVLinkPacket pack(){
 		MAVLinkPacket packet = new MAVLinkPacket();

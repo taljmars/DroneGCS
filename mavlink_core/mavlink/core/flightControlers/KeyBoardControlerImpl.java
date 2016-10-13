@@ -23,8 +23,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import communication_device.TwoWaySerialComm;
-import logger.Logger;
+import tools.antenna_device.TwoWaySerialComm;
+import tools.logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 

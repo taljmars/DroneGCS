@@ -19,8 +19,6 @@ public class CRC {
 	 * 
 	 * @param data
 	 *            new char to hash
-	 * @param crcAccum
-	 *            the already accumulated checksum
 	 **/
 	public  void update_checksum(int data) {
 		int tmp;

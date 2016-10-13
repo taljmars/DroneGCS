@@ -1,15 +1,19 @@
 package gui.is.events;
 
-import logger.Logger.Type;
+import tools.logger.Logger.Type;
 
+/**
+ * Outgoing event type
+ * 
+ * @author taljmars
+ *
+ */
 public class LogOutgoingDisplayerEvent extends LogAbstractDisplayerEvent {
 	
-	public LogOutgoingDisplayerEvent(String entry) {
-		super(Type.OUTGOING, entry);
+	/**
+	 * @param message
+	 */
+	public LogOutgoingDisplayerEvent(String message) {
+		super(Type.OUTGOING, message);
 	}
-	
-	public static LogAbstractDisplayerEvent log(String entry) {
-		return new LogOutgoingDisplayerEvent(entry);
-	}
-	
 }

@@ -4,7 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 import mavlink.core.drone.profile.ArduCopterProfile;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Preferences;

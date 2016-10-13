@@ -1,4 +1,3 @@
-// License: GPL. For details, see Readme.txt file.
 package gui.is.events;
 
 import org.springframework.context.ApplicationEvent;
@@ -7,10 +6,18 @@ import org.springframework.context.ApplicationEvent;
  * Used for passing events between UI components and other
  * objects that register as a JMapViewerEventListener
  *
- * @author Jason Huntley
+ * @author taljmars
  *
  */
 public class JMVCommandEvent extends ApplicationEvent {
+	
+	private static final long serialVersionUID = 8701544867914969620L;
+	
+    /**
+     * Command type - UI event only
+     * @author taljmars
+     *
+     */
     public enum COMMAND {
         MOVE,
         ZOOM,
@@ -24,32 +31,22 @@ public class JMVCommandEvent extends ApplicationEvent {
     }
 
     private COMMAND command;
-    /**
-     *
-     */
-    private static final long serialVersionUID = 8701544867914969620L;
 
+    /**
+     * @param cmd
+     * @param source
+     */
     public JMVCommandEvent(COMMAND cmd, Object source) {
         super(source);
 
-        setCommand(cmd);
-    }
-
-    public JMVCommandEvent(Object source) {
-        super(source);
+        this.command = cmd;
     }
 
     /**
+     * get command enum type
      * @return the command
      */
     public COMMAND getCommand() {
         return command;
-    }
-
-    /**
-     * @param command the command to set
-     */
-    public void setCommand(COMMAND command) {
-        this.command = command;
     }
 }

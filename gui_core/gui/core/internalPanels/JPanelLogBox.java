@@ -19,8 +19,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
-import logger.Logger.Type;
+import tools.logger.Logger;
+import tools.logger.Logger.Type;
 
 @Component("areaLogBox")
 public class JPanelLogBox extends JPanel {

@@ -6,7 +6,7 @@ import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* A rally point. Used to set a point when from GCS -> MAV. Also used to return a point from MAV -> GCS
+* A rally point. Used to set a point when from GCS => MAV. Also used to return a point from MAV => GCS
 */
 public class msg_rally_point extends MAVLinkMessage{
 

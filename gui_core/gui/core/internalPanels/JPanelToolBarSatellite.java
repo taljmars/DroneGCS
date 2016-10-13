@@ -20,7 +20,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-import logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -28,6 +27,8 @@ import mavlink.is.protocol.msg_metadata.ApmModes;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+
+import tools.logger.Logger;
 
 @ComponentScan("gui.core.internalFrames")
 @Component("toolbarSatellite")

@@ -23,7 +23,7 @@ import javax.swing.SwingWorker;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 import mavlink.core.connection.helper.GCSLocationData;
 import mavlink.core.flightControlers.FlightControler;
 import mavlink.is.drone.Drone;

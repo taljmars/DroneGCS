@@ -11,10 +11,10 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+import tools.antenna_device.TwoWaySerialComm;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.connection.MavLinkConnectionTypes;
 import mavlink.is.drone.Drone;
-import communication_device.TwoWaySerialComm;
 
 /**
  * Provides support for mavlink connection via udp.
@@ -57,7 +57,7 @@ public class RadioConnection extends MavLinkConnection {
 		try {
 			if (socket != null) { // We can't send to our sister until they
 				// have connected to us
-				socket.out.write(buffer);
+				socket.getOutputStream().write(buffer);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

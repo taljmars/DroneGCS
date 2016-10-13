@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pair;
+package tools.pair;
 
 /**
  * Container to ease passing around a tuple of two objects. This object provides a sensible

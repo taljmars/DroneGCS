@@ -1,15 +1,19 @@
 package gui.is.events;
 
-import logger.Logger.Type;
+import tools.logger.Logger.Type;
 
+/**
+ * General event type
+ * 
+ * @author taljmars
+ *
+ */
 public class LogGeneralDisplayerEvent extends LogAbstractDisplayerEvent {
 	
-	public LogGeneralDisplayerEvent(String entry) {
-		super(Type.GENERAL, entry);
-	}
-	
-	public static LogAbstractDisplayerEvent log(String entry) {
-		return new LogGeneralDisplayerEvent(entry);
-	}
-	
+	/**
+	 * @param message
+	 */
+	public LogGeneralDisplayerEvent(String message) {
+		super(Type.GENERAL, message);
+	}	
 }

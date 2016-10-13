@@ -50,7 +50,7 @@ public class msg_attitude_quaternion extends MAVLinkMessage{
 
 	/**
 	 * Generates the payload for a mavlink message for a message of this type
-	 * @return
+	 * @return mavlink protocol packet
 	 */
 	public MAVLinkPacket pack(){
 		MAVLinkPacket packet = new MAVLinkPacket();
@@ -97,6 +97,7 @@ public class msg_attitude_quaternion extends MAVLinkMessage{
      * Constructor for a new message, initializes the message with the payload
      * from a mavlink packet
      * 
+     * @param mavLinkPacket
      */
     public msg_attitude_quaternion(MAVLinkPacket mavLinkPacket){
         this.sysid = mavLinkPacket.sysid;

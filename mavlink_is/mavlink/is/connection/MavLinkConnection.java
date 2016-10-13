@@ -1,6 +1,5 @@
 package mavlink.is.connection;
 
-import logger.Logger;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.io.BufferedOutputStream;
@@ -17,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import tools.logger.Logger;
 import mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;

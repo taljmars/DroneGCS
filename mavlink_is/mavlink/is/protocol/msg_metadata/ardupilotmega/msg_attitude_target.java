@@ -46,7 +46,7 @@ public class msg_attitude_target extends MAVLinkMessage{
 
 	/**
 	 * Generates the payload for a mavlink message for a message of this type
-	 * @return
+	 * @return mavlink packet
 	 */
 	public MAVLinkPacket pack(){
 		MAVLinkPacket packet = new MAVLinkPacket();

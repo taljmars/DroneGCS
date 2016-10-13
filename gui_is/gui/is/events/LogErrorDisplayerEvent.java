@@ -1,15 +1,19 @@
 package gui.is.events;
 
-import logger.Logger.Type;
+import tools.logger.Logger.Type;
 
+/**
+ * Error event type
+ *  
+ * @author taljmars
+ *
+ */
 public class LogErrorDisplayerEvent extends LogAbstractDisplayerEvent {
 	
-	public LogErrorDisplayerEvent(String entry) {
-		super(Type.ERROR, entry);
-	}
-	
-	public static LogAbstractDisplayerEvent log(String entry) {
-		return new LogErrorDisplayerEvent(entry);
-	}
-	
+	/**
+	 * @param message
+	 */
+	public LogErrorDisplayerEvent(String message) {
+		super(Type.ERROR, message);
+	}	
 }

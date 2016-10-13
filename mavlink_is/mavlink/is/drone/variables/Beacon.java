@@ -4,7 +4,6 @@ import gui.is.services.LoggerDisplayerSvc;
 
 import java.io.Serializable;
 
-import logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -15,6 +14,8 @@ import javax.annotation.Resource;
 import javax.swing.SwingWorker;
 
 import org.springframework.stereotype.Component;
+
+import tools.logger.Logger;
 
 @Component("beacon")
 public class Beacon extends DroneVariable implements Serializable{

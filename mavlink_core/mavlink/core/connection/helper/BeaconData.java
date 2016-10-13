@@ -1,12 +1,13 @@
 package mavlink.core.connection.helper;
 
-import json.JSONHelper;
-import logger.Logger;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
 
 import org.json.simple.JSONObject;
+
+import tools.json.JSONHelper;
+import tools.logger.Logger;
 
 public class BeaconData {
 	

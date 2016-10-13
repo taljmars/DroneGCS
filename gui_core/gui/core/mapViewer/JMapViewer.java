@@ -36,7 +36,7 @@ import javax.swing.event.EventListenerList;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 
 /**
  * Provides a simple panel that displays pre-rendered map tiles loaded from the

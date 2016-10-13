@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
+import tools.logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
 import mavlink.is.location.Location;
 import mavlink.is.location.LocationFinder;

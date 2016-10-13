@@ -91,6 +91,7 @@ public class msg_attitude extends MAVLinkMessage{
      * Constructor for a new message, initializes the message with the payload
      * from a mavlink packet
      * 
+     * @param mavLinkPacket
      */
     public msg_attitude(MAVLinkPacket mavLinkPacket){
         this.sysid = mavLinkPacket.sysid;

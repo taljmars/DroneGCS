@@ -24,6 +24,7 @@ import mavlink.is.utils.units.Altitude;
 import mavlink.is.utils.units.Length;
 import mavlink.is.utils.units.Speed;
 import gui.core.springConfig.AppConfig;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
-import pair.Pair;
+
+import tools.pair.Pair;
 
 /**
  * This implements a mavlink mission. A mavlink mission is a set of

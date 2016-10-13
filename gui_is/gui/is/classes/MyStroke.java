@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import logger.Logger;
+import tools.logger.Logger;
 
 public class MyStroke implements Serializable {
 	
