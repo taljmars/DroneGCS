@@ -44,6 +44,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")

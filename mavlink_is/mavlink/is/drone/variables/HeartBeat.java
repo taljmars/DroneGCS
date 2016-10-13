@@ -11,6 +11,10 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 
+/**
+ * @author taljmars
+ * @see #init
+ **/
 @Component("heartbeat")
 public class HeartBeat extends DroneVariable implements OnDroneListener {
 
@@ -19,31 +23,36 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 	private static final long HEARTBEAT_LOST_TIMEOUT = 15000; //ms
     private static final long HEARTBEAT_IMU_CALIBRATION_TIMEOUT = 35000; //ms
 
-	public static final int INVALID_MAVLINK_VERSION = -1;
+	private static final int INVALID_MAVLINK_VERSION = -1;
 
-	public HeartbeatState heartbeatState = HeartbeatState.FIRST_HEARTBEAT;
-	public int droneID = 1;
+	private HeartbeatState heartbeatState = HeartbeatState.FIRST_HEARTBEAT;
+	
+	@SuppressWarnings("unused")
+	private int droneID = 1;
 
 	/**
 	 * Stores the version of the mavlink protocol.
 	 */
 	private byte mMavlinkVersion = INVALID_MAVLINK_VERSION;
 
-	public enum HeartbeatState {
+	private enum HeartbeatState {
 		FIRST_HEARTBEAT, LOST_HEARTBEAT, NORMAL_HEARTBEAT, IMU_CALIBRATION
 	}
 
 	@Resource(name = "handler")
 	private Handler handler;
 	
-	public final Runnable watchdogCallback = new Runnable() {
+	private final Runnable watchdogCallback = new Runnable() {
 		@Override
 		public void run() {
 			onHeartbeatTimeout();
 		}
 	};
 	
-	static int called;
+	private static int called;
+	/**
+	 * must be called in order to finish object creation
+	 **/
 	public void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
