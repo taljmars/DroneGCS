@@ -3,12 +3,14 @@ package gui.core.internalPanels;
 import java.awt.GridLayout;
 import java.util.List;
 
+
 import gui.core.operations.internal.OpArmQuad;
 import gui.core.operations.internal.OpChangeFlightControllerQuad;
 import gui.core.operations.internal.OpTakeoffQuad;
 import gui.core.operations.internal.OpStartMissionQuad;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisher;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -20,8 +22,10 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 
+
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+
 
 import tools.logger.Logger;
 import mavlink.core.connection.helper.GCSLocationData;
@@ -52,6 +56,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	
 	private JPanel pnl;
 	
+	private JButton btnConnect;
 	private JButton btnExit;
 	private JButton btnSyncDrone;
 	private JButton btnFly;
@@ -63,6 +68,7 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 	private JToggleButton btnStartMission;
 	private JToggleButton btnStartPerimeter;
 	
+	private boolean connected = false;
 	private boolean takeOffThreadRunning = false;
     private SwingWorker<Void, Void> takeOffThread = null;
     private JToggleButton btnFollowBeaconStart;
@@ -99,6 +105,8 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
         		Logger.LogGeneralMessege("Summary:");
         		Logger.LogGeneralMessege("--------");
         		Logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
+        		Logger.LogGeneralMessege("Max Height: " + drone.getAltitude().getMaxAltitude() + "m");
+        		Logger.LogGeneralMessege("Max Speed: " + drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond() + "m/s (" + ((int) (drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond()*3.6)) + "km/h)");
         		Logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
 				Logger.close();
 				System.exit(0);
@@ -106,7 +114,21 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 		});
         pnl.add(btnExit);
         
+        btnConnect = new JButton("Connect");
+        btnConnect.addActionListener( e -> {
+        	if (connected) {
+        		loggerDisplayerSvc.logGeneral("Close Connection");
+        		drone.getMavClient().disconnect();
+        	}
+        	else {
+		    	loggerDisplayerSvc.logGeneral("Open Connection");
+		    	drone.getMavClient().connect();
+        	}
+		});
+        pnl.add(btnConnect);
+        
         btnSyncDrone = new JButton("Sync Drone");
+        btnSyncDrone.setEnabled(false);
         btnSyncDrone.addActionListener( e -> {
         	System.out.println("Sync");
         	loggerDisplayerSvc.logGeneral("Syncing Drone parameters");
@@ -404,6 +426,19 @@ public class JPanelButtonBoxSatellite extends JToolBar implements OnDroneListene
 				return;
 			case MODE:
 				btnStartMission.setSelected(drone.getState().getMode().equals(ApmModes.ROTOR_AUTO));
+				return;
+			case CONNECTED:
+				loggerDisplayerSvc.logGeneral("Connected");
+				connected = true;
+				btnConnect.setText("Disconnect");
+				btnSyncDrone.setEnabled(connected);
+				return;
+			case DISCONNECTED:
+				loggerDisplayerSvc.logGeneral("Disonnected");
+				connected = false;
+				btnConnect.setText("Connect");
+				btnSyncDrone.setEnabled(connected);
+				setButtonControl(connected);
 				return;
 		}
 	}

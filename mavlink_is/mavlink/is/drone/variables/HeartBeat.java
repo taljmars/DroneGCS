@@ -95,13 +95,13 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
-            case CALIBRATION_IMU:
-                //Set the heartbeat in imu calibration mode.
-                heartbeatState = HeartbeatState.IMU_CALIBRATION;
-                restartWatchdog(HEARTBEAT_IMU_CALIBRATION_TIMEOUT);
-                break;
+		case CALIBRATION_IMU:
+			//Set the heartbeat in imu calibration mode.
+			heartbeatState = HeartbeatState.IMU_CALIBRATION;
+			restartWatchdog(HEARTBEAT_IMU_CALIBRATION_TIMEOUT);
+			break;
 
-            case CONNECTED:
+		case CONNECTED:
 			notifyConnected();
 			break;
 
@@ -109,7 +109,7 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 			notifyDisconnected();
 			break;
 
-            default:
+		default:
 			break;
 		}
 	}

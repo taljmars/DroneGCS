@@ -204,6 +204,7 @@ public class JPanelTelemetrySatellite extends JToolBar implements OnDroneListene
 				loggerDisplayerSvc.logError("Quad Connected");
 				SetHeartBeat(true);
 				return;
+			case DISCONNECTED:
 			case HEARTBEAT_TIMEOUT:
 				loggerDisplayerSvc.logError("Quad Disconnected");
 				SetLblHeight(0);

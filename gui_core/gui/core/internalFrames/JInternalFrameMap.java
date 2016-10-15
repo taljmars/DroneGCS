@@ -837,8 +837,10 @@ public class JInternalFrameMap extends AbstractJInternalFrame implements
 			SetHome(drone.getHome());
 			return;
 		case HEARTBEAT_TIMEOUT:
-			SetLastKnownPosition();
+			loggerDisplayerSvc.logError("Heartbeat reached timeout");
 			removeBearing();
+		case DISCONNECTED:
+			SetLastKnownPosition();
 			return;
 		case ORIENTATION:
 			SetBearing(drone.getNavigation().getNavBearing());

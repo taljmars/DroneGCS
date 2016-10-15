@@ -40,6 +40,7 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
 	private JButton btnSetMode;
 	private JButton btnMap;
 	private JButton btnActualPWM;
+	private JButton btnSignal;
 	private JComboBox<ApmModes> flightModesCombo;
 	private JLabel lblCriticalMsg;
 
@@ -51,6 +52,9 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
 	
 	@Resource(name = "internalFrameActualPWM")
 	private AbstractJInternalFrame internalFrameActualPWM;
+	
+	@Resource(name = "internalFrameSignals")
+	private AbstractJInternalFrame internalFrameSignals;
 	
 	@Resource(name = "drone")
 	public Drone drone;
@@ -67,6 +71,10 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
         btnActualPWM = new JButton("Actual PWM");
         pnl.add(btnActualPWM);
         btnActualPWM.addMouseListener(this);
+        
+        btnSignal = new JButton("Signals");
+        pnl.add(btnSignal);
+        btnSignal.addMouseListener(this);
         
         btnMap.setSelected(true);        
         
@@ -107,10 +115,12 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
 	public void init() {
         frameContainer.add(internalFrameMap);
         frameContainer.add(internalFrameActualPWM);
+        frameContainer.add(internalFrameSignals);
         
         try {
         	internalFrameMap.setMaximum(true);
         	internalFrameActualPWM.setMaximum(true);
+        	internalFrameSignals.setMaximum(true);
 		} catch (PropertyVetoException e) {
 			Logger.LogErrorMessege("Internal Error: Failed to load frame");
 			Logger.LogErrorMessege(e.getMessage());
@@ -118,6 +128,7 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
         
         internalFrameActualPWM.setVisible(false);
         internalFrameMap.setVisible(true);
+        internalFrameSignals.setVisible(false);
         
         drone.addDroneListener(this);
 	}
@@ -134,6 +145,12 @@ public class JPanelToolBarSatellite extends JToolBar implements MouseListener, O
 		if (e.getSource() == btnActualPWM) {
 			internalFrameActualPWM.setVisible(true);
 			internalFrameActualPWM.moveToFront();
+			return;
+		}
+		
+		if (e.getSource() == btnSignal) {
+			internalFrameSignals.setVisible(true);
+			internalFrameSignals.moveToFront();
 			return;
 		}
 		

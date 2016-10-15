@@ -11,7 +11,7 @@ public class MavLinkConnectionTypes {
 	public static final int MAVLINK_CONNECTION_BLUETOOTH = 0;
 
 	/**
-	 * USP mavlink connection.
+	 * USB mavlink connection.
 	 */
 	public static final int MAVLINK_CONNECTION_USB = 1;
 
@@ -24,8 +24,6 @@ public class MavLinkConnectionTypes {
 	 * TCP mavlink connection.
 	 */
 	public static final int MAVLINK_CONNECTION_TCP = 3;
-	
-	public static final int MAVLINK_CONNECTION_RADIO = 4;
 
 	// Not instantiable
 	private MavLinkConnectionTypes() {

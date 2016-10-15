@@ -23,12 +23,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import tools.antenna_device.TwoWaySerialComm;
+import tools.comm.SerialConnection;
 import tools.logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
-@ComponentScan("communication_device")
+@ComponentScan("tools.comm.internal")
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.is.services")
 @Component("keyBoardControler")
@@ -38,7 +38,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	private static Thread KeyboardStabilizer = null;
 	
 	@Resource(name = "twoWaySerialComm")
-	private TwoWaySerialComm twoWaySerialComm;
+	private SerialConnection serialConnection;
 	
 	@Resource(name = "drone")
 	private Drone drone;
@@ -430,7 +430,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		String val = GetRCSet();
 		
 		if (! val.isEmpty()) {
-			twoWaySerialComm.write(val);
+			serialConnection.write(val);
 			System.out.println("Sending '" + val + "'");
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
@@ -446,7 +446,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		String val = GetRCSet();
 		
 		if (param_loaded && ! val.isEmpty()) {
-			twoWaySerialComm.write(val);
+			serialConnection.write(val);
 			System.out.println("Sending '" + val + "'");
 			int[] rcOutputs = {RC_Roll, RC_Pitch, RC_Thr, RC_Yaw, 0, 0, 0, 0};
 			MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);

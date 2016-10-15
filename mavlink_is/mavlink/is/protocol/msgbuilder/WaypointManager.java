@@ -39,6 +39,8 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	 * 
 	 */
 	private static final long serialVersionUID = -3068901627632028791L;
+
+	public static final int RETRIES_AMOUNT = 3;
 	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
@@ -54,7 +56,6 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 	private int readIndex;
 	private int writeIndex;
 	private int retryIndex;
-	final private int maxRetry = 3;
 	private TimeOut timeOut;
 	private Set<OnWaypointManagerListener> wpEventListeners;
 
@@ -96,7 +97,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 		readIndex = -1;
 		timeOut.setTimeOutValue(3000);
 		//timeOut.setTimeOutValue(10000); // TALMA
-		timeOut.setTimeOutRetry(maxRetry);
+		timeOut.setTimeOutRetry(RETRIES_AMOUNT);
 		state = WaypointStates.READ_REQUEST;
 		timeOut.setTimeOut();
 		loggerDisplayerSvc.logOutgoing("Sending Sync Waypoint request");
@@ -258,12 +259,12 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 		// If max retry is reached, set state to IDLE. No more retry.
 		if (mTimeOutCount >= timeOut.getTimeOutRetry()) {
 			state = WaypointStates.IDLE;
-			doWaypointEvent(WaypointEvent_Type.WP_TIMED_OUT, retryIndex, maxRetry);
+			doWaypointEvent(WaypointEvent_Type.WP_TIMED_OUT, retryIndex, RETRIES_AMOUNT);
 			return false;
 		}
 
 		retryIndex++;
-		doWaypointEvent(WaypointEvent_Type.WP_RETRY, retryIndex, maxRetry);
+		doWaypointEvent(WaypointEvent_Type.WP_RETRY, retryIndex, RETRIES_AMOUNT);
 
 		timeOut.setTimeOut(false);
 
@@ -334,7 +335,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 
 	private void doEndWaypointEvent(WaypointEvent_Type wpEvent) {
 		if (retryIndex > 0)// if retry successful, notify that we now continue
-			doWaypointEvent(WaypointEvent_Type.WP_CONTINUE, retryIndex, maxRetry);
+			doWaypointEvent(WaypointEvent_Type.WP_CONTINUE, retryIndex, RETRIES_AMOUNT);
 
 		retryIndex = 0;
 
@@ -377,7 +378,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout {
 
 		public int getTimeOutRetry() {
 			if (this.timeOutRetry <= 0)
-				return 3; // default value
+				return RETRIES_AMOUNT; // default value
 
 			return this.timeOutRetry;
 		}

@@ -1,4 +1,5 @@
-package tools.antenna_device;
+package tools.comm.internal;
+
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.springframework.stereotype.Component;
 
+import tools.comm.SerialConnection;
 import tools.logger.Logger;
 
 /**
@@ -26,12 +28,13 @@ import tools.logger.Logger;
  * @author taljmars
  *
  */
+
 @Component("twoWaySerialComm")
-public class TwoWaySerialComm {
+public class TwoWaySerialComm implements SerialConnection {
 	
-	private static String PORT_NAME = "COM9";
-	private final static int BAUD_RATE = 57600;
-	//private final static int BAUD_RATE = 112500;
+	private String PORT_NAME = null;// = "COM9";
+	//private final static int BAUD_RATE = 57600;
+	private int BAUD_RATE;// = 115200;
 	
 	private SerialPort serialPort;
 	
@@ -47,66 +50,45 @@ public class TwoWaySerialComm {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 	}
+	
+	@Override
+	public void setBaud(Integer boud) {
+		BAUD_RATE = boud;
+	}
+	
+	@Override
+	public void setPortName(String port_name) {
+		PORT_NAME = port_name.substring(0, port_name.indexOf(" "));;
+	}
     
     /**
      * This function try to connect the default port defined. 
      */
-    public void connect() {
-    	boolean portSelected = false;
-    	
+    public boolean connect() {
     	Logger.LogGeneralMessege("Radio communication manager created");
     	
-    	while (!portSelected) {
-    		try {
-				connect(PORT_NAME);
-				Logger.LogGeneralMessege("Radio communication manager started successfully");
-			}
-    		catch (NoSuchPortException e) {
-    			Logger.LogErrorMessege(PORT_NAME + " port was not found");
-    			Object[] possibilities = listPorts();
-    			if (possibilities.length != 0) {
-	    			String s = (String)JOptionPane.showInputDialog(
-	    			                    null, "Port not found, please select a different port:\n",
-	    			                    "Port Selection",JOptionPane.PLAIN_MESSAGE,null,possibilities,"");
-	    			if ((s != null) && (s.length() > 0)) {
-	    				PORT_NAME = s.substring(0, s.indexOf(" "));
-	    				continue;
-	    			}
-    			}
-    			else {
-    				JOptionPane.showMessageDialog(null, " Port not found and there are no other port to use");
-    			}
-    			Logger.close();
-				System.exit(-1);
-    		}
-    		catch (PortInUseException e) {
-    			Logger.LogErrorMessege(PORT_NAME + " port is in use");
-    			Object[] possibilities = listPorts();
-    			if (possibilities.length != 0) {
-	    			String s = (String)JOptionPane.showInputDialog(
-	    			                    null, "Port is in use, please select a different port:\n",
-	    			                    "Port Selection",JOptionPane.PLAIN_MESSAGE,null,possibilities,"");
-	    			if ((s != null) && (s.length() > 0)) {
-	    				PORT_NAME = s.substring(0, s.indexOf(" "));
-	    				continue;
-	    			}
-    			}
-    			else {
-    				JOptionPane.showMessageDialog(null, " Port is in use and there are no other port to use");
-    			}
-    			Logger.close();
-				System.exit(-1);
-    		}
-    		catch (Exception e) {
-    			Logger.LogErrorMessege("Unexpected Error:\n");
-    			Logger.LogErrorMessege(e.getMessage());
-    			Logger.close();
-    			JOptionPane.showMessageDialog(null, "Unexpected Error:\n" + e.getMessage());
-				System.exit(-1);
-			}
-	    	
-	    	portSelected = true;
-    	}
+		try {
+			if (PORT_NAME == null)
+				return false;
+			
+			if (!connect(PORT_NAME))
+				return false;
+		}
+		catch (NoSuchPortException e) {
+			Logger.LogErrorMessege("'" + PORT_NAME + "' port was not found");
+		}
+		catch (PortInUseException e) {
+			Logger.LogErrorMessege("'" + PORT_NAME + "' port is in use");
+		}
+		catch (Exception e) {
+			Logger.LogErrorMessege("Unexpected Error:");
+			Logger.LogErrorMessege(e.getMessage());
+			JOptionPane.showMessageDialog(null, "Unexpected Error:\n" + e.getMessage());
+		}
+		
+		Logger.LogGeneralMessege("Radio communication manager started successfully");
+    	
+    	return true;
     }
  
     /**
@@ -115,7 +97,7 @@ public class TwoWaySerialComm {
      * @param portName
      * @throws Exception
      */
-    private void connect( String portName ) throws Exception {
+    private boolean connect( String portName ) throws Exception {
         CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier( portName );
         if( portIdentifier.isCurrentlyOwned() ) {
             Logger.LogErrorMessege("Port " + portName + " is currently in use");
@@ -126,19 +108,49 @@ public class TwoWaySerialComm {
         CommPort commPort = portIdentifier.open( this.getClass().getName(), timeout );
  
     	if( commPort instanceof SerialPort ) {
+    		Logger.LogDesignedMessege("Going to connect to port '" + PORT_NAME + "' with baud rate '" + BAUD_RATE + "'");
     		serialPort = ( SerialPort )commPort;
     		serialPort.setSerialPortParams( BAUD_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
     		in = serialPort.getInputStream();
-    		out = serialPort.getOutputStream(); 
+    		out = serialPort.getOutputStream();
     	} 
     	else {
 			JOptionPane.showMessageDialog(null, getClass().getName() + " Only serial ports are handled");
 			Logger.LogErrorMessege("Port " + portName + " is currently in use");
     		Logger.LogErrorMessege("Only serial ports are handled");
-			Logger.close();
 			throw new PortUnreachableException("Only serial ports are handled");
     	}
+    	
+    	return true;
     }
+    
+	@Override
+	public boolean disconnect() {
+		try {
+			Logger.LogErrorMessege("Disconnected");
+			if (out != null)
+				out.close();
+			out = null;
+			
+			if (in != null)
+				in.close();
+			in = null;
+			
+			if (serialPort != null) {
+				serialPort.disableReceiveFraming();
+				serialPort.disableReceiveThreshold();
+				serialPort.disableReceiveTimeout();
+				serialPort.removeEventListener();
+				serialPort.close();
+			}
+			serialPort = null;
+			return true;
+		} catch (IOException e) {
+			Logger.LogErrorMessege("Failed to disconnect");
+			Logger.LogErrorMessege(e.getMessage());
+			return false;
+		}
+	}
     
     /**
      * read byte after byte from the USB device
@@ -214,6 +226,16 @@ public class TwoWaySerialComm {
     		System.exit(-1);
     	}
     }
+    
+	@Override
+	public void write(byte[] buffer) {
+		try {
+			out.write(buffer);
+		} catch (IOException e) {
+			Logger.LogErrorMessege("Failed to write messeges");
+			Logger.LogErrorMessege(e.getMessage());
+		}
+	}
   
     /**
      * get available USB port with devices connected to the machine
@@ -221,7 +243,7 @@ public class TwoWaySerialComm {
      * @return String array of available ports
      */
     @SuppressWarnings("unchecked")
-	private String[] listPorts()
+	public Object[] listPorts()
     {
         Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
         ArrayList<String> ans = new ArrayList<String>();
@@ -229,7 +251,7 @@ public class TwoWaySerialComm {
             CommPortIdentifier portIdentifier = portEnum.nextElement();
             ans.add(portIdentifier.getName()  +  " - " +  getPortTypeName(portIdentifier.getPortType()));
         }
-        return (String[]) ans.toArray();
+        return ans.toArray();
     }
     
     /**
@@ -256,11 +278,4 @@ public class TwoWaySerialComm {
                 return "unknown type";
         }
     }
-
-	/**
-	 * @return output stream of the USB device
-	 */
-	public OutputStream getOutputStream() {
-		return out;
-	}
 }

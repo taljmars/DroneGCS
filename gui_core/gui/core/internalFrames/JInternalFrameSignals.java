@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component("internalFrameActualPWM")
-public class JInternalFrameActualPWM extends AbstractJInternalFrame implements OnDroneListener {
+@Component("internalFrameSignals")
+public class JInternalFrameSignals extends AbstractJInternalFrame implements OnDroneListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -33,17 +33,17 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	private Drone drone;
 
 	/** The time series data. */
-	private static TimeSeries seriesRoll;
-	private static TimeSeries seriesPitch;
-	private static TimeSeries seriesThr;
-	private static TimeSeries seriesYaw;
+	private static TimeSeries seriesDistance;
+	private static TimeSeries seriesSignal;
+	private static TimeSeries seriesNoise;
+	private static TimeSeries seriesRssi;
 	
 	@Autowired
-	public JInternalFrameActualPWM(@Value("Actual PWM") String title) {
+	public JInternalFrameSignals(@Value("Signals") String title) {
 		this(title, true, true, true, true);
 	}
 	
-	private JInternalFrameActualPWM(String name, boolean resizable, boolean closable,
+	private JInternalFrameSignals(String name, boolean resizable, boolean closable,
 			boolean maximizable, boolean iconifiable) {
 		super(name, resizable, closable, maximizable, iconifiable);
 		loadChart();
@@ -63,39 +63,39 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 	}
 	
 	private JFreeChart createChart(final XYDataset dataset) {
-		final JFreeChart result = ChartFactory.createTimeSeriesChart("", "", "PWM", dataset, true, true, false);
+		final JFreeChart result = ChartFactory.createTimeSeriesChart("", "", "Signal and Distance over Time", dataset, true, true, false);
 		final XYPlot plot = result.getXYPlot();
 		ValueAxis axis = plot.getDomainAxis();
 		axis.setAutoRange(true);
-		axis.setFixedAutoRange(60000.0); // 60 seconds
+		axis.setFixedAutoRange(120000.0); // 120 seconds
 		axis = plot.getRangeAxis();
-		axis.setRange(0.0, 2500);
+		axis.setRange(-20, 200);
 		return result;
 	}
 
-	private void addRCActual(int roll, int pitch, int thr, int yaw) {
-		if (seriesRoll != null)
-			seriesRoll.add(new Millisecond(), roll);
-		if (seriesPitch != null)
-			seriesPitch.add(new Millisecond(), pitch);
-		if (seriesThr != null)
-			seriesThr.add(new Millisecond(), thr);
-		if (seriesYaw != null)
-			seriesYaw.add(new Millisecond(), yaw);
+	private void addValues(int distance, int signal, int noise, int rssi) {
+		if (seriesDistance != null)
+			seriesDistance.add(new Millisecond(), distance);
+		if (seriesSignal != null)
+			seriesSignal.add(new Millisecond(), signal);
+		if (seriesNoise != null)
+			seriesNoise.add(new Millisecond(), noise);
+		if (seriesRssi != null)
+			seriesRssi.add(new Millisecond(), rssi);
 	}
 
 	@SuppressWarnings("deprecation")
 	private void loadChart() {
 		final TimeSeriesCollection dataset = new TimeSeriesCollection();
 
-		seriesRoll = new TimeSeries("E1", Millisecond.class);
-		dataset.addSeries(seriesRoll);
-		seriesPitch = new TimeSeries("E2", Millisecond.class);
-		dataset.addSeries(seriesPitch);
-		seriesThr = new TimeSeries("E3", Millisecond.class);
-		dataset.addSeries(seriesThr);
-		seriesYaw = new TimeSeries("E4", Millisecond.class);
-		dataset.addSeries(seriesYaw);
+		seriesDistance = new TimeSeries("Distance(m)", Millisecond.class);
+		dataset.addSeries(seriesDistance);
+		seriesSignal = new TimeSeries("Signal(%)", Millisecond.class);
+		dataset.addSeries(seriesSignal);
+		seriesRssi = new TimeSeries("Rssi(%)", Millisecond.class);
+		dataset.addSeries(seriesRssi);
+		seriesNoise = new TimeSeries("Noise(%)", Millisecond.class);
+		dataset.addSeries(seriesNoise);
 
 		final JFreeChart chart = createChart(dataset);
 
@@ -108,14 +108,28 @@ public class JInternalFrameActualPWM extends AbstractJInternalFrame implements O
 
 		setContentPane(chartPanel);
 	}
+	
+	private int valueUpdate = 0;
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
-		case RC_OUT:
-			addRCActual(drone.getRC().out[0], drone.getRC().out[1], drone.getRC().out[2], drone.getRC().out[3]);
-			return;
+			case RADIO:
+				valueUpdate++;
+				break;
+			case GPS:
+				valueUpdate++;
+				break;
+		}
+		
+		if (valueUpdate == 2) {
+			int GpsdistanceFromHome = (int) (drone.getHome() == null ? 0 : drone.getHome().getDroneDistanceToHome().valueInMeters());
+			int RadiosignalStrength = drone.getRadio().getSignalStrength();
+			int RadionoiseStrength = (int) drone.getRadio().getNoise();
+			int RadioRssiStrength = (int) drone.getRadio().getRssi();
+			addValues(GpsdistanceFromHome, RadiosignalStrength, RadionoiseStrength, RadioRssiStrength);
+			valueUpdate = 0;
 		}
 	}
 }

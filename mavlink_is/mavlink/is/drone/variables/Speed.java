@@ -16,6 +16,8 @@ public class Speed extends DroneVariable {
 	private mavlink.is.utils.units.Speed groundSpeed = new mavlink.is.utils.units.Speed(0);
 	private mavlink.is.utils.units.Speed airSpeed = new mavlink.is.utils.units.Speed(0);
 	private mavlink.is.utils.units.Speed targetSpeed = new mavlink.is.utils.units.Speed(0);
+	
+	private mavlink.is.utils.units.Speed maxAirSpeed = new mavlink.is.utils.units.Speed(0);
 
 
 	public mavlink.is.utils.units.Speed getVerticalSpeed() {
@@ -33,6 +35,10 @@ public class Speed extends DroneVariable {
 	public mavlink.is.utils.units.Speed getTargetSpeed() {
 		return targetSpeed;
 	}
+	
+	public mavlink.is.utils.units.Speed getMaxAirSpeed() {
+		return maxAirSpeed;
+	}
 
 	public void setSpeedError(double aspd_error) {
 		targetSpeed = new mavlink.is.utils.units.Speed(aspd_error
@@ -44,6 +50,10 @@ public class Speed extends DroneVariable {
 		this.airSpeed = new mavlink.is.utils.units.Speed(airSpeed);
 		this.verticalSpeed = new mavlink.is.utils.units.Speed(climb);
 		checkCollisionIsImminent();
+		
+		if (this.maxAirSpeed.valueInMetersPerSecond() < airSpeed) {
+			this.maxAirSpeed = this.airSpeed;
+		}
 	}
 
 	public mavlink.is.utils.units.Speed getSpeedParameter(){

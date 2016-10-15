@@ -145,7 +145,7 @@ public class MyDroneImpl implements Drone {
 	@Resource(name = "follow")
 	private Follow follow;
 	
-	@Resource(name = "radioConnection")
+	@Resource(name = "usbConnection")
 	private MavLinkConnection mavlinkConnection;
 
 	private VehicleProfile profile;

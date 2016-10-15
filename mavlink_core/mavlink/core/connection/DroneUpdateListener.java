@@ -179,16 +179,13 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 				break;
 			default:
 				break;
-		}
-		
-		//System.err.println("[RCV] " + msg.toString());
-		
+		}		
 	}
 
 	@Override
 	public void onDisconnect() {
 		System.err.println(getClass() + " Disconnected!");
-		loggerDisplayerSvc.logError("Disconnected!");
+		//loggerDisplayerSvc.logError("Disconnected!");
 	}
 
 	@Override

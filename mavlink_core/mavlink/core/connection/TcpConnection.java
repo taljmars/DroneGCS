@@ -1,4 +1,4 @@
-package mavlink.is.connection;
+package mavlink.core.connection;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import mavlink.is.connection.MavLinkConnection;
+import mavlink.is.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via TCP.
@@ -22,8 +25,9 @@ public abstract class TcpConnection extends MavLinkConnection {
 	private int serverPort;
 
 	@Override
-	public final void openConnection() throws IOException {
+	public final boolean openConnection() throws IOException {
 		getTCPStream();
+		return true;
 	}
 
 	@Override
@@ -50,9 +54,13 @@ public abstract class TcpConnection extends MavLinkConnection {
 	protected abstract String loadServerIP();
 
 	@Override
-	public final void closeConnection() throws IOException {
-		if (socket != null)
+	public final boolean closeConnection() throws IOException {
+		if (socket != null) {
 			socket.close();
+			return false;
+		}
+		
+		return true;
 	}
 
 	private void getTCPStream() throws IOException {

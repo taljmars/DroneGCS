@@ -15,6 +15,7 @@ public class Altitude extends DroneVariable {
 	private double altitude = 0;
 	private double targetAltitude = 0;
 	private double previousAltitude = 0;
+	private double maxAltitude;
 
 	private boolean isCollisionImminent;
 
@@ -24,6 +25,10 @@ public class Altitude extends DroneVariable {
 
 	public double getTargetAltitude() {
 		return targetAltitude;
+	}
+	
+	public double getMaxAltitude() {
+		return maxAltitude;
 	}
 
 	public boolean isCollisionImminent() {
@@ -37,6 +42,7 @@ public class Altitude extends DroneVariable {
 			drone.notifyDroneEvent(DroneInterfaces.DroneEventsType.WARNING_400FT_EXCEEDED);
 		}
 		previousAltitude = altitude;
+		maxAltitude = Math.max(maxAltitude, altitude);
 	}
 
 	public void setAltitudeError(double alt_error) {

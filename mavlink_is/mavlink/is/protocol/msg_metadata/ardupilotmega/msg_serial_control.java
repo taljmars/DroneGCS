@@ -97,6 +97,7 @@ public class msg_serial_control extends MAVLinkMessage{
         unpack(mavLinkPacket.payload);
         //Log.d("MAVLink", "SERIAL_CONTROL");
         //Log.d("MAVLINK_MSG_ID_SERIAL_CONTROL", toString());
+        System.err.println("MAVLINK_MSG_ID_SERIAL_CONTROL" + toString());
     }
     
             
