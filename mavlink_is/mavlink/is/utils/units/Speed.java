@@ -9,6 +9,10 @@ public class Speed {
 		set(speedInMetersPerSecond);
 	}
 
+	public Speed(Speed speed) {
+		this.speedInMetersPerSecond = speed.speedInMetersPerSecond;
+	}
+
 	public double valueInMetersPerSecond() {
 		return speedInMetersPerSecond;
 	}

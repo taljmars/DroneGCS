@@ -1,6 +1,7 @@
 package mavlink.is.gcs.follow;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,11 @@ import mavlink.is.utils.units.Length;
 @Component("follow")
 public class Follow extends DroneVariable implements OnDroneListener, LocationReceiver {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 734094933207456020L;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	/** Set of return value for the 'toggleFollowMeState' method.*/
 	public enum FollowStates {
@@ -126,9 +128,9 @@ public class Follow extends DroneVariable implements OnDroneListener, LocationRe
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Logger.LogDesignedMessege("Location changed");
+		logger.LogDesignedMessege("Location changed");
 		if (location.isAccurate()) {
-			Logger.LogDesignedMessege("Process new location");
+			logger.LogDesignedMessege("Process new location");
 			state = FollowStates.FOLLOW_RUNNING;
             followAlgorithm.processNewLocation(location);
             roiEstimator.onLocationChanged(location);

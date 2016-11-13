@@ -14,6 +14,10 @@ public class Length implements Serializable /* TALMA serializble*/ {
 		set(lengthInMeters);
 	}
 
+	public Length(Length length) {
+		this.lengthInMeters = length.lengthInMeters;
+	}
+
 	public double valueInMeters() {
 		return lengthInMeters;
 	}

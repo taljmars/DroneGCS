@@ -1,43 +1,43 @@
 package gui.core.dashboard;
 
 import gui.core.internalPanels.*;
+import gui.core.springConfig.AppConfig;
+import mavlink.core.gcs.GCSHeartbeat;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.util.List;
 
 import gui.is.services.LoggerDisplayerSvc;
-import gui.is.services.TextNotificationPublisher;
+import gui.is.services.TextNotificationPublisherSvc;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.JDesktopPane;
-
 import org.springframework.context.event.EventListener;
 
 import javax.validation.constraints.NotNull;
 
-import mavlink.core.gcs.GCSHeartbeat;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-public class Dashboard implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
+public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
 	
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
-	private static final String APP_TITLE = "Quad Ground Station";
-	
-	@NotNull(message = "Internal Error: Failed to get main frame")
-	private JFrame frame;
+	public static final String APP_TITLE = "Quad Ground Station";
 	
 	@Resource(name = "loggerDisplayerSvc")
 	@NotNull(message = "Internal Error: Failed to get logger displayer")
@@ -49,48 +49,48 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	
 	@Resource(name="frameContainer")
 	@NotNull(message = "Internal Error: Missing panel")
-	private JDesktopPane frameContainer;
+	private Pane frameContainer;
 	
 	@Resource(name="areaLogBox")
 	@NotNull(message = "Internal Error: Missing tab")
-	private JPanelLogBox areaLogBox;
+	private PanelLogBox areaLogBox;
 
 	@Resource(name="areaMission")
 	@NotNull(message = "Internal Error: Missing tab")
-	private JPanelMissionBox areaMission;
-	
+	private PanelMissionBox areaMission;
+
 	@Resource(name="areaConfiguration")
 	@NotNull(message = "Internal Error: Missing tab")
-	private JPanelConfigurationBox areaConfiguration;
+	private PanelConfigurationBox areaConfiguration;
 	
 	@Resource(name="telemetrySatellite")
 	@NotNull(message = "Internal Error: Missing panel")
-	private JPanelTelemetrySatellite tbTelemtry;
+	private PanelTelemetrySatellite tbTelemtry;
 	
 	@Resource(name="buttonBoxSatellite")
 	@NotNull(message = "Internal Error: Missing panel")
-	private JPanelButtonBoxSatellite tbContorlButton;
+	private PanelButtonBoxSatellite tbContorlButton;
 	
 	@Resource(name="toolbarSatellite")
 	@NotNull(message = "Internal Error: Missing panel")
-	private JPanelToolBarSatellite tbToolBar;
+	private PanelToolBarSatellite tbToolBar;
 	
-	@Resource(name = "textNotificationPublisher")
+	@Resource(name = "textNotificationPublisherSvc")
 	@NotNull(message = "Internal Error: Failed to get text publisher")
-	private TextNotificationPublisher textNotificationPublisher;
+	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
 	@Resource(name = "gcsHeartbeat")
 	@NotNull(message = "Internal Error: Failed to get HB mechanism")
 	private GCSHeartbeat gcsHeartbeat;
 	
 	@NotNull(message = "Internal Error: Missing panel")
-	private JTabbedPane tbSouth;
+	private TabPane tabPane;
 	
 	@NotNull(message = "Internal Error: Missing panel")
-	private JToolBar toolBar;
+	private ProgressBar progressBar;
 	
-	@NotNull(message = "Internal Error: Missing panel")
-	private JProgressBar progressBar;
+	@NotNull(message = "Internal Error: Mission view manager")
+	private Stage viewManager;
 	
 	private static int called;
 	@PostConstruct
@@ -115,98 +115,66 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	}
 
 	private void initializeGui() {
-		frame = new JFrame(APP_TITLE);
-		frame.setBounds(100, 100, 450, 300);
-		frame.setSize(400, 400);
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-		// Central Panel
-		frame.getContentPane().add(frameContainer, BorderLayout.CENTER);
-
-		// South Panel
-		JPanel southPanel = new JPanel(new BorderLayout());
-		frame.getContentPane().add(southPanel, BorderLayout.SOUTH);
-		progressBar = new JProgressBar();
-		progressBar.setStringPainted(true);
-		southPanel.add(progressBar, BorderLayout.SOUTH);
-
-		// South Panel
-		toolBar = new JToolBar();
-		southPanel.add(toolBar, BorderLayout.CENTER);
-		tbSouth = new JTabbedPane(JTabbedPane.TOP);
-		toolBar.add(tbSouth);
-		
-		tbSouth.addTab("Log Book", null, areaLogBox, null);
-		tbSouth.addTab("Configuration", null, areaConfiguration, null);
-		tbSouth.addTab("Mission", null, areaMission, null);
+		BorderPane frame = new BorderPane();
 		
 		// North Panel
-		frame.getContentPane().add(tbToolBar, BorderLayout.NORTH);
+		frame.setTop(tbToolBar);
+
+		// Central Panel
+		frame.setCenter(frameContainer);
+
+		// South Panel
+		VBox southPanel = new VBox();
+		frame.setBottom(southPanel);
+		tabPane = new TabPane();
+		southPanel.getChildren().add(tabPane);
+		
+		Tab tab = new Tab();
+		tab.setClosable(false);
+		tab.setText("Log Book");
+		tab.setContent(areaLogBox);
+        tabPane.getTabs().add(tab);
+        
+		tab = new Tab();
+		tab.setClosable(false);
+		tab.setText("Configuration");
+		tab.setContent(areaConfiguration);
+        tabPane.getTabs().add(tab);
+        
+        tab = new Tab();
+		tab.setClosable(false);
+		tab.setText("Mission");
+		tab.setContent(areaMission);
+        tabPane.getTabs().add(tab);
+        
+        progressBar = new ProgressBar();
+        southPanel.getChildren().add(progressBar);
+		progressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
 
 		// East Panel
-		JPanel eastPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-		frame.getContentPane().add(eastPanel, BorderLayout.EAST);
-		eastPanel.add(tbContorlButton);
-
-		// East Panel
-		eastPanel.add(tbTelemtry);
-
-		frame.setVisible(true);
+		VBox eastPanel = new VBox();
+		frame.setRight(eastPanel);
+		eastPanel.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
+		tbTelemtry.setPadding(new Insets(20,0,0,0));
+		tbContorlButton.setAlignment(Pos.CENTER);
+		tbTelemtry.setAlignment(Pos.CENTER);
+		eastPanel.getChildren().add(tbContorlButton);
+		eastPanel.getChildren().add(tbTelemtry);
+        
+		getChildren().add(frame);
 	}
-
-	/*
-	 * private void ActivateBeacon() throws InterruptedException { int delay =
-	 * 5; addGeneralMessegeToDisplay("Start following beacon in ..."); while
-	 * (delay > 0) { addGeneralMessegeToDisplay("" + delay); Thread.sleep(1000);
-	 * delay--; } addGeneralMessegeToDisplay("Go");
-	 * drone.getBeacon().setActive(true); }
-	 */
-
-	/*
-	 * private void DeactivateBeacon() {
-	 * loggerDisplayerSvc.logGeneral("Stopping Follow");
-	 * drone.getBeacon().setActive(false); }
-	 */
 
 	private void VerifyBattery(double bat) {
-		// final Color orig_color = lblBattery.getBackground();
-		if (drone.getState().isFlying() && bat < 100) {
-			java.awt.Toolkit.getDefaultToolkit().beep();
-			// PaintAllWindow(Color.RED);
-			textNotificationPublisher.publish("Low Battery");
-		} else {
-			// lblBattery.setForeground(Color.BLACK);
-			// Color c = new Color(238, 238 ,238);
-			// PaintAllWindow(orig_color);
-		}
-		// lblBattery.setText((bat < 0 ? 0 : bat) + "%");
 	}
-
-//	private void PaintAllWindow(Color c) {
-//		if (c == tbTelemtry.getBackground()) {
-//			System.out.println("Same Color");
-//			return;
-//		}
-//		tbTelemtry.setBackground(c);
-//		int cnt = tbTelemtry.getComponentCount();
-//		for (int i = 0; i < cnt; i++) {
-//			tbTelemtry.getComponent(i).setBackground(c);
-//			tbTelemtry.getComponent(i).repaint();
-//		}
-//		tbTelemtry.repaint();
-//
-//	}
 	
 	private void SetDistanceToWaypoint(double d) {
 		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
 			// if (drone.getGuidedPoint().isIdle()) {
 			if (d == 0) {
-				textNotificationPublisher.publish("In Position");
+				textNotificationPublisherSvc.publish("In Position");
 				loggerDisplayerSvc.logGeneral("Guided: In Position");
 			} else {
-				textNotificationPublisher.publish("Flying to destination");
+				textNotificationPublisherSvc.publish("Flying to destination");
 				loggerDisplayerSvc.logGeneral("Guided: Fly to distination");
 			}
 		}
@@ -224,7 +192,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD) || wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			incProgressBar(count);
+			setProgressBar((double) index / count);
 			return;
 		}
 		finiProgressBar();
@@ -240,12 +208,12 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
 		case LEFT_PERIMETER:
-			textNotificationPublisher.publish("Outside Perimeter");
+			textNotificationPublisherSvc.publish("Outside Perimeter");
 			loggerDisplayerSvc.logError("Quad left the perimeter");
 			java.awt.Toolkit.getDefaultToolkit().beep();
 			return;
 		case ENFORCING_PERIMETER:
-			textNotificationPublisher.publish("Enforcing Perimeter");
+			textNotificationPublisherSvc.publish("Enforcing Perimeter");
 			loggerDisplayerSvc.logError("Enforcing Perimeter");
 			return;
 		case ORIENTATION:
@@ -255,7 +223,7 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 			VerifyBattery(drone.getBattery().getBattRemain());
 			return;
 		case MODE:
-			frame.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
+			viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
 			return;
 		case TEXT_MESSEGE:
 			loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
@@ -282,26 +250,19 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 
 	private synchronized void initProgressBar() {
 		System.out.println("Init progress bar");
-		progressBar.setMinimum(0);
-		progressBar.setValue(0);
 		progressBar.setVisible(true);
+		progressBar.setProgress(0);
 	}
 	
-	private synchronized void incProgressBar(int max) {
-		int value = progressBar.getValue();
-		if (progressBar.getMaximum() != max) {
-			progressBar.setMaximum(max);
-		}
-		progressBar.setValue(value + 1);
-
-		if (progressBar.getValue() == progressBar.getMaximum()) {
+	private synchronized void setProgressBar(double val) {
+		progressBar.setProgress(val);
+		if (progressBar.getProgress() == 1.0) {
 			finiProgressBar();
 		}
 	}
 	
 	private synchronized void finiProgressBar() {
 		System.out.println("Fini progress bar");
-		progressBar.setValue(progressBar.getMaximum());
 		progressBar.setVisible(false);
 	}
 	
@@ -320,14 +281,15 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 	@Override
 	public void onParameterReceived(Parameter parameter, int index, int count) {
 		System.out.println("received paramter " + index + " out of " + count);
-		incProgressBar(count);
 		int prc = drone.getParameters().getPrecentageComplete();
 		if (prc > 95) {
+			setProgressBar(1);
 			drone.getStreamRates().setupStreamRatesFromPref();
-			if (drone.isConnectionAlive()) {
-				tbTelemtry.SetHeartBeat(true);
+			if (drone.isConnectionAlive())
 				drone.notifyDroneEvent(DroneEventsType.MODE);
-			}
+		}
+		else {
+			setProgressBar(((double )prc) / 100.0);
 		}
 	}
 
@@ -338,9 +300,12 @@ public class Dashboard implements OnDroneListener, OnWaypointManagerListener, On
 		
 		drone.getStreamRates().prepareStreamRates();
 		drone.getStreamRates().setupStreamRatesFromPref();
-		if (drone.isConnectionAlive()) {
-			tbTelemtry.SetHeartBeat(true);
+		if (drone.isConnectionAlive())
 			drone.notifyDroneEvent(DroneEventsType.MODE);
-		}
+	}
+
+	public void setViewManager(Stage stage) {
+		this.viewManager = stage;
+		viewManager.setTitle(APP_TITLE);
 	}
 }

@@ -103,6 +103,10 @@ public class GeoTools {
 	public static Length getDistance(Coord2D from, Coord2D to) {
 		return new Length(RADIUS_OF_EARTH * Math.toRadians(getArcInRadians(from, to)));
 	}
+	
+	public static Length getDistance(Coordinate from, Coordinate to) {
+		return new Length(RADIUS_OF_EARTH * Math.toRadians(getArcInRadians(from.ConvertToCoord2D(), to.ConvertToCoord2D())));
+	}
 
 	/**
 	 * Computes the distance between two coordinates taking in account the

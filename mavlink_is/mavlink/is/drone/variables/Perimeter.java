@@ -1,28 +1,26 @@
 package mavlink.is.drone.variables;
 
 import java.io.Serializable;
-import java.util.List;
-
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import tools.logger.Logger;
-import gui.is.Coordinate;
-import gui.is.interfaces.ICoordinate;
-import gui.is.interfaces.MapPolygon;
+import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.geoTools.GeoTools;
 
+@ComponentScan("tools.logger")
 @Component("perimeter")
 public class Perimeter  extends DroneVariable implements Serializable {
 
 	private static final long serialVersionUID = -7429107483849276132L;
-	private MapPolygon pPolygon;
+	private Compound pCompound;
 	private boolean pEnforce;
 	private boolean pAlertOnly;
 	private Coord2D pLastPosition = null;
@@ -31,7 +29,16 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	private boolean pEnforcePermeterRunning = false;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 	
 	static int called;
 	public void init() {
@@ -39,12 +46,12 @@ public class Perimeter  extends DroneVariable implements Serializable {
 			throw new RuntimeException("Not a Singletone");
 		pEnforce = false;
 		pAlertOnly = false;
-		pPolygon = null;
+		pCompound = null;
 		pMode = drone.getState().getMode();
 	}
 	
-	public void setPolygon(MapPolygon perimeterPoly) {
-		pPolygon = perimeterPoly;
+	public void setCompound(Compound compound) {
+		pCompound = compound;
 		drone.notifyDroneEvent(DroneEventsType.PERIMETER_RECEIVED);
 	}
 	
@@ -52,7 +59,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 		pLastPosition = position;
 		
 		if (pEnforce) {
-			if (!isContained()) {
+			if (pLastPosition != null && !pCompound.isContained(position.convertToCoordinate())) {
 				drone.notifyDroneEvent(DroneEventsType.LEFT_PERIMETER);
 				if (!pAlertOnly && drone.getState().isFlying()) {
 					drone.notifyDroneEvent(DroneEventsType.ENFORCING_PERIMETER);
@@ -64,12 +71,13 @@ public class Perimeter  extends DroneVariable implements Serializable {
 							pEnforcePermeterRunning = true;
 						}
 					} catch (Exception e) {
-						Logger.LogErrorMessege(e.toString());
-						e.printStackTrace();
+						logger.LogErrorMessege(e.toString());
+						dialogManagerSvc.showErrorMessageDialog("Error occur while changing flight mode", e);
 					}
 				}
 			}
 			else {
+				pLastPositionInPerimeter = pLastPosition;
 				if (pEnforcePermeterRunning) {
 					loggerDisplayerSvc.logError("Changing flight from " + ApmModes.ROTOR_GUIDED.getName() + " back to " + pMode.getName());
 					drone.getState().changeFlightMode(pMode);
@@ -96,17 +104,6 @@ public class Perimeter  extends DroneVariable implements Serializable {
 		pAlertOnly = alert;
 	}
 	
-	public boolean isContained() {
-		if (pPolygon == null || pLastPosition == null)
-			return true;
-		
-		boolean res = pPolygon.contains(pLastPosition.convertToCoordinate());
-		if (res) {
-			pLastPositionInPerimeter = pLastPosition;
-		}
-		return res;
-	}
-	
 	public Coord2D getClosestPointOnPerimeterBorder() {
 		if (pLastPositionInPerimeter == null) {
 			loggerDisplayerSvc.logGeneral("Last position not exist, return closest corner in it");
@@ -117,21 +114,7 @@ public class Perimeter  extends DroneVariable implements Serializable {
 	}
 	
 	public Coord2D getClosestCornerInPoligon() {
-		Coordinate closestPoint = new Coordinate(0,0);
-		double min_dist = Integer.MAX_VALUE;
-		
-		List<? extends ICoordinate> lst = pPolygon.getPoints();
-		for (int i = 0 ; i < lst.size() ; i++) {
-			Coordinate corner = (Coordinate) lst.get(i);
-			
-			double val = GeoTools.getDistance(pLastPosition, corner.ConvertToCoord2D()).valueInMeters();
-			if (val < min_dist) {
-				min_dist = val;
-				closestPoint = corner;
-			}
-		}
-		
-		return closestPoint.ConvertToCoord2D();
+		return pCompound.getClosestPointOnEdge(pLastPosition.convertToCoordinate()).ConvertToCoord2D();
 	}
 
 	public boolean isAlertOnly() {

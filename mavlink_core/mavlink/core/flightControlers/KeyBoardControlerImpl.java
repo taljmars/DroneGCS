@@ -1,7 +1,8 @@
 package mavlink.core.flightControlers;
 
-import gui.is.events.JMVCommandEvent;
-import gui.is.interfaces.KeyBoardControler;
+import gui.is.KeyBoardControler;
+import gui.is.events.GuiEvent;
+import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
 
 import java.awt.event.KeyEvent;
@@ -17,7 +18,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
@@ -28,6 +29,7 @@ import tools.logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
+@ComponentScan("tools.logger")
 @ComponentScan("tools.comm.internal")
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.is.services")
@@ -38,22 +40,43 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	private static Thread KeyboardStabilizer = null;
 	
 	@Resource(name = "twoWaySerialComm")
+	@NotNull(message = "Internal Error: Failed to get serial communication")
 	private SerialConnection serialConnection;
 	
 	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
+	
+	
 	public KeyBoardControlerImpl() {
+		
+	}
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
 		LoadParams();
 		
 		KeyboardStabilizer = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				Logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
+				logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
 				while (true) {
 					try {
 						//Thread.sleep(1000);
@@ -66,13 +89,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			}
 		});
 		KeyboardStabilizer.start();
-	}
-	
-	static int called;
-	@PostConstruct
-	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
 	}
 	
 	public boolean bActive = false;
@@ -102,7 +118,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 
 	@SuppressWarnings("resource")
 	private void LoadParams() {
-		Logger.LogGeneralMessege("Loading flight controler configuration");
+		logger.LogGeneralMessege("Loading flight controler configuration");
 		paramAmount = 0;
 		param_loaded = false;
 		fFilePath = Paths.get(settingsFilePath);
@@ -118,10 +134,10 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			    return;
 			}
 			else {
-				Logger.LogErrorMessege("Failed to read parameters, invalid line");
-		    	Logger.close();
+				logger.LogErrorMessege("Failed to read parameters, invalid line");
+				logger.close();
 		    	System.err.println(getClass().getName() + " Failed to read parameters, invalid line");
-		    	JOptionPane.showMessageDialog(null, "Configuration file must be supply, please resolve issue and try later");
+		    	dialogManagerSvc.showAlertMessageDialog("Configuration file must be supply, please resolve issue and try later");
 				System.exit(-1);
 			}
 		}
@@ -136,53 +152,53 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			      
 			      if (name.equals("_MIN_PWM_RANGE")) {
 			    	  _MIN_PWM_RANGE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MIN_PWM_RANGE=" + _MIN_PWM_RANGE);
+			    	  logger.LogGeneralMessege("_MIN_PWM_RANGE=" + _MIN_PWM_RANGE);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_MAX_PWM_RANGE")) {
 			    	  _MAX_PWM_RANGE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MAX_PWM_RANGE=" + _MAX_PWM_RANGE);
+			    	  logger.LogGeneralMessege("_MAX_PWM_RANGE=" + _MAX_PWM_RANGE);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_MIN_PWM_ANGLE")) {
 			    	  _MIN_PWM_ANGLE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MIN_PWM_ANGLE=" + _MIN_PWM_ANGLE);
+			    	  logger.LogGeneralMessege("_MIN_PWM_ANGLE=" + _MIN_PWM_ANGLE);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_MAX_PWM_ANGLE")) {
 			    	  _MAX_PWM_ANGLE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MAX_PWM_ANGLE=" + _MAX_PWM_ANGLE);
+			    	  logger.LogGeneralMessege("_MAX_PWM_ANGLE=" + _MAX_PWM_ANGLE);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_TRIM_ANGLE")) {
 			    	  _TRIM_ANGLE = Integer.parseInt(value);
 			    	  _TRIM_ANGLE_PITCH = _TRIM_ANGLE_ROLL = _TRIM_ANGLE_YAW = _TRIM_ANGLE;
-			    	  Logger.LogGeneralMessege("_TRIM_ANGLE=" + _TRIM_ANGLE);
+			    	  logger.LogGeneralMessege("_TRIM_ANGLE=" + _TRIM_ANGLE);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_PITCH_STEP")) {
 			    	  _PITCH_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_PITCH_STEP=" + _PITCH_STEP);
+			    	  logger.LogGeneralMessege("_PITCH_STEP=" + _PITCH_STEP);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_ROLL_STEP")) {
 			    	  _ROLL_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_ROLL_STEP=" + _ROLL_STEP);
+			    	  logger.LogGeneralMessege("_ROLL_STEP=" + _ROLL_STEP);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_YAW_STEP")) {
 			    	  _YAW_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_YAW_STEP=" + _YAW_STEP);
+			    	  logger.LogGeneralMessege("_YAW_STEP=" + _YAW_STEP);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_THR_STEP")) {
 			    	  _THR_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_THR_STEP=" + _THR_STEP);
+			    	  logger.LogGeneralMessege("_THR_STEP=" + _THR_STEP);
 			    	  paramAmount++;
 			      }
 			      if (name.equals("_INIT_THR")) {
 				   	  _INIT_THR = Integer.parseInt(value);
-				   	  Logger.LogGeneralMessege("_INIT_THR=" + _INIT_THR);
+				   	  logger.LogGeneralMessege("_INIT_THR=" + _INIT_THR);
 				   	  paramAmount++;
 				  }
 			      
@@ -190,35 +206,35 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			      System.out.println("Param: '" + name + "', Value: '" + value + "'");
 			    }
 			    else {
-			    	Logger.LogErrorMessege("Failed to read parameters, invalid line");
-			    	Logger.close();
+			    	logger.LogErrorMessege("Failed to read parameters, invalid line");
+			    	logger.close();
 			    	System.err.println(getClass().getName() + " Failed to read parameters, invalid line");
-			    	JOptionPane.showMessageDialog(null, "Failed to read parameters, invalid line");
+			    	dialogManagerSvc.showAlertMessageDialog("Failed to read parameters, invalid line");
 					System.exit(-1);
 			    }
 			}
 			if (paramAmount != 10) {
-				Logger.LogErrorMessege("Missing parameter: Only " + paramAmount + " parameters were loaded");
-				Logger.close();
+				logger.LogErrorMessege("Missing parameter: Only " + paramAmount + " parameters were loaded");
+				logger.close();
 				if (paramAmount == 0) {
 					System.err.println("Parameters haven't been found.\nVerify you've open a configuration file.");
-					JOptionPane.showMessageDialog(null, "Parameters haven't been found.\nVerify you've open a configuration file.");
+					dialogManagerSvc.showAlertMessageDialog("Parameters haven't been found.\nVerify you've open a configuration file.");
 				}
 				else {
 					System.err.println("Missing parameter: Only " + paramAmount + " parameters were loaded\nVerify you've open a configuration file.");
-					JOptionPane.showMessageDialog(null, "Missing parameter: Only " + paramAmount + " parameters were loaded"
+					dialogManagerSvc.showAlertMessageDialog("Missing parameter: Only " + paramAmount + " parameters were loaded"
 												+ "\nVerify you've open a configuration file.");
 				}
 				System.exit(-1);
 			}
 			
-			Logger.LogGeneralMessege("All parameter loaded, configuration was successfully loaded");
+			logger.LogGeneralMessege("All parameter loaded, configuration was successfully loaded");
 		}
 		catch (Exception e) {
-			Logger.LogErrorMessege("Unexpected Error:");
-			Logger.LogErrorMessege(e.getMessage());
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Unexpected Error:\n" + e.getMessage());
+			logger.LogErrorMessege("Unexpected Error:");
+			logger.LogErrorMessege(e.getMessage());
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e);
 			System.exit(-1);
 		}
 		
@@ -464,13 +480,11 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(JMVCommandEvent command) {
+	public void onApplicationEvent(GuiEvent command) {
 		switch (command.getCommand()) {
 			case ZOOM:
 			case MOVE:
 			case CONTORL_KEYBOARD:
-			case CONTORL_MAP:
-				return;
 				
 			case FLIGHT:
 				try {
@@ -479,12 +493,11 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 				}
 				catch (AccessDeniedException e1) {
 					System.err.println(getClass().getName() + " Failed to access device");
-					JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to access device");
+					dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to access device", e1);
 					System.exit(-1);
 				}
 				catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e1);
 				}
 		}
 	}	

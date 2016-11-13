@@ -8,16 +8,13 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 
 public abstract class MissionCMD extends MissionItem {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5992408850648290132L;
 
 	public MissionCMD(Mission mission) {
 		super(mission);
 	}
 
-	public MissionCMD(MissionItem item) {
+	public MissionCMD(MissionCMD item) {
 		super(item);
 	}
 

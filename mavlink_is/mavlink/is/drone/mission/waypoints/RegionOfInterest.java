@@ -3,7 +3,6 @@ package mavlink.is.drone.mission.waypoints;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -11,13 +10,10 @@ import mavlink.is.utils.coordinates.Coord3D;
 
 public class RegionOfInterest extends SpatialCoordItem {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7150214335545129314L;
 
-	public RegionOfInterest(MissionItem item) {
-		super(item);
+	public RegionOfInterest(RegionOfInterest regionOfInterest) {
+		super(regionOfInterest);
 	}
 	
 	public RegionOfInterest(Mission mission,Coord3D coord) {
@@ -46,6 +42,13 @@ public class RegionOfInterest extends SpatialCoordItem {
 	@Override
 	public MissionItemType getType() {
 		return MissionItemType.ROI;
+	}
+
+	@Override
+	public RegionOfInterest clone(Mission mission) {
+		RegionOfInterest regionOfInterest = new RegionOfInterest(this);
+		regionOfInterest.setMission(mission);
+		return regionOfInterest;
 	}
 
 }

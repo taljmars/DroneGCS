@@ -13,6 +13,10 @@ public class Altitude extends Length implements Serializable /* TALMA serializbl
 		super(heightInMeters);
 	}
 
+	public Altitude(Altitude altitude) {
+		super(altitude);
+	}
+
 	public Length subtract(Altitude toSubtract) {
 		return new Length(this.valueInMeters() - toSubtract.valueInMeters());
 	}

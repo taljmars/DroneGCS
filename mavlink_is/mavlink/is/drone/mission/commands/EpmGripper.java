@@ -3,7 +3,6 @@ package mavlink.is.drone.mission.commands;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 
@@ -19,8 +18,9 @@ public class EpmGripper extends MissionCMD {
 
 	private boolean release = true;
 
-	public EpmGripper(MissionItem item) {
+	public EpmGripper(EpmGripper item) {
 		super(item);
+		this.release = item.release;
 	}
 
 	public EpmGripper(msg_mission_item msg, Mission mission) {
@@ -62,5 +62,12 @@ public class EpmGripper extends MissionCMD {
 
 	public void setAsRelease(boolean release) {
 		this.release = release;
+	}
+
+	@Override
+	public EpmGripper clone(Mission mission) {
+		EpmGripper epmGripper = new EpmGripper(this);
+		epmGripper.setMission(mission);
+		return epmGripper;
 	}
 }

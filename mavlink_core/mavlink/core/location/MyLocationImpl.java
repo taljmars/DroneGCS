@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,12 @@ public class MyLocationImpl implements LocationFinder {
 	private static final double SPEED = 3;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 	
 	private Set<LocationReceiver> receivers = null;
 	private TimerTask scTimerTask = null;
@@ -48,7 +54,7 @@ public class MyLocationImpl implements LocationFinder {
 	@Override
 	public void enableLocationUpdates() {
 		Timer timer = new Timer();
-		Logger.LogDesignedMessege(getClass() + " Location updates started!");
+		logger.LogDesignedMessege(getClass() + " Location updates started!");
 		scTimerTask = new TimerTask() {
 			@Override
 			public void run() {
@@ -58,7 +64,7 @@ public class MyLocationImpl implements LocationFinder {
 					loggerDisplayerSvc.logError("Failed to get beacon point from the web");
 					return;
 				}
-				Logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				
+				logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				
 				Coord2D coord = beaconDate.getCoordinate().dot(1);
 				
 				for (LocationReceiver lr : receivers)
@@ -76,7 +82,7 @@ public class MyLocationImpl implements LocationFinder {
 		
 		scTimerTask = null;
 		
-		Logger.LogDesignedMessege(getClass() + " Location updates canceled!");
+		logger.LogDesignedMessege(getClass() + " Location updates canceled!");
 	}
 	
 	static int called;

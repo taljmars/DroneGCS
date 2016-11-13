@@ -26,6 +26,13 @@ public class Survey extends MissionItem {
 	public Polygon polygon = new Polygon();
 	public SurveyData surveyData = new SurveyData();
 	public Grid grid;
+	
+	public Survey(Survey survey) {
+		super(survey);
+		this.polygon = new Polygon(survey.polygon);
+		this.surveyData = new SurveyData(survey.surveyData);
+		this.grid = new Grid(survey.grid);
+	}
 
 	public Survey(Mission mission, List<Coord2D> points) {
 		super(mission);
@@ -99,6 +106,13 @@ public class Survey extends MissionItem {
 	@Override
 	public MissionItemType getType() {
 		return MissionItemType.SURVEY;
+	}
+
+	@Override
+	public Survey clone(Mission mission) {
+		Survey survey = new Survey(this);
+		survey.setMission(mission);
+		return survey;
 	}
 
 }

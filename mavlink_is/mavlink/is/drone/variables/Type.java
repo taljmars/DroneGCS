@@ -1,5 +1,8 @@
 package mavlink.is.drone.variables;
 
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.stereotype.Component;
 
 import tools.logger.Logger;
@@ -15,6 +18,10 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 
 	private static final long serialVersionUID = -6024646665700501198L;
 	private static final int DEFAULT_TYPE = MAV_TYPE.MAV_TYPE_GENERIC;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	private int type = DEFAULT_TYPE;
 	private String firmwareVersion = null;
@@ -56,7 +63,7 @@ public class Type extends DroneVariable implements DroneInterfaces.OnDroneListen
 
 			default:
 				// unsupported - fall thru to offline condition
-				Logger.LogErrorMessege("Unsupported Profile");
+				logger.LogErrorMessege("Unsupported Profile");
 			}
 		}
 		return drone.getPreferences().getVehicleType(); // offline or

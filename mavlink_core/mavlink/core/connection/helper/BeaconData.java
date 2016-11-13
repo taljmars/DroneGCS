@@ -6,6 +6,7 @@ import mavlink.is.utils.units.Altitude;
 
 import org.json.simple.JSONObject;
 
+import gui.core.springConfig.AppConfig;
 import tools.json.JSONHelper;
 import tools.logger.Logger;
 
@@ -31,7 +32,8 @@ public class BeaconData {
 	
 	public static BeaconData fetch() {
 		long startTimestamp = System.currentTimeMillis();
-		Logger.LogDesignedMessege("Sending request from '" + LOCATION_ADDRESS + "'");
+		Logger logger = (Logger) AppConfig.context.getBean("logger");
+		logger.LogDesignedMessege("Sending request from '" + LOCATION_ADDRESS + "'");
 		JSONObject obj = JSONHelper.makeHttpPostRequest(LOCATION_ADDRESS);
 		if (obj == null) {
 			return null;

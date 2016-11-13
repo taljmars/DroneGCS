@@ -1,6 +1,5 @@
 package mavlink.core.drone;
 
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -38,15 +37,14 @@ import mavlink.is.drone.variables.Type;
 import mavlink.is.gcs.follow.Follow;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
+import tools.validations.RuntimeValidator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import gui.is.validations.RuntimeValidator;
-
-
+@ComponentScan("tools.validations")
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
@@ -176,6 +174,10 @@ public class MyDroneImpl implements Drone {
 	@NotNull(message="Missing MavLinkConnection parameter")
 	@Resource(name = "usbConnection")
 	private MavLinkConnection mavlinkConnection;
+	
+	@Resource(name = "validator")
+	@NotNull(message = "Internal Error: Failed to get validator")
+	private RuntimeValidator validator;
 
 	private VehicleProfile profile;
 	
@@ -195,7 +197,7 @@ public class MyDroneImpl implements Drone {
 		parameters.init();
 		messeges.init();
 		
-		if (!RuntimeValidator.validate(this))
+		if (!validator.validate(this))
 			throw new RuntimeException("Failed to initialize drone");
 	}
 

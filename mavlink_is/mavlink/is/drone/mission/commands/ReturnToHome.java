@@ -3,7 +3,6 @@ package mavlink.is.drone.mission.commands;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -12,15 +11,12 @@ import mavlink.is.utils.units.Altitude;
 
 public class ReturnToHome extends MissionCMD {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8038289595958313009L;
 	private Altitude returnAltitude;
 
-	public ReturnToHome(MissionItem item) {
+	public ReturnToHome(ReturnToHome item) {
 		super(item);
-		returnAltitude = new Altitude(0);
+		returnAltitude = new Altitude(item.returnAltitude);
 	}
 
 	public ReturnToHome(msg_mission_item msg, Mission mission) {
@@ -59,6 +55,13 @@ public class ReturnToHome extends MissionCMD {
 	@Override
 	public MissionItemType getType() {
 		return MissionItemType.RTL;
+	}
+	
+	@Override
+	public ReturnToHome clone(Mission mission) {
+		ReturnToHome returnToHome = new ReturnToHome(this);
+		returnToHome.setMission(mission);
+		return returnToHome;
 	}
 
 }

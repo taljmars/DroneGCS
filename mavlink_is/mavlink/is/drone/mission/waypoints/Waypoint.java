@@ -4,17 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
+import mavlink.is.drone.mission.waypoints.interfaces.Delayable;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.utils.coordinates.Coord3D;
 
-public class Waypoint extends SpatialCoordItem implements Serializable /* TALMA serializble*/ {
+public class Waypoint extends SpatialCoordItem implements Delayable, Serializable /* TALMA serializble*/ {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3576058694665759132L;
 	private double delay;
 	private double acceptanceRadius;
@@ -22,8 +19,8 @@ public class Waypoint extends SpatialCoordItem implements Serializable /* TALMA 
 	private double orbitalRadius;
 	private boolean orbitCCW;
 
-	public Waypoint(MissionItem item) {
-		super(item);
+	public Waypoint(Waypoint referenceItem) {
+		super(referenceItem);
 	}
 
 	public Waypoint(Mission mission, Coord3D coord) {
@@ -62,10 +59,12 @@ public class Waypoint extends SpatialCoordItem implements Serializable /* TALMA 
 		return MissionItemType.WAYPOINT;
 	}
 
+	@Override
 	public double getDelay() {
 		return delay;
 	}
 
+	@Override
 	public void setDelay(double delay) {
 		this.delay = delay;
 	}
@@ -100,6 +99,13 @@ public class Waypoint extends SpatialCoordItem implements Serializable /* TALMA 
 
 	public void setOrbitCCW(boolean orbitCCW) {
 		this.orbitCCW = orbitCCW;
+	}
+
+	@Override
+	public Waypoint clone(Mission mission) {
+		Waypoint waypoint = new Waypoint(this);
+		waypoint.setMission(mission);
+		return waypoint;
 	}
 
 }

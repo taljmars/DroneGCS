@@ -4,43 +4,60 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JOptionPane;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.stereotype.Component;
+
+import gui.is.services.DialogManagerSvc;
+import tools.os_utilities.Environment;
+
+@Component("logger")
 public class Logger {
 	
-	private static Logger logger = null;
+	private final String LOG_ENTRY_SUFFIX = ".html";
+	
+	
 	private PrintWriter writer = null;
 	
-	private Logger() {
-		Date date = new Date();
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
 		
 		try {
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM_dd_hhmmss");
-				String dateAsString = simpleDateFormat.format(date);
-				System.out.println(dateAsString);
-				
-				File logDir = new File(System.getProperty("user.dir") + "\\logs");
-				if (!logDir.exists())
-					logDir.mkdir();
-		
-				writer = new PrintWriter(logDir + "\\quadlog_" + dateAsString + ".html", "UTF-8");
-				System.out.println(logDir + "\\quadlog_" + dateAsString + ".html");
+			File logDir = Environment.getRunningEnvDirectory();
+			writer = new PrintWriter(logDir + Environment.DIR_SEPERATOR + "log" + LOG_ENTRY_SUFFIX, "UTF-8");
+			System.out.println(logDir + Environment.DIR_SEPERATOR + "log" + LOG_ENTRY_SUFFIX);
 		} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				System.err.println(getClass().getName() + " Failed to open log file, log will not be available");
-		    	JOptionPane.showMessageDialog(null, "Failed to open log file, log will not be available");
-				writer = null;
+			e.printStackTrace();
+			System.err.println(getClass().getName() + " Failed to open log file, log will not be available");
+			dialogManagerSvc.showErrorMessageDialog("Failed to open log file, log will not be available", e);
+			writer = null;
+			return;
 		} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Failed to open log file, due to the following error:" + e.getMessage() + "\nlog will not be available");
-				writer = null;
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Failed to open log file. log will not be available due to the following error", e);
+			writer = null;
+			return;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Failed to build running directory path", e);
+			writer = null;
+			return;
 		}
 		
-		Timestamp ts = new Timestamp(date.getTime());
+		Timestamp ts = new Timestamp(new Date().getTime());
 		
 		writer.println("<html>");
 		writer.println("<title>");
@@ -56,13 +73,8 @@ public class Logger {
 		writer.println("<h3>Log:</h3>");
 	}
 	
-	private static Logger get() {
-		if (logger == null)
-			logger = new Logger();
-		
-		return logger;
-	}
 	
+
 	int recordNumber = 0;
 	private void log(String str){
 		if (writer == null)
@@ -72,26 +84,26 @@ public class Logger {
 		recordNumber++;
 	}
 	
-	public static void LogDesignedMessege(String msg) {
-		get().log(msg);
+	public void LogDesignedMessege(String msg) {
+		log(msg);
 	}
 	
-	public static void LogGeneralMessege(String msg) {
+	public void LogGeneralMessege(String msg) {
 		System.out.println(msg);
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
 		
 		String modmsg = "<font color=\"black\">" + "[" + ts.toString() + "] " + msg + "</font>" + "<br/>";
-		get().log(modmsg);
+		log(modmsg);
 	}
 	
-	public static void LogErrorMessege(String msg) {
+	public void LogErrorMessege(String msg) {
 		System.err.println(msg);
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
 		
 		String modmsg = "<font color=\"red\">" + "[" + ts.toString() + "] " + msg + "</font>" + "<br/>";
-		get().log(modmsg);
+		log(modmsg);
 	}
 	
 	protected void finalize() throws Throwable {
@@ -108,9 +120,9 @@ public class Logger {
 	     }
     }
 	
-	public static void close() {
+	public void close() {
 		try {
-			get().finalize();
+			finalize();
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

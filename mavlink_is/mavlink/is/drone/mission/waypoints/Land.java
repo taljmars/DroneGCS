@@ -55,5 +55,12 @@ public class Land extends SpatialCoordItem implements Serializable /* TALMA seri
 	public MissionItemType getType() {
 		return MissionItemType.LAND;
 	}
+	
+	@Override
+	public Land clone(Mission mission) {
+		Land land = new Land(this);
+		land.setMission(mission);
+		return land;
+	}
 
 }

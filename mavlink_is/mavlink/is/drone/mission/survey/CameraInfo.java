@@ -9,6 +9,20 @@ public class CameraInfo {
 	public Double overlap = 50.0;
 	public Double sidelap = 60.0;
 	public boolean isInLandscapeOrientation = true;
+	
+	public CameraInfo() {
+	}
+
+	public CameraInfo(CameraInfo camera) {
+		this.name = camera.name;
+		this.sensorWidth = camera.sensorWidth;
+		this.sensorHeight = camera.sensorHeight;
+		this.sensorResolution = camera.sensorResolution;
+		this.focalLength = camera.focalLength;
+		this.overlap = camera.overlap;
+		this.sidelap = camera.sidelap;
+		this.isInLandscapeOrientation = camera.isInLandscapeOrientation;
+	}
 
 	public Double getSensorLateralSize() {
 		if (isInLandscapeOrientation) {

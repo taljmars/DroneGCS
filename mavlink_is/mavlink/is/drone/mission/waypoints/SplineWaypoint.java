@@ -3,7 +3,6 @@ package mavlink.is.drone.mission.waypoints;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -14,9 +13,6 @@ import mavlink.is.utils.coordinates.Coord3D;
  */
 public class SplineWaypoint extends SpatialCoordItem {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4729271441892347417L;
 	/**
 	 * Hold time in decimal seconds. (ignored by fixed wing, time to stay at
@@ -24,8 +20,9 @@ public class SplineWaypoint extends SpatialCoordItem {
 	 */
 	private double delay;
 
-	public SplineWaypoint(MissionItem item) {
-		super(item);
+	public SplineWaypoint(SplineWaypoint splineWaypoint) {
+		super(splineWaypoint);
+		this.delay = splineWaypoint.delay;
 	}
 
 	public SplineWaypoint(Mission mission, Coord3D coord) {
@@ -63,5 +60,12 @@ public class SplineWaypoint extends SpatialCoordItem {
 
 	public void setDelay(double delay) {
 		this.delay = delay;
+	}
+	
+	@Override
+	public SplineWaypoint clone(Mission mission) {
+		SplineWaypoint splineWaypoint = new SplineWaypoint(this);
+		splineWaypoint.setMission(mission);
+		return splineWaypoint;
 	}
 }

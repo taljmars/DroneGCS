@@ -5,6 +5,8 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
+import gui.core.springConfig.AppConfig;
+import gui.is.services.DialogManagerSvc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.annotation.PostConstruct;
-import javax.swing.JOptionPane;
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import tools.comm.SerialConnection;
@@ -29,6 +33,8 @@ import tools.logger.Logger;
  *
  */
 
+@ComponentScan("tools.logger")
+@ComponentScan("gui.is.services")
 @Component("twoWaySerialComm")
 public class TwoWaySerialComm implements SerialConnection {
 
@@ -40,6 +46,14 @@ public class TwoWaySerialComm implements SerialConnection {
 
 	private InputStream in;
 	private OutputStream out;
+	
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	private static int called;
 	/**
@@ -65,7 +79,7 @@ public class TwoWaySerialComm implements SerialConnection {
 	 * This function try to connect the default port defined. 
 	 */
 	public boolean connect() {
-		Logger.LogGeneralMessege("Radio communication manager created");
+		logger.LogGeneralMessege("Radio communication manager created");
 
 		try {
 			if (PORT_NAME == null)
@@ -75,18 +89,18 @@ public class TwoWaySerialComm implements SerialConnection {
 				return false;
 		}
 		catch (NoSuchPortException e) {
-			Logger.LogErrorMessege("'" + PORT_NAME + "' port was not found");
+			logger.LogErrorMessege("'" + PORT_NAME + "' port was not found");
 		}
 		catch (PortInUseException e) {
-			Logger.LogErrorMessege("'" + PORT_NAME + "' port is in use");
+			logger.LogErrorMessege("'" + PORT_NAME + "' port is in use");
 		}
 		catch (Exception e) {
-			Logger.LogErrorMessege("Unexpected Error:");
-			Logger.LogErrorMessege(e.getMessage());
-			JOptionPane.showMessageDialog(null, "Unexpected Error:\n" + e.getMessage());
+			logger.LogErrorMessege("Unexpected Error:");
+			logger.LogErrorMessege(e.getMessage());
+			dialogManagerSvc.showErrorMessageDialog("Unexpected Error", e);
 		}
 
-		Logger.LogGeneralMessege("Radio communication manager started successfully");
+		logger.LogGeneralMessege("Radio communication manager started successfully");
 
 		return true;
 	}
@@ -100,7 +114,7 @@ public class TwoWaySerialComm implements SerialConnection {
 	private boolean connect( String portName ) throws Exception {
 		CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier( portName );
 		if( portIdentifier.isCurrentlyOwned() ) {
-			Logger.LogErrorMessege("Port " + portName + " is currently in use");
+			logger.LogErrorMessege("Port " + portName + " is currently in use");
 			throw new PortInUseException();
 		}
 
@@ -108,16 +122,16 @@ public class TwoWaySerialComm implements SerialConnection {
 		CommPort commPort = portIdentifier.open( this.getClass().getName(), timeout );
 
 		if( commPort instanceof SerialPort ) {
-			Logger.LogDesignedMessege("Going to connect to port '" + PORT_NAME + "' with baud rate '" + BAUD_RATE + "'");
+			logger.LogDesignedMessege("Going to connect to port '" + PORT_NAME + "' with baud rate '" + BAUD_RATE + "'");
 			serialPort = ( SerialPort )commPort;
 			serialPort.setSerialPortParams( BAUD_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
 			in = serialPort.getInputStream();
 			out = serialPort.getOutputStream();
 		} 
 		else {
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Only serial ports are handled");
-			Logger.LogErrorMessege("Port " + portName + " is currently in use");
-			Logger.LogErrorMessege("Only serial ports are handled");
+			dialogManagerSvc.showAlertMessageDialog(getClass().getName() + " Only serial ports are handled");
+			logger.LogErrorMessege("Port " + portName + " is currently in use");
+			logger.LogErrorMessege("Only serial ports are handled");
 			throw new PortUnreachableException("Only serial ports are handled");
 		}
 
@@ -127,7 +141,7 @@ public class TwoWaySerialComm implements SerialConnection {
 	@Override
 	public boolean disconnect() {
 		try {
-			Logger.LogErrorMessege("Disconnected");
+			logger.LogErrorMessege("Disconnected");
 			if (out != null)
 				out.close();
 			out = null;
@@ -146,8 +160,8 @@ public class TwoWaySerialComm implements SerialConnection {
 			serialPort = null;
 			return true;
 		} catch (IOException e) {
-			Logger.LogErrorMessege("Failed to disconnect");
-			Logger.LogErrorMessege(e.getMessage());
+			logger.LogErrorMessege("Failed to disconnect");
+			logger.LogErrorMessege(e.getMessage());
 			return false;
 		}
 	}
@@ -174,21 +188,21 @@ public class TwoWaySerialComm implements SerialConnection {
 			return i;
 		}
 		catch (AccessDeniedException e) {
-			Logger.LogErrorMessege("Failed to access device, check connectivity");
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to access device, check connectivity");
+			logger.LogErrorMessege("Failed to access device, check connectivity");
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to access device, check connectivity", e);
 			System.exit(-1);
 		}
 		catch (IOException e) {
-			Logger.LogErrorMessege("Failed to read from device");
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to read from device");
+			logger.LogErrorMessege("Failed to read from device");
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to read from device", e);
 			System.exit(-1);
 		}
 		catch (Exception e) {
-			Logger.LogErrorMessege("Unexpected Error:");
-			Logger.LogErrorMessege(e.getMessage());
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Unexpected Error:\n" + e.getMessage());
+			logger.LogErrorMessege("Unexpected Error:");
+			logger.LogErrorMessege(e.getMessage());
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e);
 			System.exit(-1);
 		}
 
@@ -207,22 +221,22 @@ public class TwoWaySerialComm implements SerialConnection {
 				this.out.write( (text + "\n").getBytes() );
 		}
 		catch (AccessDeniedException e) {
-			Logger.LogErrorMessege("Failed to access device, check connectivity");
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to access device, check connectivity");
+			logger.LogErrorMessege("Failed to access device, check connectivity");
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to access device, check connectivity", e);
 			System.exit(-1);
 		}
 		catch (IOException e) {
-			Logger.LogErrorMessege("Failed to write to device");
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to write to device");
+			logger.LogErrorMessege("Failed to write to device");
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to write to device", e);
 			System.exit(-1);
 		}
 		catch (Exception e) {
-			Logger.LogErrorMessege("Unexpected Error:");
-			Logger.LogErrorMessege(e.getMessage());
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Unexpected Error:\n" + e.getMessage());
+			logger.LogErrorMessege("Unexpected Error:");
+			logger.LogErrorMessege(e.getMessage());
+			logger.close();
+			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e);
 			System.exit(-1);
 		}
 	}
@@ -232,8 +246,8 @@ public class TwoWaySerialComm implements SerialConnection {
 		try {
 			out.write(buffer);
 		} catch (IOException e) {
-			Logger.LogErrorMessege("Failed to write messeges");
-			Logger.LogErrorMessege(e.getMessage());
+			logger.LogErrorMessege("Failed to write messeges");
+			logger.LogErrorMessege(e.getMessage());
 		}
 	}
 
@@ -277,5 +291,16 @@ public class TwoWaySerialComm implements SerialConnection {
 		default:
 			return "unknown type";
 		}
+	}
+
+	@Override
+	public Object[] baudList() {
+		Object[] oblist = new Object[]{57600, 115200};// Arrays.asList(57600, 115200).toArray();
+		return oblist;
+	}
+
+	@Override
+	public Object getDefaultBaud() {
+		return AppConfig.DebugMode ? 115200 : 57600;
 	}
 }

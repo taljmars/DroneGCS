@@ -1,6 +1,8 @@
 package mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,10 @@ import mavlink.is.drone.profiles.VehicleProfile;
 
 @Component("preferencesImpl")
 public class PreferencesImpl implements Preferences {
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	private FirmwareType type;
 	private VehicleProfile profile;
@@ -30,9 +36,10 @@ public class PreferencesImpl implements Preferences {
 				type = FirmwareType.ARDU_COPTER;
 				rates = new Rates(1, 1, 1, 1, 4, 1, 1, 1);
 				profile = new ArduCopterProfile();
+				logger.LogDesignedMessege("ArduCopter Profile was created");
 				return profile;
 			default:
-				Logger.LogErrorMessege("Unsupported frame '" + firmwareType.name() + "'");
+				logger.LogErrorMessege("Unsupported frame '" + firmwareType.name() + "'");
 		}
 		return null;
 	}

@@ -5,24 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
+import mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import mavlink.is.utils.coordinates.Coord3D;
 
-public class Circle extends SpatialCoordItem implements Serializable /* TALMA serializble*/  {
+public class Circle extends SpatialCoordItem implements Radiusable, Serializable /* TALMA serializble*/  {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9135067547610660828L;
 	private double radius = 10.0;
 	private int turns = 1;
 
-	public Circle(MissionItem item) {
-		super(item);
+	public Circle(Circle circle) {
+		super(circle);
+		this.radius = circle.radius;
+		this.turns = circle.turns;
 	}
 
 	public Circle(Mission mission, Coord3D coord) {
@@ -38,6 +37,7 @@ public class Circle extends SpatialCoordItem implements Serializable /* TALMA se
 		this.turns = Math.abs(turns);
 	}
 
+	@Override
 	public void setRadius(double radius) {
 		this.radius = Math.abs(radius);
 	}
@@ -46,6 +46,7 @@ public class Circle extends SpatialCoordItem implements Serializable /* TALMA se
 		return turns;
 	}
 
+	@Override
 	public double getRadius() {
 		return radius;
 	}
@@ -82,6 +83,13 @@ public class Circle extends SpatialCoordItem implements Serializable /* TALMA se
 	@Override
 	public MissionItemType getType() {
 		return MissionItemType.CIRCLE;
+	}
+
+	@Override
+	public Circle clone(Mission mission) {
+		Circle circle = new Circle(this);
+		circle.setMission(mission);
+		return circle;
 	}
 
 }

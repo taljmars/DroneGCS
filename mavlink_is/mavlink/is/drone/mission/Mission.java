@@ -55,6 +55,12 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 		super();
 	}
 
+	public Mission(Mission mission) {
+		super(mission);
+		defaultAlt.set(mission.getDefaultAlt().valueInMeters());
+		for (MissionItem mi : mission.getItems()) items.add((MissionItem) mi.clone(this));
+	}
+
 	/**
 	 * @return the mission's default altitude
 	 */

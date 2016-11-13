@@ -4,12 +4,13 @@ import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
+import mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
 
-public abstract class SpatialCoordItem extends MissionItem {
+public abstract class SpatialCoordItem extends MissionItem implements Altitudable {
 
 	/**
 	 * 
@@ -55,12 +56,17 @@ public abstract class SpatialCoordItem extends MissionItem {
 		setCoordinate(new Coord3D(mavMsg.x, mavMsg.y, alt));
 	}
 
+	@Override
 	public void setAltitude(Altitude altitude) {
 		coordinate.set(coordinate.getLat(), coordinate.getLng(), altitude);
+	}
+	
+	@Override
+	public Altitude getAltitude() {
+		return coordinate.getAltitude();
 	}
 
 	public void setPosition(Coord2D position) {
 		coordinate.set(position);
 	}
-
 }
