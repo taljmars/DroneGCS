@@ -21,6 +21,7 @@ import mavlink.is.protocol.msgbuilder.MavLinkRC;
 
 @ComponentScan("tools.validations")
 @ComponentScan("mavlink.core.flightControlers")
+@ComponentScan("gui.is.services")
 @SwitchToRC
 @Component("opChangeFlightControllerQuad")
 public class OpChangeFlightControllerQuad extends OperationHandler {
@@ -44,7 +45,8 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	@NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager when changing flight mode")
 	private DialogManagerSvc dialogManagerSvc;
 
 	private FlightControler requiredFlightMode;
@@ -61,8 +63,10 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	public boolean go() throws InterruptedException {
 		loggerDisplayerSvc.logGeneral("Start Takeoff Phase");
 	
-		if (!validator.validate(this))
-			return false;
+		if (!validator.validate(this)) {
+			if (dialogManagerSvc.showYesNoDialog("Would you like to force flight mode change?", "", true) == 1)
+				return false;
+		}
 		
     	keyBoardControler.HoldIfNeeded();
     	

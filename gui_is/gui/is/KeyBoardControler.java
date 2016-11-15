@@ -1,6 +1,9 @@
 package gui.is;
 
-public interface KeyBoardControler {
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyEvent;
+
+public interface KeyBoardControler extends EventHandler<KeyEvent> {
 
 	void HoldIfNeeded();
 

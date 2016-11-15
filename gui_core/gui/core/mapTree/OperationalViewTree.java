@@ -22,6 +22,7 @@ import gui.is.events.GuiEvent.COMMAND;
 import gui.is.services.EventPublisherSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisherSvc;
+import javafx.application.Platform;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -266,37 +267,39 @@ public class OperationalViewTree extends LayeredViewTree<CheckBoxTreeItem<Layer>
 
 	@Override
 	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
-		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			loggerDisplayerSvc.logIncoming("Waypoints downloaded");
-			if (drone.getMission() == null) {
-				loggerDisplayerSvc.logError("Failed to find mission");
+		Platform.runLater( () -> { 
+			if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+				loggerDisplayerSvc.logIncoming("Waypoints downloaded");
+				if (drone.getMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find mission");
+					return;
+				}
+	
+				LayerMission lm = (LayerMission) AppConfig.context.getBean("layerMission");
+				lm.setName("UnnamedMission");
+				lm.setMission(drone.getMission());
+				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, lm);
+	
+				loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
+				textNotificationPublisherSvc.publish("Mission successfully downloaded");
 				return;
 			}
-
-			LayerMission lm = (LayerMission) AppConfig.context.getBean("layerMission");
-			lm.setName("UnnamedMission");
-			lm.setMission(drone.getMission());
-			uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, lm);
-
-			loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
-			textNotificationPublisherSvc.publish("Mission successfully downloaded");
-			return;
-		}
-
-		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Waypoints uploaded");
-			if (drone.getMission() == null) {
-				loggerDisplayerSvc.logError("Failed to find mission");
+	
+			if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+				loggerDisplayerSvc.logIncoming("Waypoints uploaded");
+				if (drone.getMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find mission");
+					return;
+				}
+				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, uploadedLayerMissionCandidate);
+				uploadedLayerMissionCandidate = null;
+				loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
+				textNotificationPublisherSvc.publish("Mission successfully uploaded");
 				return;
 			}
-			uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, uploadedLayerMissionCandidate);
-			uploadedLayerMissionCandidate = null;
-			loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
-			textNotificationPublisherSvc.publish("Mission successfully uploaded");
-			return;
-		}
-		
-		loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
-		textNotificationPublisherSvc.publish("Mission Sync failed");
+			
+			loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+			textNotificationPublisherSvc.publish("Mission Sync failed");
+		});
 	}
 }

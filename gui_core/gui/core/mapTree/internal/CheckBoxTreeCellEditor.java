@@ -1,6 +1,8 @@
 package gui.core.mapTree.internal;
 
 import gui.core.mapTree.ViewTree;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTreeCell;
@@ -10,14 +12,18 @@ public class CheckBoxTreeCellEditor<T> extends CheckBoxTreeCell<T> {
 	 
     private TextField textField;
 	private TreeCellEditorConvertor<T> convertor;
+	private Node graphic;
     
     public CheckBoxTreeCellEditor( TreeCellEditorConvertor<T> treeCellEditorConvertor ) {
 		this.convertor = treeCellEditorConvertor;
+		graphic = new CheckBox().getGraphic();
 	}
 
     @Override
     public void startEdit() {
         super.startEdit();
+        
+        System.out.println(getTreeItem().getGraphic());
 
         if (textField == null)
             createTextField();
@@ -33,6 +39,7 @@ public class CheckBoxTreeCellEditor<T> extends CheckBoxTreeCell<T> {
 
         setText(((T) getItem()).toString());
         //setGraphic(getTreeItem().getGraphic());
+        setGraphic(graphic);
     }
 
     @Override

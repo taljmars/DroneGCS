@@ -38,7 +38,7 @@ public class OpTakeoffQuad extends OperationHandler {
 	private double expectedValue;
 	
 	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@NotNull(message = "Internal Error: Failed to get dialog manager when setting takeoff")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	@Resource(name = "validator")

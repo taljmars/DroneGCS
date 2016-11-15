@@ -106,6 +106,10 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 		pnlRCActual.setAlignment(Pos.CENTER);
 		secondSection.getChildren().add(pnlRCActual);
 		
+		VBox pnlRadioIn = new VBox();
+		pnlRadioIn.setAlignment(Pos.CENTER);
+		secondSection.getChildren().add(pnlRadioIn);
+		
 		getChildren().add(firstSection);
 		getChildren().add(secondSection);
 		

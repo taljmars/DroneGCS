@@ -28,7 +28,7 @@ public class OpArmQuad extends OperationHandler {
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@NotNull(message = "Internal Error: Failed to get dialog manager when arming quad")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	static int called;

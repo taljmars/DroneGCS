@@ -180,7 +180,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         		String btnFlyText = btnFly.getText();
         		opChangeFlightControllerQuad.setNext(null);
         		String[] options = {FlightControler.KEYBOARD.name(), FlightControler.REMOTE.name()};
-            	int n = dialogManagerSvc.showYesNoOptionDialog("Choose Controler", "", null,options, options[1]);
+            	int n = dialogManagerSvc.showOptionsDialog("Choose Controler", "", null,options, options[1]);
             	if (n == 0) {
             		opChangeFlightControllerQuad.setFlightMode(FlightControler.KEYBOARD);
             		btnFlyText = "Controler: " + FlightControler.KEYBOARD.name();
@@ -305,7 +305,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	private boolean TryLand() {
 		boolean result = true;
 		String[] options = {"Land", "RTL", "Cancel"};
-		int n = dialogManagerSvc.showYesNoOptionDialog("Choose Land Option", "", null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
+		int n = dialogManagerSvc.showOptionsDialog("Choose Land Option", "", null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
 		if (n == 0) {
 			MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
 			loggerDisplayerSvc.logGeneral("Landing");

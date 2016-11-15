@@ -1,19 +1,12 @@
 package mavlink.core.flightControlers;
 
-import gui.is.KeyBoardControler;
-import gui.is.events.GuiEvent;
-import gui.is.services.DialogManagerSvc;
-import gui.is.services.LoggerDisplayerSvc;
-
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import java.util.Date;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -21,13 +14,16 @@ import javax.swing.JFileChooser;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import tools.comm.SerialConnection;
-import tools.logger.Logger;
+import gui.is.KeyBoardControler;
+import gui.is.services.DialogManagerSvc;
+import gui.is.services.LoggerDisplayerSvc;
+import javafx.scene.input.KeyEvent;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
+import tools.comm.SerialConnection;
+import tools.logger.Logger;
 
 @ComponentScan("tools.logger")
 @ComponentScan("tools.comm.internal")
@@ -341,7 +337,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	}
 	
 	static long LastContolKeyTS = 0;
-	private void UpdateRCSet(KeyEvent event) throws Exception {
+	@SuppressWarnings("incomplete-switch")
+	private void UpdateRCSet(KeyEvent event) {
 		System.out.println(getClass().getName() + " Updating RC Set");
 		if (!bActive)
 			return;
@@ -349,9 +346,9 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		if (event == null)
 			return;
 		
-		switch( event.getKeyCode() ) { 
+		switch( event.getCode() ) { 
 			// For pitch: down is positive, up is negative
-		    case KeyEvent.VK_UP:
+		    case UP:
 		    	if (RC_Pitch > 3 * _PITCH_STEP)
 		    		RC_Pitch-=(3 * _PITCH_STEP);
 		    	else
@@ -361,7 +358,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		        break;
-		    case KeyEvent.VK_DOWN:
+		    case DOWN:
 		    	if (RC_Pitch < -3 * _PITCH_STEP)
 		    		RC_Pitch+=(3 * _PITCH_STEP);
 		    	else
@@ -373,7 +370,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		        break;
 		        
 			// For roll: right is positive, left is negative
-		    case KeyEvent.VK_LEFT:
+		    case LEFT:
 		    	if (RC_Roll > 3 * _ROLL_STEP)
 		    		RC_Roll-=(3 * _ROLL_STEP);
 		    	else
@@ -383,7 +380,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		        break;
-		    case KeyEvent.VK_RIGHT :
+		    case RIGHT:
 		    	if (RC_Roll < -3 * _ROLL_STEP)
 		    		RC_Roll+=(3 * _ROLL_STEP);
 		    	else
@@ -395,19 +392,19 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		        break;
 		        
 			// For Throttle: up is higher, down is lower (with min value of 1000)
-		    case KeyEvent.VK_W :
+		    case W:
 		    	RC_Thr += _THR_STEP;
 		    	RC_Thr = constrain(RC_Thr, _MIN_PWM_RANGE, _MAX_PWM_RANGE);
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_S :
+		    case S:
 		    	RC_Thr -= _THR_STEP;
 		    	RC_Thr = constrain(RC_Thr, _MIN_PWM_RANGE, _MAX_PWM_RANGE);
 		    	event.consume();
 		    	break;
 		        
 			// For Yaw: right is positive, left is negative (no decay, and with some hexa values)
-		    case KeyEvent.VK_D :
+		    case D:
 		    	if (RC_Yaw < -3 * _YAW_STEP)
 		    		RC_Yaw+=(3 * _YAW_STEP);
 		    	else
@@ -417,7 +414,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_A :
+		    case A:
 		    	if (RC_Yaw > 3 * _YAW_STEP)
 		    		RC_Yaw-=(3 * _YAW_STEP);
 		    	else
@@ -427,14 +424,14 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_SPACE :
+		    case BACK_SPACE:
 		    	_TRIM_ANGLE_ROLL = RC_Roll;
 		    	_TRIM_ANGLE_PITCH = RC_Pitch;
 		    	_TRIM_ANGLE_YAW = RC_Yaw;
 		    	loggerDisplayerSvc.logGeneral("Calibrating New Center of Keyboard Control");
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_BACK_SPACE :
+		    case SPACE:
 		    	_TRIM_ANGLE_ROLL = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_PITCH = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_YAW = _TRIM_ANGLE;
@@ -478,27 +475,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		RC_Thr = parseInt;
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
-		switch (command.getCommand()) {
-			case ZOOM:
-			case MOVE:
-			case CONTORL_KEYBOARD:
-				
-			case FLIGHT:
-				try {
-					KeyEvent ke = (KeyEvent) command.getSource();
-					UpdateRCSet(ke);
-				}
-				catch (AccessDeniedException e1) {
-					System.err.println(getClass().getName() + " Failed to access device");
-					dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Failed to access device", e1);
-					System.exit(-1);
-				}
-				catch (Exception e1) {
-					dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e1);
-				}
-		}
+	@Override
+	public void handle(KeyEvent arg0) {
+		UpdateRCSet(arg0);
 	}	
 }

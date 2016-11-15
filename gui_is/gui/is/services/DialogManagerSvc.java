@@ -92,43 +92,37 @@ public class DialogManagerSvc {
 		return result.get() == ButtonType.OK ? true : false;
 	}
 
-	public int showYesNoOptionDialog(String text, String title, Object object2, String[] options,
-			Object initialValue) {
+	public int showOptionsDialog(String text, String title, Object object2, String[] options,
+			String initialValue) {
 		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(title);
 		alert.setHeaderText(null);
 		alert.setContentText(text);
 
+		ButtonType defaultButton = null;
 		Vector<ButtonType> buttonOptions = new Vector<>();
-		for (String s : options)
-			buttonOptions.add(new ButtonType(s));
+		for (String s : options) {
+			ButtonType btn = new ButtonType(s);
+			if (s.equals(initialValue))
+				defaultButton = btn;
+				buttonOptions.add(btn);
+		}
 		
 		alert.getButtonTypes().removeAll(alert.getButtonTypes());
 		for (ButtonType button : buttonOptions)
 			alert.getButtonTypes().add(button);
+		
+		if (defaultButton != null)
+			alert.getDialogPane().lookupButton(defaultButton);
 
 		Optional<ButtonType> result = alert.showAndWait();
 		return buttonOptions.indexOf(result.get());
 	}
 	
-	public int showYesNoCancelOptionDialog(String text, String title, Object object2, String[] options,
-			Object initialValue) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(text);
-
-		Vector<ButtonType> buttonOptions = new Vector<>();
-		for (String s : options)
-			buttonOptions.add(new ButtonType(s));
-		
-		alert.getButtonTypes().removeAll(alert.getButtonTypes());
-		for (ButtonType button : buttonOptions)
-			alert.getButtonTypes().add(button);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		return buttonOptions.indexOf(result.get());
+	public int showYesNoDialog(String text, String title, boolean defaultNo) {
+		String[] options = {"Yes", "No"};
+		return showOptionsDialog(text, title, null, options, defaultNo ? options[1] : options[0]);
 	}
 
 	public String showInputDialog(String text, String title, Object object2, Object object3, String initialValue) {
@@ -184,5 +178,4 @@ public class DialogManagerSvc {
 		
 		return result.get() == ButtonType.OK ? new Pair<Object, Object>(cmbList1.getValue(), cmbList2.getValue()) : null;
 	}
-
 }

@@ -2,6 +2,7 @@ package gui.core.Main;
 
 import gui.core.dashboard.Dashboard;
 import gui.core.springConfig.AppConfig;
+import gui.is.KeyBoardControler;
 import gui.is.services.DialogManagerSvc;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -28,7 +29,10 @@ public class Main extends Application {
 			dialogManager.showAlertMessageDialog("Critical error occur, failed to find running path");
 			return;
 		}
-        primaryStage.setScene(new Scene(dashboard, 300, 250));
+        Scene scene = new Scene(dashboard, 300, 250);
+        KeyBoardControler keyboardControler = (KeyBoardControler) AppConfig.context.getBean("keyBoardControler");
+        scene.setOnKeyPressed(keyboardControler);
+        primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.setFullScreen(!AppConfig.DebugMode);
         primaryStage.show();

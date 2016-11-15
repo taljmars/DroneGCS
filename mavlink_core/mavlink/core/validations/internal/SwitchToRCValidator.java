@@ -30,12 +30,12 @@ public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpCh
 		if (changeFlightControllerQuad.getRequiredControler() != FlightControler.REMOTE)
 			return true;
 		
-		int avgThrust = changeFlightControllerQuad.getDrone().getRC().getThrust();
-		if (avgThrust < MIN_THRUST_TO_SWITCH_TO_RC) {
+		int thrustOut = changeFlightControllerQuad.getDrone().getRC().getThrustOut();
+		if (thrustOut > MIN_THRUST_TO_SWITCH_TO_RC) {
 			//disable existing violation message
 			arg1.disableDefaultConstraintViolation();
 		    //build new violation message and add it
-			arg1.buildConstraintViolationWithTemplate("Thrust from the radio is too low").addConstraintViolation();
+			arg1.buildConstraintViolationWithTemplate("Thrust is too height, please verify remote is on").addConstraintViolation();
 			return false;
 		}
 			

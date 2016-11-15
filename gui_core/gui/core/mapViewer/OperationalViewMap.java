@@ -239,7 +239,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 				System.out.println(getClass().getName() + " Start GeoFence");
 				String[] options = { "Cycle", "Polygon", "Cancel" };
 				int n = dialogManagerSvc
-						.showYesNoCancelOptionDialog("Choose a way to create perimeter.",
+						.showOptionsDialog("Choose a way to create perimeter.",
 								"Perimeter Limitation",
 								null, options,
 								options[2]);

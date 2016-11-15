@@ -18,6 +18,7 @@ import mavlink.is.protocol.msg_metadata.ApmModes;
 import tools.validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
+@ComponentScan("gui.is.services")
 @Component("opStartMissionQuad")
 public class OpStartMissionQuad extends OperationHandler {
 	
