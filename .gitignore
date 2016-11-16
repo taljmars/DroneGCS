@@ -9,9 +9,12 @@ Desktop.ini
 $RECYCLE.BIN/
 
 # Igone bin directory - talma
+ExRunnable/Cache/
+ExRunnable/Logs/
 bin/
-logs/
-cache/
+Logs/
+Cache/
+
 
 # Windows Installer files
 *.cab
