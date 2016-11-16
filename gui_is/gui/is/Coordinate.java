@@ -17,7 +17,7 @@ import mavlink.is.utils.coordinates.Coord2D;
  * @author Jan Peter Stotz
  *
  */
-public class Coordinate implements Serializable /*TALMA add serilizebae*/ {
+public class Coordinate implements Serializable {
     /**
 	 * 
 	 */

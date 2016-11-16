@@ -10,7 +10,7 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.utils.coordinates.Coord3D;
 
-public class Waypoint extends SpatialCoordItem implements Delayable, Serializable /* TALMA serializble*/ {
+public class Waypoint extends SpatialCoordItem implements Delayable, Serializable {
 
 	private static final long serialVersionUID = -3576058694665759132L;
 	private double delay;

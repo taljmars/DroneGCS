@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.annotation.Resource;
 
-public class DroneVariable  implements Serializable /*TALMA Serializele*/  {
+public class DroneVariable  implements Serializable  {
 	/**
 	 * 
 	 */

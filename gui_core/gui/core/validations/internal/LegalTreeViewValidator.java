@@ -15,7 +15,6 @@ public class LegalTreeViewValidator implements ConstraintValidator<LegalTreeView
 	
 	@Override
 	public void initialize(LegalTreeView arg0) {
-		
 	}
 
 	@Override
@@ -35,15 +34,16 @@ public class LegalTreeViewValidator implements ConstraintValidator<LegalTreeView
 	
 	public String verifyUniqueLayerNames(TreeItem<Layer> treeItem, Set<String> nameList) {
 		String name = treeItem.getValue().getName();
-		if (name.endsWith("*"))
-			name = name.substring(0, name.length() - 1);
+		if (name.endsWith(OperationalViewTree.EDIT_SUFFIX))
+			name = name.substring(0, name.length() - OperationalViewTree.EDIT_SUFFIX.length());
+		
+		if (name.startsWith(OperationalViewTree.UPLOADED_PREFIX))
+			name = name.substring(OperationalViewTree.UPLOADED_PREFIX.length(), name.length());
 		
 		if (nameList.contains(name))
 			return name;
 
 		nameList.add(name);
-		
-		System.err.println("TALMA " + name + " " + nameList);
 		
 		for (TreeItem<Layer> item : treeItem.getChildren()) {
 			String res = verifyUniqueLayerNames(item, nameList);

@@ -2,7 +2,7 @@ package mavlink.is.utils.units;
 
 import java.io.Serializable;
 
-public class Altitude extends Length implements Serializable /* TALMA serializble*/  {
+public class Altitude extends Length implements Serializable {
 
 	/**
 	 * 

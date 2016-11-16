@@ -12,7 +12,7 @@ import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import mavlink.is.utils.coordinates.Coord3D;
 
-public class Circle extends SpatialCoordItem implements Radiusable, Serializable /* TALMA serializble*/  {
+public class Circle extends SpatialCoordItem implements Radiusable, Serializable {
 
 	private static final long serialVersionUID = 9135067547610660828L;
 	private double radius = 10.0;

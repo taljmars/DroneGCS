@@ -3,7 +3,7 @@ package mavlink.is.utils.units;
 import java.io.Serializable;
 import java.util.Locale;
 
-public class Length implements Serializable /* TALMA serializble*/ {
+public class Length implements Serializable {
 	/**
 	 * 
 	 */

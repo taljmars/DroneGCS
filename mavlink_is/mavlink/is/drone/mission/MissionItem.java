@@ -7,7 +7,7 @@ import java.util.List;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
-public abstract class MissionItem implements Comparable<MissionItem> , Serializable /* TALMA serializble*/  {
+public abstract class MissionItem implements Comparable<MissionItem> , Serializable  {
 
 	/**
 	 * 

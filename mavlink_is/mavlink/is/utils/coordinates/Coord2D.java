@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import gui.is.Coordinate;
 
-public class Coord2D implements Serializable /*TALMA Serializele*/  {
+public class Coord2D implements Serializable  {
 	/**
 	 * 
 	 */

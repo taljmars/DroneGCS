@@ -599,13 +599,13 @@ OnDroneListener, EventHandler<ActionEvent> {
 				super.startModifiedLayerMode(modifyiedLayerMission);
 				isMissionBuildMode = true;
 				missionBuilder.startMissionLayer(modifyiedLayerMission);
-				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + "*");
+				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + OperationalViewTree.EDIT_SUFFIX);
 			} else if (layer instanceof LayerPolygonPerimeter) {
 				System.out.println("Working on Perimeter Layer");
 				modifyiedLayerPerimeter = (LayerPolygonPerimeter) layer;
 				modifyiedLayerPerimeterOriginal = new LayerPolygonPerimeter((LayerPolygonPerimeter) modifyiedLayerPerimeter);
 				isPerimeterBuildMode = true;
-				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + "*");
+				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + OperationalViewTree.EDIT_SUFFIX);
 			} else {
 				EditModeOff();
 				return;

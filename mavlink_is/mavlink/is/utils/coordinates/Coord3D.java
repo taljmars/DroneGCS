@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import mavlink.is.utils.units.Altitude;
 
-public class Coord3D extends Coord2D implements Serializable /*TALMA Serializele*/ {
+public class Coord3D extends Coord2D implements Serializable {
 	/**
 	 * 
 	 */

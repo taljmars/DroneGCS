@@ -12,7 +12,7 @@ import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
 
-public class Land extends SpatialCoordItem implements Serializable /* TALMA serializble*/  {
+public class Land extends SpatialCoordItem implements Serializable {
 
 	/**
 	 * 

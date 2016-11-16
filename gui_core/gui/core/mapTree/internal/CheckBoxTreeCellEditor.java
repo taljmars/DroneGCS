@@ -16,14 +16,12 @@ public class CheckBoxTreeCellEditor<T> extends CheckBoxTreeCell<T> {
     
     public CheckBoxTreeCellEditor( TreeCellEditorConvertor<T> treeCellEditorConvertor ) {
 		this.convertor = treeCellEditorConvertor;
-		graphic = new CheckBox().getGraphic();
+		graphic = new CheckBox();
 	}
 
     @Override
     public void startEdit() {
         super.startEdit();
-        
-        System.out.println(getTreeItem().getGraphic());
 
         if (textField == null)
             createTextField();
@@ -38,7 +36,6 @@ public class CheckBoxTreeCellEditor<T> extends CheckBoxTreeCell<T> {
         super.cancelEdit();
 
         setText(((T) getItem()).toString());
-        //setGraphic(getTreeItem().getGraphic());
         setGraphic(graphic);
     }
 
@@ -48,19 +45,18 @@ public class CheckBoxTreeCellEditor<T> extends CheckBoxTreeCell<T> {
 
     	if (empty) {
     		setText(null);
-    		//setGraphic(null);
+    		setGraphic(null);
     	} else {
     		if (isEditing()) {
     			if (textField != null) {
     				textField.setText(getString());
     			}
     			setText(null);
-    			//setGraphic(textField);
-                
+    			setGraphic(textField);               
     		} 
     		else {
     			setText(getString());
-    			//setGraphic(getTreeItem().getGraphic());
+    			setGraphic(graphic);
     			
     			ContextMenu menu = ((ViewTree<T>) getTreeView()).getPopupMenu(getTreeItem());
     			setContextMenu(menu);

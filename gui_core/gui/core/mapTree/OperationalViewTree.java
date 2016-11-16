@@ -37,7 +37,8 @@ import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 @Component("tree")
 public class OperationalViewTree extends LayeredViewTree<CheckBoxTreeItem<Layer>> implements OnWaypointManagerListener {
 	
-	private static final CharSequence UPLOADED_PREFIX = "(CURR) ";
+	public static final String UPLOADED_PREFIX = "(CURR) ";
+	public static final String EDIT_SUFFIX = "*";
 	
     @Resource(name = "eventPublisherSvc")
     @NotNull(message = "Internal Error: Missing event publisher")
@@ -215,7 +216,7 @@ public class OperationalViewTree extends LayeredViewTree<CheckBoxTreeItem<Layer>
 		}
 		else {
 			// Means we are not aware of any uploaded mission
-			addLayer(finalLayer);
+			//addLayer(finalLayer);
 			finalLayer.regenerateMapObjects();
 			loggerDisplayerSvc.logGeneral("A new layer was created for current mission");
 		}
@@ -227,11 +228,15 @@ public class OperationalViewTree extends LayeredViewTree<CheckBoxTreeItem<Layer>
 	private void CurrentPrefixRemove(Layer old_layer) {
 		if (old_layer.getName().contains(UPLOADED_PREFIX))
 			old_layer.setName(old_layer.getName().substring(UPLOADED_PREFIX.length(), old_layer.getName().length()));
+		
+		refresh();
 	}
 
 	private void CurrentPrefixAdd(Layer finalLayer) {
 		if (!finalLayer.getName().contains(UPLOADED_PREFIX))
 			finalLayer.setName(UPLOADED_PREFIX + finalLayer.getName());
+		
+		refresh();
 	}
 	
 	@Override
@@ -278,6 +283,7 @@ public class OperationalViewTree extends LayeredViewTree<CheckBoxTreeItem<Layer>
 				LayerMission lm = (LayerMission) AppConfig.context.getBean("layerMission");
 				lm.setName("UnnamedMission");
 				lm.setMission(drone.getMission());
+				addLayer(lm);
 				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, lm);
 	
 				loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
