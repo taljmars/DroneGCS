@@ -1,0 +1,71 @@
+Loading flight controler configuration
+_MIN_PWM_RANGE=1000
+Param: '_MIN_PWM_RANGE', Value: '1000'
+_MAX_PWM_RANGE=2200
+Param: '_MAX_PWM_RANGE', Value: '2200'
+_MIN_PWM_ANGLE=1100
+Param: '_MIN_PWM_ANGLE', Value: '1100'
+_MAX_PWM_ANGLE=1900
+Param: '_MAX_PWM_ANGLE', Value: '1900'
+_TRIM_ANGLE=1500
+Param: '_TRIM_ANGLE', Value: '1500'
+_PITCH_STEP=10
+Param: '_PITCH_STEP', Value: '10'
+_ROLL_STEP=10
+Param: '_ROLL_STEP', Value: '10'
+_YAW_STEP=50
+Param: '_YAW_STEP', Value: '50'
+_THR_STEP=25
+Param: '_THR_STEP', Value: '25'
+_INIT_THR=1100
+Param: '_INIT_THR', Value: '1100'
+All parameter loaded, configuration was successfully loaded
+Reseting RC Set
+mavlink.core.flightControlers.KeyBoardControlerImpl$1 Stabilizer Thread started
+C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524//log.html
+mavlink.is.drone.profiles.Parameters Setting new paramter listener class gui.core.internalPanels.PanelButtonBoxSatellite
+class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.mapTree.OperationalViewTree
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\actualPWM.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\signals.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\HeightAndSpeed.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\battery.csv'
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+Sign Dashboard as drone listener
+class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.dashboard.Dashboard
+mavlink.is.drone.profiles.Parameters Setting new paramter listener class gui.core.dashboard.Dashboard
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+mavlink.core.flightControlers.KeyBoardControlerImpl Updating RC Set
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+Bye Bye
+
+Summary:
+--------
+Traveled distance: 0.0m
+Max Height: 0.0m
+Max Speed: 0.0m/s (0km/h)
+Flight time: 0
+Finalize of Sub Class

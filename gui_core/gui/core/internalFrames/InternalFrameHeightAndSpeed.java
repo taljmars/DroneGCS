@@ -54,7 +54,7 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 			throw new RuntimeException("Not a Singletone");
 		
 		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.csv");
-		csv.open(Arrays.asList("Height", "VerticalSpeed", "AirSpeed"));
+		csv.open(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
 		
 		drone.addDroneListener(this);
 	}
@@ -70,7 +70,7 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 			if (seriesAirSpeed != null)
 				seriesAirSpeed.getData().add(new XYChart.Data<String, Number>(timestamp, airSpeed));
 			
-			csv.addEntry(Arrays.asList(altitude, airSpeed, verticalSpeed));
+			csv.addEntry(Arrays.asList(timestamp, altitude, airSpeed, verticalSpeed));
 		});
 	}
 

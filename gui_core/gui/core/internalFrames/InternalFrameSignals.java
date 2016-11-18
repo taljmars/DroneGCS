@@ -55,7 +55,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener {
 			throw new RuntimeException("Not a Singletone");
 		
 		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "signals.csv");
-		csv.open(Arrays.asList("distance", "signal", "noise", "rssi"));
+		csv.open(Arrays.asList("Time", "distance", "signal", "noise", "rssi"));
 		
 		drone.addDroneListener(this);
 	}
@@ -73,7 +73,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener {
 			if (seriesRssi != null)
 				seriesRssi.getData().add(new XYChart.Data<String, Number>(timestamp, rssi));
 			
-			csv.addEntry(Arrays.asList(distance, signal, noise, rssi));
+			csv.addEntry(Arrays.asList(timestamp, distance, signal, noise, rssi));
 		});
 	}
 

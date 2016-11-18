@@ -1,6 +1,7 @@
 package gui.core.internalPanels;
 
 import gui.core.internalFrames.InternalFrameActualPWM;
+import gui.core.internalFrames.InternalFrameBattery;
 import gui.core.internalFrames.InternalFrameHeightAndSpeed;
 import gui.core.internalFrames.InternalFrameMap;
 import gui.core.internalFrames.InternalFrameSignals;
@@ -36,6 +37,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	private Button btnSetMode;
 	private Button btnMap;
 	private Button btnActualPWM;
+	private Button btnBattery;
 	private Button btnSignal;
 	private Button btnHeightAndSpeed;
 	private ComboBox<ApmModes> flightModesCombo;
@@ -56,6 +58,9 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	@Resource(name = "internalFrameHeightAndSpeed")
 	private InternalFrameHeightAndSpeed internalFrameHeightAndSpeed;
 	
+	@Resource(name = "internalFrameBattery")
+	private InternalFrameBattery internalFrameBattery;
+	
 	@Resource(name = "drone")
 	public Drone drone;
 
@@ -75,6 +80,10 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         btnHeightAndSpeed = new Button("Height And Speed");
         getChildren().add(btnHeightAndSpeed);
         btnHeightAndSpeed.setOnAction(this);
+        
+        btnBattery = new Button("Battery");
+        getChildren().add(btnBattery);
+        btnBattery.setOnAction(this);
         
         //btnMap.setSelected(true);
         
@@ -179,6 +188,16 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 		        frameContainer.getChildren().add(internalFrameHeightAndSpeed);
 		        internalFrameHeightAndSpeed.setPrefHeight(frameContainer.getHeight());
 		        internalFrameHeightAndSpeed.setPrefWidth(frameContainer.getWidth());
+			});
+			return;
+		}
+		
+		if (e.getSource() == btnBattery) {
+			Platform.runLater(() -> {
+				frameContainer.getChildren().clear();
+		        frameContainer.getChildren().add(internalFrameBattery);
+		        internalFrameBattery.setPrefHeight(frameContainer.getHeight());
+		        internalFrameBattery.setPrefWidth(frameContainer.getWidth());
 			});
 			return;
 		}

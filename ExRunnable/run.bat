@@ -1,0 +1,1 @@
+java -jar C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\GCDashboard.jar > backlog.elg

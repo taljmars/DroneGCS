@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import mavlink.is.drone.variables.Battery;
 import tools.csv.CSV;
 import tools.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
@@ -26,8 +27,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
-@Component("internalFrameActualPWM")
-public class InternalFrameActualPWM extends Pane implements OnDroneListener {
+@Component("internalFrameBattery")
+public class InternalFrameBattery extends Pane implements OnDroneListener {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
@@ -38,13 +39,13 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
 	private CSV csv;
 
 	/** The time series data. */
-	private static XYChart.Series<String, Number> seriesRoll;
-	private static XYChart.Series<String, Number> seriesPitch;
-	private static XYChart.Series<String, Number> seriesThr;
-	private static XYChart.Series<String, Number> seriesYaw;
+	private static XYChart.Series<String, Number> seriesCurrent;
+	private static XYChart.Series<String, Number> seriesDischarge;
+	private static XYChart.Series<String, Number> seriesRemain;
+	private static XYChart.Series<String, Number> seriesVolt;
 	
 	@Autowired
-	public InternalFrameActualPWM(@Value("Actual PWM") String title) {		
+	public InternalFrameBattery(@Value("Battery") String title) {		
 		loadChart();
 	}
 	
@@ -55,26 +56,26 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
-		csv.open(Arrays.asList("Time", "Roll", "Pitch", "Thrust", "Yaw"));
+		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
+		csv.open(Arrays.asList("Time", "Current", "Discharge", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
 	}
 
-	private void addRCActual(int roll, int pitch, int thr, int yaw) {
+	private void addBatteyInfo(double battCurrent, double battDischarge, double battRemain, double battVolt) {
 		Platform.runLater( () -> {
 			String timestamp = LocalDateTime.now().toLocalTime().toString();
 			
-			if (seriesRoll != null)
-				seriesRoll.getData().add(new XYChart.Data<String, Number>(timestamp, roll));
-			if (seriesPitch != null)
-				seriesPitch.getData().add(new XYChart.Data<String, Number>(timestamp, pitch));
-			if (seriesThr != null)
-				seriesThr.getData().add(new XYChart.Data<String, Number>(timestamp, thr));
-			if (seriesYaw != null)
-				seriesYaw.getData().add(new XYChart.Data<String, Number>(timestamp, yaw));
+			if (seriesCurrent != null)
+				seriesCurrent.getData().add(new XYChart.Data<String, Number>(timestamp, battCurrent));
+			if (seriesDischarge != null)
+				seriesDischarge.getData().add(new XYChart.Data<String, Number>(timestamp, battDischarge));
+			if (seriesRemain != null)
+				seriesRemain.getData().add(new XYChart.Data<String, Number>(timestamp, battRemain));
+			if (seriesVolt != null)
+				seriesVolt.getData().add(new XYChart.Data<String, Number>(timestamp, battVolt));
 			
-			csv.addEntry(Arrays.asList(timestamp, roll, pitch, thr, yaw));
+			csv.addEntry(Arrays.asList(timestamp, battCurrent, battDischarge, battRemain, battVolt));
 		});
 	}
 
@@ -88,23 +89,23 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
         
 		LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
        
-        lineChart.setTitle("PWM");
+        lineChart.setTitle("Battery");
 
-		seriesRoll = new XYChart.Series<String, Number>();
-		seriesRoll.setName("E1");
-		lineChart.getData().add(seriesRoll);
+		seriesCurrent = new XYChart.Series<String, Number>();
+		seriesCurrent.setName("Current");
+		lineChart.getData().add(seriesCurrent);
 		
-		seriesPitch = new XYChart.Series<String, Number>();
-		seriesPitch.setName("E2");
-		lineChart.getData().add(seriesPitch);
+		seriesDischarge = new XYChart.Series<String, Number>();
+		seriesDischarge.setName("Discharge");
+		lineChart.getData().add(seriesDischarge);
 		
-		seriesThr = new XYChart.Series<String, Number>();
-		seriesThr.setName("E3");
-		lineChart.getData().add(seriesThr);
+		seriesRemain = new XYChart.Series<String, Number>();
+		seriesRemain.setName("Remain");
+		lineChart.getData().add(seriesRemain);
 		
-		seriesYaw = new XYChart.Series<String, Number>();
-		seriesYaw.setName("E4");
-		lineChart.getData().add(seriesYaw);
+		seriesVolt = new XYChart.Series<String, Number>();
+		seriesVolt.setName("Volt");
+		lineChart.getData().add(seriesVolt);
 		
 		lineChart.prefWidthProperty().bind(widthProperty());
 		
@@ -115,8 +116,9 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		switch (event) {
-		case RC_OUT:
-			addRCActual(drone.getRC().out[0], drone.getRC().out[1], drone.getRC().out[2], drone.getRC().out[3]);
+		case BATTERY:
+			Battery bat = drone.getBattery();
+			addBatteyInfo(bat.getBattCurrent(), bat.getBattDischarge().doubleValue(), bat.getBattRemain(), bat.getBattVolt());
 			return;
 		}
 	}
