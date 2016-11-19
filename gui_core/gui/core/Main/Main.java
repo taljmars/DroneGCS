@@ -31,10 +31,10 @@ public class Main extends Application {
 		}
         Scene scene = new Scene(dashboard, 300, 250);
         KeyBoardControler keyboardControler = (KeyBoardControler) AppConfig.context.getBean("keyBoardControler");
-        scene.setOnKeyPressed(keyboardControler);
+        scene.setOnKeyPressed(keyboardControler);       
+        primaryStage.setResizable(false);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
-        primaryStage.setFullScreen(!AppConfig.DebugMode);
         primaryStage.show();
     }
 

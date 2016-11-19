@@ -22,11 +22,12 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class AppConfig {
 	
 	public static final double FRAME_CONTAINER_REDUCE_PRECENTAGE = 0.17;
-	public static final String DEBUG_SYMBOL = "debug";
 	public static final String ENV_SYMBOL = "GCSMode";
+	
+	public static boolean DebugMode = false;
+	public static final String DEBUG_SYMBOL = "debug";
 
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-	public static boolean DebugMode = false;
 	
 	@Bean
 	public Pane frameContainer() {

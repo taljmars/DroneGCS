@@ -64,7 +64,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	@Resource(name = "drone")
 	public Drone drone;
 
-	public PanelToolBarSatellite() {		
+	public PanelToolBarSatellite() {	
 		btnMap = new Button("Map");
         getChildren().add(btnMap);
         btnMap.setOnAction(this);
@@ -110,6 +110,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         btnSetMode = new Button("Set Mode");
         btnSetMode.setOnAction(this);
         pnlMode.getChildren().add(btnSetMode);
+        
         getChildren().add(pnlMode);
         
         lblCriticalMsg = new TextField("");

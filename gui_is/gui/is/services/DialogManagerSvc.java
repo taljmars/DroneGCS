@@ -42,10 +42,10 @@ public class DialogManagerSvc {
 		alert.setContentText(text);
 		
 		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get().getButtonData() == ButtonData.YES)
-			return 1;
+		if (result.get().getButtonData() == ButtonData.OK_DONE)
+			return YES_OPTION;
 		else
-			return 0;
+			return NO_OPTION;
 	}
 
 	public boolean showAlertMessageDialog(String msg) {

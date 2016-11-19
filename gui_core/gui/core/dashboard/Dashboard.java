@@ -1,6 +1,7 @@
 package gui.core.dashboard;
 
 import gui.core.internalPanels.*;
+import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.springConfig.AppConfig;
 import mavlink.core.gcs.GCSHeartbeat;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisherSvc;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
@@ -19,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -32,7 +35,7 @@ import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 
-public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener {
+public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent> {
 	
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
@@ -78,6 +81,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@Resource(name = "textNotificationPublisherSvc")
 	@NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
+	
+	@Resource(name = "opGCSTerminationHandler")
+	private OpGCSTerminationHandler opGCSTerminationHandler;
 	
 	@Resource(name = "gcsHeartbeat")
 	@NotNull(message = "Internal Error: Failed to get HB mechanism")
@@ -307,5 +313,19 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	public void setViewManager(Stage stage) {
 		this.viewManager = stage;
 		viewManager.setTitle(APP_TITLE);
+		viewManager.setOnCloseRequest(this);
+	}
+
+	@Override
+	public void handle(WindowEvent event) {
+		if (event.getEventType() == WindowEvent.WINDOW_CLOSE_REQUEST) {
+			try {
+				opGCSTerminationHandler.go();
+				event.consume();
+			} 
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

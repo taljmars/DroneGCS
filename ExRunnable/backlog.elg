@@ -22,40 +22,17 @@ Param: '_INIT_THR', Value: '1100'
 All parameter loaded, configuration was successfully loaded
 Reseting RC Set
 mavlink.core.flightControlers.KeyBoardControlerImpl$1 Stabilizer Thread started
-C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524//log.html
+C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115//log.html
 mavlink.is.drone.profiles.Parameters Setting new paramter listener class gui.core.internalPanels.PanelButtonBoxSatellite
 class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.mapTree.OperationalViewTree
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\actualPWM.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\signals.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\HeightAndSpeed.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_061524\battery.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\actualPWM.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\signals.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\HeightAndSpeed.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\battery.csv'
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 Sign Dashboard as drone listener
 class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.dashboard.Dashboard
 mavlink.is.drone.profiles.Parameters Setting new paramter listener class gui.core.dashboard.Dashboard
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-mavlink.core.flightControlers.KeyBoardControlerImpl Updating RC Set
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB

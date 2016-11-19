@@ -2,12 +2,11 @@ package gui.core.internalPanels;
 
 import java.util.List;
 
+import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.operations.OpArmQuad;
 import gui.core.operations.OpChangeFlightControllerQuad;
 import gui.core.operations.OpStartMissionQuad;
 import gui.core.operations.OpTakeoffQuad;
-import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.COMMAND;
 import gui.is.services.DialogManagerSvc;
 import gui.is.services.EventPublisherSvc;
 import gui.is.services.LoggerDisplayerSvc;
@@ -85,6 +84,9 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Resource(name = "opArmQuad")
 	private OpArmQuad opArmQuad;
 	
+	@Resource(name = "opGCSTerminationHandler")
+	private OpGCSTerminationHandler opGCSTerminationHandler;
+	
 	@Resource(name = "opTakeoffQuad")
 	private OpTakeoffQuad opTakeoffQuad;
 	
@@ -120,19 +122,13 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		btnExit = new Button("Exit");
 		btnExit.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnExit.setOnAction( e -> {
-        	if (DialogManagerSvc.YES_OPTION == dialogManagerSvc.showConfirmDialog("Are you sure you wand to exit?", "")) {
-        		System.out.println("Bye Bye");
-        		logger.LogGeneralMessege("");
-        		logger.LogGeneralMessege("Summary:");
-        		logger.LogGeneralMessege("--------");
-        		logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
-        		logger.LogGeneralMessege("Max Height: " + drone.getAltitude().getMaxAltitude() + "m");
-        		logger.LogGeneralMessege("Max Speed: " + drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond() + "m/s (" + ((int) (drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond()*3.6)) + "km/h)");
-        		logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
-        		eventPublisherSvc.publish(new GuiEvent(COMMAND.EXIT, this));
-				logger.close();
-				System.exit(0);
-        	}
+        	try {
+				opGCSTerminationHandler.go();
+			} 
+			catch (InterruptedException ex) {
+				loggerDisplayerSvc.logError("Failed to terminate GCS");
+				ex.printStackTrace();
+			}
 		});
         getChildren().add(btnExit);
         
