@@ -1,5 +1,10 @@
 package gui.core.dashboard;
 
+import gui.core.internalFrames.InternalFrameActualPWM;
+import gui.core.internalFrames.InternalFrameBattery;
+import gui.core.internalFrames.InternalFrameHeightAndSpeed;
+import gui.core.internalFrames.InternalFrameMap;
+import gui.core.internalFrames.InternalFrameSignals;
 import gui.core.internalPanels.*;
 import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.springConfig.AppConfig;
@@ -7,16 +12,25 @@ import mavlink.core.gcs.GCSHeartbeat;
 
 import java.util.List;
 
+import gui.is.events.GuiEvent;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisherSvc;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -52,7 +66,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@Resource(name="frameContainer")
 	@NotNull(message = "Internal Error: Missing panel")
-	private Pane frameContainer;
+	private HBox frameContainer;
+	
+	private SimpleIntegerProperty frameAmount;
 	
 	@Resource(name="areaLogBox")
 	@NotNull(message = "Internal Error: Missing tab")
@@ -98,6 +114,26 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@NotNull(message = "Internal Error: Mission view manager")
 	private Stage viewManager;
 	
+	
+	// Internal Frame
+	
+	@Resource(name = "internalFrameMap")
+	private InternalFrameMap internalFrameMap;
+	
+	@Resource(name = "internalFrameActualPWM")
+	private InternalFrameActualPWM internalFrameActualPWM;
+	
+	@Resource(name = "internalFrameSignals")
+	private InternalFrameSignals internalFrameSignals;
+	
+	@Resource(name = "internalFrameHeightAndSpeed")
+	private InternalFrameHeightAndSpeed internalFrameHeightAndSpeed;
+	
+	@Resource(name = "internalFrameBattery")
+	private InternalFrameBattery internalFrameBattery;
+	
+	private BorderPane frame;
+	
 	private static int called;
 	@PostConstruct
 	private void init() {
@@ -121,13 +157,61 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	}
 
 	private void initializeGui() {
-		BorderPane frame = new BorderPane();
+		frameAmount = new SimpleIntegerProperty(2);
+		frameAmount.addListener( (observable, oldValue, newValue) -> {
+			for (int i = 0 ; i < oldValue.intValue() - newValue.intValue() ; i++)
+				frameContainer.getChildren().remove(newValue.intValue() - i);
+		});
+		
+		frame = new BorderPane();
 		
 		// North Panel
 		frame.setTop(tbToolBar);
 
 		// Central Panel
 		frame.setCenter(frameContainer);
+		
+		frameContainer.setOnDragOver( (event) -> {
+		        /* data is dragged over the target */
+		        /* accept it only if it is not dragged from the same node 
+		         * and if it has a string data */
+		        if (event.getGestureSource() != frameContainer && event.getDragboard().hasString()) {
+		            /* allow for both copying and moving, whatever user chooses */
+		            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+		        }
+		        
+		        event.consume();
+		        frameContainer.setStyle("-fx-border-color: red; -fx-border-width: 2; -fx-background-color: #C6C6C6; -fx-border-style: solid;");
+		});
+		
+		frameContainer.setOnDragExited( (event) -> frameContainer.setStyle(""));
+		
+		frameContainer.setOnDragDropped( (event) -> {
+		        /* data dropped */
+		        /* if there is a string data on dragboard, read it and use it */
+		    	Dragboard db = event.getDragboard();
+		    	boolean success = false;
+		    	if (db.hasString()) {
+		    		loggerDisplayerSvc.logGeneral(db.getString());
+		    		success = true;
+		    	}
+		    	
+		    	if (event.getGestureSource() instanceof Button) {
+		    		Button button = (Button) event.getGestureSource();
+		    		int index = GetFrameIndexInsideContainer(event.getScreenX());
+		    		handleFrameContainerRequest((String) button.getUserData(), index);
+		    		/* let the source know whether the string was successfully transferred and used */
+			    	event.setDropCompleted(success);
+		    	}
+		    	else {
+		    		event.setDropCompleted(false);
+		    	}
+		        	
+		    	
+
+		    	event.consume();
+		});
+		frameContainer.setOnDragEntered( (event) -> event.consume());
 
 		// South Panel
 		VBox southPanel = new VBox();
@@ -168,11 +252,26 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		eastPanel.getChildren().add(tbTelemtry);
         
 		getChildren().add(frame);
-	}
-
-	private void VerifyBattery(double bat) {
+		
+		handleFrameContainerRequest("Map", 0);
+		
 	}
 	
+	private int GetFrameIndexInsideContainer(double intersectedPoint) {
+		if (frameAmount.get() == 1)
+			return 0;
+		
+		ObservableList<Node> children = frameContainer.getChildren();
+		if (children.isEmpty())
+			return 0;
+		
+		double size = frameContainer.getWidth();
+		double positionRelativeToFrameContainerSize = intersectedPoint - frameContainer.getLayoutX();
+		
+		int index = (int) Math.round((positionRelativeToFrameContainerSize / size) * (frameAmount.get() - 1));
+		return index;
+	}
+
 	private void SetDistanceToWaypoint(double d) {
 		if (drone.getState().getMode().equals(ApmModes.ROTOR_GUIDED)) {
 			// if (drone.getGuidedPoint().isIdle()) {
@@ -224,9 +323,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			return;
 		case ORIENTATION:
 			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP().valueInMeters());
-			return;
-		case BATTERY:
-			VerifyBattery(drone.getBattery().getBattRemain());
 			return;
 		case MODE:
 			viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
@@ -328,4 +424,52 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			}
 		}
 	}
+	
+	public void handleFrameContainerRequest(String cmd, int index) {
+		if (cmd.isEmpty())
+			return;
+		
+		ObservableList<Node> children = frameContainer.getChildren();
+		final Node selectedPane;
+		
+		if (cmd.equals("Map"))
+			selectedPane = internalFrameMap;
+		else if (cmd.equals("Actual PWM"))
+			selectedPane = internalFrameActualPWM;
+		else if (cmd.equals("Signals"))
+			selectedPane = internalFrameSignals;
+		else if (cmd.equals("Height And Speed"))
+			selectedPane = internalFrameHeightAndSpeed;
+		else if (cmd.equals("Battery"))
+			selectedPane = internalFrameBattery;
+		else 
+			selectedPane = null;
+				
+		if (selectedPane != null) {
+			Platform.runLater(() -> {
+				if (children.contains(selectedPane) || frameAmount.get() == 1)
+					children.clear();
+				
+				if (children.size() != frameAmount.get())
+					children.add(selectedPane);
+				else {
+					children.remove(index);
+					children.add(index, selectedPane);
+				}
+				((Region) selectedPane).setPrefHeight(frameContainer.getHeight());
+				((Region) selectedPane).setPrefWidth(frameContainer.getWidth());
+			});
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	@EventListener
+	public void onApplicationEvent(GuiEvent command) {
+		switch (command.getCommand()) {
+		case SPLIT_FRAMECONTAINER:
+			frameAmount.set((Integer) command.getSource());
+			break;
+		}
+	}
+
 }

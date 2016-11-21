@@ -1,5 +1,6 @@
 package gui.core.internalPanels;
 
+import java.net.URL;
 import java.util.List;
 
 import gui.core.operations.OpGCSTerminationHandler;
@@ -12,11 +13,15 @@ import gui.is.services.EventPublisherSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 
 import javax.annotation.PostConstruct;
@@ -112,29 +117,23 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
+	@SuppressWarnings("deprecation")
 	public PanelButtonBoxSatellite () {		
 		setVgap(2);
 		setHgap(2);
 		setPrefColumns(2);
 		double preferedButtonWidth = 100;
 		double preferedButtonHeight = 25;
-		
-		btnExit = new Button("Exit");
-		btnExit.setPrefSize(preferedButtonWidth, preferedButtonHeight);
-        btnExit.setOnAction( e -> {
-        	try {
-				opGCSTerminationHandler.go();
-			} 
-			catch (InterruptedException ex) {
-				loggerDisplayerSvc.logError("Failed to terminate GCS");
-				ex.printStackTrace();
-			}
-		});
-        getChildren().add(btnExit);
         
-        btnConnect = new Button("Connect");
+        btnConnect = new Button();//new Button("Connect");
+        SetImageButton(btnConnect, this.getClass().getResource("/guiImages/Disconnected.png"), "Connect");
         btnConnect.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnConnect.setOnAction( e -> {
+        	if (connected) {
+        		loggerDisplayerSvc.logGeneral("Close Connection");
+        		drone.getMavClient().disconnect();
+        	}
+        	
         	Object[] ports = serialConnection.listPorts();
         	if (ports.length == 0) {
         		dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
@@ -147,19 +146,14 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         		serialConnection.setPortName(port_name);
         		serialConnection.setBaud(baud);
         		
-        		if (connected) {
-            		loggerDisplayerSvc.logGeneral("Close Connection");
-            		drone.getMavClient().disconnect();
-            	}
-            	else {
-    		    	loggerDisplayerSvc.logGeneral("Open Connection");
-    		    	drone.getMavClient().connect();
-            	}
+    		    loggerDisplayerSvc.logGeneral("Open Connection");
+    		    drone.getMavClient().connect();
         	}
 		});
         getChildren().add(btnConnect);
         
-        btnSyncDrone = new Button("Sync Drone");
+        btnSyncDrone = new Button();//new Button("Sync Drone");
+        SetImageButton(btnSyncDrone, this.getClass().getResource("/guiImages/Synchronize.png"), "Sync Drone");
         btnSyncDrone.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnSyncDrone.setDisable(true);
         btnSyncDrone.setOnAction( e -> {
@@ -169,25 +163,31 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         });
         getChildren().add(btnSyncDrone);
         
-        btnFly = new Button("Controler: " + FlightControler.REMOTE.name());
+        btnFly = new Button();
+        SetImageButton(btnFly, this.getClass().getResource("/guiImages/Remote.png"), FlightControler.REMOTE.name());
         btnFly.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnFly.setOnAction( e -> {
         	try {
         		String btnFlyText = btnFly.getText();
+        		String imagePath = ((ImageView) (btnFly.getGraphic())).getImage().impl_getUrl();
         		opChangeFlightControllerQuad.setNext(null);
         		String[] options = {FlightControler.KEYBOARD.name(), FlightControler.REMOTE.name()};
             	int n = dialogManagerSvc.showOptionsDialog("Choose Controler", "", null,options, options[1]);
             	if (n == 0) {
             		opChangeFlightControllerQuad.setFlightMode(FlightControler.KEYBOARD);
-            		btnFlyText = "Controler: " + FlightControler.KEYBOARD.name();
+            		btnFlyText = FlightControler.KEYBOARD.name();
+            		imagePath = "/guiImages/Keyboard.png";
             	}
             	if (n == 1) {
             		opChangeFlightControllerQuad.setFlightMode(FlightControler.REMOTE);
-            		btnFlyText = "Controler: " + FlightControler.REMOTE.name();
+            		btnFlyText = FlightControler.REMOTE.name();
+            		imagePath = "/guiImages/Remote.png";
+            		
             	}
 				if (opChangeFlightControllerQuad.go()) {
 					loggerDisplayerSvc.logGeneral("Start Fly '" + options[n] + "'");
 					btnFly.setText(btnFlyText);
+					SetImageButton(btnFly, this.getClass().getResource(imagePath), btnFlyText);
 				}
 				
 			} catch (Exception e1) {
@@ -197,7 +197,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         });
         getChildren().add(btnFly);        
         
-        btnArm = new ToggleButton("Arm Motors");
+        btnArm = new ToggleButton();//new ToggleButton("Arm Motors");
+        SetImageToggleButton(btnArm, this.getClass().getResource("/guiImages/Arm.png"), "Arm");
         btnArm.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnArm.setOnAction( e -> {
         	if (btnArm.isSelected()) {
@@ -219,17 +220,20 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         });
         getChildren().add(btnArm);
         
-        btnLandRTL = new Button("Land/RTL");
+        btnLandRTL = new Button();//new Button("Land/RTL");
+        SetImageButton(btnLandRTL, this.getClass().getResource("/guiImages/Land.png"), "Land/RTL");
         btnLandRTL.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnLandRTL.setOnAction( e -> TryLand());
         getChildren().add(btnLandRTL);
         
-        btnTakeoff = new Button("Takeoff");
+        btnTakeoff = new Button();//new Button("Takeoff");
+        SetImageButton(btnTakeoff, this.getClass().getResource("/guiImages/Takeoff.png"), "Takeoff");
         btnTakeoff.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnTakeoff.setOnAction(this);
         getChildren().add(btnTakeoff);
         
-        btnFollowBeaconShow = new Button("Show Beacon");
+        btnFollowBeaconShow = new Button();//new Button("Show Beacon");
+        SetImageButton(btnFollowBeaconShow, this.getClass().getResource("/guiImages/BeaconOn.png"), "Show Beacon");
         btnFollowBeaconShow.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnFollowBeaconShow.setOnAction( e -> {        		
         	Task<Void> task = new Task<Void>() {
@@ -244,12 +248,14 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         });
         getChildren().add(btnFollowBeaconShow);
         
-        btnFollowBeaconStart = new ToggleButton("Lock on Beacon");
+        btnFollowBeaconStart = new ToggleButton();//new ToggleButton("Lock on Beacon");
+        SetImageToggleButton(btnFollowBeaconStart, this.getClass().getResource("/guiImages/LockPostion.png"), "Follow Beacon");
         btnFollowBeaconStart.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnFollowBeaconStart.setOnAction(this);
         getChildren().add(btnFollowBeaconStart);
         
-        btnGCSShow = new Button("Get GCS Position");
+        btnGCSShow = new Button();
+        SetImageButton(btnGCSShow, this.getClass().getResource("/guiImages/GCSPosition.png"), "GCS Position");
         btnGCSShow.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnGCSShow.setOnAction( e -> {
         	Task<Void> task = new Task<Void>() {
@@ -271,23 +277,40 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         });
         getChildren().add(btnGCSShow);
         
-        btnHoldPosition = new Button("Hold Position");
+        btnHoldPosition = new Button();
+        SetImageButton(btnHoldPosition, this.getClass().getResource("/guiImages/HoldPosition.png"), "Hold Position");
         btnHoldPosition.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnHoldPosition.setOnAction( e -> TryPoshold());
         btnHoldPosition.setDisable(true);
         getChildren().add(btnHoldPosition);
         
-        btnStartMission = new ToggleButton("Start Mission");
+        btnStartMission = new ToggleButton();
+        SetImageToggleButton(btnStartMission, this.getClass().getResource("/guiImages/Mission2.png"), "Start Mission");
         btnStartMission.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnStartMission.setOnAction(this);
         btnStartMission.setDisable(true);
         getChildren().add(btnStartMission);
         
-        btnStartPerimeter = new ToggleButton("Start Perimeter");
+        btnStartPerimeter = new ToggleButton();
+        SetImageToggleButton(btnStartPerimeter, this.getClass().getResource("/guiImages/Perimeter.png"), "Start Perimeter");
         btnStartPerimeter.setPrefSize(preferedButtonWidth, preferedButtonHeight);
         btnStartPerimeter.setOnAction( e -> drone.getPerimeter().setEnforce(btnStartPerimeter.isSelected()));
         btnStartPerimeter.setDisable(true);
         getChildren().add(btnStartPerimeter);
+        
+        btnExit = new Button();//new Button("Exit");
+		SetImageButton(btnExit, this.getClass().getResource("/guiImages/Exit.png"), "Exit");
+		btnExit.setPrefSize(preferedButtonWidth, preferedButtonHeight);
+        btnExit.setOnAction( e -> {
+        	try {
+				opGCSTerminationHandler.go();
+			} 
+			catch (InterruptedException ex) {
+				loggerDisplayerSvc.logError("Failed to terminate GCS");
+				ex.printStackTrace();
+			}
+		});
+        getChildren().add(btnExit);
         
 	}
 	
@@ -361,12 +384,14 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 				loggerDisplayerSvc.logGeneral("Connected");
 				connected = true;
 				btnConnect.setText("Disconnect");
+				SetImageButton(btnConnect, this.getClass().getResource("/guiImages/Connected.png"), "Disconnect");
 				btnSyncDrone.setDisable(!connected);
 				return;
 			case DISCONNECTED:
 				loggerDisplayerSvc.logGeneral("Disonnected");
 				connected = false;
 				btnConnect.setText("Connect");
+				SetImageButton(btnConnect, this.getClass().getResource("/guiImages/Disconnected.png"), "Connect");
 				btnSyncDrone.setDisable(!connected);
 				setButtonControl(connected);
 				return;
@@ -522,5 +547,33 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         	}
 		}
 	}
+	
+	private void SetImageButton(Button button, URL url, String userDate) {
+		button.setText(userDate);
+		Image img = new Image(url.toString());
+		ImageView iview = new ImageView(img);
+		iview.setFitHeight(20);
+		iview.setFitWidth(20);
+		button.setGraphic(iview);
+		button.setUserData(userDate);
+	}
+	
+	private ToggleButton SetImageToggleButton(ToggleButton button, URL url, String userDate) {
+		button.setText(userDate);
+		Image img = new Image(url.toString());
+		ImageView iview = new ImageView(img);
+		iview.setFitHeight(20);
+		iview.setFitWidth(20);
+		button.setGraphic(iview);
+		button.armedProperty().addListener(new ChangeListener<Boolean> () {
 
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				loggerDisplayerSvc.logError(newValue + "");
+			}
+			
+		});
+		button.setUserData(userDate);
+		return button;
+	}
 }

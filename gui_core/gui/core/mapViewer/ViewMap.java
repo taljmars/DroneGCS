@@ -121,19 +121,19 @@ public abstract class ViewMap extends Pane {
 	protected transient TileController tileController;
 
 	private SimpleIntegerProperty MapX;
-	public void setMapX( int val) { this.MapX.set( val); }
+	//public void setMapX( int val) { this.MapX.set( val); }
 	public int getMapX() { return this.MapX.get(); }
 
 	private SimpleIntegerProperty MapY;
-	public void setMapY( int val) { this.MapY.set( val); }
+	//public void setMapY( int val) { this.MapY.set( val); }
 	public int getMapY() { return this.MapY.get(); }
 
 	private SimpleIntegerProperty MapWidth;
-	public void setMapWidth(double val) { this.MapWidth.set( (int)val); }
+	//public void setMapWidth(double val) { System.err.println("setMapWidth"); this.MapWidth.set( (int)val); }
 	public int getMapWidth() { return this.MapWidth.get(); }
 
 	private SimpleIntegerProperty MapHeight;
-	public void setMapHeight(double val) { this.MapHeight.set( (int)val); }
+	//public void setMapHeight(double val) { this.MapHeight.set( (int)val); }
 	public int getMapHeight() { return this.MapHeight.get(); }
 
 	protected SimpleBooleanProperty mapPolygonsVisible = new SimpleBooleanProperty( true );
@@ -206,8 +206,8 @@ public abstract class ViewMap extends Pane {
 		this.MapWidth = new SimpleIntegerProperty(width);
 		this.MapWidth.addListener( (observable, oldValue, newValue) -> {
 			int val = (int) newValue;
-			RootPane.setMinWidth(val);
-			RootPane.setMaxWidth(val);
+			//RootPane.setMinWidth(val);
+			//RootPane.setMaxWidth(val);
 			RootPane.setPrefWidth(val);
 			ClipMask.setWidth(val);
 			CursorLocationText.setLayoutX( val / 2 );
@@ -353,7 +353,7 @@ public abstract class ViewMap extends Pane {
 
 		setTileSource(mapTilesSources[0]);
 		setMonochromeMode(false);
-		setMapBounds( 0, 0, 800, 600 );
+		//setMapBounds( 0, 0, 800, 600 );
 	}
 
 	public Pane getMapTopPane() {
@@ -470,12 +470,12 @@ public abstract class ViewMap extends Pane {
 
 		zoomSlider.valueProperty().addListener( (ov, old_val, new_val) -> setZoom(new_val.intValue()));
 
-		Image imagePlus = new Image("gui/core/mapTileControl/images/plus.png");
+		Image imagePlus = new Image(this.getClass().getResource("/mapImages/plus.png").toString());
 		zoomInButton = new Button();
 		zoomInButton.setGraphic(new ImageView(imagePlus));
 		zoomInButton.setOnAction( e -> {if( IgnoreRepaint == false ) zoomIn();});
 
-		Image imageMinus = new Image("gui/core/mapTileControl/images/minus.png");
+		Image imageMinus = new Image(this.getClass().getResource("/mapImages/minus.png").toString());
 		zoomOutButton = new Button();
 		zoomOutButton.setGraphic(new ImageView(imageMinus));
 		zoomOutButton.setOnAction(e -> {if( IgnoreRepaint == false ) zoomOut();});

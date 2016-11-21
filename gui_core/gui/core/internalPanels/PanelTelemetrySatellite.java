@@ -1,6 +1,7 @@
 package gui.core.internalPanels;
 
 import gui.is.services.LoggerDisplayerSvc;
+import gui.is.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -12,6 +13,8 @@ import javafx.scene.text.FontWeight;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -44,13 +47,15 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 
 	private Label keepAliveLabel;
 	
+	@Resource(name = "textNotificationPublisherSvc")
+	@NotNull(message = "Internal Error: Failed to get text publisher")
+	private TextNotificationPublisherSvc textNotificationPublisherSvc;
+	
 	@Resource(name = "loggerDisplayerSvc")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
 	public Drone drone;
-	
-	
 	
 	private static int called;
 	@PostConstruct
@@ -204,8 +209,37 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 		lblFlightDistanceVal.setText(String.format("%.1f", distanceTraveled) + "m");
 	}
 	
-	public void SetLblBattery(double bat) {
+	public void SetBattery(double bat) {
 		lblBatteryVal.setText((bat < 0 ? 0 : bat) + "%");
+		
+		if (drone.getState().isArmed()) {
+			if (bat == 50 || bat == 49) {
+				textNotificationPublisherSvc.publish("Battery at 50%");
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+			
+			if (bat == 25 || bat == 24) {
+				textNotificationPublisherSvc.publish("Battery at 25%");
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				lblBatteryVal.setStyle("-fx-background-color: #red");
+				return;
+			}
+			
+			if (bat == 10 || bat == 9) {
+				textNotificationPublisherSvc.publish("Critical: battery below 10%");
+				lblBatteryVal.setStyle("-fx-background-color: #red");
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+			
+			if (bat < 10) {
+				java.awt.Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+		}
 	}
 	
 	public void setRCActual(int e1, int e2, int e3, int e4) {
@@ -254,7 +288,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 					loggerDisplayerSvc.logError("Quad Disconnected");
 					SetLblHeight(0);
 					SetSignal(0);
-					SetLblBattery(0);
+					SetBattery(0);
 					SetFlightModeLabel("Unknown");
 					SetHeartBeat(false);
 					return;
@@ -274,7 +308,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 					setFlightTime(drone.getState().getFlightTime());
 					return;
 				case BATTERY:
-					SetLblBattery(drone.getBattery().getBattRemain());
+					SetBattery(drone.getBattery().getBattRemain());
 					return;
 				case MODE:
 					SetFlightModeLabel(drone.getState().getMode().getName());

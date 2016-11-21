@@ -3,8 +3,12 @@ package gui.core.internalFrames;
 import gui.core.mapTree.OperationalViewTree;
 import gui.core.mapViewer.OperationalViewMap;
 import gui.core.springConfig.AppConfig;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.DragEvent;
 import javafx.stage.Screen;
 import tools.validations.RuntimeValidator;
 
@@ -20,7 +24,7 @@ import org.springframework.stereotype.Component;
 @ComponentScan("gui.core.mapTree")
 @ComponentScan("gui.is.services")
 @Component("internalFrameMap")
-public class InternalFrameMap extends Pane {
+public class InternalFrameMap extends SplitPane implements ChangeListener<Number>{
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
@@ -45,24 +49,28 @@ public class InternalFrameMap extends Pane {
 		
 		if (!validator.validate(tree))
 			throw new RuntimeException("Failed to validate tree view");
+	
+		getItems().addAll(tree, map);
 		
-		BorderPane pane = new BorderPane();
-		getChildren().add(pane);
-
-		pane.setLeft(tree);
-		setPrefSize(map.getWidth(), map.getHeight());
-		pane.setCenter(map);
-
-		Pane panelTop = new Pane();
-		Pane panelBottom = new Pane();
-		pane.setTop(panelTop);
-		pane.setBottom(panelBottom);		
+		tree.widthProperty().addListener(this);
+		tree.setMaxWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
+		tree.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
+		
+		setOnDragDropped(myDragEvent);
 	}
 	
-	public void refreshGui() {
-		// TODO: Fix this hack, need to calculate the width properly
-		tree.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
-		map.setMapBounds( 0, 0, (int) (getPrefWidth() - (Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE)), (int) getPrefHeight());
-		
+	@Override
+	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+		Platform.runLater(() -> map.setMapBounds(0, 0,(int) ( getPrefWidth() - newValue.intValue()), (int) getPrefHeight()));
 	}
+	
+	EventHandler<DragEvent> myDragEvent = new EventHandler<DragEvent>() {
+
+		@Override
+		public void handle(DragEvent event) {
+			System.err.println(event.toString());
+		}
+	};
+	
+	
 }

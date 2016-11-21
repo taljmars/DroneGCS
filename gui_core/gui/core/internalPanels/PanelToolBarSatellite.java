@@ -1,20 +1,23 @@
 package gui.core.internalPanels;
 
-import gui.core.internalFrames.InternalFrameActualPWM;
-import gui.core.internalFrames.InternalFrameBattery;
-import gui.core.internalFrames.InternalFrameHeightAndSpeed;
-import gui.core.internalFrames.InternalFrameMap;
-import gui.core.internalFrames.InternalFrameSignals;
+import gui.is.events.GuiEvent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +28,7 @@ import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @ComponentScan("gui.core.internalFrames")
@@ -34,6 +38,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 763689884103713162L;
 	
+	private Button btnStartCamera;
 	private Button btnSetMode;
 	private Button btnMap;
 	private Button btnActualPWM;
@@ -42,48 +47,27 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	private Button btnHeightAndSpeed;
 	private ComboBox<ApmModes> flightModesCombo;
 	private TextField lblCriticalMsg;
+	
+	private Process cameraExternalProcess;
 
-	@Resource(name = "frameContainer")
-	private Pane frameContainer;
-	
-	@Resource(name = "internalFrameMap")
-	private InternalFrameMap internalFrameMap;
-	
-	@Resource(name = "internalFrameActualPWM")
-	private InternalFrameActualPWM internalFrameActualPWM;
-	
-	@Resource(name = "internalFrameSignals")
-	private InternalFrameSignals internalFrameSignals;
-	
-	@Resource(name = "internalFrameHeightAndSpeed")
-	private InternalFrameHeightAndSpeed internalFrameHeightAndSpeed;
-	
-	@Resource(name = "internalFrameBattery")
-	private InternalFrameBattery internalFrameBattery;
-	
 	@Resource(name = "drone")
 	public Drone drone;
 
 	public PanelToolBarSatellite() {	
-		btnMap = new Button("Map");
+		btnMap = CreateDragableButton(this.getClass().getResource("/guiImages/map.png"), "Map");
         getChildren().add(btnMap);
-        btnMap.setOnAction(this);
         
-        btnActualPWM = new Button("Actual PWM");
+        btnActualPWM = CreateDragableButton(this.getClass().getResource("/guiImages/motor.png"), "Actual PWM");
         getChildren().add(btnActualPWM);
-        btnActualPWM.setOnAction(this);
         
-        btnSignal = new Button("Signals");
+        btnSignal = CreateDragableButton(this.getClass().getResource("/guiImages/signal.png"), "Signals");
         getChildren().add(btnSignal);
-        btnSignal.setOnAction(this);
         
-        btnHeightAndSpeed = new Button("Height And Speed");
+        btnHeightAndSpeed = CreateDragableButton(this.getClass().getResource("/guiImages/hieght.png"), "Height And Speed");
         getChildren().add(btnHeightAndSpeed);
-        btnHeightAndSpeed.setOnAction(this);
         
-        btnBattery = new Button("Battery");
+        btnBattery = CreateDragableButton(this.getClass().getResource("/guiImages/battery.png"), "Battery");
         getChildren().add(btnBattery);
-        btnBattery.setOnAction(this);
         
         //btnMap.setSelected(true);
         
@@ -106,10 +90,15 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         
         flightModesCombo = new ComboBox<ApmModes>();
         flightModesCombo.getItems().addAll(new Vector<ApmModes>(flightModes));
+        flightModesCombo.setPrefHeight(30 + 8);
         pnlMode.getChildren().add(flightModesCombo);
-        btnSetMode = new Button("Set Mode");
+        btnSetMode = CreateImageButton(this.getClass().getResource("/guiImages/UpdateQuad.png"), "Set Mode");
         btnSetMode.setOnAction(this);
         pnlMode.getChildren().add(btnSetMode);
+        
+        btnStartCamera = CreateImageButton(this.getClass().getResource("/guiImages/Camera.png"), "Start Camera");
+        btnStartCamera.setOnAction(this);
+        pnlMode.getChildren().add(btnStartCamera);
         
         getChildren().add(pnlMode);
         
@@ -119,9 +108,49 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         getChildren().add(lblCriticalMsg);
 	}
 	
+	private Button CreateImageButton(URL url, String userDate) {
+		Button button = new Button();
+		Image img = new Image(url.toString());
+		ImageView iview = new ImageView(img);
+		iview.setFitHeight(30);
+		iview.setFitWidth(30);
+		button.setGraphic(iview);
+		return button;
+	}
+
+	private Button CreateDragableButton(URL url, String userDate) {
+		Button button = CreateImageButton(url, userDate);
+		button.setUserData(userDate);
+		
+		ImageView iview = (ImageView) button.getGraphic();
+        
+		button.setOnDragDetected( (event) -> {
+        	/* drag was detected, start a drag-and-drop gesture*/
+        	/* allow any transfer mode */
+        	Dragboard db = button.startDragAndDrop(TransferMode.ANY);
+        	
+        	ColorAdjust blackout = new ColorAdjust();
+            blackout.setSaturation(0.5);
+            iview.setEffect(blackout);
+        	        
+        	/* Put a string on a dragboard */
+        	ClipboardContent content = new ClipboardContent();
+        	content.putString(button.getUserData().toString());
+        	db.setContent(content);
+        	event.consume();
+        });
+		
+		button.setOnDragDone( (event) -> {
+			ColorAdjust blackout = new ColorAdjust();
+            blackout.setContrast(0);
+            iview.setEffect(blackout);
+		});
+		
+		return button;
+	}
+	
 	@PostConstruct
 	public void init() {
-		btnMap.fire();
         drone.addDroneListener(this);
 	}
 
@@ -152,60 +181,32 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 
 	@Override
 	public void handle(ActionEvent e) {
-		if (e.getSource() == btnMap) {
-			Platform.runLater(() -> {
-				frameContainer.getChildren().clear();
-		        frameContainer.getChildren().add(internalFrameMap);
-		        internalFrameMap.setPrefHeight(frameContainer.getHeight());
-		        internalFrameMap.setPrefWidth(frameContainer.getWidth());
-		        internalFrameMap.refreshGui();
-			});
-			return;
-		}
-
-		if (e.getSource() == btnActualPWM) {
-			Platform.runLater(() -> {
-				frameContainer.getChildren().clear();
-		        frameContainer.getChildren().add(internalFrameActualPWM);
-		        internalFrameActualPWM.setPrefHeight(frameContainer.getHeight());
-		        internalFrameActualPWM.setPrefWidth(frameContainer.getWidth());
-			});
-			return;
-		}
-		
-		if (e.getSource() == btnSignal) {
-			Platform.runLater(() -> {
-				frameContainer.getChildren().clear();
-		        frameContainer.getChildren().add(internalFrameSignals);
-		        internalFrameSignals.setPrefHeight(frameContainer.getHeight());
-		        internalFrameSignals.setPrefWidth(frameContainer.getWidth());
-			});
-			return;
-		}
-		
-		if (e.getSource() == btnHeightAndSpeed) {
-			Platform.runLater(() -> {
-				frameContainer.getChildren().clear();
-		        frameContainer.getChildren().add(internalFrameHeightAndSpeed);
-		        internalFrameHeightAndSpeed.setPrefHeight(frameContainer.getHeight());
-		        internalFrameHeightAndSpeed.setPrefWidth(frameContainer.getWidth());
-			});
-			return;
-		}
-		
-		if (e.getSource() == btnBattery) {
-			Platform.runLater(() -> {
-				frameContainer.getChildren().clear();
-		        frameContainer.getChildren().add(internalFrameBattery);
-		        internalFrameBattery.setPrefHeight(frameContainer.getHeight());
-		        internalFrameBattery.setPrefWidth(frameContainer.getWidth());
-			});
-			return;
-		}
-		
 		if (e.getSource() == btnSetMode) {
 			drone.getState().changeFlightMode((ApmModes) flightModesCombo.getValue());
 			return;
+		}
+		
+		if (e.getSource() == btnStartCamera) {
+			try {
+				cameraExternalProcess = Runtime.getRuntime().exec("\"C:/Program Files (x86)/Samsung/SideSync4/SideSync.exe\"");
+				cameraExternalProcess.waitFor();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	@EventListener
+	public void onApplicationEvent(GuiEvent command) {
+		switch (command.getCommand()) {
+		case EXIT:
+			if (cameraExternalProcess != null) 
+				cameraExternalProcess.destroy();;
+			break;
 		}
 	}
 

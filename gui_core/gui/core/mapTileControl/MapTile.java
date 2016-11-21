@@ -62,7 +62,7 @@ public class MapTile {
 		}
         
         if (this.tileLocation.startsWith("http")) {
-            Image delayed_img = new Image("gui/core/mapTileControl/images/hourglass.png");
+            Image delayed_img = new Image(this.getClass().getResource("/mapImages/hourglass.png").toString());
             this.ImgView.setImage( delayed_img );
             this.ImgView.setFitWidth(256);
             this.ImgView.setFitHeight(256);
@@ -151,7 +151,7 @@ public class MapTile {
 				if (file.exists())
 	        		loadImage(file.toURI().toString());
 	        	else 
-	        		loadImage("gui/core/mapTileControl/images/error.png");
+	        		loadImage(this.getClass().getResource("/mapImages/error.png").toString());
 			}
         	catch (URISyntaxException e) {
 				loadImage("gui/core/mapTileControl/images/error.png");

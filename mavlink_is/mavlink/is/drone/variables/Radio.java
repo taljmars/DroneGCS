@@ -10,7 +10,7 @@ import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.utils.math.MathUtil;
 
 @Component("radio")
-public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener{
+public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener {
 
 	private static final long serialVersionUID = -105254631328673776L;
 	public static final int MAX_FADE_MARGIN = 50;
@@ -103,9 +103,7 @@ public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListe
 
 	/**
 	 * Scalling done at the Si1000 radio More info can be found at:
-	 * http://copter
-	 * .ardupilot.com/wiki/common-using-the-3dr-radio-for-telemetry-
-	 * with-apm-and-px4/#Power_levels
+	 * http://copter.ardupilot.com/wiki/common-using-the-3dr-radio-for-telemetry-with-apm-and-px4/#Power_levels
 	 */
 	private double SikValueToDB(int value) {
 		return (value / 1.9) - 127;

@@ -22,13 +22,13 @@ Param: '_INIT_THR', Value: '1100'
 All parameter loaded, configuration was successfully loaded
 Reseting RC Set
 mavlink.core.flightControlers.KeyBoardControlerImpl$1 Stabilizer Thread started
-C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115//log.html
+C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_21_044438//log.html
 mavlink.is.drone.profiles.Parameters Setting new paramter listener class gui.core.internalPanels.PanelButtonBoxSatellite
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_21_044438\signals.csv'
 class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.mapTree.OperationalViewTree
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\actualPWM.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\signals.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\HeightAndSpeed.csv'
-New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_18_062115\battery.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_21_044438\actualPWM.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_21_044438\HeightAndSpeed.csv'
+New CSV file 'C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\Logs\quadlog_11_21_044438\battery.csv'
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 Sign Dashboard as drone listener
 class mavlink.is.protocol.msgbuilder.WaypointManager new waypoints listener class gui.core.dashboard.Dashboard
@@ -37,12 +37,39 @@ class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
 class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
-Bye Bye
-
-Summary:
---------
-Traveled distance: 0.0m
-Max Height: 0.0m
-Max Speed: 0.0m/s (0km/h)
-Flight time: 0
-Finalize of Sub Class
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+Optional[ButtonType [text=OK, buttonData=OK_DONE]] 57600 COM4 - Serial
+Starting Connection Tasks Thread
+Radio communication manager created
+Radio communication manager started successfully
+Starting Sending Tasks Thread
+Open Connection
+Connected!
+Connected
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+class mavlink.core.gcs.GCSHeartbeat$1 Sending HB
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x0000000180005b6b, pid=1028, tid=0x0000000000000cb0
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_112-b15) (build 1.8.0_112-b15)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.112-b15 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# C  [rxtxSerial.dll+0x5b6b]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# An error report file with more information is saved as:
+# C:\Users\taljmars\EclipseWorkspace\DroneGCS\ExRunnable\hs_err_pid1028.log
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#

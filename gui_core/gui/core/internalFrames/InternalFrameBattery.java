@@ -57,7 +57,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener {
 			throw new RuntimeException("Not a Singletone");
 		
 		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
-		csv.open(Arrays.asList("Time", "Current", "Discharge", "Remain", "Volt"));
+		csv.open(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
 	}
@@ -69,13 +69,13 @@ public class InternalFrameBattery extends Pane implements OnDroneListener {
 			if (seriesCurrent != null)
 				seriesCurrent.getData().add(new XYChart.Data<String, Number>(timestamp, battCurrent));
 			if (seriesDischarge != null)
-				seriesDischarge.getData().add(new XYChart.Data<String, Number>(timestamp, battDischarge));
+				seriesDischarge.getData().add(new XYChart.Data<String, Number>(timestamp, battDischarge/1000));
 			if (seriesRemain != null)
 				seriesRemain.getData().add(new XYChart.Data<String, Number>(timestamp, battRemain));
 			if (seriesVolt != null)
 				seriesVolt.getData().add(new XYChart.Data<String, Number>(timestamp, battVolt));
 			
-			csv.addEntry(Arrays.asList(timestamp, battCurrent, battDischarge, battRemain, battVolt));
+			csv.addEntry(Arrays.asList(timestamp, battCurrent, battDischarge/1000, battRemain, battVolt));
 		});
 	}
 

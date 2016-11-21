@@ -47,8 +47,6 @@ public abstract class LayeredViewMap extends ViewMap {
     public LayeredViewMap() {
     	super();
     	initLayerEditor();
-    	
-    	
     }
     
     private void initLayerEditor() {

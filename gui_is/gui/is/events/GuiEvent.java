@@ -31,7 +31,8 @@ public class GuiEvent extends ApplicationEvent {
         MISSION_VIEW_ONLY_STARTED, MISSION_VIEW_ONLY_FINISHED,
         
         
-        EXIT
+        EXIT, 
+        SPLIT_FRAMECONTAINER
     }
 
     private COMMAND command;

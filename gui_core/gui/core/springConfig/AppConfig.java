@@ -3,6 +3,7 @@ package gui.core.springConfig;
 import java.awt.Dimension;
 import gui.core.dashboard.Dashboard;
 import gui.core.mapTreeObjects.LayerMission;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.mission.Mission;
@@ -30,8 +31,8 @@ public class AppConfig {
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 	
 	@Bean
-	public Pane frameContainer() {
-		return new Pane();
+	public HBox frameContainer() {
+		return new HBox();
 	}
 	
 	@Bean
