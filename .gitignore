@@ -15,6 +15,10 @@ bin/
 Logs/
 Cache/
 
+# Irrelevant logs - talma
+*.log
+*.elg
+
 
 # Windows Installer files
 *.cab
