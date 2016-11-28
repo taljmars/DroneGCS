@@ -1,6 +1,8 @@
 package mavlink.core.flightControlers;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -10,7 +12,6 @@ import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.swing.JFileChooser;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
@@ -24,6 +25,7 @@ import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 import tools.comm.SerialConnection;
 import tools.logger.Logger;
+import tools.os_utilities.Environment;
 
 @ComponentScan("tools.logger")
 @ComponentScan("tools.comm.internal")
@@ -55,11 +57,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	@NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
-	
-	public KeyBoardControlerImpl() {
-		
-	}
-	
 	static int called;
 	@PostConstruct
 	public void init() {
@@ -76,7 +73,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 				while (true) {
 					try {
 						//Thread.sleep(1000);
-						Thread.sleep(100);
+						Thread.sleep(_STABILIZER_CYCLE);
 						Update();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -107,7 +104,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		bActive = true;
 	}
 	
-	private String settingsFilePath = "C:\\quad_setup_arducopter.txt";
+	private final String settingsFileName = "quad_setup_arducopter.txt";
 	private Path fFilePath = null;
 	private int paramAmount = 0;
 	private final static Charset ENCODING = StandardCharsets.UTF_16;
@@ -117,89 +114,94 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		logger.LogGeneralMessege("Loading flight controler configuration");
 		paramAmount = 0;
 		param_loaded = false;
-		fFilePath = Paths.get(settingsFilePath);
-		if (fFilePath.toFile().exists() == false) {
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-			fileChooser.setDialogTitle("Choose Configuration File");
-			int result = fileChooser.showOpenDialog(null);
-			if (result == JFileChooser.APPROVE_OPTION) {
-			    File selectedFile = fileChooser.getSelectedFile();
-			    settingsFilePath = selectedFile.getAbsolutePath();
-			    LoadParams();
-			    return;
+		try {
+			fFilePath = Paths.get(Environment.getRunningEnvBaseDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
+			if (fFilePath.toFile().exists() == false) {
+				System.out.println("Building default configuration file: " + fFilePath.toString());
+				
+				PrintWriter printWriter = new PrintWriter(fFilePath.toString(), ENCODING.name());
+				printWriter.println(_STABILIZER_CYCLE_KEY 	+ CONF_FILE_DELIMETER + _STABILIZER_CYCLE_DEFAULT);
+				printWriter.println(_MIN_PWM_RANGE_KEY 		+ CONF_FILE_DELIMETER + _MIN_PWM_RANGE_DEFAULT);
+				printWriter.println(_MAX_PWM_RANGE_KEY 		+ CONF_FILE_DELIMETER + _MAX_PWM_RANGE_DEFAULT);
+				printWriter.println(_MIN_PWM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _MIN_PWM_ANGLE_DEFAULT);
+				printWriter.println(_MAX_PWM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _MAX_PWM_ANGLE_DEFAULT);
+				printWriter.println(_TRIM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _TRIM_ANGLE_DEFAULT);
+				printWriter.println(_PITCH_STEP_KEY 		+ CONF_FILE_DELIMETER + _PITCH_STEP_DEFAULT);
+				printWriter.println(_ROLL_STEP_KEY 			+ CONF_FILE_DELIMETER + _ROLL_STEP_DEFAULT);
+				printWriter.println(_YAW_STEP_KEY 			+ CONF_FILE_DELIMETER + _YAW_STEP_DEFAULT);
+				printWriter.println(_THR_STEP_KEY 			+ CONF_FILE_DELIMETER + _THR_STEP_DEFAULT);
+				printWriter.println(_INIT_THR_KEY 			+ CONF_FILE_DELIMETER + _INIT_THR_DEFAULT);
+				printWriter.close();
 			}
-			else {
-				logger.LogErrorMessege("Failed to read parameters, invalid line");
-				logger.close();
-		    	System.err.println(getClass().getName() + " Failed to read parameters, invalid line");
-		    	dialogManagerSvc.showAlertMessageDialog("Configuration file must be supply, please resolve issue and try later");
-				System.exit(-1);
-			}
-		}
-		try (Scanner scanner =  new Scanner(fFilePath, ENCODING.name())) {
+		
+			Scanner scanner =  new Scanner(fFilePath, ENCODING.name());
 			while (scanner.hasNextLine()) {
 				Scanner lineScanner = new Scanner(scanner.nextLine());
-				lineScanner.useDelimiter("=");
-			    if (lineScanner.hasNext()){
-			      //assumes the line has a certain structure
-			      String name = lineScanner.next();
-			      String value = lineScanner.hasNext() ? lineScanner.next() : "";
+				lineScanner.useDelimiter(CONF_FILE_DELIMETER);
+			    if (lineScanner.hasNext()) {
+			    	// assumes the line has a certain structure
+			    	String name = lineScanner.next();
+			    	String value = lineScanner.hasNext() ? lineScanner.next() : "";
 			      
-			      if (name.equals("_MIN_PWM_RANGE")) {
-			    	  _MIN_PWM_RANGE = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_MIN_PWM_RANGE=" + _MIN_PWM_RANGE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MAX_PWM_RANGE")) {
-			    	  _MAX_PWM_RANGE = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_MAX_PWM_RANGE=" + _MAX_PWM_RANGE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MIN_PWM_ANGLE")) {
-			    	  _MIN_PWM_ANGLE = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_MIN_PWM_ANGLE=" + _MIN_PWM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MAX_PWM_ANGLE")) {
-			    	  _MAX_PWM_ANGLE = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_MAX_PWM_ANGLE=" + _MAX_PWM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_TRIM_ANGLE")) {
-			    	  _TRIM_ANGLE = Integer.parseInt(value);
-			    	  _TRIM_ANGLE_PITCH = _TRIM_ANGLE_ROLL = _TRIM_ANGLE_YAW = _TRIM_ANGLE;
-			    	  logger.LogGeneralMessege("_TRIM_ANGLE=" + _TRIM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_PITCH_STEP")) {
-			    	  _PITCH_STEP = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_PITCH_STEP=" + _PITCH_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_ROLL_STEP")) {
-			    	  _ROLL_STEP = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_ROLL_STEP=" + _ROLL_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_YAW_STEP")) {
-			    	  _YAW_STEP = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_YAW_STEP=" + _YAW_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_THR_STEP")) {
-			    	  _THR_STEP = Integer.parseInt(value);
-			    	  logger.LogGeneralMessege("_THR_STEP=" + _THR_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_INIT_THR")) {
-				   	  _INIT_THR = Integer.parseInt(value);
-				   	  logger.LogGeneralMessege("_INIT_THR=" + _INIT_THR);
-				   	  paramAmount++;
-				  }
-			      
-			  	
-			      System.out.println("Param: '" + name + "', Value: '" + value + "'");
+			    	if (name.equals(_MIN_PWM_RANGE_KEY)) {
+			    		_MIN_PWM_RANGE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MIN_PWM_RANGE_KEY + CONF_FILE_DELIMETER + _MIN_PWM_RANGE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MAX_PWM_RANGE_KEY)) {
+			    		_MAX_PWM_RANGE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MAX_PWM_RANGE_KEY + CONF_FILE_DELIMETER + _MAX_PWM_RANGE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MIN_PWM_ANGLE_KEY)) {
+			    		_MIN_PWM_ANGLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MIN_PWM_ANGLE_KEY + CONF_FILE_DELIMETER + _MIN_PWM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MAX_PWM_ANGLE_KEY)) {
+			    		_MAX_PWM_ANGLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MAX_PWM_ANGLE_KEY + CONF_FILE_DELIMETER + _MAX_PWM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_TRIM_ANGLE_KEY)) {
+			    		_TRIM_ANGLE = Integer.parseInt(value);
+			    		_TRIM_ANGLE_PITCH = _TRIM_ANGLE_ROLL = _TRIM_ANGLE_YAW = _TRIM_ANGLE;
+			    		logger.LogGeneralMessege(_TRIM_ANGLE_KEY + CONF_FILE_DELIMETER + _TRIM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_PITCH_STEP_KEY)) {
+			    		_PITCH_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_PITCH_STEP_KEY + CONF_FILE_DELIMETER + _PITCH_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_ROLL_STEP_KEY)) {
+			    		_ROLL_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_ROLL_STEP_KEY + CONF_FILE_DELIMETER + _ROLL_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_YAW_STEP_KEY)) {
+			    		_YAW_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_YAW_STEP_KEY + CONF_FILE_DELIMETER + _YAW_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_THR_STEP_KEY)) {
+			    		_THR_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_THR_STEP_KEY + CONF_FILE_DELIMETER + _THR_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_INIT_THR_KEY)) {
+			    		_INIT_THR = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_INIT_THR_KEY + CONF_FILE_DELIMETER + _INIT_THR);
+			    		paramAmount++;
+			    	}
+			    	
+			    	if (name.equals(_STABILIZER_CYCLE_KEY)) {
+			    		_STABILIZER_CYCLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_STABILIZER_CYCLE_KEY + CONF_FILE_DELIMETER + _STABILIZER_CYCLE);
+			    		paramAmount++;
+			    	}
+			    	
+			    	System.out.println("Param: '" + name + "', Value: '" + value + "'");
 			    }
 			    else {
 			    	logger.LogErrorMessege("Failed to read parameters, invalid line");
@@ -209,28 +211,32 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 					System.exit(-1);
 			    }
 			}
-			if (paramAmount != 10) {
+			if (paramAmount != 11) {
 				logger.LogErrorMessege("Missing parameter: Only " + paramAmount + " parameters were loaded");
 				logger.close();
 				if (paramAmount == 0) {
-					System.err.println("Parameters haven't been found.\nVerify you've open a configuration file.");
-					dialogManagerSvc.showAlertMessageDialog("Parameters haven't been found.\nVerify you've open a configuration file.");
+					System.err.println("Parameters haven't been found.\nVerify configuration file validity.");
+					dialogManagerSvc.showAlertMessageDialog("Parameters haven't been found.\nVerify configuration file validity.");
 				}
 				else {
-					System.err.println("Missing parameter: Only " + paramAmount + " parameters were loaded\nVerify you've open a configuration file.");
+					System.err.println("Missing parameter: Only " + paramAmount + " parameters were loaded\nVerify configuration file validity.");
 					dialogManagerSvc.showAlertMessageDialog("Missing parameter: Only " + paramAmount + " parameters were loaded"
-												+ "\nVerify you've open a configuration file.");
+												+ "\nVerify configuration file validity.");
 				}
 				System.exit(-1);
 			}
 			
 			logger.LogGeneralMessege("All parameter loaded, configuration was successfully loaded");
 		}
-		catch (Exception e) {
-			logger.LogErrorMessege("Unexpected Error:");
-			logger.LogErrorMessege(e.getMessage());
+		catch (IOException e) {
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Configuration file is missing, failed to build a default one", e);				
 			logger.close();
-			dialogManagerSvc.showErrorMessageDialog(getClass().getName() + " Unexpected Error", e);
+			System.exit(-1);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Failed to file running environment", e);
+			logger.close();
 			System.exit(-1);
 		}
 		
@@ -238,44 +244,68 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		Reset();
 	}
 	
-	static int _MIN_PWM_RANGE = 0;
-	static int _MAX_PWM_RANGE = 0;
-	static int _MIN_PWM_ANGLE = 0;
-	static int _MAX_PWM_ANGLE = 0;
+	private static String CONF_FILE_DELIMETER = "=";
 	
-	static int _TRIM_ANGLE = 0;
+	private final static String _STABILIZER_CYCLE_KEY = "_STABILIZER_CYCLE";
+	private final static int _STABILIZER_CYCLE_DEFAULT = 300;
+	private static int _STABILIZER_CYCLE = 0;
 	
-	static int _TRIM_ANGLE_PITCH = 0;
-	static int _PITCH_STEP = 0;
 	
-	static int _TRIM_ANGLE_ROLL = 0;
-	static int _ROLL_STEP = 0;
+	private final static String _MIN_PWM_RANGE_KEY = "_MIN_PWM_RANGE";
+	private final static int _MIN_PWM_RANGE_DEFAULT = 1000;
+	private static int _MIN_PWM_RANGE = 0;
 	
-	static int _TRIM_ANGLE_YAW = 0;
-	static int _YAW_STEP = 0;
+	private final static String _MAX_PWM_RANGE_KEY = "_MAX_PWM_RANGE";
+	private final static int _MAX_PWM_RANGE_DEFAULT = 2200;
+	private static int _MAX_PWM_RANGE = 0;
 	
-	static int _THR_STEP = 0;
-	static int _INIT_THR = 0;
+	private final static String _MIN_PWM_ANGLE_KEY = "_MIN_PWM_ANGLE";
+	private final static int _MIN_PWM_ANGLE_DEFAULT = 1100;
+	private static int _MIN_PWM_ANGLE = 0;
+	
+	private final static String _MAX_PWM_ANGLE_KEY = "_MAX_PWM_ANGLE";
+	private final static int _MAX_PWM_ANGLE_DEFAULT = 1900;
+	private static int _MAX_PWM_ANGLE = 0;
+	
+	
+	private final static String _TRIM_ANGLE_KEY = "_TRIM_ANGLE";
+	private final static int _TRIM_ANGLE_DEFAULT = 1500;
+	private static int _TRIM_ANGLE = 0;
+	
+	private final static String _PITCH_STEP_KEY = "_PITCH_STEP";
+	private final static int _PITCH_STEP_DEFAULT = 10;
+	private static int _PITCH_STEP = 0;
+	private static int _TRIM_ANGLE_PITCH = 0;
+	
+	private final static String _ROLL_STEP_KEY = "_ROLL_STEP";
+	private final static int _ROLL_STEP_DEFAULT = 10;
+	private static int _ROLL_STEP = 0;
+	private static int _TRIM_ANGLE_ROLL = 0;
+	
+	private final static String _YAW_STEP_KEY = "_YAW_STEP";
+	private final static int _YAW_STEP_DEFAULT = 50;
+	private static int _YAW_STEP = 0;
+	private static int _TRIM_ANGLE_YAW = 0;
+	
+	private final static String _THR_STEP_KEY = "_THR_STEP";
+	private final static int _THR_STEP_DEFAULT = 25;
+	private static int _THR_STEP = 0;
+	
+	private final static String _INIT_THR_KEY = "_INIT_THR";
+	private final static int _INIT_THR_DEFAULT = 1100;
+	private static int _INIT_THR = 0;
 	
 	private static int constrain(int val, int min, int max){
-		if (val < min) {
-			return min;
-		}
-		
-		if (val > max){
-			return max;
-		}
-		
+		if (val < min) return min;
+		if (val > max) return max;
 		return val;
 	}
 	
 	//RCValues set
-	static int RC_Min_Thr = 0;
-	//static int RC_Initial_Thr = 0;
-	static int RC_Thr = _INIT_THR;
-	static int RC_Yaw = 0;
-	static int RC_Pitch = 0;
-	static int RC_Roll = 0;
+	private static int RC_Thr = _INIT_THR;
+	private static int RC_Yaw = 0;
+	private static int RC_Pitch = 0;
+	private static int RC_Roll = 0;
 	
 	public void ResetRCSet() {
 		RC_Thr = _INIT_THR;
@@ -284,14 +314,14 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		RC_Roll = _TRIM_ANGLE_ROLL;
 	}
 	
-	public void ReduceRCSet() {		
+	private void ReduceRCSet() {		
 		if (LastContolKeyTS == 0)
 			return;
 		
 		long CurrentTS = (new Date()).getTime();
 		
 		long gap = CurrentTS - LastContolKeyTS;
-		if (gap < 500 && gap > 0)
+		if (gap < _STABILIZER_CYCLE && gap > 0)
 			return;
 		
 		// Roll, Pitch, Throttle, Yaw

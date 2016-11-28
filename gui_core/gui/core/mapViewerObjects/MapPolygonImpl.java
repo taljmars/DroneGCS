@@ -31,8 +31,6 @@ import gui.is.Coordinate;
 import gui.is.interfaces.mapObjects.MapPolygon;
 import javafx.scene.Group;
 import javafx.scene.effect.Bloom;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -51,11 +49,11 @@ public class MapPolygonImpl implements MapPolygon {
     private Color OutlineColor;
     
     public MapPolygonImpl() {
-        this(Color.YELLOW, Color.YELLOW, new ArrayList<>() );
+        this(Color.YELLOW, Color.TRANSPARENT, new ArrayList<>() );
     }
     
     public MapPolygonImpl( List<Coordinate> points ) {
-        this(Color.YELLOW, Color.YELLOW, points );
+        this(Color.YELLOW, Color.TRANSPARENT, points );
     }
 
     public MapPolygonImpl(Color fcolor, Color ocolor, List<Coordinate> coords ) {
@@ -107,31 +105,31 @@ public class MapPolygonImpl implements MapPolygon {
         polyline.getPoints().add((double)p0.x);
         polyline.getPoints().add((double)p0.y);
 
-        path.setStrokeWidth(1);
+        path.setStrokeWidth(5);
         path.setStroke( this.FillColor );
 
         Bloom bloom = new Bloom();
         bloom.setThreshold(0.0);
         
-        InnerShadow is = new InnerShadow();
-        is.setOffsetX(0.0f);
-        is.setOffsetY(0.0f);
-        is.setWidth(30.0);
-        is.setColor(this.OutlineColor);
+//        InnerShadow is = new InnerShadow();
+//        is.setOffsetX(0.0f);
+//        is.setOffsetY(0.0f);
+//        is.setWidth(30.0);
+//        is.setColor(this.OutlineColor);
         path.setEffect(bloom);
         
-//        path.setStroke( this.OutlineColor );
-//        path.setFill( this.FillColor ); 
+        //path.setStroke( this.OutlineColor );
+        //path.setFill( this.FillColor ); 
         g.getChildren().add(path);
         
         polyline.setFill( this.OutlineColor );
         
 
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(10.0f);
-        ds.setOffsetX(10.0f);
-        ds.setColor( this.OutlineColor ); // Color.color(0.4f, 0.4f, 0.4f));
-        polyline.setEffect(ds);
+//        DropShadow ds = new DropShadow();
+//        ds.setOffsetY(10.0f);
+//        ds.setOffsetX(10.0f);
+//        ds.setColor( this.OutlineColor ); // Color.color(0.4f, 0.4f, 0.4f));
+//        polyline.setEffect(ds);
         
         g.getChildren().add(polyline);
         

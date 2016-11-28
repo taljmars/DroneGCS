@@ -53,6 +53,10 @@ public class MapVectorImpl extends MapLineImpl {
     	super(mapVectorImpl);
 	}
 
+	public MapVectorImpl(Coordinate start, Coordinate end, Color color) {
+		this("",color,1,1,start, end);
+	}
+
 	@Override
     public void addCoordinate(Coordinate coordinate) {
 		if (this.Coordinates.size() == 2)

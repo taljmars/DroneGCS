@@ -116,7 +116,6 @@ public abstract class ViewMap extends Pane {
 
 	private Point lastDragPoint = new Point();
 	private boolean isMoving = false;
-	private boolean movementEnabled = true;
 
 	protected transient TileController tileController;
 
@@ -253,11 +252,21 @@ public abstract class ViewMap extends Pane {
 
 		this.ClipMask.setFill(Color.WHITE);
 
+		/*
+		 * Sliding down fingers on screen also count as scroll event, that is why
+		 * we are counting touch point
+		 */
 		this.tilesGroup.setOnScroll( me -> {
-			if( me.getDeltaY() > 0 && getZoom() < MAX_ZOOM ) {
-				zoomIn();
-			} else if( getZoom() > MIN_ZOOM ) {
-				zoomOut();
+			if (me.getTouchCount() != 1) {
+				lastDragPoint = null;
+			}
+			
+			if (me.getTouchCount() == 0) {
+				if( me.getDeltaY() > 0 && getZoom() < MAX_ZOOM ) {
+					zoomIn();
+				} else if( getZoom() > MIN_ZOOM ) {
+					zoomOut();
+				}
 			}
 		});
 
@@ -275,6 +284,16 @@ public abstract class ViewMap extends Pane {
 				updateLocationLabel(mouseLocation);
 			}
 		});
+		
+		this.tilesGroup.setOnZoom( me -> {
+			if( me.getZoomFactor() > 1 && getZoom() < MAX_ZOOM ) {
+				zoomIn();
+			} else if( getZoom() > MIN_ZOOM ) {
+				zoomOut();
+			}
+		});
+		
+		this.tilesGroup.setOnTouchMoved( me -> isMoving = true);
 
 		this.tilesGroup.setOnMouseClicked( me -> HandleMouseClick(me));
 
@@ -300,18 +319,24 @@ public abstract class ViewMap extends Pane {
 		});
 
 		this.tilesGroup.setOnMouseDragged( me -> {
-			if (!movementEnabled || !isMoving)
+			if (!isMoving)
 				return;
-
-			if (me.isPrimaryButtonDown() && lastDragPoint == null) {
-				Point p = new Point((int) me.getX(), (int) me.getY());
-				lastDragPoint = p;
-				isMoving = true;
+			
+			Point p = new Point((int)me.getX(), (int)me.getY());
+			if (lastDragPoint != null) {
+				int diffx = lastDragPoint.x - p.x;
+				int diffy = lastDragPoint.y - p.y;
+				moveMap(diffx, diffy);
 			}
+
+			if (me.isPrimaryButtonDown() && lastDragPoint == null)
+				isMoving = true;
+			
+			lastDragPoint = p;
 		});
 
 		this.tilesGroup.setOnMouseDragReleased( me -> {
-			if (!movementEnabled || !isMoving)
+			if (!isMoving)
 				return;                
 
 			Point p = new Point((int)me.getX(), (int)me.getY());
@@ -913,16 +938,5 @@ public abstract class ViewMap extends Pane {
 			for( MapLine line: mapLineList)
 				line.Render(this, tilesGroup);
 		}
-		
-		//});
-	}
-
-	public boolean isMovementEnabled() {
-		return movementEnabled;
-	}
-
-	// Enables or disables moap movement via the mouse.
-	public void setMovementEnabled(boolean movementEnabled) {
-		this.movementEnabled = movementEnabled;
 	}
 }

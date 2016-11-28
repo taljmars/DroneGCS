@@ -1,10 +1,12 @@
 package mavlink.is.drone.variables;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
 import gui.is.Coordinate;
+import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import mavlink.is.drone.DroneVariable;
 import mavlink.is.drone.DroneInterfaces.Clock;
@@ -13,6 +15,7 @@ import mavlink.is.drone.DroneInterfaces.Handler;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.MavLinkModes;
 import mavlink.is.utils.units.Altitude;
+import tools.validations.RuntimeValidator;
 
 @Component("state")
 public class State extends DroneVariable {
@@ -32,13 +35,24 @@ public class State extends DroneVariable {
 	private long elapsedFlightTime = 0;
 	
 	@Resource(name = "clock")
+	@NotNull( message = "Internal Error: Clock Field wasn't initialized" )
 	private Clock clock;
 
 	@Resource(name = "handler")
+	@NotNull( message = "Internal Error: Handler Field wasn't initialized" )
 	public Handler handler;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull( message = "Internal Error: Logger Displayer Field wasn't initialized" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "validator")
+	@NotNull(message = "Internal Error: Failed to get validator")
+	private RuntimeValidator validator;
 	
 	public Runnable watchdogCallback = () -> removeWarning();
 	
@@ -46,6 +60,8 @@ public class State extends DroneVariable {
 	public void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
+		
+		validator.validate(this);
 		resetFlightTimer();
 	}
 
@@ -122,6 +138,11 @@ public class State extends DroneVariable {
 	}
 
 	public void changeFlightMode(ApmModes mode) {
+		if (mode == null) {
+			loggerDisplayerSvc.logError("Unexpected Mode value: Null");
+			return;
+		}
+		
 		if (ApmModes.isValid(mode)) {
 			loggerDisplayerSvc.logGeneral("Start Mission - Change to " + mode.getName());
 			System.out.println(getClass().getName() + mode.getName());

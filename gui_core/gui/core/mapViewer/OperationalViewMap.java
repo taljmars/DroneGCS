@@ -106,7 +106,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Resource(name = "validator")
 	@NotNull(message = "Internal Error: Failed to get validator")
 	private RuntimeValidator validator;
-	
 
 	private boolean lockMapOnMyPosition = true;
 	private boolean paintTrail = true;
@@ -338,7 +337,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 		Coordinate start = origin.convertToCoordinate();
 		Coordinate end = target.convertToCoordinate();
-		bearing = new MapVectorImpl(start, end);
+		bearing = new MapVectorImpl(start, end, Color.RED);
 		addMapLine(bearing);
 	}
 

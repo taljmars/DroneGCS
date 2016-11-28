@@ -43,4 +43,13 @@ public class Environment {
 		
 		return file;
 	}
+	
+	public static File getRunningEnvBaseDirectory() throws URISyntaxException {
+		File file = new File(Environment.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+		file = new File(file.getParent().toString() + DIR_SEPERATOR);
+		if (!file.exists())
+			throw new RuntimeException("Running directory wasn't found");
+		
+		return file;
+	}
 }
