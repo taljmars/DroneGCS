@@ -15,9 +15,12 @@
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jboss-logging-3.2.1.Final.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/RXTXSerial"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javafx"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ImageProcessesing"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-3.1.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-3.1.0">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/openCV3_Dlls/x64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring4.3.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
 	<classpathentry kind="output" path="bin"/>
