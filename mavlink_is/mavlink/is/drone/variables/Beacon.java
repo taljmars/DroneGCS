@@ -12,6 +12,7 @@ import mavlink.is.utils.coordinates.Coord3D;
 
 import javax.annotation.Resource;
 import javax.swing.SwingWorker;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
@@ -19,13 +20,16 @@ import tools.logger.Logger;
 
 @Component("beacon")
 public class Beacon extends DroneVariable implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -9030954282536999192L;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 	
 	private boolean pIsActive;
 	private Coord3D pLastPosition;
@@ -62,9 +66,9 @@ public class Beacon extends DroneVariable implements Serializable{
 	}
 	
 	public void RunThread() {
-		Logger.LogGeneralMessege("Start Beacon Thread");
+		logger.LogGeneralMessege("Start Beacon Thread");
 		if (pFollowThread != null) {
-			Logger.LogGeneralMessege("Terminate existing beacon thread");
+			logger.LogGeneralMessege("Terminate existing beacon thread");
 			pFollowThread.cancel(true);
 		}
 		
@@ -117,12 +121,12 @@ public class Beacon extends DroneVariable implements Serializable{
 	}
 	
 	public void KillThread() {
-		Logger.LogGeneralMessege("Stop Beacon Thread");
+		logger.LogGeneralMessege("Stop Beacon Thread");
 		if (pFollowThread != null) {
-			Logger.LogGeneralMessege("Terminate existing beacon thread");
+			logger.LogGeneralMessege("Terminate existing beacon thread");
 			pFollowThread.cancel(true);
 		}
-		Logger.LogGeneralMessege("Change mode to Position Hold");
+		logger.LogGeneralMessege("Change mode to Position Hold");
 		drone.getState().changeFlightMode(ApmModes.ROTOR_POSHOLD);
 		
 		pFollowThread = null;

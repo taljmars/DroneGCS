@@ -3,7 +3,7 @@ package mavlink.is.utils.units;
 import java.io.Serializable;
 import java.util.Locale;
 
-public class Length implements Serializable /* TALMA serializble*/ {
+public class Length implements Serializable {
 	/**
 	 * 
 	 */
@@ -12,6 +12,10 @@ public class Length implements Serializable /* TALMA serializble*/ {
 
 	public Length(double lengthInMeters) {
 		set(lengthInMeters);
+	}
+
+	public Length(Length length) {
+		this.lengthInMeters = length.lengthInMeters;
 	}
 
 	public double valueInMeters() {

@@ -42,7 +42,7 @@ import tools.pair.Pair;
  */
 
 @Scope("prototype")
-public class Mission extends DroneVariable implements Serializable /* TALMA serializble*/ {
+public class Mission extends DroneVariable implements Serializable {
 
 	private static final long serialVersionUID = 8399081979944818494L;
 	/**
@@ -53,6 +53,12 @@ public class Mission extends DroneVariable implements Serializable /* TALMA seri
 
 	public Mission(){
 		super();
+	}
+
+	public Mission(Mission mission) {
+		super(mission);
+		defaultAlt.set(mission.getDefaultAlt().valueInMeters());
+		for (MissionItem mi : mission.getItems()) items.add((MissionItem) mi.clone(this));
 	}
 
 	/**

@@ -1,33 +1,33 @@
 package mavlink.core.flightControlers;
 
-import gui.is.events.JMVCommandEvent;
-import gui.is.interfaces.KeyBoardControler;
-import gui.is.services.LoggerDisplayerSvc;
-
-import java.awt.event.KeyEvent;
-import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import java.util.Date;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import tools.comm.SerialConnection;
-import tools.logger.Logger;
+import gui.is.KeyBoardControler;
+import gui.is.services.DialogManagerSvc;
+import gui.is.services.LoggerDisplayerSvc;
+import javafx.scene.input.KeyEvent;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
+import tools.comm.SerialConnection;
+import tools.logger.Logger;
+import tools.os_utilities.Environment;
 
+@ComponentScan("tools.logger")
 @ComponentScan("tools.comm.internal")
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.is.services")
@@ -38,26 +38,42 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	private static Thread KeyboardStabilizer = null;
 	
 	@Resource(name = "twoWaySerialComm")
+	@NotNull(message = "Internal Error: Failed to get serial communication")
 	private SerialConnection serialConnection;
 	
 	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	public KeyBoardControlerImpl() {
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
+	
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
 		LoadParams();
 		
 		KeyboardStabilizer = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				Logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
+				logger.LogGeneralMessege(this.getClass().getName() + " Stabilizer Thread started");
 				while (true) {
 					try {
 						//Thread.sleep(1000);
-						Thread.sleep(100);
+						Thread.sleep(_STABILIZER_CYCLE);
 						Update();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -66,13 +82,6 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 			}
 		});
 		KeyboardStabilizer.start();
-	}
-	
-	static int called;
-	@PostConstruct
-	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
 	}
 	
 	public boolean bActive = false;
@@ -95,130 +104,139 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		bActive = true;
 	}
 	
-	private String settingsFilePath = "C:\\quad_setup_arducopter.txt";
+	private final String settingsFileName = "quad_setup_arducopter.txt";
 	private Path fFilePath = null;
 	private int paramAmount = 0;
 	private final static Charset ENCODING = StandardCharsets.UTF_16;
 
 	@SuppressWarnings("resource")
 	private void LoadParams() {
-		Logger.LogGeneralMessege("Loading flight controler configuration");
+		logger.LogGeneralMessege("Loading flight controler configuration");
 		paramAmount = 0;
 		param_loaded = false;
-		fFilePath = Paths.get(settingsFilePath);
-		if (fFilePath.toFile().exists() == false) {
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-			fileChooser.setDialogTitle("Choose Configuration File");
-			int result = fileChooser.showOpenDialog(null);
-			if (result == JFileChooser.APPROVE_OPTION) {
-			    File selectedFile = fileChooser.getSelectedFile();
-			    settingsFilePath = selectedFile.getAbsolutePath();
-			    LoadParams();
-			    return;
+		try {
+			fFilePath = Paths.get(Environment.getRunningEnvBaseDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
+			if (fFilePath.toFile().exists() == false) {
+				System.out.println("Building default configuration file: " + fFilePath.toString());
+				
+				PrintWriter printWriter = new PrintWriter(fFilePath.toString(), ENCODING.name());
+				printWriter.println(_STABILIZER_CYCLE_KEY 	+ CONF_FILE_DELIMETER + _STABILIZER_CYCLE_DEFAULT);
+				printWriter.println(_MIN_PWM_RANGE_KEY 		+ CONF_FILE_DELIMETER + _MIN_PWM_RANGE_DEFAULT);
+				printWriter.println(_MAX_PWM_RANGE_KEY 		+ CONF_FILE_DELIMETER + _MAX_PWM_RANGE_DEFAULT);
+				printWriter.println(_MIN_PWM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _MIN_PWM_ANGLE_DEFAULT);
+				printWriter.println(_MAX_PWM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _MAX_PWM_ANGLE_DEFAULT);
+				printWriter.println(_TRIM_ANGLE_KEY 		+ CONF_FILE_DELIMETER + _TRIM_ANGLE_DEFAULT);
+				printWriter.println(_PITCH_STEP_KEY 		+ CONF_FILE_DELIMETER + _PITCH_STEP_DEFAULT);
+				printWriter.println(_ROLL_STEP_KEY 			+ CONF_FILE_DELIMETER + _ROLL_STEP_DEFAULT);
+				printWriter.println(_YAW_STEP_KEY 			+ CONF_FILE_DELIMETER + _YAW_STEP_DEFAULT);
+				printWriter.println(_THR_STEP_KEY 			+ CONF_FILE_DELIMETER + _THR_STEP_DEFAULT);
+				printWriter.println(_INIT_THR_KEY 			+ CONF_FILE_DELIMETER + _INIT_THR_DEFAULT);
+				printWriter.close();
 			}
-			else {
-				Logger.LogErrorMessege("Failed to read parameters, invalid line");
-		    	Logger.close();
-		    	System.err.println(getClass().getName() + " Failed to read parameters, invalid line");
-		    	JOptionPane.showMessageDialog(null, "Configuration file must be supply, please resolve issue and try later");
-				System.exit(-1);
-			}
-		}
-		try (Scanner scanner =  new Scanner(fFilePath, ENCODING.name())) {
+		
+			Scanner scanner =  new Scanner(fFilePath, ENCODING.name());
 			while (scanner.hasNextLine()) {
 				Scanner lineScanner = new Scanner(scanner.nextLine());
-				lineScanner.useDelimiter("=");
-			    if (lineScanner.hasNext()){
-			      //assumes the line has a certain structure
-			      String name = lineScanner.next();
-			      String value = lineScanner.hasNext() ? lineScanner.next() : "";
+				lineScanner.useDelimiter(CONF_FILE_DELIMETER);
+			    if (lineScanner.hasNext()) {
+			    	// assumes the line has a certain structure
+			    	String name = lineScanner.next();
+			    	String value = lineScanner.hasNext() ? lineScanner.next() : "";
 			      
-			      if (name.equals("_MIN_PWM_RANGE")) {
-			    	  _MIN_PWM_RANGE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MIN_PWM_RANGE=" + _MIN_PWM_RANGE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MAX_PWM_RANGE")) {
-			    	  _MAX_PWM_RANGE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MAX_PWM_RANGE=" + _MAX_PWM_RANGE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MIN_PWM_ANGLE")) {
-			    	  _MIN_PWM_ANGLE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MIN_PWM_ANGLE=" + _MIN_PWM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_MAX_PWM_ANGLE")) {
-			    	  _MAX_PWM_ANGLE = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_MAX_PWM_ANGLE=" + _MAX_PWM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_TRIM_ANGLE")) {
-			    	  _TRIM_ANGLE = Integer.parseInt(value);
-			    	  _TRIM_ANGLE_PITCH = _TRIM_ANGLE_ROLL = _TRIM_ANGLE_YAW = _TRIM_ANGLE;
-			    	  Logger.LogGeneralMessege("_TRIM_ANGLE=" + _TRIM_ANGLE);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_PITCH_STEP")) {
-			    	  _PITCH_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_PITCH_STEP=" + _PITCH_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_ROLL_STEP")) {
-			    	  _ROLL_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_ROLL_STEP=" + _ROLL_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_YAW_STEP")) {
-			    	  _YAW_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_YAW_STEP=" + _YAW_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_THR_STEP")) {
-			    	  _THR_STEP = Integer.parseInt(value);
-			    	  Logger.LogGeneralMessege("_THR_STEP=" + _THR_STEP);
-			    	  paramAmount++;
-			      }
-			      if (name.equals("_INIT_THR")) {
-				   	  _INIT_THR = Integer.parseInt(value);
-				   	  Logger.LogGeneralMessege("_INIT_THR=" + _INIT_THR);
-				   	  paramAmount++;
-				  }
-			      
-			  	
-			      System.out.println("Param: '" + name + "', Value: '" + value + "'");
+			    	if (name.equals(_MIN_PWM_RANGE_KEY)) {
+			    		_MIN_PWM_RANGE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MIN_PWM_RANGE_KEY + CONF_FILE_DELIMETER + _MIN_PWM_RANGE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MAX_PWM_RANGE_KEY)) {
+			    		_MAX_PWM_RANGE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MAX_PWM_RANGE_KEY + CONF_FILE_DELIMETER + _MAX_PWM_RANGE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MIN_PWM_ANGLE_KEY)) {
+			    		_MIN_PWM_ANGLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MIN_PWM_ANGLE_KEY + CONF_FILE_DELIMETER + _MIN_PWM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_MAX_PWM_ANGLE_KEY)) {
+			    		_MAX_PWM_ANGLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_MAX_PWM_ANGLE_KEY + CONF_FILE_DELIMETER + _MAX_PWM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_TRIM_ANGLE_KEY)) {
+			    		_TRIM_ANGLE = Integer.parseInt(value);
+			    		_TRIM_ANGLE_PITCH = _TRIM_ANGLE_ROLL = _TRIM_ANGLE_YAW = _TRIM_ANGLE;
+			    		logger.LogGeneralMessege(_TRIM_ANGLE_KEY + CONF_FILE_DELIMETER + _TRIM_ANGLE);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_PITCH_STEP_KEY)) {
+			    		_PITCH_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_PITCH_STEP_KEY + CONF_FILE_DELIMETER + _PITCH_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_ROLL_STEP_KEY)) {
+			    		_ROLL_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_ROLL_STEP_KEY + CONF_FILE_DELIMETER + _ROLL_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_YAW_STEP_KEY)) {
+			    		_YAW_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_YAW_STEP_KEY + CONF_FILE_DELIMETER + _YAW_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_THR_STEP_KEY)) {
+			    		_THR_STEP = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_THR_STEP_KEY + CONF_FILE_DELIMETER + _THR_STEP);
+			    		paramAmount++;
+			    	}
+			    	if (name.equals(_INIT_THR_KEY)) {
+			    		_INIT_THR = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_INIT_THR_KEY + CONF_FILE_DELIMETER + _INIT_THR);
+			    		paramAmount++;
+			    	}
+			    	
+			    	if (name.equals(_STABILIZER_CYCLE_KEY)) {
+			    		_STABILIZER_CYCLE = Integer.parseInt(value);
+			    		logger.LogGeneralMessege(_STABILIZER_CYCLE_KEY + CONF_FILE_DELIMETER + _STABILIZER_CYCLE);
+			    		paramAmount++;
+			    	}
+			    	
+			    	System.out.println("Param: '" + name + "', Value: '" + value + "'");
 			    }
 			    else {
-			    	Logger.LogErrorMessege("Failed to read parameters, invalid line");
-			    	Logger.close();
+			    	logger.LogErrorMessege("Failed to read parameters, invalid line");
+			    	logger.close();
 			    	System.err.println(getClass().getName() + " Failed to read parameters, invalid line");
-			    	JOptionPane.showMessageDialog(null, "Failed to read parameters, invalid line");
+			    	dialogManagerSvc.showAlertMessageDialog("Failed to read parameters, invalid line");
 					System.exit(-1);
 			    }
 			}
-			if (paramAmount != 10) {
-				Logger.LogErrorMessege("Missing parameter: Only " + paramAmount + " parameters were loaded");
-				Logger.close();
+			if (paramAmount != 11) {
+				logger.LogErrorMessege("Missing parameter: Only " + paramAmount + " parameters were loaded");
+				logger.close();
 				if (paramAmount == 0) {
-					System.err.println("Parameters haven't been found.\nVerify you've open a configuration file.");
-					JOptionPane.showMessageDialog(null, "Parameters haven't been found.\nVerify you've open a configuration file.");
+					System.err.println("Parameters haven't been found.\nVerify configuration file validity.");
+					dialogManagerSvc.showAlertMessageDialog("Parameters haven't been found.\nVerify configuration file validity.");
 				}
 				else {
-					System.err.println("Missing parameter: Only " + paramAmount + " parameters were loaded\nVerify you've open a configuration file.");
-					JOptionPane.showMessageDialog(null, "Missing parameter: Only " + paramAmount + " parameters were loaded"
-												+ "\nVerify you've open a configuration file.");
+					System.err.println("Missing parameter: Only " + paramAmount + " parameters were loaded\nVerify configuration file validity.");
+					dialogManagerSvc.showAlertMessageDialog("Missing parameter: Only " + paramAmount + " parameters were loaded"
+												+ "\nVerify configuration file validity.");
 				}
 				System.exit(-1);
 			}
 			
-			Logger.LogGeneralMessege("All parameter loaded, configuration was successfully loaded");
+			logger.LogGeneralMessege("All parameter loaded, configuration was successfully loaded");
 		}
-		catch (Exception e) {
-			Logger.LogErrorMessege("Unexpected Error:");
-			Logger.LogErrorMessege(e.getMessage());
-			Logger.close();
-			JOptionPane.showMessageDialog(null, getClass().getName() + " Unexpected Error:\n" + e.getMessage());
+		catch (IOException e) {
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Configuration file is missing, failed to build a default one", e);				
+			logger.close();
+			System.exit(-1);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			dialogManagerSvc.showErrorMessageDialog("Failed to file running environment", e);
+			logger.close();
 			System.exit(-1);
 		}
 		
@@ -226,44 +244,68 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		Reset();
 	}
 	
-	static int _MIN_PWM_RANGE = 0;
-	static int _MAX_PWM_RANGE = 0;
-	static int _MIN_PWM_ANGLE = 0;
-	static int _MAX_PWM_ANGLE = 0;
+	private static String CONF_FILE_DELIMETER = "=";
 	
-	static int _TRIM_ANGLE = 0;
+	private final static String _STABILIZER_CYCLE_KEY = "_STABILIZER_CYCLE";
+	private final static int _STABILIZER_CYCLE_DEFAULT = 300;
+	private static int _STABILIZER_CYCLE = 0;
 	
-	static int _TRIM_ANGLE_PITCH = 0;
-	static int _PITCH_STEP = 0;
 	
-	static int _TRIM_ANGLE_ROLL = 0;
-	static int _ROLL_STEP = 0;
+	private final static String _MIN_PWM_RANGE_KEY = "_MIN_PWM_RANGE";
+	private final static int _MIN_PWM_RANGE_DEFAULT = 1000;
+	private static int _MIN_PWM_RANGE = 0;
 	
-	static int _TRIM_ANGLE_YAW = 0;
-	static int _YAW_STEP = 0;
+	private final static String _MAX_PWM_RANGE_KEY = "_MAX_PWM_RANGE";
+	private final static int _MAX_PWM_RANGE_DEFAULT = 2200;
+	private static int _MAX_PWM_RANGE = 0;
 	
-	static int _THR_STEP = 0;
-	static int _INIT_THR = 0;
+	private final static String _MIN_PWM_ANGLE_KEY = "_MIN_PWM_ANGLE";
+	private final static int _MIN_PWM_ANGLE_DEFAULT = 1100;
+	private static int _MIN_PWM_ANGLE = 0;
+	
+	private final static String _MAX_PWM_ANGLE_KEY = "_MAX_PWM_ANGLE";
+	private final static int _MAX_PWM_ANGLE_DEFAULT = 1900;
+	private static int _MAX_PWM_ANGLE = 0;
+	
+	
+	private final static String _TRIM_ANGLE_KEY = "_TRIM_ANGLE";
+	private final static int _TRIM_ANGLE_DEFAULT = 1500;
+	private static int _TRIM_ANGLE = 0;
+	
+	private final static String _PITCH_STEP_KEY = "_PITCH_STEP";
+	private final static int _PITCH_STEP_DEFAULT = 10;
+	private static int _PITCH_STEP = 0;
+	private static int _TRIM_ANGLE_PITCH = 0;
+	
+	private final static String _ROLL_STEP_KEY = "_ROLL_STEP";
+	private final static int _ROLL_STEP_DEFAULT = 10;
+	private static int _ROLL_STEP = 0;
+	private static int _TRIM_ANGLE_ROLL = 0;
+	
+	private final static String _YAW_STEP_KEY = "_YAW_STEP";
+	private final static int _YAW_STEP_DEFAULT = 50;
+	private static int _YAW_STEP = 0;
+	private static int _TRIM_ANGLE_YAW = 0;
+	
+	private final static String _THR_STEP_KEY = "_THR_STEP";
+	private final static int _THR_STEP_DEFAULT = 25;
+	private static int _THR_STEP = 0;
+	
+	private final static String _INIT_THR_KEY = "_INIT_THR";
+	private final static int _INIT_THR_DEFAULT = 1100;
+	private static int _INIT_THR = 0;
 	
 	private static int constrain(int val, int min, int max){
-		if (val < min) {
-			return min;
-		}
-		
-		if (val > max){
-			return max;
-		}
-		
+		if (val < min) return min;
+		if (val > max) return max;
 		return val;
 	}
 	
 	//RCValues set
-	static int RC_Min_Thr = 0;
-	//static int RC_Initial_Thr = 0;
-	static int RC_Thr = _INIT_THR;
-	static int RC_Yaw = 0;
-	static int RC_Pitch = 0;
-	static int RC_Roll = 0;
+	private static int RC_Thr = _INIT_THR;
+	private static int RC_Yaw = 0;
+	private static int RC_Pitch = 0;
+	private static int RC_Roll = 0;
 	
 	public void ResetRCSet() {
 		RC_Thr = _INIT_THR;
@@ -272,14 +314,14 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		RC_Roll = _TRIM_ANGLE_ROLL;
 	}
 	
-	public void ReduceRCSet() {		
+	private void ReduceRCSet() {		
 		if (LastContolKeyTS == 0)
 			return;
 		
 		long CurrentTS = (new Date()).getTime();
 		
 		long gap = CurrentTS - LastContolKeyTS;
-		if (gap < 500 && gap > 0)
+		if (gap < _STABILIZER_CYCLE && gap > 0)
 			return;
 		
 		// Roll, Pitch, Throttle, Yaw
@@ -325,7 +367,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 	}
 	
 	static long LastContolKeyTS = 0;
-	private void UpdateRCSet(KeyEvent event) throws Exception {
+	@SuppressWarnings("incomplete-switch")
+	private void UpdateRCSet(KeyEvent event) {
 		System.out.println(getClass().getName() + " Updating RC Set");
 		if (!bActive)
 			return;
@@ -333,9 +376,9 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		if (event == null)
 			return;
 		
-		switch( event.getKeyCode() ) { 
+		switch( event.getCode() ) { 
 			// For pitch: down is positive, up is negative
-		    case KeyEvent.VK_UP:
+		    case UP:
 		    	if (RC_Pitch > 3 * _PITCH_STEP)
 		    		RC_Pitch-=(3 * _PITCH_STEP);
 		    	else
@@ -345,7 +388,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		        break;
-		    case KeyEvent.VK_DOWN:
+		    case DOWN:
 		    	if (RC_Pitch < -3 * _PITCH_STEP)
 		    		RC_Pitch+=(3 * _PITCH_STEP);
 		    	else
@@ -357,7 +400,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		        break;
 		        
 			// For roll: right is positive, left is negative
-		    case KeyEvent.VK_LEFT:
+		    case LEFT:
 		    	if (RC_Roll > 3 * _ROLL_STEP)
 		    		RC_Roll-=(3 * _ROLL_STEP);
 		    	else
@@ -367,7 +410,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		        break;
-		    case KeyEvent.VK_RIGHT :
+		    case RIGHT:
 		    	if (RC_Roll < -3 * _ROLL_STEP)
 		    		RC_Roll+=(3 * _ROLL_STEP);
 		    	else
@@ -379,19 +422,19 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		        break;
 		        
 			// For Throttle: up is higher, down is lower (with min value of 1000)
-		    case KeyEvent.VK_W :
+		    case W:
 		    	RC_Thr += _THR_STEP;
 		    	RC_Thr = constrain(RC_Thr, _MIN_PWM_RANGE, _MAX_PWM_RANGE);
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_S :
+		    case S:
 		    	RC_Thr -= _THR_STEP;
 		    	RC_Thr = constrain(RC_Thr, _MIN_PWM_RANGE, _MAX_PWM_RANGE);
 		    	event.consume();
 		    	break;
 		        
 			// For Yaw: right is positive, left is negative (no decay, and with some hexa values)
-		    case KeyEvent.VK_D :
+		    case D:
 		    	if (RC_Yaw < -3 * _YAW_STEP)
 		    		RC_Yaw+=(3 * _YAW_STEP);
 		    	else
@@ -401,7 +444,7 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_A :
+		    case A:
 		    	if (RC_Yaw > 3 * _YAW_STEP)
 		    		RC_Yaw-=(3 * _YAW_STEP);
 		    	else
@@ -411,14 +454,14 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		    	LastContolKeyTS = (new Date()).getTime();
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_SPACE :
+		    case BACK_SPACE:
 		    	_TRIM_ANGLE_ROLL = RC_Roll;
 		    	_TRIM_ANGLE_PITCH = RC_Pitch;
 		    	_TRIM_ANGLE_YAW = RC_Yaw;
 		    	loggerDisplayerSvc.logGeneral("Calibrating New Center of Keyboard Control");
 		    	event.consume();
 		    	break;
-		    case KeyEvent.VK_BACK_SPACE :
+		    case SPACE:
 		    	_TRIM_ANGLE_ROLL = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_PITCH = _TRIM_ANGLE;
 		    	_TRIM_ANGLE_YAW = _TRIM_ANGLE;
@@ -462,30 +505,8 @@ public class KeyBoardControlerImpl implements KeyBoardControler {
 		RC_Thr = parseInt;
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	@EventListener
-	public void onApplicationEvent(JMVCommandEvent command) {
-		switch (command.getCommand()) {
-			case ZOOM:
-			case MOVE:
-			case CONTORL_KEYBOARD:
-			case CONTORL_MAP:
-				return;
-				
-			case FLIGHT:
-				try {
-					KeyEvent ke = (KeyEvent) command.getSource();
-					UpdateRCSet(ke);
-				}
-				catch (AccessDeniedException e1) {
-					System.err.println(getClass().getName() + " Failed to access device");
-					JOptionPane.showMessageDialog(null, getClass().getName() + " Failed to access device");
-					System.exit(-1);
-				}
-				catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		}
+	@Override
+	public void handle(KeyEvent arg0) {
+		UpdateRCSet(arg0);
 	}	
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
-public abstract class MissionItem implements Comparable<MissionItem> , Serializable /* TALMA serializble*/  {
+public abstract class MissionItem implements Comparable<MissionItem> , Serializable  {
 
 	/**
 	 * 
@@ -52,10 +52,16 @@ public abstract class MissionItem implements Comparable<MissionItem> , Serializa
 	public Mission getMission() {
 		return mission;
 	}
+	
+	public void setMission(Mission mission) {
+		this.mission = mission;
+	}
 
 	@Override
 	public int compareTo(MissionItem another) {
 		return mission.getOrder(this) - mission.getOrder(another);
 	}
+	
+	public abstract MissionItem clone(Mission mission);
 
 }

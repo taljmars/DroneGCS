@@ -12,7 +12,7 @@ import mavlink.is.utils.coordinates.Coord2D;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
 
-public class Land extends SpatialCoordItem implements Serializable /* TALMA serializble*/  {
+public class Land extends SpatialCoordItem implements Serializable {
 
 	/**
 	 * 
@@ -54,6 +54,13 @@ public class Land extends SpatialCoordItem implements Serializable /* TALMA seri
 	@Override
 	public MissionItemType getType() {
 		return MissionItemType.LAND;
+	}
+	
+	@Override
+	public Land clone(Mission mission) {
+		Land land = new Land(this);
+		land.setMission(mission);
+		return land;
 	}
 
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.annotation.Resource;
 
-public class DroneVariable  implements Serializable /*TALMA Serializele*/  {
+public class DroneVariable  implements Serializable  {
 	/**
 	 * 
 	 */
@@ -13,9 +13,12 @@ public class DroneVariable  implements Serializable /*TALMA Serializele*/  {
 	@Resource(name = "drone")
 	protected transient Drone drone;
 
-	//public DroneVariable(Drone myDrone) {
 	public DroneVariable() {
-		//this.myDrone = myDrone;
+
+	}
+	
+	public DroneVariable(DroneVariable dv) {
+		drone = dv.drone;
 	}
 
 	public void setDrone(Drone myDrone) {

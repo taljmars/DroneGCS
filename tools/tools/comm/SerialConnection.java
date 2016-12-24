@@ -18,4 +18,8 @@ public interface SerialConnection {
 
 	public void setBaud(Integer baud);
 
+	public Object[] baudList();
+
+	public Object getDefaultBaud();
+
 }

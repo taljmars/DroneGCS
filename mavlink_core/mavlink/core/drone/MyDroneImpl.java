@@ -1,9 +1,8 @@
 package mavlink.core.drone;
 
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-
+import javax.validation.constraints.NotNull;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.connection.MavLinkConnection;
 import mavlink.is.drone.Drone;
@@ -38,13 +37,14 @@ import mavlink.is.drone.variables.Type;
 import mavlink.is.gcs.follow.Follow;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
+import tools.validations.RuntimeValidator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-
+@ComponentScan("tools.validations")
 @ComponentScan("mavlink.is.drone.variables")
 @ComponentScan("mavlink.is.drone")
 @ComponentScan("mavlink.is.gcs.follow")
@@ -61,30 +61,39 @@ public class MyDroneImpl implements Drone {
 		return profile;
 	}
 	
+	@NotNull(message="Missing GPS parameter")
 	@Resource(name = "gps")
 	private GPS GPS;
 	
+	@NotNull(message="Missing Preferences parameter")
 	@Resource(name = "preferencesImpl")
 	private Preferences preferences;
 	
+	@NotNull(message="Missing RC parameter")
 	@Resource(name = "rc")
 	private RC RC;
 
+	@NotNull(message="Missing Beacon parameter")
 	@Resource(name = "beacon")
 	private Beacon Beacon;
 
+	@NotNull(message="Missing GCS parameter")
 	@Resource(name = "gcs")
 	private GCS GCS;
 	
+	@NotNull(message="Missing Speed parameter")
 	@Resource(name = "speed")
 	private Speed speed;
 
+	@NotNull(message="Missing Battery parameter")
 	@Resource(name = "battery")
 	private Battery battery;
 
+	@NotNull(message="Missing Radio parameter")
 	@Resource(name = "radio")
 	private Radio radio;
 
+	@NotNull(message="Missing Home parameter")
 	@Resource(name = "home")
 	private Home home;
 
@@ -94,59 +103,81 @@ public class MyDroneImpl implements Drone {
 	@Resource(name = "missionStats")
 	private MissionStats missionStats;
 
+	@NotNull(message="Missing StreamRates parameter")
 	@Resource(name = "streamRates")
 	private StreamRates streamRates;
 
+	@NotNull(message="Missing Altitude parameter")
 	@Resource(name = "altitude")
 	private Altitude altitude;
 
+	@NotNull(message="Missing Orientation parameter")
 	@Resource(name = "orientation")
 	private Orientation orientation;
 
+	@NotNull(message="Missing Navigation parameter")
 	@Resource(name = "navigation")
 	private Navigation navigation;
 
+	@NotNull(message="Missing GuidedPoint parameter")
 	@Resource(name = "guidedPoint")
 	private GuidedPoint guidedPoint;
 	
+	@NotNull(message="Missing Calibration parameter")
 	@Resource(name = "calibrationSetup")
 	private Calibration calibrationSetup;
 
+	@NotNull(message="Missing WaypointManager parameter")
 	@Resource(name = "waypointManager")
 	private WaypointManager waypointManager;
 
+	@NotNull(message="Missing Magnetometer parameter")
 	@Resource(name = "mag")
 	private Magnetometer mag;
 
+	@NotNull(message="Missing CameraFootprints parameter")
 	@Resource(name = "footprints")
 	private CameraFootprints footprints;
 
+	@NotNull(message="Missing Perimeter parameter")
 	@Resource(name = "perimeter")
 	private Perimeter Perimeter;
 	
+	@NotNull(message="Missing Type parameter")
 	@Resource(name = "type")
 	private Type type;
 	
+	@NotNull(message="Missing Messege parameter")
 	@Resource(name = "messeges")
 	private Messeges messeges;	
 	
+	@NotNull(message="Missing Parameters parameter")
 	@Resource(name = "parameters")
 	private Parameters parameters;
 
+	@NotNull(message="Missing DroneEvents parameter")
 	@Resource(name = "events")
 	private DroneEvents events;
 	
+	@NotNull(message="Missing HeartBeat parameter")
 	@Resource(name = "heartbeat")
 	private HeartBeat heartbeat;
 	
+	@NotNull(message="Missing State parameter")
 	@Resource(name = "state")
 	private State state;
 
+	@NotNull(message="Missing Follow parameter")
 	@Resource(name = "follow")
 	private Follow follow;
 	
+	@NotNull(message="Missing MavLinkConnection parameter")
 	@Resource(name = "usbConnection")
 	private MavLinkConnection mavlinkConnection;
+	
+	@Resource(name = "validator")
+	@NotNull(message = "Internal Error: Failed to get validator")
+	private RuntimeValidator validator;
 
 	private VehicleProfile profile;
 	
@@ -165,6 +196,9 @@ public class MyDroneImpl implements Drone {
 		Perimeter.init();
 		parameters.init();
 		messeges.init();
+		
+		if (!validator.validate(this))
+			throw new RuntimeException("Failed to initialize drone");
 	}
 
 	@Override

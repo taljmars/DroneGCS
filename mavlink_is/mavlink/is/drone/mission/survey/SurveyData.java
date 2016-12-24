@@ -12,6 +12,18 @@ public class SurveyData {
 	private Double overlap = 50.0;
 	private Double sidelap = 60.0;
 	private CameraInfo camera = new CameraInfo();
+	
+	public SurveyData() {
+		
+	}
+
+	public SurveyData(SurveyData survey) {
+		this.altitude.set(survey.altitude.valueInMeters());
+		this.angle = survey.angle;
+		this.overlap = survey.overlap;
+		this.sidelap = survey.sidelap;
+		this.camera = new CameraInfo(survey.camera);
+	}
 
 	public void update(double angle, Altitude altitude, double overlap, double sidelap) {
 		this.angle = angle;

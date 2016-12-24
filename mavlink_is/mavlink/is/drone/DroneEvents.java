@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component;
 @Component("events")
 public class DroneEvents extends DroneVariable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7458904266838861886L;
 
 	private final ConcurrentLinkedQueue<DroneEventsType> eventsQueue = new ConcurrentLinkedQueue<DroneEventsType>();
@@ -40,11 +37,7 @@ public class DroneEvents extends DroneVariable {
 		}
 	};
 
-	//@Autowired
-	//public DroneEvents(Drone myDrone, DroneInterfaces.Handler handler) {
 	public DroneEvents() {
-		//super(myDrone);
-		//this.handler = handler;
 	}
 
 	private final ConcurrentLinkedQueue<OnDroneListener> droneListeners = new ConcurrentLinkedQueue<OnDroneListener>();

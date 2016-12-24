@@ -8,6 +8,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.context.annotation.ComponentScan;
 
 import tools.logger.Logger;
 import mavlink.is.drone.Drone;
@@ -20,16 +23,23 @@ import mavlink.is.protocol.msgparser.Parser;
 /**
  * Base for mavlink connection implementations.
  */
+@ComponentScan("tools.logger")
 public abstract class MavLinkConnection {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = MavLinkConnection.class.getSimpleName();
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	/*
 	 * MavLink connection states
@@ -114,7 +124,7 @@ public abstract class MavLinkConnection {
 					sendingThread.interrupt();
 				}
 
-				Logger.LogDesignedMessege("Connection Thread finished");
+				logger.LogDesignedMessege("Connection Thread finished");
 				drone.notifyDroneEvent(DroneEventsType.DISCONNECTED);
 				disconnect();
 			}
@@ -150,7 +160,7 @@ public abstract class MavLinkConnection {
 					if (packet.unpack().msgid != msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT) {
 //						System.err.println("[SND] " + packet.unpack().toString());
 						String log_entry = Logger.generateDesignedMessege(packet.unpack().toString(), Logger.Type.OUTGOING, false);
-						Logger.LogDesignedMessege(log_entry);
+						logger.LogDesignedMessege(log_entry);
 					}
 					packet.seq = msgSeqNumber;
 					byte[] buffer = packet.encodePacket();
@@ -165,10 +175,10 @@ public abstract class MavLinkConnection {
 				}
 				loggerDisplayerSvc.logError("Mavlink was not connected");
 			} catch (InterruptedException e) {
-				Logger.LogErrorMessege("Interrupted exception:");
-				Logger.LogErrorMessege(e.getMessage());
+				logger.LogErrorMessege("Interrupted exception:");
+				logger.LogErrorMessege(e.getMessage());
 			} finally {
-				Logger.LogDesignedMessege("Sending Thread finished");
+				logger.LogDesignedMessege("Sending Thread finished");
 				disconnect();
 			}
 		}
@@ -205,7 +215,7 @@ public abstract class MavLinkConnection {
 			closeConnection();
 			reportDisconnect();
 		} catch (IOException e) {
-			Logger.LogErrorMessege(e.getMessage());
+			logger.LogErrorMessege(e.getMessage());
 			reportComError(e.getMessage());
 		}
 	}

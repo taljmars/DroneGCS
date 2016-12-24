@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import mavlink.is.utils.units.Altitude;
 
-public class Takeoff extends MissionCMD implements Serializable /* TALMA serializble*/ {
+public class Takeoff extends MissionCMD implements Serializable {
 
     /**
 	 * 
@@ -22,8 +21,9 @@ public class Takeoff extends MissionCMD implements Serializable /* TALMA seriali
 
 	private Altitude finishedAlt = new Altitude(10);
 
-	public Takeoff(MissionItem item) {
+	public Takeoff(Takeoff item) {
 		super(item);
+		finishedAlt = new Altitude(item.finishedAlt);
 	}
 
 	public Takeoff(msg_mission_item msg, Mission mission) {
@@ -62,5 +62,12 @@ public class Takeoff extends MissionCMD implements Serializable /* TALMA seriali
 
 	public void setFinishedAlt(Altitude finishedAlt) {
 		this.finishedAlt = finishedAlt;
+	}
+
+	@Override
+	public Takeoff clone(Mission mission) {
+		Takeoff takeoff = new Takeoff(this);
+		takeoff.setMission(mission);
+		return takeoff;
 	}
 }

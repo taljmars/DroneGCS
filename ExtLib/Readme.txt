@@ -6,4 +6,6 @@ Or, should be place near the executable in order to run the GCS.
 You can use the following spring 4.3.3:
 http://repo.spring.io/release/org/springframework/spring/4.3.3.RELEASE/
 
+Copy *.dll file to <Java_home>/bin directory
+
 Tal.

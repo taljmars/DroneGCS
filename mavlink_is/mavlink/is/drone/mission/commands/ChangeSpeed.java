@@ -3,7 +3,6 @@ package mavlink.is.drone.mission.commands;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -17,8 +16,9 @@ public class ChangeSpeed extends MissionCMD {
 	private static final long serialVersionUID = 2103304715264899317L;
 	private Speed speed = new Speed(5);
 
-	public ChangeSpeed(MissionItem item) {
+	public ChangeSpeed(ChangeSpeed item) {
 		super(item);
+		this.speed = new Speed(item.speed);
 	}
 
 	public ChangeSpeed(msg_mission_item msg, Mission mission) {
@@ -57,5 +57,12 @@ public class ChangeSpeed extends MissionCMD {
 
 	public void setSpeed(Speed speed) {
 		this.speed = speed;
+	}
+
+	@Override
+	public ChangeSpeed clone(Mission mission) {
+		ChangeSpeed changeSpeed = new ChangeSpeed(this);
+		changeSpeed.setMission(mission);
+		return changeSpeed;
 	}
 }

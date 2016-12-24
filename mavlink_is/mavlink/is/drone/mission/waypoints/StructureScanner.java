@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mavlink.is.drone.mission.Mission;
-import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.drone.mission.survey.CameraInfo;
 import mavlink.is.drone.mission.survey.Survey;
@@ -34,8 +33,13 @@ public class StructureScanner extends SpatialCoordItem {
 		super(mission,coord);
 	}
 
-	public StructureScanner(MissionItem item) {
-		super(item);
+	public StructureScanner(StructureScanner structureScanner) {
+		super(structureScanner);
+		this.radius.set(structureScanner.radius.valueInMeters());
+		this.heightStep.set(structureScanner.heightStep.valueInMeters());
+		this.numberOfSteps = structureScanner.numberOfSteps;
+		this.crossHatch = structureScanner.crossHatch;
+		this.survey = new SurveyData(survey);
 	}
 
 	@Override
@@ -167,6 +171,13 @@ public class StructureScanner extends SpatialCoordItem {
 
 	public String getCamera() {
 		return survey.getCameraName();
+	}
+	
+	@Override
+	public StructureScanner clone(Mission mission) {
+		StructureScanner structureScanner = new StructureScanner(this);
+		structureScanner.setMission(mission);
+		return structureScanner;
 	}
 
 }

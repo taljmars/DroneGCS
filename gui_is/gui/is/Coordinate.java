@@ -1,8 +1,6 @@
 // License: GPL. For details, see Readme.txt file.
 package gui.is;
 
-import gui.is.interfaces.ICoordinate;
-
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +17,7 @@ import mavlink.is.utils.coordinates.Coord2D;
  * @author Jan Peter Stotz
  *
  */
-public class Coordinate implements ICoordinate ,Serializable /*TALMA add serilizebae*/ {
+public class Coordinate implements Serializable {
     /**
 	 * 
 	 */
@@ -30,22 +28,18 @@ public class Coordinate implements ICoordinate ,Serializable /*TALMA add seriliz
         data = new Point2D.Double(lon, lat);
     }
 
-    @Override
     public synchronized double getLat() {
         return data.y;
     }
 
-    @Override
     public synchronized void setLat(double lat) {
         data.y = lat;
     }
 
-    @Override
     public synchronized double getLon() {
         return data.x;
     }
 
-    @Override
     public synchronized void setLon(double lon) {
         data.x = lon;
     }

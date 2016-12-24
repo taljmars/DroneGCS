@@ -1,10 +1,10 @@
 package gui.core.springConfig;
 
 import java.awt.Dimension;
-import javax.swing.JDesktopPane;
-import javax.swing.JPanel;
 import gui.core.dashboard.Dashboard;
-import gui.core.mapObjects.LayerMission;
+import gui.core.mapTreeObjects.LayerMission;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.is.drone.mission.Mission;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -22,11 +22,17 @@ import org.springframework.context.support.AbstractApplicationContext;
 @Configuration
 public class AppConfig {
 	
+	public static final double FRAME_CONTAINER_REDUCE_PRECENTAGE = 0.17;
+	public static final String ENV_SYMBOL = "GCSMode";
+	
+	public static boolean DebugMode = false;
+	public static final String DEBUG_SYMBOL = "debug";
+
 	public static AbstractApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 	
 	@Bean
-	public JDesktopPane frameContainer() {
-		return new JDesktopPane();
+	public HBox frameContainer() {
+		return new HBox();
 	}
 	
 	@Bean
@@ -36,8 +42,8 @@ public class AppConfig {
 	
 	@Bean
 	@Scope("prototype")
-	public JPanel emptyPanel() {
-		return new JPanel();
+	public Pane emptyPanel() {
+		return new Pane();
 	}
 	
 	@Bean
@@ -54,6 +60,6 @@ public class AppConfig {
 	@Bean
 	@Scope("prototype")
 	public LayerMission layerMission() {
-		return new LayerMission();
+		return new LayerMission("New Mission*");
 	}
 }

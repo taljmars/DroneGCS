@@ -13,6 +13,13 @@ public class Polygon {
 
 	private List<Coord2D> points = new ArrayList<Coord2D>();
 
+	public Polygon(Polygon polygon) {
+		for (Coord2D coord2d : polygon.points) points.add(new Coord2D(coord2d));
+	}
+
+	public Polygon() {
+	}
+
 	public void addPoints(List<Coord2D> pointList) {
 		for (Coord2D point : pointList) {
 			addPoint(point);

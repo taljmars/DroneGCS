@@ -2,8 +2,9 @@ package mavlink.core.connection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.swing.JOptionPane;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import tools.logger.Logger;
@@ -29,8 +30,11 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import mavlink.is.utils.coordinates.Coord2D;
+import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
 
+@ComponentScan("tools.logger")
+@ComponentScan("gui.is.service")
 @Component("droneUpdateListener")
 public class DroneUpdateListener implements MavLinkConnectionListener {
 
@@ -40,10 +44,20 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	byte t_sysid = 1;
 	
 	@Resource(name = "loggerDisplayerSvc")
+	@NotNull(message = "Internal Error: Failed to get logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Resource(name = "drone")
+	@NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+	
+	@Resource(name = "dialogManagerSvc")
+	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	private DialogManagerSvc dialogManagerSvc;
+	
+	@Resource(name = "logger")
+	@NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 	
 	static int called;
 	@PostConstruct
@@ -61,7 +75,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 	@Override
 	public void onReceiveMessage(MAVLinkMessage msg) {		
 		if (msg == null) {
-			JOptionPane.showMessageDialog(null, "Recieved empty messege from quad, please restart the GCS");
+			dialogManagerSvc.showAlertMessageDialog("Recieved empty messege from quad, please restart the GCS");
 			System.exit(0);
 		}
 		
@@ -72,7 +86,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 		}
 		
 		String log_entry = Logger.generateDesignedMessege(msg.toString(), Logger.Type.INCOMING, false);
-		Logger.LogDesignedMessege(log_entry);
+		logger.LogDesignedMessege(log_entry);
 
 		drone.getWaypointManager().processMessage(msg);
 		drone.getCalibrationSetup().processMessage(msg);

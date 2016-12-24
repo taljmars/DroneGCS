@@ -2,29 +2,40 @@ package gui.core.Main;
 
 import gui.core.dashboard.Dashboard;
 import gui.core.springConfig.AppConfig;
-import gui.is.validations.RuntimeValidator;
+import gui.is.KeyBoardControler;
+import gui.is.services.DialogManagerSvc;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import tools.validations.RuntimeValidator;
 
-import java.awt.EventQueue;
-
-import javax.swing.JOptionPane;
-
-public class Main {
-
+public class Main extends Application {
+	
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					System.out.println("Start Dashboard");
-					Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
-					if (!RuntimeValidator.validate(dashboard)) {
-						JOptionPane.showMessageDialog(null, "Critical error occur, failed to find running path");
-						return;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+        launch(args);
+    }
+	
+	@Override
+    public void start(Stage primaryStage) {
+		if (AppConfig.DEBUG_SYMBOL.equals(System.getenv(AppConfig.ENV_SYMBOL)))
+			AppConfig.DebugMode = true;
+		
+        Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
+        DialogManagerSvc dialogManager = (DialogManagerSvc) AppConfig.context.getBean("dialogManagerSvc");
+    	RuntimeValidator validator = (RuntimeValidator) AppConfig.context.getBean("validator");
+    	
+        dashboard.setViewManager(primaryStage);
+        if (!validator.validate(dashboard)) {
+			dialogManager.showAlertMessageDialog("Critical error occur, failed to find running path");
+			return;
+		}
+        Scene scene = new Scene(dashboard, 300, 250);
+        KeyBoardControler keyboardControler = (KeyBoardControler) AppConfig.context.getBean("keyBoardControler");
+        scene.setOnKeyPressed(keyboardControler);       
+        primaryStage.setResizable(false);
+        primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
+        primaryStage.show();
+    }
 
 }
