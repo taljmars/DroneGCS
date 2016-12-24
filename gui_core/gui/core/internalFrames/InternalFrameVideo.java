@@ -7,8 +7,6 @@ import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
-import org.opencv.core.Core;
-import org.opencv.videoio.VideoCapture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
