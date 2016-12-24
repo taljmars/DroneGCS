@@ -43,7 +43,8 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 763689884103713162L;
 	
-	private Button btnStartCamera;
+	private Button btnCamera;
+	private Button btnStartExternalCamera;
 	private Button btnSetMode;
 	private Button btnMap;
 	private Button btnActualPWM;
@@ -78,6 +79,9 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         
         btnBattery = CreateDragableButton(this.getClass().getResource("/guiImages/battery.png"), "Battery");
         getChildren().add(btnBattery);
+        
+        btnCamera = CreateDragableButton(this.getClass().getResource("/guiImages/Camera.png"), "Video");
+        getChildren().add(btnCamera);
 		
         Vector<ApmModes> flightModes = new Vector<ApmModes>();
         flightModes.add(ApmModes.ROTOR_STABILIZE);
@@ -102,9 +106,9 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         btnSetMode.setOnAction(this);
         getChildren().add(btnSetMode);
         
-        btnStartCamera = CreateImageButton(this.getClass().getResource("/guiImages/Camera.png"), "Start Camera");
-        btnStartCamera.setOnAction(this);
-        getChildren().add(btnStartCamera);
+        btnStartExternalCamera = CreateImageButton(this.getClass().getResource("/guiImages/Camera.png"), "Start Camera");
+        btnStartExternalCamera.setOnAction(this);
+        getChildren().add(btnStartExternalCamera);
         
         lblCriticalMsg = new TextField("");
         lblCriticalMsg.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * 0.503);
@@ -203,7 +207,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 			return;
 		}
 		
-		if (e.getSource() == btnStartCamera) {
+		if (e.getSource() == btnStartExternalCamera) {
 			try {
 				cameraExternalProcess = Runtime.getRuntime().exec("\"C:/Program Files (x86)/Samsung/SideSync4/SideSync.exe\"");
 				cameraExternalProcess.waitFor();

@@ -5,6 +5,7 @@ import gui.core.internalFrames.InternalFrameBattery;
 import gui.core.internalFrames.InternalFrameHeightAndSpeed;
 import gui.core.internalFrames.InternalFrameMap;
 import gui.core.internalFrames.InternalFrameSignals;
+import gui.core.internalFrames.InternalFrameVideo;
 import gui.core.internalPanels.*;
 import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.springConfig.AppConfig;
@@ -131,6 +132,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@Resource(name = "internalFrameBattery")
 	private InternalFrameBattery internalFrameBattery;
+	
+	@Resource(name = "internalFrameVideo")
+	private InternalFrameVideo internalFrameVideo;
 	
 	private BorderPane frame;
 	
@@ -442,6 +446,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			selectedPane = internalFrameHeightAndSpeed;
 		else if (cmd.equals("Battery"))
 			selectedPane = internalFrameBattery;
+		else if (cmd.equals("Video"))
+			selectedPane = internalFrameVideo;
 		else 
 			selectedPane = null;
 				
