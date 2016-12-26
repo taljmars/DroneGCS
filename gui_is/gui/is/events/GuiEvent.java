@@ -32,7 +32,9 @@ public class GuiEvent extends ApplicationEvent {
         
         
         EXIT, 
-        SPLIT_FRAMECONTAINER
+        SPLIT_FRAMECONTAINER, 
+        
+        CAMERA_DEVICEID
     }
 
     private COMMAND command;

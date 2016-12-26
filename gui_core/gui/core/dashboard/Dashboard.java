@@ -1,11 +1,6 @@
 package gui.core.dashboard;
 
-import gui.core.internalFrames.InternalFrameActualPWM;
-import gui.core.internalFrames.InternalFrameBattery;
-import gui.core.internalFrames.InternalFrameHeightAndSpeed;
 import gui.core.internalFrames.InternalFrameMap;
-import gui.core.internalFrames.InternalFrameSignals;
-import gui.core.internalFrames.InternalFrameVideo;
 import gui.core.internalPanels.*;
 import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.springConfig.AppConfig;
@@ -106,10 +101,10 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@NotNull(message = "Internal Error: Failed to get HB mechanism")
 	private GCSHeartbeat gcsHeartbeat;
 	
-	@NotNull(message = "Internal Error: Missing panel")
+	@NotNull(message = "Internal Error: Tab panel")
 	private TabPane tabPane;
 	
-	@NotNull(message = "Internal Error: Missing panel")
+	@NotNull(message = "Internal Error: Progress bar")
 	private ProgressBar progressBar;
 	
 	@NotNull(message = "Internal Error: Mission view manager")
@@ -117,24 +112,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	
 	// Internal Frame
-	
 	@Resource(name = "internalFrameMap")
 	private InternalFrameMap internalFrameMap;
-	
-	@Resource(name = "internalFrameActualPWM")
-	private InternalFrameActualPWM internalFrameActualPWM;
-	
-	@Resource(name = "internalFrameSignals")
-	private InternalFrameSignals internalFrameSignals;
-	
-	@Resource(name = "internalFrameHeightAndSpeed")
-	private InternalFrameHeightAndSpeed internalFrameHeightAndSpeed;
-	
-	@Resource(name = "internalFrameBattery")
-	private InternalFrameBattery internalFrameBattery;
-	
-	@Resource(name = "internalFrameVideo")
-	private InternalFrameVideo internalFrameVideo;
 	
 	private BorderPane frame;
 	
@@ -256,9 +235,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		eastPanel.getChildren().add(tbTelemtry);
         
 		getChildren().add(frame);
-		
-		handleFrameContainerRequest("Map", 0);
-		
 	}
 	
 	private int GetFrameIndexInsideContainer(double intersectedPoint) {
@@ -429,28 +405,13 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		}
 	}
 	
-	public void handleFrameContainerRequest(String cmd, int index) {
-		if (cmd.isEmpty())
+	public void handleFrameContainerRequest(String springInstanciation, int index) {
+		if (springInstanciation.isEmpty())
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		final Node selectedPane;
-		
-		if (cmd.equals("Map"))
-			selectedPane = internalFrameMap;
-		else if (cmd.equals("Actual PWM"))
-			selectedPane = internalFrameActualPWM;
-		else if (cmd.equals("Signals"))
-			selectedPane = internalFrameSignals;
-		else if (cmd.equals("Height And Speed"))
-			selectedPane = internalFrameHeightAndSpeed;
-		else if (cmd.equals("Battery"))
-			selectedPane = internalFrameBattery;
-		else if (cmd.equals("Video"))
-			selectedPane = internalFrameVideo;
-		else 
-			selectedPane = null;
-				
+		final Node selectedPane = (Node) AppConfig.context.getBean(springInstanciation);
+						
 		if (selectedPane != null) {
 			Platform.runLater(() -> {
 				if (children.contains(selectedPane) || frameAmount.get() == 1)

@@ -14,9 +14,11 @@ import gui.is.events.GuiEvent;
 import gui.is.events.GuiEvent.COMMAND;
 import gui.is.services.EventPublisherSvc;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import mavlink.is.drone.Drone;
@@ -38,6 +40,8 @@ public class PanelConfigurationBox extends Pane {
 	
 	private CheckBox cbActiveGeofencePerimeterAlertOnly;
 	private ComboBox<Integer> cmbframeContainerCells;
+	private Button btnUpdateDevice;
+	private TextField txtDeviceId;
 	
 	private static int called = 0;
 	@PostConstruct
@@ -65,7 +69,16 @@ public class PanelConfigurationBox extends Pane {
         cmbframeContainerCells.setValue(2);
         cmbframeContainerCells.setOnAction( e -> eventPublisherSvc.publish(new GuiEvent(COMMAND.SPLIT_FRAMECONTAINER, cmbframeContainerCells.getValue())));
         cmbframeContainerCells.getItems().addAll(new Vector<Integer>(frames));
-        panel.add(cmbframeContainerCells, columnIndex+1, rowIndex++);
+        panel.add(cmbframeContainerCells, columnIndex + 1, rowIndex++);
+        
+        btnUpdateDevice = new Button("Update");
+        panel.add(btnUpdateDevice, columnIndex, rowIndex);
+        btnUpdateDevice.setOnAction( e -> {
+        	int device = Integer.parseInt(txtDeviceId.getText());
+        	eventPublisherSvc.publish(new GuiEvent(COMMAND.CAMERA_DEVICEID, device));	
+        });
+        txtDeviceId = new TextField("0");
+        panel.add(txtDeviceId, columnIndex + 1, rowIndex++);
         
         getChildren().add(panel);
 	}

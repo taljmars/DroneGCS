@@ -65,64 +65,10 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	private DialogManagerSvc dialogManagerSvc;
 
 	public PanelToolBarSatellite() {	
-		btnMap = CreateDragableButton(this.getClass().getResource("/guiImages/map.png"), "Map");
-        getChildren().add(btnMap);
-        
-        btnActualPWM = CreateDragableButton(this.getClass().getResource("/guiImages/motor.png"), "Actual PWM");
-        getChildren().add(btnActualPWM);
-        
-        btnSignal = CreateDragableButton(this.getClass().getResource("/guiImages/signal.png"), "Signals");
-        getChildren().add(btnSignal);
-        
-        btnHeightAndSpeed = CreateDragableButton(this.getClass().getResource("/guiImages/hieght.png"), "Height And Speed");
-        getChildren().add(btnHeightAndSpeed);
-        
-        btnBattery = CreateDragableButton(this.getClass().getResource("/guiImages/battery.png"), "Battery");
-        getChildren().add(btnBattery);
-        
-        btnCamera = CreateDragableButton(this.getClass().getResource("/guiImages/Camera.png"), "Video");
-        getChildren().add(btnCamera);
-		
-        Vector<ApmModes> flightModes = new Vector<ApmModes>();
-        flightModes.add(ApmModes.ROTOR_STABILIZE);
-        flightModes.add(ApmModes.ROTOR_ACRO);
-        flightModes.add(ApmModes.ROTOR_ALT_HOLD);
-        flightModes.add(ApmModes.ROTOR_AUTO);
-        flightModes.add(ApmModes.ROTOR_GUIDED);
-        flightModes.add(ApmModes.ROTOR_LOITER);
-        flightModes.add(ApmModes.ROTOR_RTL);
-        flightModes.add(ApmModes.ROTOR_CIRCLE);
-        flightModes.add(ApmModes.ROTOR_LAND);
-        flightModes.add(ApmModes.ROTOR_TOY);
-        flightModes.add(ApmModes.ROTOR_SPORT);
-        flightModes.add(ApmModes.ROTOR_AUTOTUNE);
-        flightModes.add(ApmModes.ROTOR_POSHOLD);
-        
-        flightModesCombo = new ComboBox<ApmModes>();
-        flightModesCombo.getItems().addAll(new Vector<ApmModes>(flightModes));
-        flightModesCombo.setPrefHeight(30 + 8);
-        getChildren().add(flightModesCombo);
-        btnSetMode = CreateImageButton(this.getClass().getResource("/guiImages/UpdateQuad.png"), "Set Mode");
-        btnSetMode.setOnAction(this);
-        getChildren().add(btnSetMode);
-        
-        btnStartExternalCamera = CreateImageButton(this.getClass().getResource("/guiImages/Camera.png"), "Start Camera");
-        btnStartExternalCamera.setOnAction(this);
-        getChildren().add(btnStartExternalCamera);
-        
-        lblCriticalMsg = new TextField("");
-        lblCriticalMsg.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * 0.503);
-        lblCriticalMsg.setEditable(false);
-        getChildren().add(lblCriticalMsg);
-        
-        batteryBar = new ProgressBar();
-        batteryBar.setProgress(0);
-        batteryBar.setPrefHeight(30 + 8);
-        batteryBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
-        getChildren().add(batteryBar);
+
 	}
 	
-	private Button CreateImageButton(URL url, String userDate) {
+	private Button CreateImageButton(URL url) {
 		Button button = new Button();
 		Image img = new Image(url.toString());
 		ImageView iview = new ImageView(img);
@@ -132,9 +78,9 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 		return button;
 	}
 
-	private Button CreateDragableButton(URL url, String userDate) {
-		Button button = CreateImageButton(url, userDate);
-		button.setUserData(userDate);
+	private Button CreateDragableButton(URL url, String springInstanciation) {
+		Button button = CreateImageButton(url);
+		button.setUserData(springInstanciation);
 		
 		ImageView iview = (ImageView) button.getGraphic();
         
@@ -149,7 +95,7 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
         	        
         	/* Put a string on a dragboard */
         	ClipboardContent content = new ClipboardContent();
-        	content.putString(button.getUserData().toString());
+        	content.putString((String) button.getUserData());
         	db.setContent(content);
         	event.consume();
         });
@@ -166,6 +112,62 @@ public class PanelToolBarSatellite extends FlowPane implements OnDroneListener, 
 	@PostConstruct
 	public void init() {
         drone.addDroneListener(this);
+        
+		btnMap = CreateDragableButton(	this.getClass().getResource("/guiImages/map.png"), "internalFrameMap");
+		getChildren().add(btnMap);
+		
+		btnActualPWM = CreateDragableButton(this.getClass().getResource("/guiImages/motor.png"), "internalFrameActualPWM");
+		getChildren().add(btnActualPWM);
+		
+		btnSignal = CreateDragableButton(	this.getClass().getResource("/guiImages/signal.png"), "internalFrameSignals");
+		getChildren().add(btnSignal);
+		
+		btnHeightAndSpeed = CreateDragableButton(	this.getClass().getResource("/guiImages/hieght.png"), "internalFrameHeightAndSpeed");
+		getChildren().add(btnHeightAndSpeed);
+		
+		btnBattery = CreateDragableButton(	this.getClass().getResource("/guiImages/battery.png"), "internalFrameBattery");
+		getChildren().add(btnBattery);
+		
+		btnCamera = CreateDragableButton(	this.getClass().getResource("/guiImages/Camera.png"), "internalFrameVideo");
+		getChildren().add(btnCamera);
+		
+		Vector<ApmModes> flightModes = new Vector<ApmModes>();
+		flightModes.add(ApmModes.ROTOR_STABILIZE);
+		flightModes.add(ApmModes.ROTOR_ACRO);
+		flightModes.add(ApmModes.ROTOR_ALT_HOLD);
+		flightModes.add(ApmModes.ROTOR_AUTO);
+		flightModes.add(ApmModes.ROTOR_GUIDED);
+		flightModes.add(ApmModes.ROTOR_LOITER);
+		flightModes.add(ApmModes.ROTOR_RTL);
+		flightModes.add(ApmModes.ROTOR_CIRCLE);
+		flightModes.add(ApmModes.ROTOR_LAND);
+		flightModes.add(ApmModes.ROTOR_TOY);
+		flightModes.add(ApmModes.ROTOR_SPORT);
+		flightModes.add(ApmModes.ROTOR_AUTOTUNE);
+		flightModes.add(ApmModes.ROTOR_POSHOLD);
+		
+		flightModesCombo = new ComboBox<ApmModes>();
+		flightModesCombo.getItems().addAll(new Vector<ApmModes>(flightModes));
+		flightModesCombo.setPrefHeight(30 + 8);
+		getChildren().add(flightModesCombo);
+		btnSetMode = CreateImageButton(this.getClass().getResource("/guiImages/UpdateQuad.png"));
+		btnSetMode.setOnAction(this);
+		getChildren().add(btnSetMode);
+		
+		btnStartExternalCamera = CreateImageButton(this.getClass().getResource("/guiImages/Camera.png"));
+		btnStartExternalCamera.setOnAction(this);
+		getChildren().add(btnStartExternalCamera);
+		
+		lblCriticalMsg = new TextField("");
+		lblCriticalMsg.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * 0.467);
+		lblCriticalMsg.setEditable(false);
+		getChildren().add(lblCriticalMsg);
+		
+		batteryBar = new ProgressBar();
+		batteryBar.setProgress(0);
+		batteryBar.setPrefHeight(30 + 8);
+		batteryBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
+		getChildren().add(batteryBar);
 	}
 
 	public void ClearNotification() {

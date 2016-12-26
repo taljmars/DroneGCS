@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @ComponentScan("gui.core.mapTree")
 @ComponentScan("gui.is.services")
 @Component("internalFrameMap")
-public class InternalFrameMap extends SplitPane implements ChangeListener<Number>{
+public class InternalFrameMap extends SplitPane implements ChangeListener<Number> {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;

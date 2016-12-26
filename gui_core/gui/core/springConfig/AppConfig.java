@@ -1,6 +1,7 @@
 package gui.core.springConfig;
 
 import java.awt.Dimension;
+
 import gui.core.dashboard.Dashboard;
 import gui.core.mapTreeObjects.LayerMission;
 import javafx.scene.layout.HBox;
