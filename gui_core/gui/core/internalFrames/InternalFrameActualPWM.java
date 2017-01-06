@@ -1,11 +1,14 @@
 package gui.core.internalFrames;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -14,41 +17,38 @@ import tools.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.GuiEvent;
 import javafx.application.Platform;
-import javafx.scene.chart.CategoryAxis;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
 @Component("internalFrameActualPWM")
-public class InternalFrameActualPWM extends Pane implements OnDroneListener {
+public class InternalFrameActualPWM extends Pane implements OnDroneListener, Initializable {
 
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	
-	@Resource(name = "drone")
+	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
 	private CSV csv;
+	
+	@FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
-	private static XYChart.Series<String, Number> seriesRoll;
-	private static XYChart.Series<String, Number> seriesPitch;
-	private static XYChart.Series<String, Number> seriesThr;
-	private static XYChart.Series<String, Number> seriesYaw;
-	
-	@Autowired
-	public InternalFrameActualPWM(@Value("Actual PWM") String title) {		
+	private static XYChart.Series<String, Number> seriesE1;
+	private static XYChart.Series<String, Number> seriesE2;
+	private static XYChart.Series<String, Number> seriesE3;
+	private static XYChart.Series<String, Number> seriesE4;
+			
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		loadChart();
 	}
-	
-	
+
 	private static int called;
 	@PostConstruct
 	private void init() throws URISyntaxException {
@@ -56,59 +56,44 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
 			throw new RuntimeException("Not a Singletone");
 		
 		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
-		csv.open(Arrays.asList("Time", "Roll", "Pitch", "Thrust", "Yaw"));
+		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
 		
 		drone.addDroneListener(this);
 	}
 
-	private void addRCActual(int roll, int pitch, int thr, int yaw) {
+	private void addRCActual(int e1, int e2, int e3, int e4) {
 		Platform.runLater( () -> {
 			String timestamp = LocalDateTime.now().toLocalTime().toString();
 			
-			if (seriesRoll != null)
-				seriesRoll.getData().add(new XYChart.Data<String, Number>(timestamp, roll));
-			if (seriesPitch != null)
-				seriesPitch.getData().add(new XYChart.Data<String, Number>(timestamp, pitch));
-			if (seriesThr != null)
-				seriesThr.getData().add(new XYChart.Data<String, Number>(timestamp, thr));
-			if (seriesYaw != null)
-				seriesYaw.getData().add(new XYChart.Data<String, Number>(timestamp, yaw));
+			if (seriesE1 != null)
+				seriesE1.getData().add(new XYChart.Data<String, Number>(timestamp, e1));
+			if (seriesE2 != null)
+				seriesE2.getData().add(new XYChart.Data<String, Number>(timestamp, e2));
+			if (seriesE3 != null)
+				seriesE3.getData().add(new XYChart.Data<String, Number>(timestamp, e3));
+			if (seriesE4 != null)
+				seriesE4.getData().add(new XYChart.Data<String, Number>(timestamp, e4));
 			
-			csv.addEntry(Arrays.asList(timestamp, roll, pitch, thr, yaw));
+			csv.addEntry(Arrays.asList(timestamp, e1, e2, e3, e4));
 		});
 	}
 
 	private void loadChart() {
-		CategoryAxis xAxis = new CategoryAxis();
-		xAxis.setLabel("Time");
+		seriesE1 = new XYChart.Series<String, Number>();
+		seriesE1.setName("E1");
+		lineChart.getData().add(seriesE1);
 		
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setUpperBound(2200);
-        yAxis.setLowerBound(0);
-        
-		LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-       
-        lineChart.setTitle("PWM");
-
-		seriesRoll = new XYChart.Series<String, Number>();
-		seriesRoll.setName("E1");
-		lineChart.getData().add(seriesRoll);
+		seriesE2 = new XYChart.Series<String, Number>();
+		seriesE2.setName("E2");
+		lineChart.getData().add(seriesE2);
 		
-		seriesPitch = new XYChart.Series<String, Number>();
-		seriesPitch.setName("E2");
-		lineChart.getData().add(seriesPitch);
+		seriesE3 = new XYChart.Series<String, Number>();
+		seriesE3.setName("E3");
+		lineChart.getData().add(seriesE3);
 		
-		seriesThr = new XYChart.Series<String, Number>();
-		seriesThr.setName("E3");
-		lineChart.getData().add(seriesThr);
-		
-		seriesYaw = new XYChart.Series<String, Number>();
-		seriesYaw.setName("E4");
-		lineChart.getData().add(seriesYaw);
-		
-		lineChart.prefWidthProperty().bind(widthProperty());
-		
-		getChildren().add(lineChart);
+		seriesE4 = new XYChart.Series<String, Number>();
+		seriesE4.setName("E4");
+		lineChart.getData().add(seriesE4);
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -130,6 +115,5 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener {
 				csv.close();
 			break;
 		}
-	}
-	
+	}	
 }

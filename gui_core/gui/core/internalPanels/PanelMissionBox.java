@@ -1,10 +1,13 @@
 package gui.core.internalPanels;
 
+import java.net.URL;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +21,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -29,7 +34,9 @@ import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
+import mavlink.is.drone.mission.MissionItemType;
 import mavlink.is.drone.mission.waypoints.Circle;
+import mavlink.is.drone.mission.waypoints.RegionOfInterest;
 import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
 import mavlink.is.drone.mission.waypoints.interfaces.Delayable;
@@ -38,34 +45,37 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.is.utils.units.Altitude;
 
 @Component("areaMission")
-public class PanelMissionBox extends Pane {
-
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 86865235148815438L;
+public class PanelMissionBox extends Pane implements Initializable {
 	
-	@Resource(name = "eventPublisherSvc")
+	@Autowired @NotNull( message = "Internal Error: Fail to get event publisher" )
 	protected EventPublisherSvc eventPublisherSvc;
 	
-	private TableView<MissionItemTableEntry> table;
+	@FXML private TableView<MissionItemTableEntry> table;
     
-	private TableColumn<MissionItemTableEntry,Integer> order = new TableColumn<MissionItemTableEntry,Integer>("#");
-	private TableColumn<MissionItemTableEntry,String> type = new TableColumn<MissionItemTableEntry,String>("Type");
-	private TableColumn<MissionItemTableEntry,Double> lat = new TableColumn<MissionItemTableEntry,Double>("Lat");
-	private TableColumn<MissionItemTableEntry,Double> lon = new TableColumn<MissionItemTableEntry,Double>("Lon");
-	private TableColumn<MissionItemTableEntry,Double> height = new TableColumn<MissionItemTableEntry,Double>("Height");
-	private TableColumn<MissionItemTableEntry,Double> delay = new TableColumn<MissionItemTableEntry,Double>("Delay");
-	private TableColumn<MissionItemTableEntry,Double> radius = new TableColumn<MissionItemTableEntry,Double>("Radius");
-	private TableColumn<MissionItemTableEntry,String> setUp = new TableColumn<MissionItemTableEntry,String>("Move Up");
-	private TableColumn<MissionItemTableEntry,String> setDown = new TableColumn<MissionItemTableEntry,String>("Move Down");
-	private TableColumn<MissionItemTableEntry,String> remove = new TableColumn<MissionItemTableEntry,String>("Remove");
-    
+	@FXML private TableColumn<MissionItemTableEntry,Integer> order;
+	@FXML private TableColumn<MissionItemTableEntry,String> type;
+	@FXML private TableColumn<MissionItemTableEntry,Double> lat;
+	@FXML private TableColumn<MissionItemTableEntry,Double> lon;
+	@FXML private TableColumn<MissionItemTableEntry,Double> height;
+	@FXML private TableColumn<MissionItemTableEntry,Double> delay;
+	@FXML private TableColumn<MissionItemTableEntry,Double> radius;
+	@FXML private TableColumn<MissionItemTableEntry,String> setUp;
+	@FXML private TableColumn<MissionItemTableEntry,String> setDown;
+	@FXML private TableColumn<MissionItemTableEntry,String> remove;
+	
 	private LayerMission layerMission;
 	
-	@SuppressWarnings("unchecked")
-	public PanelMissionBox() {
+	static int called;
+	@PostConstruct
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {		
 		setPrefHeight(Screen.getPrimary().getBounds().getHeight()*0.25);
 		
-	    table = new TableView<MissionItemTableEntry>();
 	    table.prefHeightProperty().bind(prefHeightProperty());
 	    
 	    Callback<TableColumn<MissionItemTableEntry, Double>, TableCell<MissionItemTableEntry, Double>> cellFactory = new Callback<TableColumn<MissionItemTableEntry, Double>, TableCell<MissionItemTableEntry, Double>>() {
@@ -185,21 +195,15 @@ public class PanelMissionBox extends Pane {
             };
             return cell;
         });
-        
-        table.getColumns().addAll(order, type, lat, lon, height, delay, radius, setUp, setDown, remove);
-	    getChildren().add(table);
 	}
 
-	static int called;
-	@PostConstruct
-	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
-	}
-	
 	@SuppressWarnings("unchecked")
 	public void generateMissionTable(boolean editmode) {
 		MissionItemTableEntry entry = null;
+		
+		if (table == null) {
+			throw new RuntimeException("Failed to get Table");
+		}
 		
 		if (layerMission == null) {
 			table.setItems(null);
@@ -235,7 +239,7 @@ public class PanelMissionBox extends Pane {
 			switch (mItem.getType()) {
 				case WAYPOINT: {
 					Waypoint wp = (Waypoint) mItem;
-					entry = new MissionItemTableEntry(i, "WayPoint", wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), wp.getDelay(), 0.0, mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), wp.getDelay(), 0.0, mItem);
 					break;
 				}
 				case SPLINE_WAYPOINT:
@@ -244,7 +248,7 @@ public class PanelMissionBox extends Pane {
 				case TAKEOFF: {
 					msg_mission_item msg = mItem.packMissionItem().get(0);
 					double alt = (double) msg.z;
-					entry = new MissionItemTableEntry(i, "Takeoff", 0.0, 0.0, alt, 0.0, 0.0,  mItem); 
+					entry = new MissionItemTableEntry(i, MissionItemType.TAKEOFF, 0.0, 0.0, alt, 0.0, 0.0,  mItem); 
 					break;	
 				}
 				case CHANGE_SPEED:
@@ -254,20 +258,22 @@ public class PanelMissionBox extends Pane {
 				case EPM_GRIPPER:
 					//return new EpmGripper(referenceItem);
 				case RTL: {
-					entry = new MissionItemTableEntry(i, "RTL", 0.0, 0.0, 0.0, 0.0, 0.0, mItem); 
+					entry = new MissionItemTableEntry(i, MissionItemType.RTL, 0.0, 0.0, 0.0, 0.0, 0.0, mItem); 
 					break;
 				}
 				case LAND: {
-					entry = new MissionItemTableEntry(i, "LAND", 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.LAND, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
 					break;
 				}
 				case CIRCLE: { // Loiter
 					Circle wp = (Circle) mItem;
-					entry = new MissionItemTableEntry(i, "Circle", wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), 0.0, wp.getRadius(), mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), 0.0, wp.getRadius(), mItem);
 					break;
 				}
 				case ROI:
-					//return new RegionOfInterest(referenceItem);
+					RegionOfInterest roi = (RegionOfInterest) mItem;
+					entry = new MissionItemTableEntry(i, MissionItemType.ROI, roi.getCoordinate().getLat(), roi.getCoordinate().getLng(), roi.getCoordinate().getAltitude().valueInMeters(), 0.0, 0.0, mItem);
+					break;
 				case SURVEY:
 					//return new Survey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
 				case CYLINDRICAL_SURVEY:
@@ -321,4 +327,5 @@ public class PanelMissionBox extends Pane {
 			}
 		});
 	}
+
 }

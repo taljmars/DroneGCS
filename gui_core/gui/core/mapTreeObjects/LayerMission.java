@@ -13,6 +13,7 @@ import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.waypoints.Circle;
 import mavlink.is.drone.mission.waypoints.Land;
+import mavlink.is.drone.mission.waypoints.RegionOfInterest;
 import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.utils.geoTools.GeoTools;
 
@@ -103,7 +104,12 @@ public class LayerMission extends LayerSingle {
 					break;
 				}
 				case ROI:
-					//return new RegionOfInterest(referenceItem);
+					RegionOfInterest roi = (RegionOfInterest) item;
+					MapMarkerDot m = new MapMarkerDot(Color.AQUA, roi.getCoordinate().convertToCoordinate());
+					//m.setBackColor(Color.MAGENTA);
+					addMapMarker(m);
+					points.add(roi.getCoordinate().convertToCoordinate());
+					break;
 				case SURVEY:
 					//return new Survey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
 				case CYLINDRICAL_SURVEY:

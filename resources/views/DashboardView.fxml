@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.core.dashboard.Dashboard">
+   <children>
+      <BorderPane prefHeight="446.0">
+         <bottom>
+		    <VBox prefHeight="9.0" prefWidth="1104.0" BorderPane.alignment="CENTER">
+			    <children>
+                  <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" />
+				</children>
+			</VBox>
+         </bottom>
+         <top>
+            <FlowPane prefHeight="30.0" prefWidth="622.0" BorderPane.alignment="CENTER">
+			  <children>
+                <fx:include source="panels/PanelToolBarSatelliteView.fxml" />
+              </children>
+			</FlowPane>
+         </top>
+         <right>
+            <VBox prefHeight="376.0" prefWidth="253.0" BorderPane.alignment="CENTER">
+               <children>              
+                  <AnchorPane>
+				    <children>
+                      <fx:include source="panels/PanelButtonBoxSatelliteView.fxml" />
+			        </children>
+				  </AnchorPane>
+				  <AnchorPane>
+				    <children>
+                      <fx:include source="panels/PanelTelemetrySatelliteView.fxml" />
+			        </children>
+				  </AnchorPane>
+               </children>
+            </VBox>
+         </right>
+         <center>
+            <StackPane BorderPane.alignment="CENTER">
+               <children>
+                  <HBox fx:id="frameContainer" StackPane.alignment="TOP_CENTER" />
+      					<Accordion maxHeight="20.0" prefHeight="20.0" StackPane.alignment="BOTTOM_CENTER">
+      						<panes>
+      							<TitledPane animated="false" text="Log">
+      								<content>
+      									<AnchorPane>
+      										<children>
+      											<fx:include source="panels/PanelLogBoxView.fxml" />
+      										</children>
+      									</AnchorPane>
+      								</content>
+      							</TitledPane>                
+      							<TitledPane animated="false" text="Configuration">
+      								<content>
+      									<AnchorPane>
+      										<children>
+      											<fx:include source="panels/PanelConfigurationView.fxml" />
+      										</children>
+      									</AnchorPane>
+      								</content>
+      							</TitledPane>
+								<TitledPane animated="false" text="Mission Box">
+      								<content>
+      									<AnchorPane>
+      										<children>
+      											<fx:include source="panels/PanelMissionView.fxml" />
+      										</children>
+      									</AnchorPane>
+      								</content>
+      							</TitledPane>
+      						</panes>
+      					</Accordion>
+               </children>
+            </StackPane>
+         </center>
+      </BorderPane>
+   </children>
+</StackPane>

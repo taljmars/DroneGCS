@@ -3,18 +3,21 @@ package gui.core.internalPanels;
 import gui.is.services.LoggerDisplayerSvc;
 import gui.is.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.TilePane;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mavlink.is.drone.Drone;
@@ -22,195 +25,75 @@ import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
 
 @Component("telemetrySatellite")
-public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
+public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
 	
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 486044738229582782L;
-	
-	private Label lblHeightVal;
-	private Label lblSignalVal;
-	private Label lblBatteryVal;
-	private Label lblFlightModeVal;
+	@FXML private Label lblStatus;
+	@FXML private Label lblFlightMode;
+	@FXML private Label lblSignal;
+	@FXML private Label lblBattery;
+	@FXML private ProgressBar batteryBar;
+	@FXML private Label lblHeight;
+	@FXML private Label lblFlightTime;
+	@FXML private Label lblFlightDistance;
 
-	private Label lblEngine1;
-	private Label lblEngine2;
-	private Label lblEngine3;
-	private Label lblEngine4;
+	@FXML private Label lblEngine1;
+	@FXML private Label lblEngine2;
+	@FXML private Label lblEngine3;
+	@FXML private Label lblEngine4;
 
-	private Label lblThrust;
-	private Label lblYaw;
-	private Label lblPitch;
-	private Label lblRoll;
+	@FXML private Label lblThrust;
+	@FXML private Label lblYaw;
+	@FXML private Label lblPitch;
+	@FXML private Label lblRoll;
 	
-	private Label lblFlightTimeVal;
-	private Label lblFlightDistanceVal;
-
-	private Label keepAliveLabel;
+	@FXML private TextField lblCriticalMsg;
 	
-	@Resource(name = "textNotificationPublisherSvc")
-	@NotNull(message = "Internal Error: Failed to get text publisher")
+	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Resource(name = "loggerDisplayerSvc")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	public Drone drone;
 	
 	private static int called;
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singletone");	
 		
-		Font headlineFont = Font.font(Font.getDefault().getName(), FontWeight.BOLD, Font.getDefault().getSize());
-		
-		TilePane firstSection = new TilePane();
-		firstSection.setPrefColumns(3);
-		firstSection.setHgap(1);
-		firstSection.setAlignment(Pos.CENTER);
-		
-		VBox pnlConnection = new VBox();
-		pnlConnection.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlConnection);
-		
-		VBox pnlMode = new VBox();
-		pnlMode.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlMode);
-		
-		VBox pnlBattery = new VBox();
-		pnlBattery.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlBattery);
-		
-		VBox pnlSignal = new VBox();
-		pnlSignal.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlSignal);
-		
-		VBox pnlHeight = new VBox();
-		pnlHeight.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlHeight);
-		
-		VBox pnlStatisticsTime = new VBox();
-		pnlStatisticsTime.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlStatisticsTime);
-		
-		VBox pnlStatisticsDistanceTraveled = new VBox();
-		pnlStatisticsDistanceTraveled.setAlignment(Pos.CENTER);
-		firstSection.getChildren().add(pnlStatisticsDistanceTraveled);
-		
-		TilePane secondSection = new TilePane();
-		secondSection.setPrefColumns(2);
-		secondSection.setHgap(5);
-		secondSection.setAlignment(Pos.CENTER);
-		
-		VBox pnlRCSend = new VBox();
-		pnlRCSend.setAlignment(Pos.CENTER);
-		secondSection.getChildren().add(pnlRCSend);
-		
-		VBox pnlRCActual = new VBox();
-		pnlRCActual.setAlignment(Pos.CENTER);
-		secondSection.getChildren().add(pnlRCActual);
-		
-		VBox pnlRadioIn = new VBox();
-		pnlRadioIn.setAlignment(Pos.CENTER);
-		secondSection.getChildren().add(pnlRadioIn);
-		
-		getChildren().add(firstSection);
-		getChildren().add(secondSection);
-		
-		Label lblStatus = new Label("Status");
-		lblStatus.setFont(headlineFont);
-		pnlConnection.getChildren().add(lblStatus);
-        keepAliveLabel = new Label("Disonnected");
-        keepAliveLabel.setTextFill(Color.web("#FF0000"));
-        keepAliveLabel.setFont(headlineFont);
-        pnlConnection.getChildren().add(keepAliveLabel);
-        
-        Label lblFlightMode = new Label("Mode");
-        lblFlightMode.setFont(headlineFont);
-        pnlMode.getChildren().add(lblFlightMode);
-        lblFlightModeVal = new Label("Unknown");
-        pnlMode.getChildren().add(lblFlightModeVal);        
-        
-        Label lblBattery = new Label("Battery");
-        lblBattery.setFont(headlineFont);
-        pnlBattery.getChildren().add(lblBattery);
-        lblBatteryVal = new Label("0%");
-        pnlBattery.getChildren().add(lblBatteryVal);
-        
-        Label lblSignal = new Label("Signal");
-        lblSignal.setFont(headlineFont);
-        pnlSignal.getChildren().add(lblSignal);
-        lblSignalVal = new Label("0%");
-        pnlSignal.getChildren().add(lblSignalVal);
-        
-        Label lblHeight = new Label("Height");
-        lblHeight.setFont(headlineFont);
-        pnlHeight.getChildren().add(lblHeight);
-        lblHeightVal = new Label("0m");
-        pnlHeight.getChildren().add(lblHeightVal);
-        
-        Label lblFlightTime = new Label("F.Time");
-        lblFlightTime.setFont(headlineFont);
-        lblFlightTimeVal = new Label("0 sec (0 min)");
-        pnlStatisticsTime.getChildren().add(lblFlightTime);
-        pnlStatisticsTime.getChildren().add(lblFlightTimeVal);
-        
-        Label lblFlightDistance = new Label("F.Distance");
-        lblFlightDistance.setFont(headlineFont);
-        lblFlightDistanceVal = new Label("0m");
-        pnlStatisticsDistanceTraveled.getChildren().add(lblFlightDistance);
-        pnlStatisticsDistanceTraveled.getChildren().add(lblFlightDistanceVal);
-        
-        Label lblAxis = new Label("RC Send:");
-        lblAxis.setFont(headlineFont);
-        pnlRCSend.getChildren().add(lblAxis);
-        lblRoll = new Label("---");
-        pnlRCSend.getChildren().add(lblRoll);
-        lblPitch = new Label("---");
-        pnlRCSend.getChildren().add(lblPitch);
-        lblThrust = new Label("---");
-        pnlRCSend.getChildren().add(lblThrust);
-        lblYaw = new Label("---");
-        pnlRCSend.getChildren().add(lblYaw);
-        
-        Label lblRcActual = new Label("RC Actual:");
-        lblRcActual.setFont(headlineFont);
-        pnlRCActual.getChildren().add(lblRcActual);
-        lblEngine1 = new Label("---");
-        pnlRCActual.getChildren().add(lblEngine1);
-        lblEngine2 = new Label("---");
-        pnlRCActual.getChildren().add(lblEngine2);
-        lblEngine3 = new Label("---");
-        pnlRCActual.getChildren().add(lblEngine3);
-        lblEngine4 = new Label("---");
-        pnlRCActual.getChildren().add(lblEngine4);
-        
 		drone.addDroneListener(this);
 	}
 	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		lblCriticalMsg.setEditable(false);
+		batteryBar.setProgress(0);		
+	}
+	
 	protected void SetFlightModeLabel(String name) {
-		lblFlightModeVal.setText(name);
+		lblFlightMode.setText(name);
 	}
 	
 	public void SetLblHeight(double ht) {
-		lblHeightVal.setText(String.format("%.1f", ht) + "m");
+		lblHeight.setText(String.format("%.1f", ht) + "m");
 	}
 	
 	public void SetSignal(int signalStrength) {
-		lblSignalVal.setText(signalStrength + "%");
+		lblSignal.setText(signalStrength + "%");
 	}
 	
 	private void setFlightTime(long flightTime) {
-		lblFlightTimeVal.setText(flightTime + " sec (" + flightTime/60 + " min)");
+		lblFlightTime.setText(flightTime + " sec (" + flightTime/60 + " min)");
 	}
 
 	private void setDistanceTraveled(double distanceTraveled) {
-		lblFlightDistanceVal.setText(String.format("%.1f", distanceTraveled) + "m");
+		lblFlightDistance.setText(String.format("%.1f", distanceTraveled) + "m");
 	}
 	
 	public void SetBattery(double bat) {
-		lblBatteryVal.setText((bat < 0 ? 0 : bat) + "%");
+		lblBattery.setText((bat < 0 ? 0 : bat) + "%");
 		
 		if (drone.getState().isArmed()) {
 			if (bat == 50 || bat == 49) {
@@ -222,13 +105,13 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 			if (bat == 25 || bat == 24) {
 				textNotificationPublisherSvc.publish("Battery at 25%");
 				java.awt.Toolkit.getDefaultToolkit().beep();
-				lblBatteryVal.setStyle("-fx-background-color: #red");
+				lblBattery.setStyle("-fx-background-color: #red");
 				return;
 			}
 			
 			if (bat == 10 || bat == 9) {
 				textNotificationPublisherSvc.publish("Critical: battery below 10%");
-				lblBatteryVal.setStyle("-fx-background-color: #red");
+				lblBattery.setStyle("-fx-background-color: #red");
 				java.awt.Toolkit.getDefaultToolkit().beep();
 				java.awt.Toolkit.getDefaultToolkit().beep();
 				java.awt.Toolkit.getDefaultToolkit().beep();
@@ -258,14 +141,29 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 	
 	public void SetHeartBeat(boolean on) {
 		if (on) {
-			keepAliveLabel.setText("Connected");
-			keepAliveLabel.setTextFill(Color.web("#008000"));
+			lblStatus.setText("Connected");
+			lblStatus.setTextFill(Color.web("#008000"));
 			return;
 		}
 		
-		keepAliveLabel.setText("Disconnected");
-		keepAliveLabel.setTextFill(Color.web("#FF0000"));
+		lblStatus.setText("Disconnected");
+		lblStatus.setTextFill(Color.web("#FF0000"));
 	}
+	
+	public void ClearNotification() {
+		lblCriticalMsg.setVisible(false);
+	}
+
+	public void SetNotification(String notification) {
+		lblCriticalMsg.setVisible(true);
+		if (lblCriticalMsg.getStyle().equals("-fx-control-inner-background: orange;"))
+			lblCriticalMsg.setStyle("-fx-control-inner-background: blue;");
+		else
+			lblCriticalMsg.setStyle("-fx-control-inner-background: orange;");
+		
+		lblCriticalMsg.setText(notification);
+	}
+
 	
 	@SuppressWarnings("incomplete-switch")
 	@Override
@@ -309,6 +207,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener {
 					return;
 				case BATTERY:
 					SetBattery(drone.getBattery().getBattRemain());
+					Platform.runLater( () -> batteryBar.setProgress(drone.getBattery().getBattRemain() / 100.0));
 					return;
 				case MODE:
 					SetFlightModeLabel(drone.getState().getMode().getName());

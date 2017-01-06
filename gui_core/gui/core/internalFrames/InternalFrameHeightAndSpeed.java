@@ -1,11 +1,14 @@
 package gui.core.internalFrames;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -14,39 +17,37 @@ import tools.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.GuiEvent;
 import javafx.application.Platform;
-import javafx.scene.chart.CategoryAxis;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
 @Component("internalFrameHeightAndSpeed")
-public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener {
+public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener, Initializable {
 
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	
-	@Resource(name = "drone")
+	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
 	private CSV csv;
+	
+	@FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesHeight;
 	private static XYChart.Series<String, Number> seriesAirSpeed;
 	private static XYChart.Series<String, Number> seriesVerticalSpeed;
 	
-	@Autowired
-	public InternalFrameHeightAndSpeed(@Value("Height & Speed") String title) {		
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		loadChart();
 	}
-	
+
 	private static int called;
 	@PostConstruct
 	private void init() throws URISyntaxException {
@@ -75,13 +76,6 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	}
 
 	private void loadChart() {
-		CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Time");
-		LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-       
-        lineChart.setTitle("Height & Speed");
-
         seriesHeight = new XYChart.Series<String, Number>();
         seriesHeight.setName("Height (m)");
 		lineChart.getData().add(seriesHeight);
@@ -93,10 +87,6 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 		seriesVerticalSpeed = new XYChart.Series<String, Number>();
 		seriesVerticalSpeed.setName("Vertical Speed (m/s)");
 		lineChart.getData().add(seriesVerticalSpeed);
-		
-		lineChart.prefWidthProperty().bind(widthProperty());
-
-		getChildren().add(lineChart);
 	}
 	
 	@SuppressWarnings("incomplete-switch")

@@ -1,8 +1,8 @@
 package gui.core.operations;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,12 @@ import gui.is.services.DialogManagerSvc;
 import gui.is.services.EventPublisherSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import mavlink.is.drone.mission.Mission;
+import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.commands.ReturnToHome;
 import mavlink.is.drone.mission.commands.Takeoff;
 import mavlink.is.drone.mission.waypoints.Circle;
 import mavlink.is.drone.mission.waypoints.Land;
+import mavlink.is.drone.mission.waypoints.RegionOfInterest;
 import mavlink.is.drone.mission.waypoints.Waypoint;
 import mavlink.is.utils.coordinates.Coord3D;
 import mavlink.is.utils.units.Altitude;
@@ -26,14 +28,13 @@ import mavlink.is.utils.units.Altitude;
 @Component("missionBuilder")
 public class MissionBuilder {
 	
-    @Resource(name = "eventPublisherSvc")
+    @Autowired @NotNull( message = "Internal Error: Failed to get event publisher service" )
 	protected EventPublisherSvc eventPublisherSvc;
     
-	@Resource(name = "loggerDisplayerSvc")
+    @Autowired @NotNull( message = "Internal Error: Failed to get log displayer" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	private LayerMission layerMission;
@@ -52,11 +53,7 @@ public class MissionBuilder {
 			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
 			return;
 		}
-		Waypoint wp = new Waypoint(mission, c3);
-		mission.addMissionItem(wp);
-		
-		layerMission.regenerateMapObjects();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
+		updateMissionItem(new Waypoint(mission, c3));
 	}
 
 	public void addCircle(Coordinate coord) {
@@ -65,11 +62,7 @@ public class MissionBuilder {
 			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
 			return;
 		}
-		Circle wp = new Circle(mission, c3);
-		mission.addMissionItem(wp);
-		
-		layerMission.regenerateMapObjects();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
+		updateMissionItem(new Circle(mission, c3));
 	}
 
 	public void addLandPoint(Coordinate coord) {
@@ -78,11 +71,7 @@ public class MissionBuilder {
 			dialogManagerSvc.showAlertMessageDialog("RTL/Land point was already defined");
 			return;
 		}
-		Land lnd = new Land(mission, c3);
-		mission.addMissionItem(lnd);
-		
-		layerMission.regenerateMapObjects();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
+		updateMissionItem(new Land(mission, c3));
 	}
 
 	public void addRTL() {
@@ -90,11 +79,7 @@ public class MissionBuilder {
 			dialogManagerSvc.showAlertMessageDialog("RTL/Land point was already defined");
 			return;
 		}
-		ReturnToHome lnd = new ReturnToHome(mission);
-		mission.addMissionItem(lnd);
-		
-		layerMission.regenerateMapObjects();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
+		updateMissionItem(new ReturnToHome(mission));
 	}
 
 	public void addTakeOff() {
@@ -110,10 +95,20 @@ public class MissionBuilder {
 			return;
 		}
 		double altitude = Double.parseDouble((String) val);
-
-		Takeoff toff = new Takeoff(mission, new Altitude(altitude));
-		mission.addMissionItem(toff);
-		
+		updateMissionItem(new Takeoff(mission, new Altitude(altitude)));
+	}
+	
+	public void addROI(Coordinate coord) {
+		Coord3D c3 = new Coord3D(coord.ConvertToCoord2D(),new Altitude(20));
+		if (mission.isLastItemLandOrRTL()) {
+			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
+			return;
+		}
+		updateMissionItem(new RegionOfInterest(mission, c3));
+	}
+	
+	private void updateMissionItem(MissionItem missionItem) {
+		mission.addMissionItem(missionItem);
 		layerMission.regenerateMapObjects();
 		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
 	}

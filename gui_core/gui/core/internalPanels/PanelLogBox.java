@@ -1,77 +1,53 @@
 package gui.core.internalPanels;
 
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.BorderPane;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Screen;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ResourceBundle;
+
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.logevents.LogAbstractDisplayerEvent;
 import tools.logger.Logger;
 import tools.logger.Logger.Type;
+import tools.validations.RuntimeValidator;
 
 @Component("areaLogBox")
-public class PanelLogBox extends Pane {
-
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 7668860997050137469L;
+public class PanelLogBox extends Pane implements Initializable {
 	
-	@Resource(name = "logger")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull
+	private RuntimeValidator runtimeValidator;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
-	private TextFlow logTextBox;
-
-	public PanelLogBox() {
-		setPrefHeight(Screen.getPrimary().getBounds().getHeight()*0.25);
-		setPrefWidth(Screen.getPrimary().getBounds().getWidth());
-		
-		BorderPane pnlLogbox = new BorderPane();
-		pnlLogbox.prefHeightProperty().bind(prefHeightProperty());
-		pnlLogbox.prefWidthProperty().bind(prefWidthProperty());
-		
-		VBox pnlLogToolBox = new VBox();
-        pnlLogbox.setRight(pnlLogToolBox);
-        
-        ToggleButton areaLogLockTop = new ToggleButton("Top");        
-        //areaLogLockTop.setOnAction(e -> {if (areaLogLockTop.isSelected()) logbox.getVerticalScrollBar().setValue(0);});
-        pnlLogToolBox.getChildren().add(areaLogLockTop);
-        
-        Button areaLogClear = new Button("CLR");
-        areaLogClear.setOnAction(e -> logTextBox.getChildren().removeAll(logTextBox.getChildren()));
-        pnlLogToolBox.getChildren().add(areaLogClear);
-		
-        logTextBox = new TextFlow();
-        logTextBox.prefHeightProperty().bind(pnlLogbox.prefHeightProperty());
-        logTextBox.setPrefWidth(pnlLogbox.getPrefWidth() * 0.95);
-        //logTextBox.setPrefHeight(Screen.getPrimary().getBounds().getHeight()*0.5);
-        //logTextBox.setPrefWidth(pnlLogbox.getWidth() - pnlLogToolBox.getWidth());
-        ScrollPane logbox = new ScrollPane(logTextBox);
-        logbox.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        
-        pnlLogbox.setCenter(logbox);
-        
-        getChildren().add(pnlLogbox);
-	}
+	@FXML private TextFlow logTextBox;	
 	
 	private static int called;
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		
 	}
 	
 	private void addGeneralMessegeToDisplay(String cmd) {

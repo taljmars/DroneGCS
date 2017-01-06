@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -81,7 +82,7 @@ import tools.validations.RuntimeValidator;
 public class OperationalViewMap extends LayeredViewMap implements
 OnDroneListener, EventHandler<ActionEvent> {
 	
-	@Resource(name = "drone")
+	@Autowired @NotNull( message = "Internal Error: Failed to get drone" )
 	private Drone drone;
 	
 	@Resource(name = "tree")
@@ -90,21 +91,19 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Resource(name = "missionBuilder")
 	private MissionBuilder missionBuilder;
 	
-	@Resource(name = "keyBoardControler")
+	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
 	private KeyBoardControler keyboardController;
 	
-	@Resource(name = "textNotificationPublisherSvc")
+	@Autowired @NotNull( message = "Internal Error: Failed to get notification publisher" )
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Resource(name = "loggerDisplayerSvc")
+	@Autowired @NotNull( message = "Internal Error: Failed to get loggger displayer" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
-	@Resource(name = "validator")
-	@NotNull(message = "Internal Error: Failed to get validator")
+	@Autowired
 	private RuntimeValidator validator;
 
 	private boolean lockMapOnMyPosition = true;
@@ -141,6 +140,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		MenuItem menuItemMissionBuild = new MenuItem("Build Mission");
 		MenuItem menuItemMissionAddWayPoint = new MenuItem("Add Way Point");
 		MenuItem menuItemMissionAddCircle = new MenuItem("Add Circle");
+		MenuItem menuItemMissionAddROI = new MenuItem("Add ROI");
 		MenuItem menuItemMissionSetHome = new MenuItem("Set Home");
 		MenuItem menuItemMissionSetLandPoint = new MenuItem("Set Land Point");
 		MenuItem menuItemMissionSetRTL = new MenuItem("Set RTL");
@@ -155,6 +155,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		menuItemDist.setDisable(!drone.getGps().isPositionValid());
 		menuItemMissionAddWayPoint.setVisible(isMissionBuildMode);
 		menuItemMissionAddCircle.setVisible(isMissionBuildMode);
+		menuItemMissionAddROI.setVisible(isMissionBuildMode);
 		menuItemMissionSetHome.setVisible(drone.getGps().isPositionValid() && !isMissionBuildMode && !isPerimeterBuildMode);
 		menuItemMissionSetLandPoint.setVisible(isMissionBuildMode);
 		menuItemMissionSetRTL.setVisible(isMissionBuildMode);
@@ -181,6 +182,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		//popup.getItems().addSeparator();
 		popup.getItems().add(menuItemMissionAddWayPoint);
 		popup.getItems().add(menuItemMissionAddCircle);
+		popup.getItems().add(menuItemMissionAddROI);
 		popup.getItems().add(menuItemMissionSetLandPoint);
 		popup.getItems().add(menuItemMissionSetRTL);
 		popup.getItems().add(menuItemMissionSetHome);
@@ -298,6 +300,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 		menuItemMissionAddCircle.setOnAction( arg -> missionBuilder.addCircle((Coordinate) getPosition(point)));
 
 		menuItemMissionSetLandPoint.setOnAction( arg -> missionBuilder.addLandPoint((Coordinate) getPosition(point)));
+		
+		menuItemMissionAddROI.setOnAction( arg -> missionBuilder.addROI((Coordinate) getPosition(point)));
 
 		menuItemMissionSetRTL.setOnAction( arg -> missionBuilder.addRTL());
 

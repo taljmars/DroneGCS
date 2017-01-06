@@ -1,11 +1,14 @@
 package gui.core.internalFrames;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -14,28 +17,26 @@ import tools.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.GuiEvent;
 import javafx.application.Platform;
-import javafx.scene.chart.CategoryAxis;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
 @Component("internalFrameSignals")
-public class InternalFrameSignals extends Pane implements OnDroneListener {
+public class InternalFrameSignals extends Pane implements OnDroneListener, Initializable {
 
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	
-	@Resource(name = "drone")
+	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
 	private CSV csv;
+	
+	@FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesDistance;
@@ -43,8 +44,8 @@ public class InternalFrameSignals extends Pane implements OnDroneListener {
 	private static XYChart.Series<String, Number> seriesNoise;
 	private static XYChart.Series<String, Number> seriesRssi;
 	
-	@Autowired
-	public InternalFrameSignals(@Value("Signals") String title) {		
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		loadChart();
 	}
 	
@@ -78,13 +79,6 @@ public class InternalFrameSignals extends Pane implements OnDroneListener {
 	}
 
 	private void loadChart() {
-		CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Time");
-		LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-       
-        lineChart.setTitle("Signals");
-
         seriesDistance = new XYChart.Series<String, Number>();
         seriesDistance.setName("Distance (m)");
 		lineChart.getData().add(seriesDistance);
@@ -100,12 +94,6 @@ public class InternalFrameSignals extends Pane implements OnDroneListener {
 		seriesNoise = new XYChart.Series<String, Number>();
 		seriesNoise.setName("Noise (%)");
 		lineChart.getData().add(seriesNoise);
-
-		
-		lineChart.setPickOnBounds(true);
-		lineChart.prefWidthProperty().bind(widthProperty());
-        
-		getChildren().add(lineChart);
 	}
 	
 	private int valueUpdate = 0;

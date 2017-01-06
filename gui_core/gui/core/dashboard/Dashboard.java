@@ -4,9 +4,10 @@ import gui.core.internalFrames.InternalFrameMap;
 import gui.core.internalPanels.*;
 import gui.core.operations.OpGCSTerminationHandler;
 import gui.core.springConfig.AppConfig;
-import mavlink.core.gcs.GCSHeartbeat;
 
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import gui.is.events.GuiEvent;
 import gui.is.services.LoggerDisplayerSvc;
@@ -15,26 +16,21 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 
 import javax.validation.constraints.NotNull;
@@ -44,78 +40,37 @@ import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import tools.validations.RuntimeValidator;
 
-public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent> {
-	
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
+public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
 
 	public static final String APP_TITLE = "Quad Ground Station";
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
-	private LoggerDisplayerSvc loggerDisplayerSvc;
+	@FXML private HBox frameContainer;
+	@FXML private PanelTelemetrySatellite tbTelemtry;
+	@FXML private ProgressBar progressBar;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Resource(name="frameContainer")
-	@NotNull(message = "Internal Error: Missing panel")
-	private HBox frameContainer;
-	
-	private SimpleIntegerProperty frameAmount;
-	
-	@Resource(name="areaLogBox")
-	@NotNull(message = "Internal Error: Missing tab")
-	private PanelLogBox areaLogBox;
-
-	@Resource(name="areaMission")
-	@NotNull(message = "Internal Error: Missing tab")
-	private PanelMissionBox areaMission;
-
-	@Resource(name="areaConfiguration")
-	@NotNull(message = "Internal Error: Missing tab")
-	private PanelConfigurationBox areaConfiguration;
-	
-	@Resource(name="telemetrySatellite")
-	@NotNull(message = "Internal Error: Missing panel")
-	private PanelTelemetrySatellite tbTelemtry;
-	
-	@Resource(name="buttonBoxSatellite")
-	@NotNull(message = "Internal Error: Missing panel")
-	private PanelButtonBoxSatellite tbContorlButton;
-	
-	@Resource(name="toolbarSatellite")
-	@NotNull(message = "Internal Error: Missing panel")
-	private PanelToolBarSatellite tbToolBar;
-	
-	@Resource(name = "textNotificationPublisherSvc")
-	@NotNull(message = "Internal Error: Failed to get text publisher")
+	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Resource(name = "opGCSTerminationHandler")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Autowired @NotNull(message = "Internal Error: Failed to get GCS terminator handler")
 	private OpGCSTerminationHandler opGCSTerminationHandler;
 	
-	@Resource(name = "gcsHeartbeat")
-	@NotNull(message = "Internal Error: Failed to get HB mechanism")
-	private GCSHeartbeat gcsHeartbeat;
-	
-	@NotNull(message = "Internal Error: Tab panel")
-	private TabPane tabPane;
-	
-	@NotNull(message = "Internal Error: Progress bar")
-	private ProgressBar progressBar;
-	
-	@NotNull(message = "Internal Error: Mission view manager")
-	private Stage viewManager;
-	
-	
-	// Internal Frame
-	@Resource(name = "internalFrameMap")
+	@Autowired @NotNull(message = "Internal Error: Failed to get map frame")
 	private InternalFrameMap internalFrameMap;
 	
-	private BorderPane frame;
+	@Autowired
+	private RuntimeValidator runtimeValidator;
+	
+	private Stage viewManager;
+
+	private SimpleIntegerProperty frameAmount;
 	
 	private static int called;
 	@PostConstruct
@@ -123,7 +78,16 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass()); 
+		
 		initializeDefinitions();
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		initializeGui();
 	}
 	
@@ -145,14 +109,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			for (int i = 0 ; i < oldValue.intValue() - newValue.intValue() ; i++)
 				frameContainer.getChildren().remove(newValue.intValue() - i);
 		});
-		
-		frame = new BorderPane();
-		
-		// North Panel
-		frame.setTop(tbToolBar);
-
-		// Central Panel
-		frame.setCenter(frameContainer);
 		
 		frameContainer.setOnDragOver( (event) -> {
 		        /* data is dragged over the target */
@@ -190,51 +146,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		    		event.setDropCompleted(false);
 		    	}
 		        	
-		    	
-
 		    	event.consume();
 		});
 		frameContainer.setOnDragEntered( (event) -> event.consume());
-
-		// South Panel
-		VBox southPanel = new VBox();
-		frame.setBottom(southPanel);
-		tabPane = new TabPane();
-		southPanel.getChildren().add(tabPane);
-		
-		Tab tab = new Tab();
-		tab.setClosable(false);
-		tab.setText("Log Book");
-		tab.setContent(areaLogBox);
-        tabPane.getTabs().add(tab);
-        
-		tab = new Tab();
-		tab.setClosable(false);
-		tab.setText("Configuration");
-		tab.setContent(areaConfiguration);
-        tabPane.getTabs().add(tab);
-        
-        tab = new Tab();
-		tab.setClosable(false);
-		tab.setText("Mission");
-		tab.setContent(areaMission);
-        tabPane.getTabs().add(tab);
-        
-        progressBar = new ProgressBar();
-        southPanel.getChildren().add(progressBar);
-		progressBar.setPrefWidth(Screen.getPrimary().getBounds().getWidth());
-
-		// East Panel
-		VBox eastPanel = new VBox();
-		frame.setRight(eastPanel);
-		eastPanel.setPrefWidth(Screen.getPrimary().getBounds().getWidth() * AppConfig.FRAME_CONTAINER_REDUCE_PRECENTAGE);
-		tbTelemtry.setPadding(new Insets(20,0,0,0));
-		tbContorlButton.setAlignment(Pos.CENTER);
-		tbTelemtry.setAlignment(Pos.CENTER);
-		eastPanel.getChildren().add(tbContorlButton);
-		eastPanel.getChildren().add(tbTelemtry);
-        
-		getChildren().add(frame);
 	}
 	
 	private int GetFrameIndexInsideContainer(double intersectedPoint) {
@@ -350,7 +264,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@EventListener
 	public void onApplicationEvent(String notification) {
-		tbToolBar.SetNotification(notification);
+		tbTelemtry.SetNotification(notification);
 	}
 
 	@Override
@@ -405,16 +319,17 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		}
 	}
 	
-	public void handleFrameContainerRequest(String springInstanciation, int index) {
+	private void handleFrameContainerRequest(String springInstanciation, int index) {
 		if (springInstanciation.isEmpty())
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		final Node selectedPane = (Node) AppConfig.context.getBean(springInstanciation);
+		Node selectedPane = (Node) AppConfig.loader.load(springInstanciation);
+		selectedPane.setUserData(springInstanciation);
 						
 		if (selectedPane != null) {
 			Platform.runLater(() -> {
-				if (children.contains(selectedPane) || frameAmount.get() == 1)
+				if (frameAmount.get() == 1 || isFrameAlreadyOpen(children, selectedPane))
 					children.clear();
 				
 				if (children.size() != frameAmount.get())
@@ -425,8 +340,19 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 				}
 				((Region) selectedPane).setPrefHeight(frameContainer.getHeight());
 				((Region) selectedPane).setPrefWidth(frameContainer.getWidth());
+				
+				System.err.println(children.toString());
 			});
 		}
+	}
+	
+	private boolean isFrameAlreadyOpen(ObservableList<Node> lst, Node obj) {
+		for (Node node : lst) {
+			if (node.getUserData().equals(obj.getUserData()))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	@SuppressWarnings("incomplete-switch")

@@ -1,11 +1,14 @@
 package gui.core.internalFrames;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -15,28 +18,26 @@ import tools.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.GuiEvent;
 import javafx.application.Platform;
-import javafx.scene.chart.CategoryAxis;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
 @Component("internalFrameBattery")
-public class InternalFrameBattery extends Pane implements OnDroneListener {
+public class InternalFrameBattery extends Pane implements OnDroneListener, Initializable {
 
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	
-	@Resource(name = "drone")
+	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
 	private CSV csv;
+	
+	@FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesCurrent;
@@ -44,11 +45,10 @@ public class InternalFrameBattery extends Pane implements OnDroneListener {
 	private static XYChart.Series<String, Number> seriesRemain;
 	private static XYChart.Series<String, Number> seriesVolt;
 	
-	@Autowired
-	public InternalFrameBattery(@Value("Battery") String title) {		
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		loadChart();
 	}
-	
 	
 	private static int called;
 	@PostConstruct
@@ -80,17 +80,6 @@ public class InternalFrameBattery extends Pane implements OnDroneListener {
 	}
 
 	private void loadChart() {
-		CategoryAxis xAxis = new CategoryAxis();
-		xAxis.setLabel("Time");
-		
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setUpperBound(2200);
-        yAxis.setLowerBound(0);
-        
-		LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-       
-        lineChart.setTitle("Battery");
-
 		seriesCurrent = new XYChart.Series<String, Number>();
 		seriesCurrent.setName("Current");
 		lineChart.getData().add(seriesCurrent);
@@ -106,10 +95,6 @@ public class InternalFrameBattery extends Pane implements OnDroneListener {
 		seriesVolt = new XYChart.Series<String, Number>();
 		seriesVolt.setName("Volt");
 		lineChart.getData().add(seriesVolt);
-		
-		lineChart.prefWidthProperty().bind(widthProperty());
-		
-		getChildren().add(lineChart);
 	}
 
 	@SuppressWarnings("incomplete-switch")

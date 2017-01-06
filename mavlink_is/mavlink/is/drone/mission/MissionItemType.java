@@ -1,9 +1,19 @@
 package mavlink.is.drone.mission;
 
 public enum MissionItemType {
-	WAYPOINT("Waypoint"), SPLINE_WAYPOINT("Spline Waypoint"), TAKEOFF("Takeoff"), RTL(
-			"Return to Launch"), LAND("Land"), CIRCLE("Circle"), ROI("Region of Interest"), SURVEY(
-			"Survey"), CYLINDRICAL_SURVEY("Structure Scan"), CHANGE_SPEED("Change Speed"), CAMERA_TRIGGER("Camera Trigger"), EPM_GRIPPER("EPM");
+	
+	WAYPOINT("Waypoint"), 
+	SPLINE_WAYPOINT("Spline Waypoint"), 
+	TAKEOFF("Takeoff"), 
+	RTL("Return to Launch"), 
+	LAND("Land"), 
+	CIRCLE("Circle"), 
+	ROI("Region of Interest"), 
+	SURVEY("Survey"), 
+	CYLINDRICAL_SURVEY("Structure Scan"), 
+	CHANGE_SPEED("Change Speed"), 
+	CAMERA_TRIGGER("Camera Trigger"), 
+	EPM_GRIPPER("EPM");
 
 	private final String name;
 

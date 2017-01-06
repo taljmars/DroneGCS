@@ -3,39 +3,36 @@ package gui.core.Main;
 import gui.core.dashboard.Dashboard;
 import gui.core.springConfig.AppConfig;
 import gui.is.KeyBoardControler;
-import gui.is.services.DialogManagerSvc;
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import tools.validations.RuntimeValidator;
 
-public class Main extends Application {
-	
-	public static void main(String[] args) {
-        launch(args);
-    }
+public class DroneLaunch extends Application {
+	//private static final AppConfig loader = new AppConfig();
 	
 	@Override
     public void start(Stage primaryStage) {
 		if (AppConfig.DEBUG_SYMBOL.equals(System.getenv(AppConfig.ENV_SYMBOL)))
 			AppConfig.DebugMode = true;
 		
-        Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
-        DialogManagerSvc dialogManager = (DialogManagerSvc) AppConfig.context.getBean("dialogManagerSvc");
-    	RuntimeValidator validator = (RuntimeValidator) AppConfig.context.getBean("validator");
-    	
+		
+        Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");    	
         dashboard.setViewManager(primaryStage);
-        if (!validator.validate(dashboard)) {
-			dialogManager.showAlertMessageDialog("Critical error occur, failed to find running path");
-			return;
-		}
-        Scene scene = new Scene(dashboard, 300, 250);
+        Parent root = (Parent) AppConfig.loader.load("/views/DashboardView.fxml");
+		root.setStyle("-fx-background-color: whitesmoke;");
+		Scene scene = new Scene(root, 800, 650);
+		scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
         KeyBoardControler keyboardControler = (KeyBoardControler) AppConfig.context.getBean("keyBoardControler");
         scene.setOnKeyPressed(keyboardControler);       
         primaryStage.setResizable(false);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();
+    }
+	
+	public static void main(String[] args) {
+        launch(args);
     }
 
 }

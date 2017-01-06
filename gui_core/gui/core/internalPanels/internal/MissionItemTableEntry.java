@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mavlink.is.drone.mission.MissionItem;
+import mavlink.is.drone.mission.MissionItemType;
 
 public class MissionItemTableEntry {
 	
@@ -14,12 +15,12 @@ public class MissionItemTableEntry {
     private final SimpleObjectProperty<MissionItem> missionItem;
  
     public MissionItemTableEntry(	Integer pOrder, 
-    				String pType, 
+    				MissionItemType missionItemType, 
     				Double pLat, Double pLon, Double pHeight, Double pDelay, Double pRadius,
     				MissionItem pMissionItem) {
     	
         this.order = new SimpleIntegerProperty(pOrder);
-        this.type = new SimpleStringProperty(pType);
+        this.type = new SimpleStringProperty(missionItemType.getName());
         this.lat = new SimpleDoubleProperty(pLat);
         this.lon = new SimpleDoubleProperty(pLon);
         this.height = new SimpleDoubleProperty(pHeight);

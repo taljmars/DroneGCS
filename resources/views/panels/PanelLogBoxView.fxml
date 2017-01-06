@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.TextFlow?>
+
+<Pane maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.core.internalPanels.PanelLogBox">
+   <children>
+      <HBox prefHeight="100.0">
+         <children>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="900.0" vbarPolicy="ALWAYS">
+              <TextFlow fx:id="logTextBox" accessibleRole="TEXT_FIELD" maxHeight="1.7976931348623157E308" prefHeight="160.0" prefWidth="900.0" />
+            </ScrollPane>
+         </children>
+      </HBox>
+   </children>
+</Pane>
