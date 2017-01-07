@@ -21,10 +21,10 @@ import gui.is.KeyBoardControler;
 import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
 import javafx.scene.input.KeyEvent;
+import logger.Logger;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msgbuilder.MavLinkRC;
 import tools.comm.SerialConnection;
-import tools.logger.Logger;
 import tools.os_utilities.Environment;
 
 @ComponentScan("tools.logger")

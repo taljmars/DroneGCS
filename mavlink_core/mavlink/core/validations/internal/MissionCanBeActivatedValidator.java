@@ -1,16 +1,14 @@
 package mavlink.core.validations.internal;
 
-import gui.is.Coordinate;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import gui.is.Coordinate;
+import gui.is.GeoTools;
 import mavlink.core.validations.MissionCanBeActivated;
 import mavlink.is.drone.mission.Mission;
 import mavlink.is.drone.mission.MissionItem;
 import mavlink.is.drone.mission.waypoints.Waypoint;
-import mavlink.is.utils.geoTools.GeoTools;
-import mavlink.is.utils.units.Length;
 
 public class MissionCanBeActivatedValidator  implements ConstraintValidator<MissionCanBeActivated, Mission> {
 	
@@ -39,14 +37,14 @@ public class MissionCanBeActivatedValidator  implements ConstraintValidator<Miss
 			return false;
 		}
 		
-		Coordinate coord = wp.getCoordinate().convertToCoordinate();
-		Length dist_between_drone_and_mission = GeoTools.getDistance(coord.ConvertToCoord2D(), mission.getDrone().getGps().getPosition());
+		Coordinate coord = wp.getCoordinate();
+		double dist_between_drone_and_mission = GeoTools.getDistance(coord, mission.getDrone().getGps().getPosition());
 		
-		if (dist_between_drone_and_mission.valueInMeters() > MAX_DISTANCE_BETWEEN_MISSION_AND_DRONE) {
+		if (dist_between_drone_and_mission > MAX_DISTANCE_BETWEEN_MISSION_AND_DRONE) {
 			//disable existing violation message
 			arg1.disableDefaultConstraintViolation();
 		    //build new violation message and add it
-			arg1.buildConstraintViolationWithTemplate("Mission is to far from drone position (" + ((int) dist_between_drone_and_mission.valueInMeters()) + "m)").addConstraintViolation();
+			arg1.buildConstraintViolationWithTemplate("Mission is to far from drone position (" + ((int) dist_between_drone_and_mission) + "m)").addConstraintViolation();
 			return false;
 		}
 			

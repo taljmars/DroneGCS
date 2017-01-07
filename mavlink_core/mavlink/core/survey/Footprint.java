@@ -3,18 +3,19 @@ package mavlink.core.survey;
 import java.util.ArrayList;
 import java.util.List;
 
+import gui.is.Coordinate;
+import gui.is.GeoTools;
 import mavlink.is.drone.mission.survey.CameraInfo;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.geoTools.GeoTools;
 
 public class Footprint {
-	private List<Coord2D> vertex = new ArrayList<Coord2D>();
-	private Coord2D center;
+	
+	private List<Coordinate> vertex = new ArrayList<Coordinate>();
+	private Coordinate center;
 
 	public Footprint(CameraInfo camera, msg_camera_feedback msg) {
 		System.out.println(msg);
-		center = new Coord2D(msg.lat/1E7,msg.lng/1E7);
+		center = new Coordinate(msg.lat/1E7,msg.lng/1E7);
 		float yaw = msg.yaw;
 		vertex.add(GeoTools.newCoordFromBearingAndDistance(center, yaw-60, 30));
 		vertex.add(GeoTools.newCoordFromBearingAndDistance(center, yaw+60, 30));
@@ -22,11 +23,11 @@ public class Footprint {
 		vertex.add(GeoTools.newCoordFromBearingAndDistance(center, yaw-120, 30));
 	}
 
-	public Coord2D getCenter() {
+	public Coordinate getCenter() {
 		return vertex.get(0);
 	}
 
-	public List<Coord2D> getVertex() {
+	public List<Coordinate> getVertex() {
 		return vertex;
 	}	
 

@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import gui.core.internalFrames.internal.view_tree_layers.LayerMission;
 import gui.core.internalPanels.internal.EditingCell;
 import gui.core.internalPanels.internal.MissionItemTableEntry;
-import gui.core.mapTreeObjects.LayerMission;
 import gui.is.events.GuiEvent;
 import gui.is.events.GuiEvent.COMMAND;
 import gui.is.services.EventPublisherSvc;
@@ -42,7 +42,6 @@ import mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
 import mavlink.is.drone.mission.waypoints.interfaces.Delayable;
 import mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.is.utils.units.Altitude;
 
 @Component("areaMission")
 public class PanelMissionBox extends Pane implements Initializable {
@@ -95,7 +94,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
         	if (entry.getMissionItem() instanceof Altitudable) {
         		Altitudable wp = (Altitudable) entry.getMissionItem();
-        		wp.setAltitude(new Altitude(t.getNewValue()));
+        		wp.setAltitude(t.getNewValue());
         	}
         	generateMissionTable(true);
         	eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
@@ -239,7 +238,7 @@ public class PanelMissionBox extends Pane implements Initializable {
 			switch (mItem.getType()) {
 				case WAYPOINT: {
 					Waypoint wp = (Waypoint) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), wp.getDelay(), 0.0, mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getCoordinate().getLat(), wp.getCoordinate().getLon(), wp.getCoordinate().getAltitude(), wp.getDelay(), 0.0, mItem);
 					break;
 				}
 				case SPLINE_WAYPOINT:
@@ -267,12 +266,12 @@ public class PanelMissionBox extends Pane implements Initializable {
 				}
 				case CIRCLE: { // Loiter
 					Circle wp = (Circle) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getCoordinate().getLat(), wp.getCoordinate().getLng(), wp.getCoordinate().getAltitude().valueInMeters(), 0.0, wp.getRadius(), mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getCoordinate().getLat(), wp.getCoordinate().getLon(), wp.getCoordinate().getAltitude(), 0.0, wp.getRadius(), mItem);
 					break;
 				}
 				case ROI:
 					RegionOfInterest roi = (RegionOfInterest) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.ROI, roi.getCoordinate().getLat(), roi.getCoordinate().getLng(), roi.getCoordinate().getAltitude().valueInMeters(), 0.0, 0.0, mItem);
+					entry = new MissionItemTableEntry(i, MissionItemType.ROI, roi.getCoordinate().getLat(), roi.getCoordinate().getLon(), roi.getCoordinate().getAltitude(), 0.0, 0.0, mItem);
 					break;
 				case SURVEY:
 					//return new Survey(referenceItem.getMission(), Collections.<Coord2D> emptyList());

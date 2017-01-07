@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import tools.logger.Logger;
 import mavlink.is.connection.MavLinkConnectionListener;
 import mavlink.is.drone.Drone;
 import mavlink.is.protocol.msg_metadata.ApmModes;
@@ -29,9 +28,10 @@ import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_sys_status;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
-import mavlink.is.utils.coordinates.Coord2D;
+import gui.is.Coordinate;
 import gui.is.services.DialogManagerSvc;
 import gui.is.services.LoggerDisplayerSvc;
+import logger.Logger;
 
 @ComponentScan("tools.logger")
 @ComponentScan("gui.is.service")
@@ -130,7 +130,7 @@ public class DroneUpdateListener implements MavLinkConnectionListener {
 				//break;
 	
 			case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
-				Coord2D c = new Coord2D(((msg_global_position_int) msg).lat / 1E7,
+				Coordinate c = new Coordinate(((msg_global_position_int) msg).lat / 1E7,
 						((msg_global_position_int) msg).lon / 1E7);
 				drone.getGps().setPosition(c);
 				drone.getPerimeter().setPosition(c);

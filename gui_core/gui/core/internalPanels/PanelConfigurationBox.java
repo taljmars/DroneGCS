@@ -19,7 +19,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import mavlink.is.drone.Drone;
-import tools.validations.RuntimeValidator;
+import validations.RuntimeValidator;
 
 @Component("areaConfiguration")
 public class PanelConfigurationBox extends Pane implements Initializable {

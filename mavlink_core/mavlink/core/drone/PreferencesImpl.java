@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
-import tools.logger.Logger;
+import logger.Logger;
 import mavlink.core.drone.profile.ArduCopterProfile;
 import mavlink.core.firmware.FirmwareType;
 import mavlink.is.drone.Preferences;

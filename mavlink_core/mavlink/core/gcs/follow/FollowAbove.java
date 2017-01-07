@@ -1,14 +1,13 @@
 package mavlink.core.gcs.follow;
 
+import gui.is.Coordinate;
 import mavlink.is.drone.Drone;
 import mavlink.is.gcs.follow.FollowAlgorithm;
 import mavlink.is.location.Location;
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.units.Length;
 
 public class FollowAbove extends FollowAlgorithm {
 
-	public FollowAbove(Drone drone, Length radius) {
+	public FollowAbove(Drone drone, double radius) {
 		super(drone, radius);
 	}
 
@@ -19,7 +18,7 @@ public class FollowAbove extends FollowAlgorithm {
 
 	@Override
 	public void processNewLocation(Location location) {
-		Coord2D gcsCoord = new Coord2D(location.getCoord().getLat(), location.getCoord().getLng());
+		Coordinate gcsCoord = new Coordinate(location.getCoord().getLat(), location.getCoord().getLon());
 		drone.getGuidedPoint().newGuidedCoord(gcsCoord);
 	}
 

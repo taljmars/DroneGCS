@@ -1,28 +1,25 @@
 package mavlink.core.connection.helper;
 
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.coordinates.Coord3D;
-import mavlink.is.utils.units.Altitude;
-
 import org.json.simple.JSONObject;
 
-import gui.core.springConfig.AppConfig;
+import gui.is.Coordinate;
+import logger.Logger;
+import springConfig.AppConfig;
 import tools.json.JSONHelper;
-import tools.logger.Logger;
 
 public class BeaconData {
 	
 	private final static String LOCATION_ADDRESS = "http://www.sparksapp.eu/public_scripts/QuadGetFollowPosition.php";
 	
-	private Coord3D coordinate = null;
+	private Coordinate coordinate = null;
 	private int fetchTime = 0;
 	
-	public BeaconData(Coord3D coordinate, int fetchTime) {
+	public BeaconData(Coordinate coordinate, int fetchTime) {
 		this.coordinate = coordinate;
 		this.fetchTime = fetchTime;
 	}
 	
-	public Coord3D getCoordinate() {
+	public Coordinate getCoordinate() {
 		return coordinate;
 	}
 	
@@ -43,8 +40,7 @@ public class BeaconData {
 		double lon = Double.parseDouble((String) obj.get("Lng"));
 		double alt = Double.parseDouble((String) obj.get("Z"));
 		
-		Coord2D coord2d = new Coord2D(lat, lon);
-		Coord3D coord3d = new Coord3D(coord2d, new Altitude(alt));
+		Coordinate coord3d = new Coordinate(lat, lon, alt);
 		return new BeaconData(coord3d, fetchTime);
 	}
 }

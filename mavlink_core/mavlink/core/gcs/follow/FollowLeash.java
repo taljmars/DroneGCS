@@ -1,15 +1,14 @@
 package mavlink.core.gcs.follow;
 
+import gui.is.Coordinate;
+import gui.is.GeoTools;
 import mavlink.is.drone.Drone;
 import mavlink.is.gcs.follow.FollowAlgorithm;
 import mavlink.is.location.Location;
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.geoTools.GeoTools;
-import mavlink.is.utils.units.Length;
 
 public class FollowLeash extends FollowAlgorithm {
 
-	public FollowLeash(Drone drone, Length radius) {
+	public FollowLeash(Drone drone, double radius) {
 		super(drone, radius);
 	}
 
@@ -20,18 +19,18 @@ public class FollowLeash extends FollowAlgorithm {
 
 	@Override
 	public void processNewLocation(Location location) {
-		final Coord2D locationCoord = location.getCoord();
-		final Coord2D dronePosition = drone.getGps().getPosition();
+		final Coordinate locationCoord = location.getCoord();
+		final Coordinate dronePosition = drone.getGps().getPosition();
 
 		if (locationCoord == null || dronePosition == null) {
 			return;
 		}
 
-		final double radiusInMeters = radius.valueInMeters();
-		if (GeoTools.getDistance(locationCoord, dronePosition).valueInMeters() > radiusInMeters) {
+		final double radiusInMeters = radius;
+		if (GeoTools.getDistance(locationCoord, dronePosition) > radiusInMeters) {
 			double headingGCStoDrone = GeoTools.getHeadingFromCoordinates(locationCoord,
 					dronePosition);
-			Coord2D goCoord = GeoTools.newCoordFromBearingAndDistance(locationCoord,
+			Coordinate goCoord = GeoTools.newCoordFromBearingAndDistance(locationCoord,
 					headingGCStoDrone, radiusInMeters);
 			drone.getGuidedPoint().newGuidedCoord(goCoord);
 		}

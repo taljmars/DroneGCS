@@ -111,7 +111,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 		}
 		
 		if (valueUpdate == 2) {
-			int GpsdistanceFromHome = (int) (drone.getHome() == null ? 0 : drone.getHome().getDroneDistanceToHome().valueInMeters());
+			int GpsdistanceFromHome = (int) (drone.getHome() == null ? 0 : drone.getHome().getDroneDistanceToHome());
 			int RadiosignalStrength = drone.getRadio().getSignalStrength();
 			int RadionoiseStrength = (int) drone.getRadio().getNoise();
 			int RadioRssiStrength = (int) drone.getRadio().getRssi();

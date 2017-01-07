@@ -1,6 +1,8 @@
 package mavlink.core.location;
 
+import gui.is.Coordinate;
 import gui.is.services.LoggerDisplayerSvc;
+import logger.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,12 +15,10 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
-import tools.logger.Logger;
 import mavlink.core.connection.helper.BeaconData;
 import mavlink.is.location.Location;
 import mavlink.is.location.LocationFinder;
 import mavlink.is.location.LocationReceiver;
-import mavlink.is.utils.coordinates.Coord2D;
 
 @Component("locationFinder")
 public class MyLocationImpl implements LocationFinder {
@@ -65,7 +65,7 @@ public class MyLocationImpl implements LocationFinder {
 					return;
 				}
 				logger.LogDesignedMessege("Request took " + beaconDate.getFetchTime() + "ms");				
-				Coord2D coord = beaconDate.getCoordinate().dot(1);
+				Coordinate coord = beaconDate.getCoordinate().dot(1);
 				
 				for (LocationReceiver lr : receivers)
 					lr.onLocationChanged(new Location(coord, 0, (float) SPEED, true));

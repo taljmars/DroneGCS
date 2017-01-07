@@ -1,17 +1,16 @@
 package mavlink.core.gcs.follow;
 
+import gui.is.Coordinate;
+import gui.is.GeoTools;
 import mavlink.is.drone.Drone;
 import mavlink.is.gcs.follow.FollowAlgorithm;
 import mavlink.is.location.Location;
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.geoTools.GeoTools;
-import mavlink.is.utils.units.Length;
 
 public abstract class FollowHeadingAngle extends FollowAlgorithm {
 
 	protected double angleOffset;
 
-	protected FollowHeadingAngle(Drone drone, Length radius, double angleOffset) {
+	protected FollowHeadingAngle(Drone drone, double radius, double angleOffset) {
 		super(drone, radius);
 		this.angleOffset = angleOffset;
 	}
@@ -19,11 +18,10 @@ public abstract class FollowHeadingAngle extends FollowAlgorithm {
 	@Override
 	public void processNewLocation(Location location) {
 
-		Coord2D gcsCoord = new Coord2D(location.getCoord().getLat(), location.getCoord().getLng());
+		Coordinate gcsCoord = new Coordinate(location.getCoord().getLat(), location.getCoord().getLon());
 		double bearing = location.getBearing();
 
-		Coord2D goCoord = GeoTools.newCoordFromBearingAndDistance(gcsCoord, bearing + angleOffset,
-				radius.valueInMeters());
+		Coordinate goCoord = GeoTools.newCoordFromBearingAndDistance(gcsCoord, bearing + angleOffset, radius);
 		drone.getGuidedPoint().newGuidedCoord(goCoord);
 	}
 

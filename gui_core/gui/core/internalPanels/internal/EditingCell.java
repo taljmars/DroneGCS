@@ -1,11 +1,11 @@
 package gui.core.internalPanels.internal;
 
-import gui.core.springConfig.AppConfig;
 import gui.is.services.DialogManagerSvc;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
+import springConfig.AppConfig;
 
 public class EditingCell<T> extends TableCell<MissionItemTableEntry, T> {
 	private TextField textField;

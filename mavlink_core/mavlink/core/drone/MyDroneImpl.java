@@ -37,7 +37,7 @@ import mavlink.is.drone.variables.Type;
 import mavlink.is.gcs.follow.Follow;
 import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import mavlink.is.protocol.msgbuilder.WaypointManager;
-import tools.validations.RuntimeValidator;
+import validations.RuntimeValidator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

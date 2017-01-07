@@ -2,10 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="mavlink_core"/>
 	<classpathentry kind="src" path="gui_core"/>
-	<classpathentry kind="src" path="tools"/>
-	<classpathentry kind="src" path="gui_is"/>
-	<classpathentry kind="src" path="mavlink_is"/>
+	<classpathentry kind="src" path="is"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="operations"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/validation-api-1.1.0.Final.jar"/>
@@ -23,5 +22,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring4.3.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MapViewer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

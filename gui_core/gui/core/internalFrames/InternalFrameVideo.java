@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import mavlink.is.drone.Drone;
 import mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import tools.validations.RuntimeValidator;
+import validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

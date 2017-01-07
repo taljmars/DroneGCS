@@ -3,7 +3,6 @@ package gui.core.dashboard;
 import gui.core.internalFrames.InternalFrameMap;
 import gui.core.internalPanels.*;
 import gui.core.operations.OpGCSTerminationHandler;
-import gui.core.springConfig.AppConfig;
 
 import java.net.URL;
 import java.util.List;
@@ -40,7 +39,8 @@ import mavlink.is.drone.DroneInterfaces.*;
 import mavlink.is.drone.parameters.Parameter;
 import mavlink.is.protocol.msg_metadata.ApmModes;
 import mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import tools.validations.RuntimeValidator;
+import springConfig.AppConfig;
+import validations.RuntimeValidator;
 
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
 
@@ -216,7 +216,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			loggerDisplayerSvc.logError("Enforcing Perimeter");
 			return;
 		case ORIENTATION:
-			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP().valueInMeters());
+			SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP());
 			return;
 		case MODE:
 			viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
@@ -324,7 +324,11 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		Node selectedPane = (Node) AppConfig.loader.load(springInstanciation);
+		Node selectedPane;
+		if (springInstanciation.equals("internalFrameMap"))
+			selectedPane = (Node) AppConfig.context.getBean("internalFrameMap");
+		else
+			selectedPane = (Node) AppConfig.loader.load(springInstanciation);
 		selectedPane.setUserData(springInstanciation);
 						
 		if (selectedPane != null) {

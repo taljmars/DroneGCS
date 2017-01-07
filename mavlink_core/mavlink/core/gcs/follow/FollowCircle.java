@@ -1,12 +1,11 @@
 package mavlink.core.gcs.follow;
 
+import gui.is.Coordinate;
+import gui.is.GeoTools;
+import gui.is.MathUtil;
 import mavlink.is.drone.Drone;
 import mavlink.is.gcs.follow.FollowAlgorithm;
 import mavlink.is.location.Location;
-import mavlink.is.utils.coordinates.Coord2D;
-import mavlink.is.utils.geoTools.GeoTools;
-import mavlink.is.utils.math.MathUtil;
-import mavlink.is.utils.units.Length;
 
 public class FollowCircle extends FollowAlgorithm {
 
@@ -16,7 +15,7 @@ public class FollowCircle extends FollowAlgorithm {
 	private double circleStep = 2;
 	private double circleAngle = 0.0;
 
-	public FollowCircle(Drone drone, Length radius, double rate) {
+	public FollowCircle(Drone drone, double radius, double rate) {
 		super(drone, radius);
 		circleStep = rate;
 	}
@@ -28,9 +27,8 @@ public class FollowCircle extends FollowAlgorithm {
 
 	@Override
 	public void processNewLocation(Location location) {
-		Coord2D gcsCoord = new Coord2D(location.getCoord().getLat(), location.getCoord().getLng());
-		Coord2D goCoord = GeoTools.newCoordFromBearingAndDistance(gcsCoord, circleAngle,
-				radius.valueInMeters());
+		Coordinate gcsCoord = new Coordinate(location.getCoord().getLat(), location.getCoord().getLon());
+		Coordinate goCoord = GeoTools.newCoordFromBearingAndDistance(gcsCoord, circleAngle, radius);
 		circleAngle = MathUtil.constrainAngle(circleAngle + circleStep);
 		drone.getGuidedPoint().newGuidedCoord(goCoord);
 	}

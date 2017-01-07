@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
+import logger.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -35,9 +36,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import tools.comm.SerialConnection;
-import tools.logger.Logger;
 import tools.pair.Pair;
-import tools.validations.RuntimeValidator;
+import validations.RuntimeValidator;
 import mavlink.core.connection.helper.GCSLocationData;
 import mavlink.core.flightControlers.FlightControler;
 import mavlink.is.drone.Drone;

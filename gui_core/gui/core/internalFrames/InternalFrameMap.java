@@ -1,8 +1,7 @@
 package gui.core.internalFrames;
 
-import gui.core.mapTree.OperationalViewTree;
-import gui.core.mapViewer.OperationalViewMap;
-import gui.core.springConfig.AppConfig;
+import gui.core.internalFrames.internal.OperationalViewMap;
+import gui.core.internalFrames.internal.OperationalViewTree;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,7 +9,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.DragEvent;
 import javafx.stage.Screen;
-import tools.validations.RuntimeValidator;
+import springConfig.AppConfig;
+import validations.RuntimeValidator;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

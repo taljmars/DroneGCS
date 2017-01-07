@@ -6,6 +6,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import logger.Logger;
+import logger.Logger.Type;
+import validations.RuntimeValidator;
+
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
@@ -18,9 +22,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.is.events.logevents.LogAbstractDisplayerEvent;
-import tools.logger.Logger;
-import tools.logger.Logger.Type;
-import tools.validations.RuntimeValidator;
 
 @Component("areaLogBox")
 public class PanelLogBox extends Pane implements Initializable {
