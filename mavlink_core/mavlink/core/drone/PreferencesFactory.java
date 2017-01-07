@@ -1,7 +1,7 @@
 package mavlink.core.drone;
 
 import mavlink.core.firmware.FirmwareType;
-import mavlink.is.drone.Preferences;
+import mavlink.drone.Preferences;
 
 public class PreferencesFactory {
 

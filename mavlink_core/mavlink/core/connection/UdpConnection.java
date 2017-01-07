@@ -5,8 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import mavlink.is.connection.MavLinkConnection;
-import mavlink.is.connection.MavLinkConnectionTypes;
+import mavlink.connection.MavLinkConnection;
+import mavlink.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via udp.

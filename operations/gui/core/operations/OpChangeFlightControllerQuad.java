@@ -1,52 +1,47 @@
 package gui.core.operations;
 
-import gui.is.KeyBoardControler;
-import gui.is.operations.OperationHandler;
-import gui.is.services.DialogManagerSvc;
-import gui.is.services.LoggerDisplayerSvc;
+import gui.operations.OperationHandler;
+import gui.services.DialogManagerSvc;
+import gui.services.LoggerDisplayerSvc;
 import logger.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+import devices.KeyBoardControler;
 import mavlink.core.flightControlers.FlightControler;
 import mavlink.core.validations.SwitchToRC;
-import mavlink.is.drone.Drone;
-import mavlink.is.protocol.msgbuilder.MavLinkRC;
+import mavlink.drone.Drone;
+import mavlink.protocol.msgbuilder.MavLinkRC;
 import validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
 @ComponentScan("mavlink.core.flightControlers")
-@ComponentScan("gui.is.services")
+@ComponentScan("gui.services")
 @SwitchToRC
 @Component("opChangeFlightControllerQuad")
 public class OpChangeFlightControllerQuad extends OperationHandler {
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "keyBoardControler")
+	@Autowired @NotNull(message = "Internal Error: Failed to get keyboard controller")
 	private KeyBoardControler keyBoardControler;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Resource(name = "validator")
-	@NotNull(message = "Internal Error: Failed to get validator")
+	@Autowired @NotNull(message = "Internal Error: Failed to get validator")
 	private RuntimeValidator validator;
 	
-	@Resource(name = "logger")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager when changing flight mode")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when changing flight mode")
 	private DialogManagerSvc dialogManagerSvc;
 
 	private FlightControler requiredFlightMode;

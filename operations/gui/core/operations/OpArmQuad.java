@@ -1,34 +1,31 @@
 package gui.core.operations;
 
-import gui.is.operations.OperationHandler;
-import gui.is.services.DialogManagerSvc;
-import gui.is.services.LoggerDisplayerSvc;
+import gui.operations.OperationHandler;
+import gui.services.DialogManagerSvc;
+import gui.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
-import mavlink.is.protocol.msgbuilder.MavLinkArm;
+import mavlink.drone.Drone;
+import mavlink.protocol.msgbuilder.MavLinkArm;
 
-@ComponentScan("gui.is.services")
+@ComponentScan("gui.services")
 @Component("opArmQuad")
 public class OpArmQuad extends OperationHandler {
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager when arming quad")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when arming quad")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	static int called;

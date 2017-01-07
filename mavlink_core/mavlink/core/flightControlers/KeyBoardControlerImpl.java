@@ -11,50 +11,45 @@ import java.util.Date;
 import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.is.KeyBoardControler;
-import gui.is.services.DialogManagerSvc;
-import gui.is.services.LoggerDisplayerSvc;
+import devices.KeyBoardControler;
+import devices.SerialConnection;
+import gui.services.DialogManagerSvc;
+import gui.services.LoggerDisplayerSvc;
 import javafx.scene.input.KeyEvent;
 import logger.Logger;
-import mavlink.is.drone.Drone;
-import mavlink.is.protocol.msgbuilder.MavLinkRC;
-import tools.comm.SerialConnection;
+import mavlink.drone.Drone;
+import mavlink.protocol.msgbuilder.MavLinkRC;
 import tools.os_utilities.Environment;
 
-@ComponentScan("tools.logger")
-@ComponentScan("tools.comm.internal")
+@ComponentScan("logger")
+@ComponentScan("devices")
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("gui.is.services")
+@ComponentScan("gui.services")
 @Component("keyBoardControler")
 public class KeyBoardControlerImpl implements KeyBoardControler {
 	
 	private static boolean param_loaded = false;
 	private static Thread KeyboardStabilizer = null;
 	
-	@Resource(name = "twoWaySerialComm")
-	@NotNull(message = "Internal Error: Failed to get serial communication")
+	@Autowired @NotNull(message = "Internal Error: Failed to get serial communication")
 	private SerialConnection serialConnection;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
-	@Resource(name = "logger")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
 	static int called;

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ComboBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.core.internalPanels.PanelButtonBoxSatellite">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelButtonBoxSatellite">
 
 	<fx:define>
 		<Double fx:id="buttonWidth" fx:value="100E30"/>

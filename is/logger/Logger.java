@@ -9,24 +9,24 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.is.services.DialogManagerSvc;
+import gui.services.DialogManagerSvc;
 import tools.os_utilities.Environment;
 
+@ComponentScan("gui.services")
 @Component("logger")
 public class Logger {
 	
 	private final String LOG_ENTRY_SUFFIX = ".html";
 	
-	
 	private PrintWriter writer = null;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	private static int called;

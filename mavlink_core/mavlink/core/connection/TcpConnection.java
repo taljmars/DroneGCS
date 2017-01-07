@@ -7,8 +7,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import mavlink.is.connection.MavLinkConnection;
-import mavlink.is.connection.MavLinkConnectionTypes;
+import mavlink.connection.MavLinkConnection;
+import mavlink.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via TCP.

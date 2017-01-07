@@ -1,22 +1,23 @@
 package mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import logger.Logger;
 import mavlink.core.drone.profile.ArduCopterProfile;
 import mavlink.core.firmware.FirmwareType;
-import mavlink.is.drone.Preferences;
-import mavlink.is.drone.profiles.VehicleProfile;
+import mavlink.drone.Preferences;
+import mavlink.drone.profiles.VehicleProfile;
 
+@ComponentScan("logger")
 @Component("preferencesImpl")
 public class PreferencesImpl implements Preferences {
 	
-	@Resource(name = "logger")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 
 	private FirmwareType type;

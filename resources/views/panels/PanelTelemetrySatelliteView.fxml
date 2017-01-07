@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.core.internalPanels.PanelTelemetrySatellite" >
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelTelemetrySatellite" >
 	<VBox>
 		<children>
 			<GridPane alignment="CENTER" layoutX="8.0" prefHeight="120.0" prefWidth="275.0" vgap="5.0">

@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.DroneInterfaces.Handler;
+import mavlink.drone.DroneInterfaces.Handler;
 
 @Component("handler")
 public class HandlerImpl implements Handler {

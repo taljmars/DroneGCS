@@ -1,6 +1,5 @@
 package gui.core.validations.internal;
 
-import gui.core.internalFrames.internal.OperationalViewTree;
 import gui.core.mapTreeObjects.Layer;
 import gui.core.validations.LegalTreeView;
 import javafx.scene.control.TreeItem;
@@ -10,6 +9,8 @@ import java.util.Set;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import controllers.internalFrames.internal.OperationalViewTree;
 
 public class LegalTreeViewValidator implements ConstraintValidator<LegalTreeView, OperationalViewTree> {
 	

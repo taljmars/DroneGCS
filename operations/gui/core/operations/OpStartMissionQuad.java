@@ -1,42 +1,39 @@
 package gui.core.operations;
 
-import gui.is.operations.OperationHandler;
-import gui.is.services.LoggerDisplayerSvc;
+import gui.operations.OperationHandler;
+import gui.services.LoggerDisplayerSvc;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.validations.MissionCanBeActivated;
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.is.drone.Drone;
-import mavlink.is.drone.mission.Mission;
-import mavlink.is.protocol.msg_metadata.ApmModes;
+import mavlink.drone.Drone;
+import mavlink.drone.mission.Mission;
+import mavlink.protocol.msg_metadata.ApmModes;
 import validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
-@ComponentScan("gui.is.services")
+@ComponentScan("gui.services")
 @Component("opStartMissionQuad")
 public class OpStartMissionQuad extends OperationHandler {
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	@QuadIsArmed
 	private Drone drone;
 	
-	@NotNull(message = "Internal Error: Failed to get mission")
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission")
 	@MissionCanBeActivated
 	private Mission mission;
 	
-	@Resource(name = "validator")
-	@NotNull(message = "Internal Error: Failed to get validator")
+	@Autowired @NotNull(message = "Internal Error: Failed to get validator")
 	private RuntimeValidator validator;
 	
 	private static int called;

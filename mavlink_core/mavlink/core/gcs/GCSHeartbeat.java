@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.Drone;
-import mavlink.is.protocol.msgbuilder.MavLinkHeartbeat;
+import mavlink.drone.Drone;
+import mavlink.protocol.msgbuilder.MavLinkHeartbeat;
 
 /**
  * This class is used to send periodic heartbeat messages to the drone.

@@ -1,7 +1,7 @@
 package mavlink.core.location;
 
 import gui.is.Coordinate;
-import gui.is.services.LoggerDisplayerSvc;
+import gui.services.LoggerDisplayerSvc;
 import logger.Logger;
 
 import java.util.HashSet;
@@ -16,9 +16,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.is.location.Location;
-import mavlink.is.location.LocationFinder;
-import mavlink.is.location.LocationReceiver;
+import mavlink.location.Location;
+import mavlink.location.LocationFinder;
+import mavlink.location.LocationReceiver;
 
 @Component("locationFinder")
 public class MyLocationImpl implements LocationFinder {

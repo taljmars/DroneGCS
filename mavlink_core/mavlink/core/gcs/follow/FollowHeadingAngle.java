@@ -2,9 +2,9 @@ package mavlink.core.gcs.follow;
 
 import gui.is.Coordinate;
 import gui.is.GeoTools;
-import mavlink.is.drone.Drone;
-import mavlink.is.gcs.follow.FollowAlgorithm;
-import mavlink.is.location.Location;
+import mavlink.drone.Drone;
+import mavlink.gcs.follow.FollowAlgorithm;
+import mavlink.location.Location;
 
 public abstract class FollowHeadingAngle extends FollowAlgorithm {
 

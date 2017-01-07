@@ -5,8 +5,8 @@ import java.util.List;
 
 import gui.is.Coordinate;
 import gui.is.GeoTools;
-import mavlink.is.drone.mission.survey.CameraInfo;
-import mavlink.is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
+import mavlink.drone.mission.survey.CameraInfo;
+import mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
 
 public class Footprint {
 	

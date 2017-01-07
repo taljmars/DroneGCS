@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<Pane prefHeight="135.0" prefWidth="499.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.core.internalPanels.PanelConfigurationBox">
+<Pane prefHeight="135.0" prefWidth="499.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelConfigurationBox">
    <children>
       <GridPane hgap="5.0" prefHeight="145.0" prefWidth="499.0" vgap="5.0">
         <columnConstraints>

@@ -1,6 +1,6 @@
 package mavlink.core.gcs.follow;
 
-import mavlink.is.drone.Drone;
+import mavlink.drone.Drone;
 
 public class FollowLead extends FollowHeadingAngle {
 

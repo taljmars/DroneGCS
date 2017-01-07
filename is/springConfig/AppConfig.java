@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import gui.core.dashboard.Dashboard;
-import gui.core.internalFrames.internal.view_tree_layers.LayerMission;
 import javafx.fxml.FXMLLoader;
 import javafx.util.Callback;
 import mavlink.core.drone.MyDroneImpl;
-import mavlink.is.drone.mission.Mission;
+import mavlink.drone.mission.Mission;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -19,10 +17,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 
-@ComponentScan("gui.core.internalPanels")
-@ComponentScan("gui.is.services")
+import controllers.dashboard.Dashboard;
+import controllers.internalFrames.InternalFrameMap;
+import gui.core.operations.OpGCSTerminationHandler;
+
+@ComponentScan("controllers.internalPanels")
+@ComponentScan("controllers.internalFrames")
+@ComponentScan("gui.core.operations")
+@ComponentScan("gui.services")
 @ComponentScan("mavlink.core.gcs")
-@Import(MyDroneImpl.class)
+@Import({InternalFrameMap.class , MyDroneImpl.class , OpGCSTerminationHandler.class})
 @Configuration
 public class AppConfig {
 	

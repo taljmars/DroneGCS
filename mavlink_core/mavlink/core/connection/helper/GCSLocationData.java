@@ -2,10 +2,10 @@ package mavlink.core.connection.helper;
 
 import org.json.simple.JSONObject;
 
+import genericObjects.json.JSONHelper;
 import gui.is.Coordinate;
 import logger.Logger;
 import springConfig.AppConfig;
-import tools.json.JSONHelper;
 
 public class GCSLocationData {
 	

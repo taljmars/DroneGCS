@@ -1,34 +1,32 @@
 package gui.core.operations;
 
-import gui.is.operations.OperationHandler;
-import gui.is.services.DialogManagerSvc;
-import gui.is.services.LoggerDisplayerSvc;
+import gui.operations.OperationHandler;
+import gui.services.DialogManagerSvc;
+import gui.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.is.drone.Drone;
+import mavlink.drone.Drone;
 import validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
-@ComponentScan("gui.is.services")
+@ComponentScan("gui.services")
 @Component("opTakeoffQuad")
 public class OpTakeoffQuad extends OperationHandler {
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	@QuadIsArmed
 	private Drone drone;
 	
@@ -36,12 +34,10 @@ public class OpTakeoffQuad extends OperationHandler {
     @Max(value=50, message="Expected height must be less than 50m")
 	private double expectedValue;
 	
-	@Resource(name = "dialogManagerSvc")
-	@NotNull(message = "Internal Error: Failed to get dialog manager when setting takeoff")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when setting takeoff")
 	private DialogManagerSvc dialogManagerSvc;
 	
-	@Resource(name = "validator")
-	@NotNull(message = "Internal Error: Failed to get validator")
+	@Autowired @NotNull(message = "Internal Error: Failed to get validator")
 	private RuntimeValidator validator;
 	
 	static int called;

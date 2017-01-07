@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.is.drone.*;
+import mavlink.drone.*;
 
 public class QuadIsArmedValidator implements ConstraintValidator<QuadIsArmed, Drone> {
 

@@ -4,7 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.is.drone.DroneInterfaces.Clock;
+import mavlink.drone.DroneInterfaces.Clock;
 
 @Component("clock")
 public class ClockImpl implements Clock {

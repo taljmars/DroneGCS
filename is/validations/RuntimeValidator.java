@@ -10,7 +10,7 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.is.services.DialogManagerSvc;
+import gui.services.DialogManagerSvc;
 
 @Component("validator")
 public class RuntimeValidator {
