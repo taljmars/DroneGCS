@@ -37,7 +37,8 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	
 	private CSV csv;
 	
-	@FXML private LineChart<String,Number> lineChart;
+	@NotNull @FXML private Pane root;
+	@NotNull @FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesCurrent;
@@ -47,6 +48,8 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		lineChart.setPrefWidth(root.getPrefWidth());
+		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
 	}
 	

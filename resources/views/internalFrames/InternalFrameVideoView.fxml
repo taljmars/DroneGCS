@@ -8,14 +8,15 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalFrames.InternalFrameVideo">
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalFrames.InternalFrameVideo">
    <children>
-      <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <BorderPane>
          <top>
-            <HBox prefHeight="0.0" prefWidth="535.0" BorderPane.alignment="CENTER">
+            <HBox prefHeight="0.0" prefWidth="${prefWidth}" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="opCamera" mnemonicParsing="false" onAction="#handleOpCameraOnAction" text="Start Camera" />
-                  <ComboBox fx:id="cbDetectorSelect" onAction="#handleDetectorSelectOnAction" prefWidth="150.0" />
+                  <Label maxHeight="1.7976931348623157E308" text="  |  Select Tracker:  " />
+                  <ComboBox fx:id="cbTrackerSelect" onAction="#handleTrackerSelectOnAction" prefWidth="150.0" />
                </children>
             </HBox>
          </top>
@@ -23,9 +24,9 @@
             <Label fx:id="redirectionLabel" alignment="CENTER" contentDisplay="CENTER" text="Video Redirection" textAlignment="CENTER" visible="false" BorderPane.alignment="CENTER" />
          </bottom>
          <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="imageViewer" fitHeight="220.0" fitWidth="535.0" onMouseClicked="#handleVideoMouseClick" />
+                  <ImageView fx:id="imageViewer" onMouseClicked="#handleVideoMouseClick" />
                </children>
             </AnchorPane>
          </center>

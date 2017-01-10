@@ -34,7 +34,7 @@ public class GuiEvent extends ApplicationEvent {
         EXIT, 
         SPLIT_FRAMECONTAINER, 
         
-        CAMERA_DEVICEID
+        CAMERA_DEVICEID, UPDATED_INTERNAL_FRAME_SIZE
     }
 
     private COMMAND command;

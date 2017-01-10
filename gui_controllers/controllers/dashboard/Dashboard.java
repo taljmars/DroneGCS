@@ -1,39 +1,57 @@
 package controllers.dashboard;
 
 import gui.core.operations.OpGCSTerminationHandler;
+import gui.is.events.GuiEvent.COMMAND;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import gui.is.events.GuiEvent;
+import gui.services.EventPublisherSvc;
 import gui.services.LoggerDisplayerSvc;
 import gui.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CharsetEditor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import controllers.internalFrames.InternalFrameMap;
 import controllers.internalPanels.*;
+import genericObjects.pair.Pair;
 
 import javax.validation.constraints.NotNull;
 
@@ -53,7 +71,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	public static final String APP_TITLE = "Quad Ground Station";
 	
 	@FXML private HBox frameContainer;
-	@FXML private PanelTelemetrySatellite tbTelemtry;
+	//@FXML private PanelTelemetrySatellite tbTelemtry;
 	@FXML private ProgressBar progressBar;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
@@ -71,12 +89,15 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@Autowired @NotNull(message = "Internal Error: Failed to get map frame")
 	private InternalFrameMap internalFrameMap;
 	
+	@Autowired @NotNull(message = "Internal Error: Failed to get current frames amount")
+	private EventPublisherSvc eventPublisherSvc;
+	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
 	private Stage viewManager;
 
-	private SimpleIntegerProperty frameAmount;
+	private SimpleIntegerProperty maxFramesAmount;
 	
 	private static int called;
 	@PostConstruct
@@ -104,14 +125,14 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		drone.getParameters().addParameterListener(this);
 
 		if (drone.isConnectionAlive()) {
-			tbTelemtry.SetHeartBeat(true);
+//			tbTelemtry.SetHeartBeat(true);
 			drone.notifyDroneEvent(DroneEventsType.MODE);
 		}
 	}
 
 	private void initializeGui() {
-		frameAmount = new SimpleIntegerProperty(2);
-		frameAmount.addListener( (observable, oldValue, newValue) -> {
+		maxFramesAmount = new SimpleIntegerProperty(2);
+		maxFramesAmount.addListener( (observable, oldValue, newValue) -> {
 			for (int i = 0 ; i < oldValue.intValue() - newValue.intValue() ; i++)
 				frameContainer.getChildren().remove(newValue.intValue() - i);
 		});
@@ -158,7 +179,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	}
 	
 	private int GetFrameIndexInsideContainer(double intersectedPoint) {
-		if (frameAmount.get() == 1)
+		if (maxFramesAmount.get() == 1)
 			return 0;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
@@ -168,7 +189,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		double size = frameContainer.getWidth();
 		double positionRelativeToFrameContainerSize = intersectedPoint - frameContainer.getLayoutX();
 		
-		int index = (int) Math.round((positionRelativeToFrameContainerSize / size) * (frameAmount.get() - 1));
+		int index = (int) Math.round((positionRelativeToFrameContainerSize / size) * (maxFramesAmount.get() - 1));
 		return index;
 	}
 
@@ -268,10 +289,10 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		progressBar.setVisible(false);
 	}
 	
-	@EventListener
-	public void onApplicationEvent(String notification) {
-		tbTelemtry.SetNotification(notification);
-	}
+//	@EventListener
+//	public void onApplicationEvent(String notification) {
+//		tbTelemtry.SetNotification(notification);
+//	}
 
 	@Override
 	public void onBeginReceivingParameters() {
@@ -330,28 +351,20 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		Node selectedPane;
-		if (springInstanciation.equals("internalFrameMap"))
-			selectedPane = (Node) AppConfig.context.getBean("internalFrameMap");
-		else
-			selectedPane = (Node) AppConfig.loader.load(springInstanciation);
+		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstanciation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 75);
 		selectedPane.setUserData(springInstanciation);
-						
 		if (selectedPane != null) {
+			selectedPane.setUserData(springInstanciation);
 			Platform.runLater(() -> {
-				if (frameAmount.get() == 1 || isFrameAlreadyOpen(children, selectedPane))
+				if (maxFramesAmount.get() == 1 || isFrameAlreadyOpen(children, selectedPane))
 					children.clear();
 				
-				if (children.size() != frameAmount.get())
+				if (children.size() != maxFramesAmount.get())
 					children.add(selectedPane);
 				else {
 					children.remove(index);
 					children.add(index, selectedPane);
 				}
-				((Region) selectedPane).setPrefHeight(frameContainer.getHeight());
-				((Region) selectedPane).setPrefWidth(frameContainer.getWidth());
-				
-				System.err.println(children.toString());
 			});
 		}
 	}
@@ -370,7 +383,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	public void onApplicationEvent(GuiEvent command) {
 		switch (command.getCommand()) {
 		case SPLIT_FRAMECONTAINER:
-			frameAmount.set((Integer) command.getSource());
+			maxFramesAmount.set((Integer) command.getSource());
+			frameContainer.getChildren().clear();
 			break;
 		}
 	}

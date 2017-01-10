@@ -46,38 +46,38 @@
          <center>
             <StackPane BorderPane.alignment="CENTER">
                <children>
-                  <HBox fx:id="frameContainer" StackPane.alignment="TOP_CENTER" />
-      					<Accordion maxHeight="20.0" prefHeight="20.0" StackPane.alignment="BOTTOM_CENTER">
-      						<panes>
-      							<TitledPane animated="false" text="Log">
-      								<content>
-      									<AnchorPane>
-      										<children>
-      											<fx:include source="panels/PanelLogBoxView.fxml" />
-      										</children>
-      									</AnchorPane>
-      								</content>
-      							</TitledPane>                
-      							<TitledPane animated="false" text="Configuration">
-      								<content>
-      									<AnchorPane>
-      										<children>
-      											<fx:include source="panels/PanelConfigurationView.fxml" />
-      										</children>
-      									</AnchorPane>
-      								</content>
-      							</TitledPane>
-								<TitledPane animated="false" text="Mission Box">
-      								<content>
-      									<AnchorPane>
-      										<children>
-      											<fx:include source="panels/PanelMissionView.fxml" />
-      										</children>
-      									</AnchorPane>
-      								</content>
-      							</TitledPane>
-      						</panes>
-      					</Accordion>
+					<HBox fx:id="frameContainer" StackPane.alignment="TOP_CENTER" />
+					<Accordion maxHeight="20.0" prefHeight="20.0" StackPane.alignment="BOTTOM_CENTER">
+						<panes>
+							<TitledPane animated="false" text="Log">
+								<content>
+									<AnchorPane>
+										<children>
+											<fx:include source="panels/PanelLogBoxView.fxml" />
+										</children>
+									</AnchorPane>
+								</content>
+							</TitledPane>                
+							<TitledPane animated="false" text="Configuration">
+								<content>
+									<AnchorPane>
+										<children>
+											<fx:include source="panels/PanelConfigurationView.fxml" />
+										</children>
+									</AnchorPane>
+								</content>
+							</TitledPane>
+							<TitledPane animated="false" text="Mission Box">
+								<content>
+									<AnchorPane>
+										<children>
+											<fx:include source="panels/PanelMissionView.fxml" />
+										</children>
+									</AnchorPane>
+								</content>
+							</TitledPane>
+						</panes>
+					</Accordion>
                </children>
             </StackPane>
          </center>

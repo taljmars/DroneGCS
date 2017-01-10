@@ -40,7 +40,8 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	
 	private CSV csv;
 	
-	@FXML private LineChart<String,Number> lineChart;
+	@NotNull @FXML private Pane root;
+	@NotNull @FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesE1;
@@ -50,7 +51,15 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 			
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		lineChart.setPrefWidth(root.getPrefWidth());
+		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
+		else
+			System.err.println("Validation Succeeded for instance of class " + this.getClass());
+		
 	}
 
 	private static int called;
@@ -58,12 +67,6 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	private void init() throws URISyntaxException {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
-		
 		
 		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
 		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));

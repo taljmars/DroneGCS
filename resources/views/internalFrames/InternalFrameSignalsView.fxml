@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="controllers.internalFrames.InternalFrameSignals" >
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="controllers.internalFrames.InternalFrameSignals" >
 	<children>
-		<LineChart fx:id="lineChart" title="Signals">
+		<LineChart fx:id="lineChart" title="Signals" >
 			<xAxis>
 				<CategoryAxis label="Time (s)" fx:id="xAxis" />
 			</xAxis>

@@ -20,12 +20,15 @@ import ObjectsDetector.Trackers.ColorTrackerLockSingleObject.ColorTrackerLockSin
 import ObjectsDetector.Trackers.FakeTracker.FakeTracker;
 import ObjectsDetector.Trackers.MovementTracker.MovmentTracker;
 import ObjectsDetector.Utilities.DetectionResults;
+import controllers.droneEye.DroneEye;
 import gui.is.events.GuiEvent;
 import gui.services.LoggerDisplayerSvc;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -34,11 +37,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
+import springConfig.AppConfig;
 
 @ComponentScan("gui.services")
 @ComponentScan("validations")
@@ -54,10 +60,11 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
-	@FXML private ImageView imageViewer;
-	@FXML private Label redirectionLabel;
-	@FXML private Button opCamera;
-	@FXML private ComboBox<TrackersEnum> cbDetectorSelect;
+	@NotNull @FXML private Pane root;
+	@NotNull @FXML private ImageView imageViewer;
+	@NotNull @FXML private Label redirectionLabel;
+	@NotNull @FXML private Button opCamera;
+	@NotNull @FXML private ComboBox<TrackersEnum> cbTrackerSelect;
 	
 	private Detector detector;
 	private InternalFrameVideo myself;
@@ -68,29 +75,35 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
-		
 		drone.addDroneListener(this);
 		
-//		detector = new Detector(0);
-//		detector.setTracker(new MovmentTracker(23, 23));
-//		detector.addListener(this);
-//		
+		detector = new Detector(0);
+		detector.setTracker(new MovmentTracker(23, 23));
+		detector.addListener(this);
+
 		myself = this;
 	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		cbDetectorSelect.getItems().addAll(FXCollections.observableArrayList( TrackersEnum.values() ));
+		cbTrackerSelect.getItems().addAll(FXCollections.observableArrayList( TrackersEnum.values() ));
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
+		else
+			System.err.println("Validation Succeeded for instance of class " + this.getClass());
 	};
+	
+	@Autowired @NotNull 
+	private DroneEye externalFrameVideo;
 	
 	@FXML
 	public void handleVideoMouseClick(MouseEvent mouseEvent) {
-		if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mouseEvent.getClickCount() >=2 ) {				
-			ExternalFrameVideo externalFrameVideo = new ExternalFrameVideo();
+		if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mouseEvent.getClickCount() >=2 ) {
+			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+			Parent droneEyeView = (Parent) AppConfig.loader.loadInternalFrame("/views/DroneEyeView.fxml", primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight() );
+			loggerDisplayerSvc.logGeneral("add drone listening to drone eye view");
+			drone.addDroneListener(externalFrameVideo);
 			detector.addListener(externalFrameVideo);
 			detector.removeListener(myself);
 			redirectionLabel.setVisible(true);
@@ -98,8 +111,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	        Stage stage = new Stage();
 			stage.setTitle("Drone Eye");
 			stage.setMaximized(true);
-			stage.setResizable(false);
-			stage.setScene(new Scene(externalFrameVideo, 450, 450));
+			stage.setScene(new Scene(droneEyeView, 800, 800));
 			stage.setOnCloseRequest( windowEvent -> {
 				if (windowEvent.getEventType() == WindowEvent.WINDOW_CLOSE_REQUEST) {
 					loggerDisplayerSvc.logGeneral("Closing maximized video");
@@ -107,6 +119,8 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 					redirectionLabel.setVisible(false);
 					imageViewer.setVisible(true);
 					detector.addListener(myself);
+					loggerDisplayerSvc.logGeneral("Removing drone listening from drone eye view");
+					drone.removeDroneListener(externalFrameVideo);
 				}
 			});
 			stage.show();
@@ -144,8 +158,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	@Override
 	public void handleImageProcessResults(DetectionResults frameProcessResult) {
 		Image img = frameProcessResult.getFinalImage();
-		imageViewer.setFitWidth(getWidth());
-		imageViewer.setFitHeight(getHeight());
+		imageViewer.setFitWidth(root.getPrefWidth());
 		imageViewer.setPreserveRatio(true);
 		imageViewer.setImage(img);		
 	}
@@ -163,8 +176,8 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	}
 	
 	@FXML
-	public void handleDetectorSelectOnAction(ActionEvent actionEvent) {
-		TrackersEnum value = cbDetectorSelect.getValue();
+	public void handleTrackerSelectOnAction(ActionEvent actionEvent) {
+		TrackersEnum value = cbTrackerSelect.getValue();
 		switch (value) {
 			case MOVEMENT_TRACKER:
 				detector.setTracker(new MovmentTracker(10, 24));
@@ -182,35 +195,4 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 			break;
 		}
 	}
-	
-	public void HandleTracker(MovmentTracker movmentTracker) {
-		System.err.println("Movment tacker");
-	}
-	
-	public void HandleTracker(ColorTracker colorTracker) {
-		System.err.println("Coolor tacker");
-	}
-	
-	/**
-	 * private class for the external video window
-	 * @author taljmars
-	 *
-	 */
-	class ExternalFrameVideo extends Pane implements ObjectDetectorListener {
-		private ImageView imageViewer;
-		
-		public ExternalFrameVideo() {
-			imageViewer = new ImageView();
-			getChildren().add(imageViewer);
-		}
-		
-		@Override
-		public void handleImageProcessResults(DetectionResults frameProcessResult) {
-			Image img = frameProcessResult.getFinalImage();
-			imageViewer.setFitWidth(getWidth());
-			imageViewer.setFitHeight(getHeight());
-			imageViewer.setPreserveRatio(true);
-			imageViewer.setImage(img);
-		}
-	}	
 }

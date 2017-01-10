@@ -224,6 +224,7 @@ public class MyDroneImpl implements Drone {
 
 	@Override
 	public void addDroneListener(DroneInterfaces.OnDroneListener listener) {
+		System.err.println("TALMA " + listener.toString());
 		events.addDroneListener(listener);
 	}
 

@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import gui.services.LoggerDisplayerSvc;
@@ -78,7 +79,8 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		lblCriticalMsg.setEditable(false);
-		batteryBar.setProgress(0);		
+		batteryBar.setProgress(0);
+		SetHeartBeat(true);
 	}
 	
 	protected void SetFlightModeLabel(String name) {
@@ -171,6 +173,11 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 			lblCriticalMsg.setStyle("-fx-control-inner-background: orange;");
 		
 		lblCriticalMsg.setText(notification);
+	}
+	
+	@EventListener
+	public void onApplicationEvent(String notification) {
+		SetNotification(notification);
 	}
 
 	

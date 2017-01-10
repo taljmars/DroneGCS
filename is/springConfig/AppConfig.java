@@ -3,8 +3,14 @@ package springConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.drone.mission.Mission;
@@ -21,6 +27,7 @@ import controllers.dashboard.Dashboard;
 import controllers.internalFrames.InternalFrameMap;
 import gui.core.operations.OpGCSTerminationHandler;
 
+@ComponentScan("controllers.droneEye")
 @ComponentScan("controllers.internalPanels")
 @ComponentScan("controllers.internalFrames")
 @ComponentScan("gui.core.operations")
@@ -50,6 +57,7 @@ public class AppConfig {
 	public Mission mission() {
 		return new Mission();
 	}
+	
 //	
 //	@Bean
 //	@Scope("prototype")
@@ -57,24 +65,46 @@ public class AppConfig {
 //		return new LayerMission("New Mission*");
 //	}
 	
+	private FXMLLoader getFXMLLoaderForUrl(String url) {
+		FXMLLoader fxmlloader = new FXMLLoader();
+		URL location = getClass().getResource(url);
+		fxmlloader.setLocation(location);
+		fxmlloader.setControllerFactory(new Callback<Class<?>, Object>() {
+			@Override
+			public Object call(Class<?> clazz) {
+				System.err.println("Try to get bean name '" + clazz + "'");
+				Object obj = context.getBean(clazz);
+				System.err.println("got bean '" + obj + "'");
+				return obj;
+			}
+		});
+		
+		return fxmlloader;
+	}
+	
 	public Object load(String url) {
-		try (InputStream fxmlStream = AppConfig.class.getResourceAsStream(url)) 
-		{
-			FXMLLoader loader = new FXMLLoader();
-			URL location = getClass().getResource(url);
-            loader.setLocation(location);
-			loader.setControllerFactory(new Callback<Class<?>, Object>() {
-				@Override
-				public Object call(Class<?> clazz) {
-					System.err.println("Try to get bean name " + clazz );
-					return context.getBean(clazz);
-				}
-			});
-			
-			return loader.load(fxmlStream);
+		try {
+			InputStream fxmlStream = AppConfig.class.getResourceAsStream(url);
+			FXMLLoader fxmlLoader = getFXMLLoaderForUrl(url);
+			return fxmlLoader.load(fxmlStream);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
+	}
+
+	public Node loadInternalFrame(String internalFrameUrl, double width, double height) {
+		try {
+			InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
+			FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
+			fxmlLoader.getNamespace().put("prefWidth", width);
+			fxmlLoader.getNamespace().put("prefHeight", height);
+			return fxmlLoader.load(fxmlStream);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

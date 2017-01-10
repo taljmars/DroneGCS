@@ -1,0 +1,142 @@
+package controllers.droneEye;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import ObjectsDetector.ObjectDetectorListener;
+import ObjectsDetector.Utilities.DetectionResults;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import logger.Logger;
+import mavlink.drone.Drone;
+import mavlink.drone.DroneInterfaces.DroneEventsType;
+import mavlink.drone.DroneInterfaces.OnDroneListener;
+import validations.RuntimeValidator;
+
+@Component
+public class DroneEye extends StackPane implements ObjectDetectorListener, OnDroneListener, Initializable {
+	
+	@NotNull @FXML private StackPane root;
+	@NotNull @FXML private ImageView imageViewer;
+	@NotNull @FXML private Label lblAlt;
+	@NotNull @FXML private Label lblMode;
+	@NotNull @FXML private Label lblSignal;
+	@NotNull @FXML private Label lblDistToLaunch;
+	@NotNull @FXML private Label lblBattery;
+	
+	@NotNull @Autowired
+	private Logger logger;
+	
+	@Autowired
+	private RuntimeValidator runtimeValidator;
+	
+	public DroneEye() {
+		imageViewer = new ImageView();
+		getChildren().add(imageViewer);
+	}
+	
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
+		
+		logger.LogGeneralMessege("Drone Eye initialized");
+	}
+	
+	protected void SetFlightModeLabel(String name) {
+		lblMode.setText("MODE:" + name);
+	}
+	
+	protected void SetDistToLaunch(double dist) {
+		lblDistToLaunch.setText(String.format("Dist to home:%.1f", dist) + "m");
+	}
+	
+	public void SetLblAlt(double ht) {
+		lblAlt.setText(String.format("ALT:%.1f", ht) + "m");
+	}
+	
+	public void SetLblSignal(int signalStrength) {
+		lblSignal.setText("SIG:" + signalStrength + "%");
+	}
+	
+	public void SetLblBattery(double bat) {
+		lblBattery.setText("BAT:" + (bat < 0 ? 0 : bat) + "%");
+		
+		if (bat == 50 || bat == 49) {
+			return;
+		}
+			
+		if (bat == 25 || bat == 24) {
+			lblBattery.setStyle("-fx-background-color: #red");
+			return;
+		}
+			
+		if (bat == 10 || bat == 9) {
+			lblBattery.setStyle("-fx-background-color: #red");
+			return;
+		}
+		
+		if (bat < 10) {
+			return;
+		}
+	}
+	
+	@Override
+	public void handleImageProcessResults(DetectionResults frameProcessResult) {
+		Image img = frameProcessResult.getFinalImage();
+		imageViewer.setFitWidth(root.getPrefWidth());
+		imageViewer.setFitHeight(root.getPrefHeight());
+		imageViewer.setPreserveRatio(true);
+		imageViewer.setImage(img);
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	@Override
+	public void onDroneEvent(DroneEventsType event, Drone drone) {
+		Platform.runLater( () -> {
+			switch (event) {
+			case ORIENTATION:
+				SetLblAlt(drone.getAltitude().getAltitude());
+				return;
+			case DISCONNECTED:
+			case HEARTBEAT_TIMEOUT:
+				SetLblAlt(0);
+				SetLblSignal(0);
+				SetLblBattery(0);
+				SetFlightModeLabel("-");
+				return;
+			case RADIO:
+				SetLblSignal(drone.getRadio().getSignalStrength());
+				return;
+			case BATTERY:
+				SetLblBattery(drone.getBattery().getBattRemain());
+			case MODE:
+				SetFlightModeLabel(drone.getState().getMode().getName());
+				return;
+			case GPS:
+				SetDistToLaunch(drone.getHome().getDroneDistanceToHome());
+				return;
+			}
+		});
+	}
+}	

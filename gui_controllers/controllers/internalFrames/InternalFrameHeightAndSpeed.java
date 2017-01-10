@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import tools.os_utilities.Environment;
+import validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -34,9 +35,13 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
-	private CSV csv;
+	@Autowired
+	private RuntimeValidator runtimeValidator;
 	
-	@FXML private LineChart<String,Number> lineChart;
+	@NotNull @FXML private Pane root;
+	@NotNull @FXML private LineChart<String,Number> lineChart;
+	
+	private CSV csv;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesHeight;
@@ -45,7 +50,14 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		lineChart.setPrefWidth(root.getPrefWidth());
+		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
+		else
+			System.err.println("Validation Succeeded for instance of class " + this.getClass());
 	}
 
 	private static int called;

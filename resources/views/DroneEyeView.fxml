@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.droneEye.DroneEye">
+	<children>
+		<ImageView fx:id="imageViewer" />
+      <BorderPane prefHeight="200.0" prefWidth="1040.0">
+         <bottom>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblAlt" text="lblAlt" textAlignment="CENTER" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblDistToLaunch" text="lblDistToLaunch" textAlignment="CENTER" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </bottom>
+         <left>
+            <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="249.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblMode" text="lblMode" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblSignal" text="lblSignal" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblBattery" text="lblBattery" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
+	</children>
+</StackPane>

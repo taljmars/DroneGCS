@@ -16,7 +16,7 @@ public class DroneLaunch extends Application {
 			AppConfig.DebugMode = true;
 		
 		
-        Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");    	
+        Dashboard dashboard = (Dashboard) AppConfig.context.getBean("dashboard");
         dashboard.setViewManager(primaryStage);
         Parent root = (Parent) AppConfig.loader.load("/views/DashboardView.fxml");
 		root.setStyle("-fx-background-color: whitesmoke;");
