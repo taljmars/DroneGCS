@@ -35,7 +35,10 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 	@NotNull @FXML private Label lblSignal;
 	@NotNull @FXML private Label lblDistToLaunch;
 	@NotNull @FXML private Label lblBattery;
-	@NotNull @FXML private Label pointerToHome;
+	@NotNull @FXML private Label lblPointerToHome;
+	@NotNull @FXML private Label lblPointerToHomeBorder;
+	@NotNull @FXML private Label lblCompass;
+	@NotNull @FXML private Label lblCompassBorder;
 	
 	@NotNull @Autowired
 	private Logger logger;
@@ -62,6 +65,8 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 		else
 			System.err.println("Validation Succeeded for instance of " + getClass());
 		
+		lblCompassBorder.setStyle("-fx-border-color: #52ee27;");
+		lblPointerToHomeBorder.setStyle("-fx-border-color: #52ee27;");
 		logger.LogGeneralMessege("Drone Eye initialized");
 	}
 	
@@ -104,7 +109,7 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 	}
 	
 	private void SetPointerToHome(double direction) {
-		pointerToHome.setRotate(direction);
+		lblPointerToHome.setRotate(direction);
 	}
 	
 	@Override
@@ -123,6 +128,9 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 			switch (event) {
 			case ORIENTATION:
 				SetLblAlt(drone.getAltitude().getAltitude());
+				return;
+			case NAVIGATION:
+				lblCompass.setRotate(drone.getNavigation().getNavBearing());
 				return;
 			case DISCONNECTED:
 			case HEARTBEAT_TIMEOUT:

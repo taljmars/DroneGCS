@@ -27,11 +27,20 @@
                               <Font size="36.0" />
                            </font>
                         </Label>
-                        <Label fx:id="pointerToHome" text="^" textAlignment="CENTER" textFill="#52ee27">
-                           <font>
-                              <Font name="System Bold" size="36.0" />
-                           </font>
-                        </Label>
+                        <StackPane prefHeight="150.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="lblPointerToHomeBorder" alignment="CENTER" prefHeight="55.0" prefWidth="55.0" text="    " textAlignment="CENTER">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblPointerToHome" text="^" textAlignment="CENTER" textFill="#52ee27">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
                      </children>
                   </HBox>
                </children>
@@ -58,6 +67,35 @@
                </children>
             </VBox>
          </left>
+         <right>
+            <VBox prefHeight="159.0" prefWidth="157.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="180.0">
+                     <children>
+                        <Label fx:id="lblMode1" prefHeight="53.0" prefWidth="89.0" text="CMP:" textFill="#52ee27">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <StackPane prefHeight="55.0" prefWidth="55.0">
+                           <children>
+                              <Label fx:id="lblCompassBorder" alignment="CENTER" prefHeight="55.0" prefWidth="55.0" text="    " textAlignment="CENTER">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblCompass" text="^" textAlignment="CENTER" textFill="#52ee27">
+                                 <font>
+                                    <Font name="System Bold" size="36.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </right>
       </BorderPane>
 	</children>
 </StackPane>

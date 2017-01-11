@@ -46,7 +46,7 @@
             <Label text="Camera Device ID" GridPane.rowIndex="2" />
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <TextField text="0" />
+                  <TextField fx:id="txtDeviceId" text="0" />
                   <Button fx:id="btnUpdateDevice" text="Update" />
                </children>
             </HBox>

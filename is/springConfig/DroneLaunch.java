@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import tools.os_utilities.Environment;
 
 public class DroneLaunch extends Application {
-	//private static final AppConfig loader = new AppConfig();
 	
 	@Override
     public void start(Stage primaryStage) {

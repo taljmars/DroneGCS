@@ -49,9 +49,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
 	public static final String APP_TITLE = "Quad Ground Station";
 	
-	@FXML private HBox frameContainer;
-	@FXML private ProgressBar progressBar;
-	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
@@ -72,6 +69,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
+	
+	@FXML private HBox frameContainer;
+	@FXML private ProgressBar progressBar;
 	
 	private Stage viewManager;
 
@@ -266,11 +266,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		System.out.println("Fini progress bar");
 		progressBar.setVisible(false);
 	}
-	
-//	@EventListener
-//	public void onApplicationEvent(String notification) {
-//		tbTelemtry.SetNotification(notification);
-//	}
 
 	@Override
 	public void onBeginReceivingParameters() {

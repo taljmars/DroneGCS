@@ -29,6 +29,15 @@ import gui.services.TextNotificationPublisherSvc;
 @Component("telemetrySatellite")
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
 	
+	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
+	private TextNotificationPublisherSvc textNotificationPublisherSvc;
+	
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
+	
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
+	public Drone drone;
+	
 	@NotNull @FXML private Label lblStatus;
 	@NotNull @FXML private Label lblFlightMode;
 	@NotNull @FXML private Label lblSignal;
@@ -49,15 +58,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@NotNull @FXML private Label lblRoll;
 	
 	@NotNull @FXML private TextField lblCriticalMsg;
-	
-	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
-	private TextNotificationPublisherSvc textNotificationPublisherSvc;
-	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
-	private LoggerDisplayerSvc loggerDisplayerSvc;
-	
-	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
-	public Drone drone;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;

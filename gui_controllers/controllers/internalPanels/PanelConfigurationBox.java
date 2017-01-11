@@ -27,11 +27,11 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
 	protected EventPublisherSvc eventPublisherSvc;
 	
-	@Autowired @NotNull
-	private RuntimeValidator runtimeValidator;
-	
-	@Autowired @NotNull
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+	
+	@Autowired
+	private RuntimeValidator runtimeValidator;
 	
 	@NotNull @FXML private CheckBox cbActiveGeofencePerimeterAlertOnly;
 	@NotNull @FXML private ComboBox<Integer> cmbframeContainerCells;
