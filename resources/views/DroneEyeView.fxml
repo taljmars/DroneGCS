@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,11 +20,20 @@
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label fx:id="lblDistToLaunch" text="lblDistToLaunch" textAlignment="CENTER" textFill="#52ee27">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                     <children>
+                        <Label fx:id="lblDistToLaunch" text="lblDistToLaunch" textAlignment="CENTER" textFill="#52ee27">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="pointerToHome" text="^" textAlignment="CENTER" textFill="#52ee27">
+                           <font>
+                              <Font name="System Bold" size="36.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </bottom>

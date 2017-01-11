@@ -8,8 +8,6 @@ import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapLineImpl;
 import gui.core.mapViewerObjects.MapMarkerCircle;
 import gui.core.mapViewerObjects.MapMarkerDot;
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
 import mavlink.drone.mission.Mission;
@@ -18,6 +16,8 @@ import mavlink.drone.mission.waypoints.Circle;
 import mavlink.drone.mission.waypoints.Land;
 import mavlink.drone.mission.waypoints.RegionOfInterest;
 import mavlink.drone.mission.waypoints.Waypoint;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class LayerMission extends LayerSingle {
 	

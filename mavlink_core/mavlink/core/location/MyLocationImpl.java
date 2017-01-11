@@ -1,6 +1,5 @@
 package mavlink.core.location;
 
-import gui.is.Coordinate;
 import gui.services.LoggerDisplayerSvc;
 import logger.Logger;
 
@@ -19,6 +18,7 @@ import mavlink.core.connection.helper.BeaconData;
 import mavlink.location.Location;
 import mavlink.location.LocationFinder;
 import mavlink.location.LocationReceiver;
+import tools.geoTools.Coordinate;
 
 @Component("locationFinder")
 public class MyLocationImpl implements LocationFinder {

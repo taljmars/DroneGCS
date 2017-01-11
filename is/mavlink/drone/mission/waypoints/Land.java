@@ -1,21 +1,14 @@
 package mavlink.drone.mission.waypoints;
 
-import java.io.Serializable;
 import java.util.List;
-
-import gui.is.Coordinate;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItem;
 import mavlink.drone.mission.MissionItemType;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import tools.geoTools.Coordinate;
 
-public class Land extends SpatialCoordItem implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7182225492182834661L;
+public class Land extends SpatialCoordItem {
 
 	public Land(MissionItem item) {
 		super(item);

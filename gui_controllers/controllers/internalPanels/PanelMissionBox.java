@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import controllers.internalPanels.internal.EditingCell;
 import controllers.internalPanels.internal.MissionItemTableEntry;
-import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.COMMAND;
+import gui.events.QuadGuiEvent;
+import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
 import gui.services.EventPublisherSvc;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -50,18 +50,18 @@ public class PanelMissionBox extends Pane implements Initializable {
 	@Autowired @NotNull( message = "Internal Error: Fail to get event publisher" )
 	protected EventPublisherSvc eventPublisherSvc;
 	
-	@FXML private TableView<MissionItemTableEntry> table;
+	@NotNull @FXML private TableView<MissionItemTableEntry> table;
     
-	@FXML private TableColumn<MissionItemTableEntry,Integer> order;
-	@FXML private TableColumn<MissionItemTableEntry,String> type;
-	@FXML private TableColumn<MissionItemTableEntry,Double> lat;
-	@FXML private TableColumn<MissionItemTableEntry,Double> lon;
-	@FXML private TableColumn<MissionItemTableEntry,Double> height;
-	@FXML private TableColumn<MissionItemTableEntry,Double> delay;
-	@FXML private TableColumn<MissionItemTableEntry,Double> radius;
-	@FXML private TableColumn<MissionItemTableEntry,String> setUp;
-	@FXML private TableColumn<MissionItemTableEntry,String> setDown;
-	@FXML private TableColumn<MissionItemTableEntry,String> remove;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Integer> order;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> type;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Double> lat;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Double> lon;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Double> height;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Double> delay;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,Double> radius;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> setUp;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> setDown;
+	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> remove;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -73,15 +73,16 @@ public class PanelMissionBox extends Pane implements Initializable {
 	public void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
 		else
 			System.err.println("Validation Succeeded for instance of " + getClass());
-	}
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {		
+		
+		
 		setPrefHeight(Screen.getPrimary().getBounds().getHeight()*0.25);
 		
 	    table.prefHeightProperty().bind(prefHeightProperty());
@@ -106,7 +107,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         		wp.setAltitude(t.getNewValue());
         	}
         	generateMissionTable(true);
-        	eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        	eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
         
         delay.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("delay"));
@@ -118,7 +119,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         		wp.setDelay(t.getNewValue());
         	}
         	generateMissionTable(true);
-        	eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        	eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
         
         radius.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("radius"));
@@ -130,7 +131,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         		wp.setRadius(t.getNewValue());
         	}
         	generateMissionTable(true);
-        	eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        	eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
         
         setUp.setCellFactory( param -> {
@@ -148,7 +149,7 @@ public class PanelMissionBox extends Pane implements Initializable {
                             mission.getItems().remove(getIndex());
                             mission.getItems().add(getIndex() - 1, entry.getMissionItem());
                             generateMissionTable(true);
-                            eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -172,7 +173,7 @@ public class PanelMissionBox extends Pane implements Initializable {
                             mission.getItems().remove(getIndex());
                             mission.getItems().add(getIndex() + 1, entry.getMissionItem());
                             generateMissionTable(true);
-                            eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -195,7 +196,7 @@ public class PanelMissionBox extends Pane implements Initializable {
                         	Mission mission = entry.getMissionItem().getMission();
                             mission.getItems().remove(getIndex());
                             generateMissionTable(true);
-                            eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -309,7 +310,7 @@ public class PanelMissionBox extends Pane implements Initializable {
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		Platform.runLater( () -> {
 			LayerMission layerMission;
 			switch (command.getCommand()) {

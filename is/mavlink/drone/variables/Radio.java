@@ -1,12 +1,11 @@
 package mavlink.drone.variables;
 
-
 import org.springframework.stereotype.Component;
 
-import gui.is.MathUtil;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces;
 import mavlink.drone.DroneVariable;
+import tools.geoTools.MathUtil;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 
 @Component("radio")

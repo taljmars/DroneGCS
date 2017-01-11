@@ -22,6 +22,7 @@ import logger.Logger;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
+import tools.geoTools.GeoTools;
 import validations.RuntimeValidator;
 
 @Component
@@ -34,6 +35,7 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 	@NotNull @FXML private Label lblSignal;
 	@NotNull @FXML private Label lblDistToLaunch;
 	@NotNull @FXML private Label lblBattery;
+	@NotNull @FXML private Label pointerToHome;
 	
 	@NotNull @Autowired
 	private Logger logger;
@@ -63,23 +65,23 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 		logger.LogGeneralMessege("Drone Eye initialized");
 	}
 	
-	protected void SetFlightModeLabel(String name) {
+	private void SetFlightModeLabel(String name) {
 		lblMode.setText("MODE:" + name);
 	}
 	
-	protected void SetDistToLaunch(double dist) {
-		lblDistToLaunch.setText(String.format("Dist to home:%.1f", dist) + "m");
+	private void SetDistToLaunch(double dist) {
+		lblDistToLaunch.setText(String.format("HOME:%.1f", dist) + "m");
 	}
 	
-	public void SetLblAlt(double ht) {
+	private void SetLblAlt(double ht) {
 		lblAlt.setText(String.format("ALT:%.1f", ht) + "m");
 	}
 	
-	public void SetLblSignal(int signalStrength) {
+	private void SetLblSignal(int signalStrength) {
 		lblSignal.setText("SIG:" + signalStrength + "%");
 	}
 	
-	public void SetLblBattery(double bat) {
+	private void SetLblBattery(double bat) {
 		lblBattery.setText("BAT:" + (bat < 0 ? 0 : bat) + "%");
 		
 		if (bat == 50 || bat == 49) {
@@ -99,6 +101,10 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 		if (bat < 10) {
 			return;
 		}
+	}
+	
+	private void SetPointerToHome(double direction) {
+		pointerToHome.setRotate(direction);
 	}
 	
 	@Override
@@ -135,6 +141,8 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 				return;
 			case GPS:
 				SetDistToLaunch(drone.getHome().getDroneDistanceToHome());
+				double directionToHome = GeoTools.getHeadingFromCoordinates(drone.getGps().getPosition(), drone.getHome().getCoord());
+				SetPointerToHome(directionToHome);
 				return;
 			}
 		});

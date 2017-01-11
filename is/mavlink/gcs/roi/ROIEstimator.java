@@ -4,13 +4,13 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.Handler;
 import mavlink.location.Location;
 import mavlink.location.LocationReceiver;
 import mavlink.protocol.msgbuilder.MavLinkROI;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 /**
  * Uses location data from Android's FusedLocation LocationManager at 1Hz and

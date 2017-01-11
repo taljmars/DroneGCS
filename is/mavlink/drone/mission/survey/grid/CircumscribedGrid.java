@@ -3,10 +3,10 @@ package mavlink.drone.mission.survey.grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.CoordBounds;
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import gui.is.shapes.LineCoordinates;
+import tools.geoTools.CoordBounds;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class CircumscribedGrid {
 	private static final int MAX_NUMBER_OF_LINES = 200;

@@ -22,7 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import tools.pair.Pair;
+import javafx.util.Pair;
 
 @ComponentScan("mavlink.core.flightControlers")
 @Component("dialogManagerSvc")

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
 import gui.services.DialogManagerSvc;
 import gui.services.LoggerDisplayerSvc;
 import mavlink.drone.DroneVariable;
@@ -15,6 +14,7 @@ import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.Handler;
 import mavlink.protocol.msg_metadata.ApmModes;
 import mavlink.protocol.msgbuilder.MavLinkModes;
+import tools.geoTools.Coordinate;
 import validations.RuntimeValidator;
 
 @ComponentScan("validations")

@@ -1,15 +1,14 @@
 package mavlink.drone.variables;
 
-
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
 import mavlink.drone.DroneVariable;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
-import tools.geo_tools.GeoTools;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 @Component("home")
 public class Home extends DroneVariable {

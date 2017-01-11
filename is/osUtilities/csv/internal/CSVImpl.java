@@ -29,8 +29,10 @@ public class CSVImpl implements CSV {
 	
 	@Override
 	public void close() {
-		if (writer != null)
+		if (writer != null) {
+			System.out.println("Closing CSV file '" + fileName + "'");
 			writer.close();
+		}
 	}
 
 	@Override

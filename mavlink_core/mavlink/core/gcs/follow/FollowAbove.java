@@ -1,9 +1,9 @@
 package mavlink.core.gcs.follow;
 
-import gui.is.Coordinate;
 import mavlink.drone.Drone;
 import mavlink.gcs.follow.FollowAlgorithm;
 import mavlink.location.Location;
+import tools.geoTools.Coordinate;
 
 public class FollowAbove extends FollowAlgorithm {
 

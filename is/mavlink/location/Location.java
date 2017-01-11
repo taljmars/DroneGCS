@@ -1,6 +1,6 @@
 package mavlink.location;
 
-import gui.is.Coordinate;
+import tools.geoTools.Coordinate;
 
 public class Location {
 

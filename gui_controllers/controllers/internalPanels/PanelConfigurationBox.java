@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.COMMAND;
+import gui.events.QuadGuiEvent;
+import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
 import gui.services.EventPublisherSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,27 +33,27 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	@Autowired @NotNull
 	private Drone drone;
 	
-	@FXML private CheckBox cbActiveGeofencePerimeterAlertOnly;
-	@FXML private ComboBox<Integer> cmbframeContainerCells;
-	@FXML private Button btnUpdateDevice;
-	@FXML private TextField txtDeviceId;
+	@NotNull @FXML private CheckBox cbActiveGeofencePerimeterAlertOnly;
+	@NotNull @FXML private ComboBox<Integer> cmbframeContainerCells;
+	@NotNull @FXML private Button btnUpdateDevice;
+	@NotNull @FXML private TextField txtDeviceId;
 	
 	private static int called = 0;
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@Override 
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
+		
         cbActiveGeofencePerimeterAlertOnly.setOnAction( e -> drone.getPerimeter().setAlertOnly(cbActiveGeofencePerimeterAlertOnly.isSelected() ? true : false));
-        cmbframeContainerCells.setOnAction( e -> eventPublisherSvc.publish(new GuiEvent(COMMAND.SPLIT_FRAMECONTAINER, cmbframeContainerCells.getValue())));
-        btnUpdateDevice.setOnAction( e -> eventPublisherSvc.publish(new GuiEvent(COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
+        cmbframeContainerCells.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.SPLIT_FRAMECONTAINER, cmbframeContainerCells.getValue())));
+        btnUpdateDevice.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
 	}
 }

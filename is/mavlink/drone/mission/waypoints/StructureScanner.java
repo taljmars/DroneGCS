@@ -3,8 +3,6 @@ package mavlink.drone.mission.waypoints;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import gui.is.shapes.Polygon;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItemType;
@@ -14,6 +12,8 @@ import mavlink.drone.mission.survey.SurveyData;
 import mavlink.drone.mission.survey.grid.GridBuilder;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class StructureScanner extends SpatialCoordItem {
 	

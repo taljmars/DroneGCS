@@ -1,11 +1,11 @@
 package mavlink.core.gcs.follow;
 
-import gui.is.Coordinate;
-import gui.is.GeoTools;
-import gui.is.MathUtil;
 import mavlink.drone.Drone;
 import mavlink.gcs.follow.FollowAlgorithm;
 import mavlink.location.Location;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
+import tools.geoTools.MathUtil;
 
 public class FollowCircle extends FollowAlgorithm {
 

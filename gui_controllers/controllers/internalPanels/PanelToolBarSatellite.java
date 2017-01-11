@@ -1,6 +1,6 @@
 package controllers.internalPanels;
 
-import gui.is.events.GuiEvent;
+import gui.events.QuadGuiEvent;
 import gui.services.DialogManagerSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,13 +12,9 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import validations.RuntimeValidator;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -29,37 +25,28 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.InternalFrameActualPWM;
-import controllers.internalFrames.InternalFrameBattery;
-import controllers.internalFrames.InternalFrameHeightAndSpeed;
-import controllers.internalFrames.InternalFrameMap;
-import controllers.internalFrames.InternalFrameSignals;
-import controllers.internalFrames.InternalFrameVideo;
-
 @ComponentScan("gui.core.internalFrames")
 @Component("toolbarSatellite")
 public class PanelToolBarSatellite extends FlowPane implements Initializable {	
 	
-	private static Integer internalFramesAmount = 2;
-	
 	private static String INTERNAL_FRAME_PATH = "/views/internalFrames/";
 	
-	@FXML private Button btnMap;
+	@NotNull @FXML private Button btnMap;
 	private static String MAP_VIEW = "InternalFrameMapAndTreeView.fxml";
 	
-	@FXML private Button btnActualPWM;
+	@NotNull @FXML private Button btnActualPWM;
 	private static String ACTUAL_PWM_VIEW = "InternalFrameActualPWMView.fxml";
 
-	@FXML private Button btnBattery;
+	@NotNull @FXML private Button btnBattery;
 	private static String BATTERY_VIEW = "InternalFrameBatteryView.fxml";
 	
-	@FXML private Button btnSignal;
+	@NotNull @FXML private Button btnSignal;
 	private static String SIGNALS_VIEW = "InternalFrameSignalsView.fxml";
 	
-	@FXML private Button btnHeightAndSpeed;
+	@NotNull @FXML private Button btnHeightAndSpeed;
 	private static String HEIGHT_SPEED_VIEW = "InternalFrameHeightAndSpeedView.fxml";
 	
-	@FXML private Button btnCamera;
+	@NotNull @FXML private Button btnCamera;
 	private static String CAMERA_VIEW = "InternalFrameVideoView.fxml";
 		
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
@@ -73,16 +60,16 @@ public class PanelToolBarSatellite extends FlowPane implements Initializable {
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		updateFrameMapPath();
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	private void updateFrameMapPath() {
@@ -123,15 +110,10 @@ public class PanelToolBarSatellite extends FlowPane implements Initializable {
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
 			case EXIT:
-				break;
-			case SPLIT_FRAMECONTAINER:
-				//internalFramesAmount  = (Integer) command.getSource();
-				//updateFrameMapPath();
-				break;
-			
+				break;			
 		}
 	}
 }

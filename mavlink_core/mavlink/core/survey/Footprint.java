@@ -3,10 +3,10 @@ package mavlink.core.survey;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import mavlink.drone.mission.survey.CameraInfo;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class Footprint {
 	

@@ -28,7 +28,7 @@ import mavlink.protocol.msg_metadata.ardupilotmega.msg_sys_status;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import mavlink.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import mavlink.protocol.msg_metadata.enums.MAV_STATE;
-import gui.is.Coordinate;
+import tools.geoTools.Coordinate;
 import gui.services.DialogManagerSvc;
 import gui.services.LoggerDisplayerSvc;
 import logger.Logger;

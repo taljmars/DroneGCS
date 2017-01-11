@@ -1,33 +1,27 @@
 package mavlink.drone.variables;
 
-import gui.is.Coordinate;
 import gui.services.LoggerDisplayerSvc;
 import logger.Logger;
-
-import java.io.Serializable;
 
 import mavlink.core.connection.helper.BeaconData;
 import mavlink.drone.DroneVariable;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.protocol.msg_metadata.ApmModes;
+import tools.geoTools.Coordinate;
 
-import javax.annotation.Resource;
 import javax.swing.SwingWorker;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("beacon")
-public class Beacon extends DroneVariable implements Serializable{
-
-	private static final long serialVersionUID = -9030954282536999192L;
+public class Beacon extends DroneVariable {
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "logger")
-	@NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
 	private boolean pIsActive;

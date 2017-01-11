@@ -3,9 +3,9 @@ package mavlink.drone.mission.survey.grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.Coordinate;
 import gui.is.shapes.LineCoordinates;
 import gui.is.shapes.LineTools;
+import tools.geoTools.Coordinate;
 
 public class Trimmer {
 	List<LineCoordinates> trimedGrid = new ArrayList<LineCoordinates>();

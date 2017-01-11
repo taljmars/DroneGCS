@@ -35,6 +35,7 @@ import controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimete
 import controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import core.operations.MissionBuilder;
 import devices.KeyBoardControler;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -44,10 +45,7 @@ import gui.core.mapViewerObjects.MapLineImpl;
 import gui.core.mapViewerObjects.MapMarkerCircle;
 import gui.core.mapViewerObjects.MapMarkerDot;
 import gui.core.mapViewerObjects.MapVectorImpl;
-import gui.core.operations.MissionBuilder;
-import gui.is.Coordinate;
-import gui.is.GeoTools;
-import gui.is.events.GuiEvent;
+import gui.events.QuadGuiEvent;
 import gui.is.interfaces.mapObjects.MapLine;
 import gui.is.interfaces.mapObjects.MapMarker;
 import gui.services.DialogManagerSvc;
@@ -67,6 +65,8 @@ import mavlink.drone.mission.Mission;
 import mavlink.drone.variables.GuidedPoint;
 import mavlink.drone.variables.Home;
 import springConfig.AppConfig;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 import validations.RuntimeValidator;
 
 /**
@@ -579,16 +579,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
-		case ZOOM:
-		case MOVE:
-			//updateZoomParameters();
-			break;
-		case FLIGHT:
-			break;
-		case CONTORL_KEYBOARD:
-			break;
 		case EDITMODE_EXISTING_LAYER_START:
 			EditModeOn();
 			Layer layer = (Layer) command.getSource();
@@ -611,10 +603,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 				return;
 			}
 
-			break;
-		case POPUP_MAP:
-			command.getSource();
-			//createPopupMenu(e).show(e.getComponent(), e.getX(), e.getY());
 			break;
 		case MISSION_UPDATED_BY_TABLE:
 			LayerMission layerMission = (LayerMission) command.getSource();

@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import gui.is.events.GuiEvent;
+import gui.events.QuadGuiEvent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,7 +59,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
+		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
 		csv.open(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
@@ -113,7 +113,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 

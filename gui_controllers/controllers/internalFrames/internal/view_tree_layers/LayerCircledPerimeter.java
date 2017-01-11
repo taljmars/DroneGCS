@@ -2,10 +2,10 @@ package controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapMarkerCircle;
-import gui.is.Coordinate;
 import gui.services.DialogManagerSvc;
 import springConfig.AppConfig;
-import tools.geo_tools.GeoTools;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class LayerCircledPerimeter extends LayerPerimeter {
 	

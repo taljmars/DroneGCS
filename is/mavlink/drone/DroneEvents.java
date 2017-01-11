@@ -1,7 +1,5 @@
 package mavlink.drone;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.annotation.PostConstruct;
@@ -22,7 +20,6 @@ public class DroneEvents extends DroneVariable {
 
 	private final ConcurrentLinkedQueue<DroneEventsType> eventsQueue = new ConcurrentLinkedQueue<DroneEventsType>();
 
-	//@Resource(name = "handler")
 	@Autowired @NotNull( message = "Internal Error: Failed to get event handler" )
 	private Handler handler;
 	

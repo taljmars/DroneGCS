@@ -1,4 +1,4 @@
-package gui.core.operations;
+package core.operations;
 
 import javax.validation.constraints.NotNull;
 
@@ -7,9 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import gui.is.Coordinate;
-import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.COMMAND;
+import gui.events.QuadGuiEvent;
+import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
 import gui.services.DialogManagerSvc;
 import gui.services.EventPublisherSvc;
 import gui.services.LoggerDisplayerSvc;
@@ -21,6 +20,7 @@ import mavlink.drone.mission.waypoints.Circle;
 import mavlink.drone.mission.waypoints.Land;
 import mavlink.drone.mission.waypoints.RegionOfInterest;
 import mavlink.drone.mission.waypoints.Waypoint;
+import tools.geoTools.Coordinate;
 
 @ComponentScan("gui.is.services")
 @Component("missionBuilder")
@@ -42,7 +42,7 @@ public class MissionBuilder {
 		loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
 		this.layerMission = layerMission;
 		this.mission = layerMission.getMission();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_EDITING_STARTED, layerMission));
+		eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layerMission));
 	}
 
 	public void addWayPoint(Coordinate iCoord) {
@@ -108,11 +108,11 @@ public class MissionBuilder {
 	private void updateMissionItem(MissionItem missionItem) {
 		mission.addMissionItem(missionItem);
 		layerMission.regenerateMapObjects();
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
+		eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, layerMission));
 	}
 
 	public void stopBuildMission() {
-		eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_EDITING_FINISHED, this.layerMission));
+		eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.layerMission));
 		this.layerMission = null;
 		this.mission = null;
 		loggerDisplayerSvc.logGeneral("Mission editor finished");

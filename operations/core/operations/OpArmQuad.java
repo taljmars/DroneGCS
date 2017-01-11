@@ -1,4 +1,4 @@
-package gui.core.operations;
+package core.operations;
 
 import gui.operations.OperationHandler;
 import gui.services.DialogManagerSvc;

@@ -2,10 +2,10 @@ package mavlink.drone.mission.survey.grid;
 
 import java.util.List;
 
-import gui.is.Coordinate;
 import gui.is.shapes.LineCoordinates;
 import gui.is.shapes.Polygon;
 import mavlink.drone.mission.survey.SurveyData;
+import tools.geoTools.Coordinate;
 
 public class GridBuilder {
 

@@ -36,7 +36,7 @@ public class Logger {
 			throw new RuntimeException("Not a Singletone");
 		
 		try {
-			File logDir = Environment.getRunningEnvDirectory();
+			File logDir = Environment.getRunningEnvLogDirectory();
 			writer = new PrintWriter(logDir + Environment.DIR_SEPERATOR + "log" + LOG_ENTRY_SUFFIX, "UTF-8");
 			System.out.println(logDir + Environment.DIR_SEPERATOR + "log" + LOG_ENTRY_SUFFIX);
 		} catch (FileNotFoundException e) {

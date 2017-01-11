@@ -3,12 +3,12 @@ package mavlink.core.validations.internal;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import gui.is.Coordinate;
-import gui.is.GeoTools;
 import mavlink.core.validations.MissionCanBeActivated;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItem;
 import mavlink.drone.mission.waypoints.Waypoint;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 public class MissionCanBeActivatedValidator  implements ConstraintValidator<MissionCanBeActivated, Mission> {
 	

@@ -2,7 +2,6 @@ package mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneVariable;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
@@ -10,6 +9,7 @@ import mavlink.drone.DroneInterfaces.OnDroneListener;
 import mavlink.protocol.msg_metadata.ApmModes;
 import mavlink.protocol.msgbuilder.MavLinkModes;
 import mavlink.protocol.msgbuilder.MavLinkTakeoff;
+import tools.geoTools.Coordinate;
 
 @Component("guidedPoint")
 public class GuidedPoint extends DroneVariable implements OnDroneListener {

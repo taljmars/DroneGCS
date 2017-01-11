@@ -1,10 +1,9 @@
 package mavlink.drone.variables;
 
-
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
 import mavlink.drone.DroneVariable;
+import tools.geoTools.Coordinate;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 
 @Component("gcs")

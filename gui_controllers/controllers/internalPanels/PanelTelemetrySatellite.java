@@ -29,26 +29,26 @@ import gui.services.TextNotificationPublisherSvc;
 @Component("telemetrySatellite")
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
 	
-	@FXML private Label lblStatus;
-	@FXML private Label lblFlightMode;
-	@FXML private Label lblSignal;
-	@FXML private Label lblBattery;
-	@FXML private ProgressBar batteryBar;
-	@FXML private Label lblHeight;
-	@FXML private Label lblFlightTime;
-	@FXML private Label lblFlightDistance;
+	@NotNull @FXML private Label lblStatus;
+	@NotNull @FXML private Label lblFlightMode;
+	@NotNull @FXML private Label lblSignal;
+	@NotNull @FXML private Label lblBattery;
+	@NotNull @FXML private ProgressBar batteryBar;
+	@NotNull @FXML private Label lblHeight;
+	@NotNull @FXML private Label lblFlightTime;
+	@NotNull @FXML private Label lblFlightDistance;
 
-	@FXML private Label lblEngine1;
-	@FXML private Label lblEngine2;
-	@FXML private Label lblEngine3;
-	@FXML private Label lblEngine4;
+	@NotNull @FXML private Label lblEngine1;
+	@NotNull @FXML private Label lblEngine2;
+	@NotNull @FXML private Label lblEngine3;
+	@NotNull @FXML private Label lblEngine4;
 
-	@FXML private Label lblThrust;
-	@FXML private Label lblYaw;
-	@FXML private Label lblPitch;
-	@FXML private Label lblRoll;
+	@NotNull @FXML private Label lblThrust;
+	@NotNull @FXML private Label lblYaw;
+	@NotNull @FXML private Label lblPitch;
+	@NotNull @FXML private Label lblRoll;
 	
-	@FXML private TextField lblCriticalMsg;
+	@NotNull @FXML private TextField lblCriticalMsg;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
@@ -68,11 +68,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");	
 		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
-		
 		drone.addDroneListener(this);
 	}
 	
@@ -81,6 +76,11 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 		lblCriticalMsg.setEditable(false);
 		batteryBar.setProgress(0);
 		SetHeartBeat(true);
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	protected void SetFlightModeLabel(String name) {

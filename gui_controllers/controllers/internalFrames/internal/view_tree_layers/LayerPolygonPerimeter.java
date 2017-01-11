@@ -2,8 +2,8 @@ package controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapPolygonImpl;
-import gui.is.Coordinate;
 import gui.is.interfaces.mapObjects.MapPolygon;
+import tools.geoTools.Coordinate;
 
 public class LayerPolygonPerimeter extends LayerPerimeter {
 

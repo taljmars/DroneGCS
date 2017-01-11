@@ -1,5 +1,6 @@
 package gui.services;
 
+import gui.events.QuadGuiEvent;
 import gui.is.events.GuiEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,15 @@ public class EventPublisherSvc {
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
+	/**
+	 * publishing Quad GUI event
+	 * 
+	 * @param event
+	 */
+	public void publish(QuadGuiEvent event) {
+		applicationEventPublisher.publishEvent(event);
+	}
+	
 	/**
 	 * publishing GUI event
 	 * 

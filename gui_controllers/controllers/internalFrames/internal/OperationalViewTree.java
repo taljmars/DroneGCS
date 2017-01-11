@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 import controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import core.validations.LegalTreeView;
 import gui.core.mapTree.CheckBoxViewTree;
 import gui.core.mapTreeObjects.Layer;
 import gui.core.mapTreeObjects.LayerGroup;
-import gui.core.validations.LegalTreeView;
+import gui.events.QuadGuiEvent;
+import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
 import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.COMMAND;
+import gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
 import gui.services.EventPublisherSvc;
 import gui.services.LoggerDisplayerSvc;
 import gui.services.TextNotificationPublisherSvc;
@@ -157,7 +159,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		menuItemEditMission.setOnAction( e -> {
 			if (layer instanceof LayerMission) {
 				LayerMission layerMission = (LayerMission) layer;
-				eventPublisherSvc.publish(new GuiEvent(COMMAND.EDITMODE_EXISTING_LAYER_START, layerMission));
+				eventPublisherSvc.publish(new GuiEvent(MAPVIEWER_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START, layerMission));
 			}
 		});
 
@@ -190,9 +192,9 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	public void handleTreeItemClick(TreeItem<Layer> node) {
 		Layer layer = node.getValue();
 		if (layer instanceof LayerMission)
-			eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+			eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
 		else 
-			eventPublisherSvc.publish(new GuiEvent(COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+			eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
 	}
 
 	public Layer switchCurrentLayer(LayerGroup layerGroup, Layer fromLayer, Layer toLayer) {

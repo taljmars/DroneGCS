@@ -3,7 +3,6 @@ package mavlink.drone.mission.survey;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.Coordinate;
 import gui.is.shapes.Polygon;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItem;
@@ -14,6 +13,7 @@ import mavlink.drone.mission.survey.grid.GridBuilder;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
+import tools.geoTools.Coordinate;
 
 public class Survey extends MissionItem {
 

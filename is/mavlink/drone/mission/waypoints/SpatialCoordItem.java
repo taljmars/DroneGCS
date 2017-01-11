@@ -2,11 +2,11 @@ package mavlink.drone.mission.waypoints;
 
 import java.util.List;
 
-import gui.is.Coordinate;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItem;
 import mavlink.drone.mission.waypoints.interfaces.Altitudable;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import tools.geoTools.Coordinate;
 
 public abstract class SpatialCoordItem extends MissionItem implements Altitudable {
 

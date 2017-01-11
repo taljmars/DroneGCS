@@ -1,6 +1,6 @@
 package mavlink.drone.variables;
 
-import gui.is.Coordinate;
+import tools.geoTools.Coordinate;
 
 public interface Compound {
 	

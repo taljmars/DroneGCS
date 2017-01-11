@@ -5,11 +5,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
-import gui.core.operations.OpGCSTerminationHandler;
-import gui.core.operations.OpArmQuad;
-import gui.core.operations.OpChangeFlightControllerQuad;
-import gui.core.operations.OpStartMissionQuad;
-import gui.core.operations.OpTakeoffQuad;
 import gui.services.DialogManagerSvc;
 import gui.services.EventPublisherSvc;
 import gui.services.LoggerDisplayerSvc;
@@ -26,6 +21,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
+import javafx.util.Pair;
 import logger.Logger;
 
 import javax.annotation.PostConstruct;
@@ -35,8 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+import core.operations.OpArmQuad;
+import core.operations.OpChangeFlightControllerQuad;
+import core.operations.OpGCSTerminationHandler;
+import core.operations.OpStartMissionQuad;
+import core.operations.OpTakeoffQuad;
 import devices.SerialConnection;
-import tools.pair.Pair;
 import validations.RuntimeValidator;
 import mavlink.core.connection.helper.GCSLocationData;
 import mavlink.core.flightControlers.FlightControler;
@@ -50,33 +50,29 @@ import mavlink.protocol.msgbuilder.MavLinkArm;
 import mavlink.protocol.msgbuilder.MavLinkModes;
 
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("gui.core.operations.internal")
+@ComponentScan("core.operations.internal")
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.services")
-@ComponentScan("gui.core.operations")
+@ComponentScan("core.operations")
 @Component("buttonBoxSatellite")
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
 	
-	@FXML private Button btnConnect;
-	@FXML private Button btnSyncDrone;
-	@FXML private Button btnController;
-	@FXML private ToggleButton btnArm;
-	@FXML private Button btnLandRTL;
-	@FXML private Button btnTakeoff;
-	@FXML private Button btnGCSShow;
-	@FXML private Button btnHoldPosition;
-	@FXML private ToggleButton btnStartMission;
-	@FXML private ToggleButton btnStartPerimeter;
-	@FXML private Button btnFollowBeaconShow;
-	@FXML private ToggleButton btnFollowBeaconStart;
-	@FXML private Button btnExit;
+	@NotNull @FXML private Button btnConnect;
+	@NotNull @FXML private Button btnSyncDrone;
+	@NotNull @FXML private Button btnController;
+	@NotNull @FXML private ToggleButton btnArm;
+	@NotNull @FXML private Button btnLandRTL;
+	@NotNull @FXML private Button btnTakeoff;
+	@NotNull @FXML private Button btnGCSShow;
+	@NotNull @FXML private Button btnHoldPosition;
+	@NotNull @FXML private ToggleButton btnStartMission;
+	@NotNull @FXML private ToggleButton btnStartPerimeter;
+	@NotNull @FXML private Button btnFollowBeaconShow;
+	@NotNull @FXML private ToggleButton btnFollowBeaconStart;
+	@NotNull @FXML private Button btnExit;
 	
-	@FXML private ComboBox<ApmModes> flightModesCombo;
-	@FXML private Button btnSetMode;
-	
-	private boolean connected = false;
-	private boolean takeOffThreadRunning = false;
-    private Thread FollowBeaconStartThread = null;
+	@NotNull @FXML private ComboBox<ApmModes> flightModesCombo;
+	@NotNull @FXML private Button btnSetMode;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -117,6 +113,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
+	private boolean connected = false;
+	private boolean takeOffThreadRunning = false;
+    private Thread FollowBeaconStartThread = null;
+	
 	private static int called;
 	@PostConstruct
 	private void init() {
@@ -125,11 +125,6 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		
 		drone.addDroneListener(this);
 		drone.getParameters().addParameterListener(this);
-		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@Override
@@ -139,6 +134,11 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		Vector<ApmModes> flightModes = new Vector<ApmModes>();
 		flightModes.addAll(FXCollections.observableArrayList( ApmModes.values()));
 		flightModesCombo.getItems().addAll(flightModes);
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@FXML
@@ -155,8 +155,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
     	}
     	Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0] ,"Select baud rate: ",serialConnection.baudList(), serialConnection.getDefaultBaud());
     	if (res != null) {
-    		String port_name = (String) res.first;
-    		Integer baud = (Integer) res.second;
+    		String port_name = (String) res.getKey();
+    		Integer baud = (Integer) res.getValue();
     		serialConnection.setPortName(port_name);
     		serialConnection.setBaud(baud);
     		
@@ -173,6 +173,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	}
 	
 	@FXML
+	@SuppressWarnings("deprecation")
 	public void ButtonControllerOnAction(ActionEvent actionEvent) {
 		try {
     		String btnControllerText = btnController.getText();

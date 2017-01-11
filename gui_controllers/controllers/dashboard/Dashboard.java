@@ -1,57 +1,36 @@
 package controllers.dashboard;
 
-import gui.core.operations.OpGCSTerminationHandler;
-import gui.is.events.GuiEvent.COMMAND;
-
-import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
-import gui.is.events.GuiEvent;
+import gui.events.QuadGuiEvent;
 import gui.services.EventPublisherSvc;
 import gui.services.LoggerDisplayerSvc;
 import gui.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
-
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CharsetEditor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import controllers.internalFrames.InternalFrameMap;
-import controllers.internalPanels.*;
-import genericObjects.pair.Pair;
+import core.operations.OpGCSTerminationHandler;
 
 import javax.validation.constraints.NotNull;
 
@@ -71,7 +50,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	public static final String APP_TITLE = "Quad Ground Station";
 	
 	@FXML private HBox frameContainer;
-	//@FXML private PanelTelemetrySatellite tbTelemtry;
 	@FXML private ProgressBar progressBar;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
@@ -380,7 +358,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
 		case SPLIT_FRAMECONTAINER:
 			maxFramesAmount.set((Integer) command.getSource());

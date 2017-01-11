@@ -1,11 +1,11 @@
 package mavlink.protocol.msgbuilder;
 
-import gui.is.Coordinate;
 import mavlink.drone.Drone;
 import mavlink.drone.mission.commands.EpmGripper;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_digicam_control;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import tools.geoTools.Coordinate;
 
 public class MavLinkROI {
 	public static void setROI(Drone drone, Coordinate coord) {

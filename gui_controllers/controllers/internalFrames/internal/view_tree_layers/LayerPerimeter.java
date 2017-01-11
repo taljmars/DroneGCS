@@ -2,8 +2,8 @@ package controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapTreeObjects.LayerSingle;
 import gui.core.mapViewer.LayeredViewMap;
-import gui.is.Coordinate;
 import mavlink.drone.variables.Compound;
+import tools.geoTools.Coordinate;
 
 public abstract class LayerPerimeter extends LayerSingle implements Compound {
 	

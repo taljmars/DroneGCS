@@ -21,7 +21,7 @@ import ObjectsDetector.Trackers.FakeTracker.FakeTracker;
 import ObjectsDetector.Trackers.MovementTracker.MovmentTracker;
 import ObjectsDetector.Utilities.DetectionResults;
 import controllers.droneEye.DroneEye;
-import gui.is.events.GuiEvent;
+import gui.events.QuadGuiEvent;
 import gui.services.LoggerDisplayerSvc;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -37,7 +37,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -137,7 +136,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(GuiEvent command) {
+	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 			if (detector != null)

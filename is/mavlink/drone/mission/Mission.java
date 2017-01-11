@@ -19,7 +19,8 @@ import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.utils.units.Speed;
 import springConfig.AppConfig;
-import gui.is.Coordinate;
+import tools.geoTools.Coordinate;
+import tools.geoTools.GeoTools;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,8 +30,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 
-import tools.geo_tools.GeoTools;
-import tools.pair.Pair;
+import javafx.util.Pair;
 
 /**
  * This implements a mavlink mission. A mavlink mission is a set of
@@ -172,13 +172,13 @@ public class Mission extends DroneVariable implements Serializable {
 
 		boolean wasUpdated = false;
 		for (Pair<MissionItem, MissionItem> updatePair : updatesList) {
-			final MissionItem oldItem = updatePair.first;
+			final MissionItem oldItem = updatePair.getKey();
 			final int index = items.indexOf(oldItem);
 			if (index == -1) {
 				continue;
 			}
 
-			final MissionItem newItem = updatePair.second;
+			final MissionItem newItem = updatePair.getValue();
 			items.remove(index);
 			items.add(index, newItem);
 

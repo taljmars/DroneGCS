@@ -3,14 +3,8 @@ package springConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Properties;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import mavlink.core.drone.MyDroneImpl;
 import mavlink.drone.mission.Mission;
@@ -25,7 +19,7 @@ import org.springframework.context.annotation.Scope;
 
 import controllers.dashboard.Dashboard;
 import controllers.internalFrames.InternalFrameMap;
-import gui.core.operations.OpGCSTerminationHandler;
+import core.operations.OpGCSTerminationHandler;
 
 @ComponentScan("controllers.droneEye")
 @ComponentScan("controllers.internalPanels")

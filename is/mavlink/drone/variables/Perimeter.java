@@ -6,13 +6,13 @@ import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.is.Coordinate;
 import gui.services.DialogManagerSvc;
 import gui.services.LoggerDisplayerSvc;
 import logger.Logger;
 import mavlink.drone.DroneVariable;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.protocol.msg_metadata.ApmModes;
+import tools.geoTools.Coordinate;
 
 @ComponentScan("tools.logger")
 @Component("perimeter")

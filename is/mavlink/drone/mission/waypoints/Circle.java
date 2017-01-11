@@ -1,20 +1,18 @@
 package mavlink.drone.mission.waypoints;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.Coordinate;
 import mavlink.drone.mission.Mission;
 import mavlink.drone.mission.MissionItemType;
 import mavlink.drone.mission.waypoints.interfaces.Radiusable;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
+import tools.geoTools.Coordinate;
 
-public class Circle extends SpatialCoordItem implements Radiusable, Serializable {
+public class Circle extends SpatialCoordItem implements Radiusable {
 
-	private static final long serialVersionUID = 9135067547610660828L;
 	private double radius = 10.0;
 	private int turns = 1;
 

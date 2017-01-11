@@ -26,29 +26,27 @@ import gui.events.logevents.LogAbstractDisplayerEvent;
 @Component("areaLogBox")
 public class PanelLogBox extends Pane implements Initializable {
 	
-	@Autowired @NotNull
-	private RuntimeValidator runtimeValidator;
-
 	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 	
-	@FXML private TextFlow logTextBox;	
+	@NotNull @FXML private TextFlow logTextBox;
+	
+	@Autowired
+	private RuntimeValidator runtimeValidator;
 	
 	private static int called;
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
-		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Validation failed");
+		else
+			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	private void addGeneralMessegeToDisplay(String cmd) {
