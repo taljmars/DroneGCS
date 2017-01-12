@@ -23,7 +23,7 @@
          <top>
             <FlowPane prefHeight="30.0" prefWidth="622.0" BorderPane.alignment="CENTER">
 			  <children>
-                <fx:include source="panels/PanelToolBarSatelliteView.fxml" />
+                <fx:include source="panels/PanelFrameBarSatelliteView.fxml" />
               </children>
 			</FlowPane>
          </top>
@@ -49,29 +49,11 @@
 					<HBox fx:id="frameContainer" StackPane.alignment="TOP_CENTER" />
 					<Accordion maxHeight="20.0" prefHeight="20.0" StackPane.alignment="BOTTOM_CENTER">
 						<panes>
-							<TitledPane animated="false" text="Log">
+							<TitledPane animated="false" text="Tool Box">
 								<content>
 									<AnchorPane>
 										<children>
-											<fx:include source="panels/PanelLogBoxView.fxml" />
-										</children>
-									</AnchorPane>
-								</content>
-							</TitledPane>                
-							<TitledPane animated="false" text="Configuration">
-								<content>
-									<AnchorPane>
-										<children>
-											<fx:include source="panels/PanelConfigurationView.fxml" />
-										</children>
-									</AnchorPane>
-								</content>
-							</TitledPane>
-							<TitledPane animated="false" text="Mission Box">
-								<content>
-									<AnchorPane>
-										<children>
-											<fx:include source="panels/PanelMissionView.fxml" />
+											<fx:include source="panels/PanelToolBoxView.fxml" />
 										</children>
 									</AnchorPane>
 								</content>

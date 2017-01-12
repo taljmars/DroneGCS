@@ -94,12 +94,12 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 		}
 			
 		if (bat == 25 || bat == 24) {
-			lblBattery.setStyle("-fx-background-color: #red");
+			lblBattery.setStyle("-fx-background-color: #red;");
 			return;
 		}
 			
 		if (bat == 10 || bat == 9) {
-			lblBattery.setStyle("-fx-background-color: #red");
+			lblBattery.setStyle("-fx-background-color: #red;");
 			return;
 		}
 		

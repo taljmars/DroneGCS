@@ -83,11 +83,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get drone" )
 	private Drone drone;
-	
-	@Resource(name = "tree")
-	private OperationalViewTree tree;
 
-	@Resource(name = "missionBuilder")
+	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
 	private MissionBuilder missionBuilder;
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
@@ -102,8 +99,11 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 	
+	@Resource(name = "tree") @NotNull( message = "Internal Error: Failed to get tree view" )
+	private OperationalViewTree tree;
+	
 	@Autowired
-	private RuntimeValidator validator;
+	private RuntimeValidator runtimeValidator;
 
 	private boolean lockMapOnMyPosition = true;
 	private boolean paintTrail = true;
@@ -131,6 +131,19 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private CheckBox cbFollowTrail;
 	
 	private ContextMenu popup;
+	
+	private static int called;
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singletone");
+		
+		setDisplayPosition(new Coordinate(32.0684, 34.8248), 10);
+		drone.addDroneListener(this);
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
+	}
 	
 	private ContextMenu buildPopup(Point point) {
 		ContextMenu popup = new ContextMenu();		
@@ -280,7 +293,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 		menuItemMissionBuild.setOnAction( arg -> {
 				if (modifyiedLayerMission == null) {
-					modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
+					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
+					// TALMA i am trying not to use bean here
+					modifyiedLayerMission = new LayerMission("New Mission*", this);
 					tree.addLayer(modifyiedLayerMission);
 					Mission msn = (Mission) AppConfig.context.getBean("mission");
 					msn.setDrone(drone);
@@ -486,17 +501,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 		loggerDisplayerSvc.logGeneral("Beacon was updated");
 	}
 	
-	private static int called;
-	@PostConstruct
-	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
-
-		setDisplayPosition(new Coordinate(32.0684, 34.8248), 10);
-
-		drone.addDroneListener(this);
-	}
-	
 	@Override
 	public HBox getMapButtomPane() {
 		HBox hb = super.getMapButtomPane();
@@ -645,8 +649,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 	@Override
 	public void LayerEditorSave() {
-		if (!validator.validate(tree))
-			return;
+		if (!runtimeValidator.validate(tree)) {
+			throw new RuntimeException("Failed to save layer, validatio failed");
+		}
 		
 		if (modifyiedLayerMission != null)
 			modifyiedLayerMission.setName(modifyiedLayerMission.getName().substring(0,modifyiedLayerMission.getName().length() - 1));

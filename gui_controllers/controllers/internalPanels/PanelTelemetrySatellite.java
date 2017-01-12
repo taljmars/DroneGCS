@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import gui.services.LoggerDisplayerSvc;
 import gui.services.TextNotificationPublisherSvc;
 
-@Component("telemetrySatellite")
+@Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
@@ -79,8 +79,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	protected void SetFlightModeLabel(String name) {

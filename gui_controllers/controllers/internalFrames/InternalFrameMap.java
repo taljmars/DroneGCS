@@ -24,7 +24,7 @@ import controllers.internalFrames.internal.OperationalViewTree;
 @ComponentScan("controllers.internalFrames.internal")
 @ComponentScan("validations")
 @ComponentScan("gui.services")
-@Component("internalFrameMap")
+@Component
 public class InternalFrameMap extends Pane implements ChangeListener<Number>, Initializable {
 	
 	@Autowired @NotNull(message = "Internal Error: Missing tree view")
@@ -59,8 +59,6 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
 	}
 	
 	@Override

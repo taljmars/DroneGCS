@@ -66,9 +66,12 @@ public class AppConfig {
 		fxmlloader.setControllerFactory(new Callback<Class<?>, Object>() {
 			@Override
 			public Object call(Class<?> clazz) {
-				System.err.println("Try to get bean name '" + clazz + "'");
+				System.out.print("Fetch bean name '" + clazz + "' ");
 				Object obj = context.getBean(clazz);
-				System.err.println("got bean '" + obj + "'");
+				if (obj != null)
+					System.out.println("[SUCCESS :'" + obj + "']");
+				else
+					System.err.println("[FAIL]");
 				return obj;
 			}
 		});

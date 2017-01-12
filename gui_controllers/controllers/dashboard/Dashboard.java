@@ -85,8 +85,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass()); 
 		
 		initializeDefinitions();
 	}
@@ -110,10 +108,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
 	private void initializeGui() {
 		maxFramesAmount = new SimpleIntegerProperty(2);
-		maxFramesAmount.addListener( (observable, oldValue, newValue) -> {
-			for (int i = 0 ; i < oldValue.intValue() - newValue.intValue() ; i++)
-				frameContainer.getChildren().remove(newValue.intValue() - i);
-		});
 		
 		frameContainer.setOnDragOver( (event) -> {
 		        /* data is dragged over the target */
@@ -324,7 +318,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstanciation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 75);
+		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstanciation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
 		selectedPane.setUserData(springInstanciation);
 		if (selectedPane != null) {
 			selectedPane.setUserData(springInstanciation);

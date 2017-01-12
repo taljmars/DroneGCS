@@ -26,10 +26,10 @@ import javafx.scene.layout.Pane;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
-import osUtilities.csv.CSV;
-import osUtilities.csv.internal.CSVImpl;
+import objects.csv.CSV;
+import objects.csv.internal.CSVImpl;
 
-@Component("internalFrameSignals")
+@Component
 public class InternalFrameSignals extends Pane implements OnDroneListener, Initializable {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
@@ -38,10 +38,10 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
-	private CSV csv;
-	
 	@NotNull @FXML private Pane root;
 	@NotNull @FXML private LineChart<String,Number> lineChart;
+	
+	private CSV csv;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesDistance;
@@ -57,8 +57,6 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
 	}
 	
 	private static int called;

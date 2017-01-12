@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 import gui.events.logevents.LogAbstractDisplayerEvent;
 
-@Component("areaLogBox")
+@Component
 public class PanelLogBox extends Pane implements Initializable {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
@@ -45,8 +45,6 @@ public class PanelLogBox extends Pane implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	private void addGeneralMessegeToDisplay(String cmd) {

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import java.lang.Double?>
 
-<FlowPane columnHalignment="CENTER" hgap="2.0" prefWrapLength="1100.0" vgap="2.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelToolBarSatellite">
+<FlowPane columnHalignment="CENTER" hgap="2.0" prefWrapLength="1100.0" vgap="2.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelFrameBarSatellite">
 	<fx:define>
 		<Double fx:id="buttonSize" fx:value="40.0"/>
 	</fx:define>

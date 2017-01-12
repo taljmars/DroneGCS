@@ -1,4 +1,4 @@
-package osUtilities.csv.internal;
+package objects.csv.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import osUtilities.csv.CSV;
+import objects.csv.CSV;
 
 public class CSVImpl implements CSV {
 	

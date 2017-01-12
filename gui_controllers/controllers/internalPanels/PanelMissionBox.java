@@ -29,7 +29,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import mavlink.drone.mission.Mission;
@@ -44,7 +43,7 @@ import mavlink.drone.mission.waypoints.interfaces.Radiusable;
 import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import validations.RuntimeValidator;
 
-@Component("areaMission")
+@Component
 public class PanelMissionBox extends Pane implements Initializable {
 	
 	@Autowired @NotNull( message = "Internal Error: Fail to get event publisher" )
@@ -78,14 +77,7 @@ public class PanelMissionBox extends Pane implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
-		
-		
-		setPrefHeight(Screen.getPrimary().getBounds().getHeight()*0.25);
-		
-	    table.prefHeightProperty().bind(prefHeightProperty());
+			throw new RuntimeException("Validation failed");		
 	    
 	    Callback<TableColumn<MissionItemTableEntry, Double>, TableCell<MissionItemTableEntry, Double>> cellFactory = new Callback<TableColumn<MissionItemTableEntry, Double>, TableCell<MissionItemTableEntry, Double>>() {
              public TableCell<MissionItemTableEntry, Double> call(TableColumn<MissionItemTableEntry, Double> p) {

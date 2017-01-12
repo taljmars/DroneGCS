@@ -1,9 +1,9 @@
 package controllers.internalFrames.internal;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +30,7 @@ import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.OnWaypointManagerListener;
 import mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import springConfig.AppConfig;
+import validations.RuntimeValidator;
 
 @ComponentScan("gui.core.mapTree")
 @ComponentScan("gui.is.services")
@@ -40,21 +41,20 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	public static final String UPLOADED_PREFIX = "(CURR) ";
 	public static final String EDIT_SUFFIX = "*";
 	
-    @Resource(name = "eventPublisherSvc")
-    @NotNull(message = "Internal Error: Missing event publisher")
+    @Autowired @NotNull(message = "Internal Error: Missing event publisher")
 	protected EventPublisherSvc eventPublisherSvc;
     
-	@Resource(name = "textNotificationPublisherSvc")
-	@NotNull(message = "Internal Error: Failed to get text publisher")
+	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Resource(name = "loggerDisplayerSvc")
-	@NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Resource(name = "drone")
-	@NotNull(message = "Internal Error: Failed to get drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+	
+	@Autowired
+	private RuntimeValidator runtimeValidator;
 	
 	private LayerMission uploadedLayerMissionCandidate = null;
 	private LayerMission uploadedLayerMission = null;
@@ -97,6 +97,9 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
         drone.getWaypointManager().addWaypointManagerListener(this);
        
         addSelectionHandler(getRoot());
+        
+        if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
 	}
 
 	private void addSelectionHandler(TreeItem<Layer> cbox) {

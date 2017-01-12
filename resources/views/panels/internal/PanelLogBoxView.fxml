@@ -8,10 +8,10 @@
 
 <Pane maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelLogBox">
    <children>
-      <HBox prefHeight="100.0">
+      <HBox>
          <children>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="900.0" vbarPolicy="ALWAYS">
-              <TextFlow fx:id="logTextBox" accessibleRole="TEXT_FIELD" maxHeight="1.7976931348623157E308" prefHeight="160.0" prefWidth="900.0" />
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="180.0" prefWidth="900.0" vbarPolicy="ALWAYS">
+              <TextFlow fx:id="logTextBox" accessibleRole="TEXT_FIELD"  prefWidth="900.0" />
             </ScrollPane>
          </children>
       </HBox>

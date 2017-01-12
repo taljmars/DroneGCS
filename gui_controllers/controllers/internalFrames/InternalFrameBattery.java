@@ -13,9 +13,10 @@ import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
 import mavlink.drone.variables.Battery;
-import osUtilities.csv.CSV;
-import osUtilities.csv.internal.CSVImpl;
+import objects.csv.CSV;
+import objects.csv.internal.CSVImpl;
 import tools.os_utilities.Environment;
+import validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -29,16 +30,19 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
 
-@Component("internalFrameBattery")
+@Component
 public class InternalFrameBattery extends Pane implements OnDroneListener, Initializable {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
-	private CSV csv;
+	@Autowired
+	private RuntimeValidator runtimeValidator;
 	
 	@NotNull @FXML private Pane root;
 	@NotNull @FXML private LineChart<String,Number> lineChart;
+	
+	private CSV csv;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesCurrent;
@@ -51,6 +55,9 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		lineChart.setPrefWidth(root.getPrefWidth());
 		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
+		
+		if (!runtimeValidator.validate(this))
+			throw new RuntimeException("Value weren't initialized");
 	}
 	
 	private static int called;

@@ -6,7 +6,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.internalPanels.PanelMissionBox" >
 	<children>
-		<TableView fx:id="table" prefHeight="200.0" prefWidth="900.0">
+		<TableView fx:id="table" prefHeight="180.0" prefWidth="900.0">
 			<columns>
 				<TableColumn fx:id="order" prefWidth="15.0" text="#" />
 				<TableColumn fx:id="type" prefWidth="140.0" text="Type" />

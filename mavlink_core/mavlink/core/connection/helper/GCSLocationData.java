@@ -2,8 +2,8 @@ package mavlink.core.connection.helper;
 
 import org.json.simple.JSONObject;
 
-import genericObjects.json.JSONHelper;
 import logger.Logger;
+import objects.json.JSONHelper;
 import springConfig.AppConfig;
 import tools.geoTools.Coordinate;
 

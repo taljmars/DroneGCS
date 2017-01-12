@@ -21,7 +21,7 @@ import javafx.scene.layout.Pane;
 import mavlink.drone.Drone;
 import validations.RuntimeValidator;
 
-@Component("areaConfiguration")
+@Component
 public class PanelConfigurationBox extends Pane implements Initializable {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
@@ -49,8 +49,6 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 		
         cbActiveGeofencePerimeterAlertOnly.setOnAction( e -> drone.getPerimeter().setAlertOnly(cbActiveGeofencePerimeterAlertOnly.isSelected() ? true : false));
         cmbframeContainerCells.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QUAD_GUI_COMMAND.SPLIT_FRAMECONTAINER, cmbframeContainerCells.getValue())));

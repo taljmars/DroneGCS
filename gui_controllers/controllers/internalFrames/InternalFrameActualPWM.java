@@ -26,8 +26,8 @@ import javafx.scene.layout.Pane;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
-import osUtilities.csv.CSV;
-import osUtilities.csv.internal.CSVImpl;
+import objects.csv.CSV;
+import objects.csv.internal.CSVImpl;
 
 @Component("internalFrameActualPWM")
 public class InternalFrameActualPWM extends Pane implements OnDroneListener, Initializable {
@@ -35,13 +35,13 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 	
+	@NotNull @FXML private Pane root;
+	@NotNull @FXML private LineChart<String,Number> lineChart;
+	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
 	private CSV csv;
-	
-	@NotNull @FXML private Pane root;
-	@NotNull @FXML private LineChart<String,Number> lineChart;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesE1;
@@ -56,10 +56,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 		loadChart();
 		
 		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
-		
+			throw new RuntimeException("Value weren't initialized");		
 	}
 
 	private static int called;

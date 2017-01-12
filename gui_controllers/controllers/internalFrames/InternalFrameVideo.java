@@ -47,14 +47,17 @@ import springConfig.AppConfig;
 
 @ComponentScan("gui.services")
 @ComponentScan("validations")
-@Component("internalFrameVideo")
+@Component
 public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectDetectorListener, Initializable {
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
+	@Autowired @NotNull(message="Internal Error: Failed to get drone")
 	private Drone drone;
+	
+	@Autowired @NotNull(message="Internal Error: Failed to get drone eye") 
+	private DroneEye externalFrameVideo;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -67,6 +70,9 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	
 	private Detector detector;
 	private InternalFrameVideo myself;
+	
+	private double originalVideoWidth = 0;
+	private double originalVideoHeight = 0;
 
 	private static int called;
 	@PostConstruct
@@ -77,30 +83,32 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 		drone.addDroneListener(this);
 		
 		detector = new Detector(0);
-		detector.setTracker(new MovmentTracker(23, 23));
+		detector.setTracker(null);
 		detector.addListener(this);
 
 		myself = this;
 	}
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		cbTrackerSelect.getItems().addAll(FXCollections.observableArrayList( TrackersEnum.values() ));
+		cbTrackerSelect.setValue(TrackersEnum.VIDEO_ONLY);
+		
+		// Setting the initial value for the detector
+		handleTrackerSelectOnAction(null);
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Value weren't initialized");
-		else
-			System.err.println("Validation Succeeded for instance of class " + this.getClass());
 	};
-	
-	@Autowired @NotNull 
-	private DroneEye externalFrameVideo;
 	
 	@FXML
 	public void handleVideoMouseClick(MouseEvent mouseEvent) {
 		if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mouseEvent.getClickCount() >=2 ) {
 			Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-			Parent droneEyeView = (Parent) AppConfig.loader.loadInternalFrame("/views/DroneEyeView.fxml", primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight() );
+			double ratio = primaryScreenBounds.getHeight() /  originalVideoHeight;
+			double height = primaryScreenBounds.getHeight();
+			double width = originalVideoWidth * ratio;
+			Parent droneEyeView = (Parent) AppConfig.loader.loadInternalFrame("/views/DroneEyeView.fxml" ,width ,height );
 			loggerDisplayerSvc.logGeneral("add drone listening to drone eye view");
 			drone.addDroneListener(externalFrameVideo);
 			detector.addListener(externalFrameVideo);
@@ -109,8 +117,8 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 			imageViewer.setVisible(false);
 	        Stage stage = new Stage();
 			stage.setTitle("Drone Eye");
-			stage.setMaximized(true);
-			stage.setScene(new Scene(droneEyeView, 800, 800));
+			stage.setResizable(false);
+			stage.setScene(new Scene(droneEyeView, width, height));
 			stage.setOnCloseRequest( windowEvent -> {
 				if (windowEvent.getEventType() == WindowEvent.WINDOW_CLOSE_REQUEST) {
 					loggerDisplayerSvc.logGeneral("Closing maximized video");
@@ -157,6 +165,8 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	@Override
 	public void handleImageProcessResults(DetectionResults frameProcessResult) {
 		Image img = frameProcessResult.getFinalImage();
+		originalVideoWidth = img.getWidth();
+		originalVideoHeight = img.getHeight();
 		imageViewer.setFitWidth(root.getPrefWidth());
 		imageViewer.setPreserveRatio(true);
 		imageViewer.setImage(img);		

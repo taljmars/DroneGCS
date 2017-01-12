@@ -54,7 +54,7 @@ import mavlink.protocol.msgbuilder.MavLinkModes;
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.services")
 @ComponentScan("core.operations")
-@Component("buttonBoxSatellite")
+@Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
 	
 	@NotNull @FXML private Button btnConnect;
@@ -137,8 +137,6 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	@FXML

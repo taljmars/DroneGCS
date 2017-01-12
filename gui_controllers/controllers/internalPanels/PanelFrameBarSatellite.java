@@ -26,8 +26,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @ComponentScan("gui.core.internalFrames")
-@Component("toolbarSatellite")
-public class PanelToolBarSatellite extends FlowPane implements Initializable {	
+@Component
+public class PanelFrameBarSatellite extends FlowPane implements Initializable {	
 	
 	private static String INTERNAL_FRAME_PATH = "/views/internalFrames/";
 	
@@ -68,8 +68,6 @@ public class PanelToolBarSatellite extends FlowPane implements Initializable {
 		
 		if (!runtimeValidator.validate(this))
 			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
 	}
 	
 	private void updateFrameMapPath() {

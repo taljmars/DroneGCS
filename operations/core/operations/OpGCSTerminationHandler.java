@@ -19,7 +19,7 @@ import validations.RuntimeValidator;
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("logger")
 @ComponentScan("gui.services")
-@Component("opGCSTerminationHandler")
+@Component
 public class OpGCSTerminationHandler extends OperationHandler {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
@@ -44,10 +44,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 			throw new RuntimeException("Not a Singletone");
 		
 		if (!runtimeValidator.validate(this))
-			throw new RuntimeException("Validation failed");
-		else
-			System.err.println("Validation Succeeded for instance of " + getClass());
-	
+			throw new RuntimeException("Validation failed");	
 	}
 
 	@Override
