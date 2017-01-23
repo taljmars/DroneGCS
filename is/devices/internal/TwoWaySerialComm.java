@@ -35,7 +35,7 @@ import devices.SerialConnection;
 
 @ComponentScan("logger")
 @ComponentScan("gui.services")
-@Component("twoWaySerialComm")
+@Component
 public class TwoWaySerialComm implements SerialConnection {
 
 	private String PORT_NAME = null;// = "COM9";

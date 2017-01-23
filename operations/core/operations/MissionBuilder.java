@@ -23,7 +23,7 @@ import mavlink.drone.mission.waypoints.Waypoint;
 import tools.geoTools.Coordinate;
 
 @ComponentScan("gui.is.services")
-@Component("missionBuilder")
+@Component
 public class MissionBuilder {
 	
     @Autowired @NotNull( message = "Internal Error: Failed to get event publisher service" )

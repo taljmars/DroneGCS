@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -49,22 +50,28 @@
          <left>
             <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="249.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="lblMode" text="lblMode" textFill="#52ee27">
+                  <Label fx:id="lblMode" text="lblMode" textAlignment="CENTER" textFill="#52ee27">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label fx:id="lblSignal" text="lblSignal" textFill="#52ee27">
+                  <Label fx:id="lblSignal" text="lblSignal" textAlignment="CENTER" textFill="#52ee27">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label fx:id="lblBattery" text="lblBattery" textFill="#52ee27">
+                  <Label fx:id="lblBattery" text="lblBattery" textAlignment="CENTER" textFill="#52ee27">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
                </children>
+               <opaqueInsets>
+                  <Insets left="10.0" />
+               </opaqueInsets>
+               <BorderPane.margin>
+                  <Insets left="10.0" />
+               </BorderPane.margin>
             </VBox>
          </left>
          <right>
@@ -93,7 +100,23 @@
                         </StackPane>
                      </children>
                   </HBox>
+                  <Label fx:id="lblFlightTime" text="lblFlightTime" textAlignment="CENTER" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblFlightDist" text="lblFlightDist" textAlignment="CENTER" textFill="#52ee27">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
                </children>
+               <opaqueInsets>
+                  <Insets right="10.0" />
+               </opaqueInsets>
+               <BorderPane.margin>
+                  <Insets right="10.0" />
+               </BorderPane.margin>
             </VBox>
          </right>
       </BorderPane>

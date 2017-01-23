@@ -3,7 +3,7 @@ package springConfig;
 import java.net.URISyntaxException;
 
 import controllers.dashboard.Dashboard;
-import devices.KeyBoardControler;
+import devices.KeyBoardController;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,7 +27,7 @@ public class DroneLaunch extends Application {
 			root.setStyle("-fx-background-color: whitesmoke;");
 			Scene scene = new Scene(root, 800, 650);
 			scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
-	        KeyBoardControler keyboardControler = (KeyBoardControler) AppConfig.context.getBean("keyBoardControler");
+	        KeyBoardController keyboardControler = (KeyBoardController) AppConfig.context.getBean("keyBoardController");
 	        scene.setOnKeyPressed(keyboardControler);       
 	        primaryStage.setResizable(false);
 	        primaryStage.setScene(scene);

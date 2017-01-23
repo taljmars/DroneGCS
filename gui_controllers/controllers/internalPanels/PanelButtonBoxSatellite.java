@@ -39,7 +39,7 @@ import core.operations.OpTakeoffQuad;
 import devices.SerialConnection;
 import validations.RuntimeValidator;
 import mavlink.core.connection.helper.GCSLocationData;
-import mavlink.core.flightControlers.FlightControler;
+import mavlink.core.flightControllers.FlightController;
 import mavlink.drone.Drone;
 import mavlink.drone.DroneInterfaces.DroneEventsType;
 import mavlink.drone.DroneInterfaces.OnDroneListener;
@@ -177,16 +177,16 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
     		String btnControllerText = btnController.getText();
     		String imagePath = ((ImageView) (btnController.getGraphic())).getImage().impl_getUrl();
     		opChangeFlightControllerQuad.setNext(null);
-    		String[] options = {FlightControler.KEYBOARD.name(), FlightControler.REMOTE.name()};
+    		String[] options = {FlightController.KEYBOARD.name(), FlightController.REMOTE.name()};
         	int n = dialogManagerSvc.showOptionsDialog("Choose Controller", "", null,options, options[1]);
         	if (n == 0) {
-        		opChangeFlightControllerQuad.setFlightMode(FlightControler.KEYBOARD);
-        		btnControllerText = FlightControler.KEYBOARD.name();
+        		opChangeFlightControllerQuad.setFlightMode(FlightController.KEYBOARD);
+        		btnControllerText = FlightController.KEYBOARD.name();
         		imagePath = "/guiImages/Keyboard.png";
         	}
         	if (n == 1) {
-        		opChangeFlightControllerQuad.setFlightMode(FlightControler.REMOTE);
-        		btnControllerText = FlightControler.REMOTE.name();
+        		opChangeFlightControllerQuad.setFlightMode(FlightController.REMOTE);
+        		btnControllerText = FlightController.REMOTE.name();
         		imagePath = "/guiImages/Remote.png";
         		
         	}

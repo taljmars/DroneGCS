@@ -6,12 +6,13 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Vector;
 
-import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.KeyBoardControler;
+import devices.KeyBoardController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -24,15 +25,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.util.Pair;
 
-@ComponentScan("mavlink.core.flightControlers")
+@ComponentScan("mavlink.core.flightControllers")
 @Component("dialogManagerSvc")
 public class DialogManagerSvc {
 
 	public static final int YES_OPTION = 0;
 	public static final int NO_OPTION = 1;
 	
-	@Resource(name = "keyBoardControler")
-	private KeyBoardControler keyboardController;
+	@Autowired @NotNull(message = "Internal Error: Failed to get keyboard controller")
+	private KeyBoardController keyboardController;
 
 
 	public int showConfirmDialog(String text, String title) {		

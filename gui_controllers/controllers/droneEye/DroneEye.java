@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import ObjectsDetector.ObjectDetectorListener;
@@ -25,9 +26,10 @@ import mavlink.drone.DroneInterfaces.OnDroneListener;
 import tools.geoTools.GeoTools;
 import validations.RuntimeValidator;
 
+@ComponentScan("logger")
 @Component
 public class DroneEye extends StackPane implements ObjectDetectorListener, OnDroneListener, Initializable {
-	
+
 	@NotNull @FXML private StackPane root;
 	@NotNull @FXML private ImageView imageViewer;
 	@NotNull @FXML private Label lblAlt;
@@ -39,17 +41,14 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 	@NotNull @FXML private Label lblPointerToHomeBorder;
 	@NotNull @FXML private Label lblCompass;
 	@NotNull @FXML private Label lblCompassBorder;
+	@NotNull @FXML private Label lblFlightTime;
+	@NotNull @FXML private Label lblFlightDist;
 	
 	@NotNull @Autowired
 	private Logger logger;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
-	
-	public DroneEye() {
-		imageViewer = new ImageView();
-		getChildren().add(imageViewer);
-	}
 	
 	private static int called;
 	@PostConstruct
@@ -112,6 +111,10 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 		lblPointerToHome.setRotate(direction);
 	}
 	
+	private void SetCompass(double direction) {
+		lblCompass.setRotate(direction);
+	}
+	
 	@Override
 	public void handleImageProcessResults(DetectionResults frameProcessResult) {
 		Image img = frameProcessResult.getFinalImage();
@@ -130,7 +133,7 @@ public class DroneEye extends StackPane implements ObjectDetectorListener, OnDro
 				SetLblAlt(drone.getAltitude().getAltitude());
 				return;
 			case NAVIGATION:
-				lblCompass.setRotate(drone.getNavigation().getNavBearing());
+				SetCompass(drone.getNavigation().getNavBearing());
 				return;
 			case DISCONNECTED:
 			case HEARTBEAT_TIMEOUT:

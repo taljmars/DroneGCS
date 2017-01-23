@@ -32,7 +32,7 @@ import core.operations.OpGCSTerminationHandler;
 public class AppConfig {
 	
 	public static final AppConfig loader = new AppConfig();
-	
+
 	public static final double FRAME_CONTAINER_REDUCE_PRECENTAGE = 0.17;
 	public static final String ENV_SYMBOL = "GCSMode";
 	

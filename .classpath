@@ -6,22 +6,22 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="operations"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/classmate-1.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/hibernate-validator-5.2.4.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/javax.el-api-2.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jcommon-1.0.23.jar"/>
-	<classpathentry kind="lib" path="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/jboss-logging-3.2.1.Final.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/RXTXSerial"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ImageProcessesing"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-3.1.0">
+	<classpathentry exported="true" kind="lib" path="ExtLib/json-simple-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/validation-api-1.1.0.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/classmate-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/hibernate-validator-5.2.4.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/javax.el-api-2.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/jcommon-1.0.23.jar"/>
+	<classpathentry exported="true" kind="lib" path="ExtLib/jboss-logging-3.2.1.Final.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/RXTXSerial"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/ImageProcessesing"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-3.1.0">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/taljmars/EclipseWorkspace/DroneGCS/ExtLib/openCV3_Dlls/x64"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring4.3.3"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MapViewer"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring4.3.3"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/MapViewer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

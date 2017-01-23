@@ -12,15 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.KeyBoardControler;
-import mavlink.core.flightControlers.FlightControler;
+import devices.KeyBoardController;
+import mavlink.core.flightControllers.FlightController;
 import mavlink.core.validations.SwitchToRC;
 import mavlink.drone.Drone;
 import mavlink.protocol.msgbuilder.MavLinkRC;
 import validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
-@ComponentScan("mavlink.core.flightControlers")
+@ComponentScan("mavlink.core.flightControllers")
 @ComponentScan("gui.services")
 @SwitchToRC
 @Component("opChangeFlightControllerQuad")
@@ -30,7 +30,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get keyboard controller")
-	private KeyBoardControler keyBoardControler;
+	private KeyBoardController keyBoardController;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -44,7 +44,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when changing flight mode")
 	private DialogManagerSvc dialogManagerSvc;
 
-	private FlightControler requiredFlightMode;
+	private FlightController requiredFlightMode;
 	
 	static int called;
 	@PostConstruct
@@ -63,19 +63,19 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 				return false;
 		}
 		
-    	keyBoardControler.HoldIfNeeded();
+    	keyBoardController.HoldIfNeeded();
     	
     	switch (requiredFlightMode) {
     	case KEYBOARD:
-    		keyBoardControler.ReleaseIfNeeded();
-    		keyBoardControler.Activate();
+    		keyBoardController.ReleaseIfNeeded();
+    		keyBoardController.Activate();
     		int eAvg = drone.getRC().getAverageThrust();
     		loggerDisplayerSvc.logGeneral("Setting Keyboard Thrust starting value to " + eAvg);
-    		keyBoardControler.SetThrust(eAvg);
+    		keyBoardController.SetThrust(eAvg);
     		break;
     	case REMOTE:
-    		keyBoardControler.ReleaseIfNeeded();
-    		keyBoardControler.Deactivate();
+    		keyBoardController.ReleaseIfNeeded();
+    		keyBoardController.Deactivate();
     		int[] rcOutputs = {0, 0, 0, 0, 0, 0, 0, 0};
     		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);
     		try {
@@ -93,7 +93,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 		return super.go();
 	}
 
-	public void setFlightMode(FlightControler flightmode) {
+	public void setFlightMode(FlightController flightmode) {
 		requiredFlightMode = flightmode;
 	}
 
@@ -101,7 +101,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 		return drone;
 	}
 
-	public FlightControler getRequiredControler() {
+	public FlightController getRequiredControler() {
 		return requiredFlightMode;
 	}
 }

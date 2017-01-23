@@ -36,7 +36,7 @@ import controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import core.operations.MissionBuilder;
-import devices.KeyBoardControler;
+import devices.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import gui.core.mapTreeObjects.Layer;
@@ -88,7 +88,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private MissionBuilder missionBuilder;
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
-	private KeyBoardControler keyboardController;
+	private KeyBoardController keyboardController;
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get notification publisher" )
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;

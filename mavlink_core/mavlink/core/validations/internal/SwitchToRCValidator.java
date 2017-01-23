@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import core.operations.OpChangeFlightControllerQuad;
-import mavlink.core.flightControlers.FlightControler;
+import mavlink.core.flightControllers.FlightController;
 import mavlink.core.validations.SwitchToRC;
 
 public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpChangeFlightControllerQuad> {
@@ -18,7 +18,7 @@ public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpCh
 
 	@Override
 	public boolean isValid(OpChangeFlightControllerQuad changeFlightControllerQuad, ConstraintValidatorContext arg1) {
-		if (changeFlightControllerQuad.getRequiredControler() == FlightControler.UNKNOWN) {
+		if (changeFlightControllerQuad.getRequiredControler() == FlightController.UNKNOWN) {
 			//disable existing violation message
 			arg1.disableDefaultConstraintViolation();
 		    //build new violation message and add it
@@ -26,7 +26,7 @@ public class SwitchToRCValidator implements ConstraintValidator<SwitchToRC, OpCh
 			return false;
 		}
 			
-		if (changeFlightControllerQuad.getRequiredControler() != FlightControler.REMOTE)
+		if (changeFlightControllerQuad.getRequiredControler() != FlightController.REMOTE)
 			return true;
 		
 		int thrustOut = changeFlightControllerQuad.getDrone().getRC().getThrustOut();
