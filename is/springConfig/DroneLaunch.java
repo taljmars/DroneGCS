@@ -18,6 +18,9 @@ public class DroneLaunch extends Application {
 			if (AppConfig.DEBUG_SYMBOL.equals(System.getenv(AppConfig.ENV_SYMBOL)))
 				AppConfig.DebugMode = true;
 			
+			// Set serial communications - links
+			
+			
 			Environment.setBaseRunningDirectoryByClass(this.getClass());
 			System.err.println("Setting Running base directory as '" + Environment.getRunningEnvBaseDirectory() + "'");
 			
