@@ -1,7 +1,7 @@
 package springConfig;
 
 import java.net.URISyntaxException;
-
+import java.nio.file.Paths;
 import controllers.dashboard.Dashboard;
 import devices.KeyBoardController;
 import javafx.application.Application;
@@ -18,8 +18,12 @@ public class DroneLaunch extends Application {
 			if (AppConfig.DEBUG_SYMBOL.equals(System.getenv(AppConfig.ENV_SYMBOL)))
 				AppConfig.DebugMode = true;
 			
-			// Set serial communications - links
-			
+			//Validating serial device exists
+			if (Paths.get("/dev/ttyACM0").toFile().exists() &&
+					!Paths.get("/dev/ttyS85").toFile().exists() ) {
+				System.err.println("Soft link to Arduino doesn't exist, please run the following command "
+						+ "in order to set it right:\n'sudo ln -s /dev/ttyACM0 /dev/ttyS85' and run it again");
+			}
 			
 			Environment.setBaseRunningDirectoryByClass(this.getClass());
 			System.err.println("Setting Running base directory as '" + Environment.getRunningEnvBaseDirectory() + "'");
