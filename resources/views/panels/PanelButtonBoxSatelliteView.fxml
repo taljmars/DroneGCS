@@ -24,8 +24,8 @@
 		<children>
 			<GridPane alignment="CENTER" hgap="5.0" vgap="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 				<columnConstraints>
-					<ColumnConstraints halignment="CENTER" minWidth="10.0" prefWidth="130.0" />
-					<ColumnConstraints halignment="CENTER" minWidth="10.0" prefWidth="130.0" />
+					<ColumnConstraints halignment="CENTER" minWidth="10.0" prefWidth="150.0" />
+					<ColumnConstraints halignment="CENTER" minWidth="10.0" prefWidth="150.0" />
 				</columnConstraints>
 				
 				<children>

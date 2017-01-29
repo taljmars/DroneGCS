@@ -10,8 +10,8 @@
    <children>
       <HBox>
          <children>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="180.0" prefWidth="900.0" vbarPolicy="ALWAYS">
-              <TextFlow fx:id="logTextBox" accessibleRole="TEXT_FIELD"  prefWidth="900.0" />
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="175.0" prefWidth="1260.0" vbarPolicy="ALWAYS">
+              <TextFlow fx:id="logTextBox" accessibleRole="TEXT_FIELD"  prefWidth="1260.0" />
             </ScrollPane>
          </children>
       </HBox>

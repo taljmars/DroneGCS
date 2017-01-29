@@ -28,7 +28,7 @@
 			</FlowPane>
          </top>
          <right>
-            <VBox prefHeight="376.0" prefWidth="253.0" BorderPane.alignment="CENTER">
+            <VBox prefHeight="376.0" prefWidth="300.0" BorderPane.alignment="CENTER">
                <children>              
                   <AnchorPane>
 				    <children>
