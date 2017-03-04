@@ -5,7 +5,7 @@ import java.util.List;
 import gui.is.shapes.LineCoordinates;
 import gui.is.shapes.Polygon;
 import is.mavlink.drone.mission.survey.SurveyData;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class GridBuilder {
 

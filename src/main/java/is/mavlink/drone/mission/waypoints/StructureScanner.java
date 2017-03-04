@@ -12,8 +12,8 @@ import is.mavlink.drone.mission.survey.SurveyData;
 import is.mavlink.drone.mission.survey.grid.GridBuilder;
 import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 public class StructureScanner extends SpatialCoordItem {
 	

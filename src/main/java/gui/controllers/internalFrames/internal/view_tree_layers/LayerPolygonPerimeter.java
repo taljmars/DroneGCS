@@ -3,7 +3,7 @@ package gui.controllers.internalFrames.internal.view_tree_layers;
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapPolygonImpl;
 import gui.is.interfaces.mapObjects.MapPolygon;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class LayerPolygonPerimeter extends LayerPerimeter {
 

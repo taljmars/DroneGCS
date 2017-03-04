@@ -23,7 +23,7 @@ import is.logger.Logger;
 import is.mavlink.drone.Drone;
 import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import tools.geoTools.GeoTools;
+import geoTools.GeoTools;
 import is.validations.RuntimeValidator;
 
 @ComponentScan("logger")

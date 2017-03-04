@@ -20,7 +20,7 @@ import is.mavlink.drone.mission.waypoints.Circle;
 import is.mavlink.drone.mission.waypoints.Land;
 import is.mavlink.drone.mission.waypoints.RegionOfInterest;
 import is.mavlink.drone.mission.waypoints.Waypoint;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 @ComponentScan("gui.is.services")
 @Component

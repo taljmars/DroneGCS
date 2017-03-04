@@ -5,7 +5,7 @@ import java.util.List;
 
 import gui.is.shapes.LineCoordinates;
 import gui.is.shapes.LineTools;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class Trimmer {
 	List<LineCoordinates> trimedGrid = new ArrayList<LineCoordinates>();

@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 import is.logger.Logger;
 import is.objects.json.JSONHelper;
 import is.springConfig.AppConfig;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class BeaconData {
 	

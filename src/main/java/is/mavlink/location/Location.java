@@ -1,6 +1,6 @@
 package is.mavlink.location;
 
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class Location {
 

@@ -3,8 +3,8 @@ package mavlink.core.gcs.follow;
 import is.mavlink.drone.Drone;
 import is.mavlink.gcs.follow.FollowAlgorithm;
 import is.mavlink.location.Location;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 public class FollowLeash extends FollowAlgorithm {
 

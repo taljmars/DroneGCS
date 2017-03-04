@@ -9,8 +9,8 @@ import is.mavlink.drone.DroneInterfaces.Handler;
 import is.mavlink.location.Location;
 import is.mavlink.location.LocationReceiver;
 import is.mavlink.protocol.msgbuilder.MavLinkROI;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 /**
  * Uses location data from Android's FusedLocation LocationManager at 1Hz and

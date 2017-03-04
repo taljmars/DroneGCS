@@ -12,7 +12,7 @@ import is.logger.Logger;
 import is.mavlink.drone.DroneVariable;
 import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 import is.mavlink.protocol.msg_metadata.ApmModes;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 @ComponentScan("tools.logger")
 @Component("perimeter")

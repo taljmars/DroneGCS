@@ -65,8 +65,8 @@ import is.mavlink.drone.mission.Mission;
 import is.mavlink.drone.variables.GuidedPoint;
 import is.mavlink.drone.variables.Home;
 import is.springConfig.AppConfig;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 import is.validations.RuntimeValidator;
 
 /**

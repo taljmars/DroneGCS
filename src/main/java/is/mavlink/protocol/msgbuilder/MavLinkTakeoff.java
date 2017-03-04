@@ -3,7 +3,7 @@ package is.mavlink.protocol.msgbuilder;
 import is.mavlink.drone.Drone;
 import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class MavLinkTakeoff {
 	public static void sendTakeoff(Drone drone, double alt) {

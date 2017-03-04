@@ -7,7 +7,7 @@ import mavlink.core.connection.helper.BeaconData;
 import is.mavlink.drone.DroneVariable;
 import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 import is.mavlink.protocol.msg_metadata.ApmModes;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 import javax.swing.SwingWorker;
 import javax.validation.constraints.NotNull;

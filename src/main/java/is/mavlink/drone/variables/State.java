@@ -14,7 +14,7 @@ import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 import is.mavlink.drone.DroneInterfaces.Handler;
 import is.mavlink.protocol.msg_metadata.ApmModes;
 import is.mavlink.protocol.msgbuilder.MavLinkModes;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 import is.validations.RuntimeValidator;
 
 @ComponentScan("validations")

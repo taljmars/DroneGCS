@@ -3,9 +3,9 @@ package mavlink.core.gcs.follow;
 import is.mavlink.drone.Drone;
 import is.mavlink.gcs.follow.FollowAlgorithm;
 import is.mavlink.location.Location;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
-import tools.geoTools.MathUtil;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
+import geoTools.MathUtil;
 
 public class FollowCircle extends FollowAlgorithm {
 

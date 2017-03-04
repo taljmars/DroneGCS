@@ -16,7 +16,6 @@ function fetch {
 	MODULE=$1
 	echo "Fetching module '${MODULE}'"
 	echo "Getting 'https://github.com/taljmars/${MODULE}/archive'"
-	#wget -o - https://github.com/taljmars/$MODULE/archive/master.zip $EXT_MODULE_DIR/
 	wget -O $EXT_MODULE_DIR/$MODULE.zip https://github.com/taljmars/$MODULE/archive/master.zip
 	chmod 777 $EXT_MODULE_DIR/$MODULE.zip
 	unzip $EXT_MODULE_DIR/$MODULE.zip -d $EXT_MODULE_DIR

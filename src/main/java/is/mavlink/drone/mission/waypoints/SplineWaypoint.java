@@ -7,7 +7,7 @@ import is.mavlink.drone.mission.Mission;
 import is.mavlink.drone.mission.MissionItemType;
 import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 /**
  * Handle spline waypoint mavlink packet generation.

@@ -4,8 +4,8 @@ import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapMarkerCircle;
 import is.gui.services.DialogManagerSvc;
 import is.springConfig.AppConfig;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 public class LayerCircledPerimeter extends LayerPerimeter {
 	

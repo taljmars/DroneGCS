@@ -11,14 +11,15 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import is.springConfig.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import is.gui.services.DialogManagerSvc;
-import tools.os_utilities.Environment;
 
 @ComponentScan("is.gui.services")
+@ComponentScan("is.springConfig")
 @Component
 public class Logger {
 	
@@ -28,6 +29,9 @@ public class Logger {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get environment")
+	private Environment environment;
 
 	private static int called;
 	@PostConstruct

@@ -7,8 +7,8 @@ import mavlink.core.validations.MissionCanBeActivated;
 import is.mavlink.drone.mission.Mission;
 import is.mavlink.drone.mission.MissionItem;
 import is.mavlink.drone.mission.waypoints.Waypoint;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 public class MissionCanBeActivatedValidator  implements ConstraintValidator<MissionCanBeActivated, Mission> {
 	

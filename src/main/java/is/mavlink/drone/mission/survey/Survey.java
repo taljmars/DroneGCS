@@ -13,7 +13,7 @@ import is.mavlink.drone.mission.survey.grid.GridBuilder;
 import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import is.mavlink.protocol.msg_metadata.enums.MAV_FRAME;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class Survey extends MissionItem {
 

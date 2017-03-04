@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gui.is.shapes.PolylineTools;
-import tools.geoTools.Coordinate;
+import geoTools.Coordinate;
 
 public class Grid {
 	public List<Coordinate> gridPoints;

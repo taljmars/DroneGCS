@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>groupId</groupId>
+    <groupId>DroneGCS</groupId>
     <artifactId>DroneGCS</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -88,18 +88,32 @@
             <version>8.40.12</version>
         </dependency>
 
+        <!-- Private Repo -->
+
+        <dependency>
+            <groupId>MapViewer</groupId>
+            <artifactId>GeoTools</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>MapViewer</groupId>
+            <artifactId>Viewer</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
         <!-- Private JARS -->
 
         <dependency>
             <groupId>Detector</groupId>
             <artifactId>Detector</artifactId>
-            <version>1.0</version>
+            <version>RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>RXTXcomm</groupId>
             <artifactId>RXTXcomm</artifactId>
-            <version>1.0</version>
+            <version>RELEASE</version>
         </dependency>
 
         <dependency>
@@ -111,15 +125,9 @@
         </dependency>
 
         <dependency>
-            <groupId>MapViewer</groupId>
-            <artifactId>MapViewer</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>opencv-310</groupId>
             <artifactId>opencv-310</artifactId>
-            <version>1.0</version>
+            <version>RELEASE</version>
         </dependency>
 
     </dependencies>
@@ -164,6 +172,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -208,6 +217,17 @@
     </build>
 
     <repositories>
+
+        <repository>
+            <id>taljmars-mvn-repo</id>
+            <name>taljmars-mvn-repo</name>
+            <url>https://raw.githubusercontent.com/taljmars/mvn-repo/master/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
     </repositories>
     
 </project>

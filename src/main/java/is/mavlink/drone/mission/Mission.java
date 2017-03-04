@@ -19,8 +19,8 @@ import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import is.mavlink.utils.units.Speed;
 import is.springConfig.AppConfig;
-import tools.geoTools.Coordinate;
-import tools.geoTools.GeoTools;
+import geoTools.Coordinate;
+import geoTools.GeoTools;
 
 import java.io.Serializable;
 import java.util.ArrayList;
