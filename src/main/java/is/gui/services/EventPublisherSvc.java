@@ -1,6 +1,6 @@
-package gui.services;
+package is.gui.services;
 
-import gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent;
 import gui.is.events.GuiEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,5 +23,6 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring4.3.3"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/MapViewer"/>
+	<classpathentry kind="lib" path="/home/oem/Desktop/DBClient.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

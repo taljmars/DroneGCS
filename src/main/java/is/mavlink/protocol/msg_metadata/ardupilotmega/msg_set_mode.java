@@ -1,9 +1,9 @@
 // MESSAGE SET_MODE PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Set the system mode, as defined by enum MAV_MODE. There is no target component id as the mode is by definition for the overall aircraft, not only for one component.

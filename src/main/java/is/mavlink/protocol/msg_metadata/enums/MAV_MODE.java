@@ -1,7 +1,7 @@
 /** These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
                simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_MODE {
 	public static final int MAV_MODE_PREFLIGHT = 0; /* System is not ready to fly, booting, calibrating, etc. No flag is set. | */

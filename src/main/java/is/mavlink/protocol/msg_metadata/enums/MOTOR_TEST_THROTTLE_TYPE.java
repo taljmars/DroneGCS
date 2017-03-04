@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MOTOR_TEST_THROTTLE_TYPE {
 	public static final int MOTOR_TEST_THROTTLE_PERCENT = 0; /* throttle as a percentage from 0 ~ 100 | */

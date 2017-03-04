@@ -1,9 +1,9 @@
-package mavlink.drone;
+package is.mavlink.drone;
 
 import java.util.List;
 
-import mavlink.drone.parameters.Parameter;
-import mavlink.protocol.msgbuilder.WaypointManager;
+import is.mavlink.drone.parameters.Parameter;
+import is.mavlink.protocol.msgbuilder.WaypointManager;
 
 public class DroneInterfaces {
 

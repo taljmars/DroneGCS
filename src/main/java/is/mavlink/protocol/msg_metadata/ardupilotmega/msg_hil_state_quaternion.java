@@ -1,10 +1,9 @@
 // MESSAGE HIL_STATE_QUATERNION PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
-
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 /**
 * Sent from simulation to autopilot, avoids in contrast to HIL_STATE singularities. This packet is useful for high throughput applications such as hardware in the loop simulations.
 */

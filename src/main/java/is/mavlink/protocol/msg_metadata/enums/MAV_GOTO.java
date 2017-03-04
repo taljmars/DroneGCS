@@ -1,6 +1,6 @@
 /** Override command, pauses current mission execution and moves immediately to a position
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_GOTO {
 	public static final int MAV_GOTO_DO_HOLD = 0; /* Hold at the current position. | */

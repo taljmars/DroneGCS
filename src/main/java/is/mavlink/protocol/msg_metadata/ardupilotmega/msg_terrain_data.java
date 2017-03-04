@@ -1,9 +1,9 @@
 // MESSAGE TERRAIN_DATA PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Terrain data sent from GCS. The lat/lon and grid_spacing must be the same as a lat/lon from a TERRAIN_REQUEST

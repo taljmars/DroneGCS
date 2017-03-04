@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.Iterator;
@@ -7,16 +7,16 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import gui.controllers.internalPanels.internal.EditingCell;
+import gui.controllers.internalPanels.internal.MissionItemTableEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import main.java.gui_controllers.controllers.internalPanels.internal.EditingCell;
-import main.java.gui_controllers.controllers.internalPanels.internal.MissionItemTableEntry;
-import main.java.is.gui.events.QuadGuiEvent;
-import main.java.is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
-import main.java.is.gui.services.EventPublisherSvc;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
+import is.gui.services.EventPublisherSvc;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,17 +31,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
-import main.java.is.mavlink.drone.mission.Mission;
-import main.java.is.mavlink.drone.mission.MissionItem;
-import main.java.is.mavlink.drone.mission.MissionItemType;
-import main.java.is.mavlink.drone.mission.waypoints.Circle;
-import main.java.is.mavlink.drone.mission.waypoints.RegionOfInterest;
-import main.java.is.mavlink.drone.mission.waypoints.Waypoint;
-import main.java.is.mavlink.drone.mission.waypoints.interfaces.Altitudable;
-import main.java.is.mavlink.drone.mission.waypoints.interfaces.Delayable;
-import main.java.is.mavlink.drone.mission.waypoints.interfaces.Radiusable;
-import main.java.is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItem;
+import is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.drone.mission.waypoints.Circle;
+import is.mavlink.drone.mission.waypoints.RegionOfInterest;
+import is.mavlink.drone.mission.waypoints.Waypoint;
+import is.mavlink.drone.mission.waypoints.interfaces.Altitudable;
+import is.mavlink.drone.mission.waypoints.interfaces.Delayable;
+import is.mavlink.drone.mission.waypoints.interfaces.Radiusable;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.validations.RuntimeValidator;
 
 @Component
 public class PanelMissionBox extends Pane implements Initializable {

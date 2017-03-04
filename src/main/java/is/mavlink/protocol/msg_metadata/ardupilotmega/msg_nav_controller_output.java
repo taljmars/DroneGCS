@@ -1,9 +1,9 @@
-// MESSAGE NAV_CONTROLLER_OUTPUT PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+// MESSAGE HWSTATUS PACKING
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Outputs of the APM navigation controller. The primary use of this message is to check the response and signs of the controller before actual flight and to assist with tuning controller parameters.

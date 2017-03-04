@@ -1,9 +1,9 @@
-// MESSAGE RAW_IMU PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
+
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * The RAW IMU readings for the usual 9DOF sensor setup. This message should always contain the true raw values without any scaling to allow data capture and system debugging.

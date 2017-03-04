@@ -1,8 +1,8 @@
-package mavlink.protocol.msg_metadata;
+package is.mavlink.protocol.msg_metadata;
 
 import java.util.ArrayList;
 
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 
 public enum ApmCommands {	
 

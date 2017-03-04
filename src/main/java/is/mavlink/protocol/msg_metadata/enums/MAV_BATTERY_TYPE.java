@@ -1,6 +1,6 @@
 /** Enumeration of battery types
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_BATTERY_TYPE {
 	public static final int MAV_BATTERY_TYPE_UNKNOWN = 0; /* Not specified. | */

@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalFrames;
+package gui.controllers.internalFrames;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,20 +9,20 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import main.java.is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import main.java.is.mavlink.drone.variables.Battery;
-import main.java.is.objects.csv.CSV;
-import main.java.is.objects.csv.internal.CSVImpl;
-import tools.os_utilities.Environment;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.variables.Battery;
+import is.objects.csv.CSV;
+import is.objects.csv.internal.CSVImpl;
+import is.springConfig.Environment;
+import is.validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import main.java.is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,6 +35,9 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
+
+	@Autowired @NotNull(message="Internal Error: Failed to get environment")
+	private Environment environment;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;

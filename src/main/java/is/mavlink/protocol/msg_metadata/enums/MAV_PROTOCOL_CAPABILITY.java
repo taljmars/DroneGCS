@@ -1,6 +1,6 @@
 /** Bitmask of (optional) autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_PROTOCOL_CAPABILITY {
 	public static final int MAV_PROTOCOL_CAPABILITY_MISSION_FLOAT = 1; /* Autopilot supports MISSION float message type. | */

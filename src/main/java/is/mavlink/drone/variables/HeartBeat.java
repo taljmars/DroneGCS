@@ -1,15 +1,15 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.Drone;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.Handler;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.Handler;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 
 /**
  * @author taljmars

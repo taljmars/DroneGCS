@@ -1,14 +1,14 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
-import main.java.is.gui.services.DialogManagerSvc;
-import main.java.is.gui.services.EventPublisherSvc;
-import main.java.is.gui.services.LoggerDisplayerSvc;
-import main.java.is.gui.services.TextNotificationPublisherSvc;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.EventPublisherSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.gui.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -22,7 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.util.Pair;
-import main.java.is.logger.Logger;
+import is.logger.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -31,29 +31,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import core.operations.OpArmQuad;
-import core.operations.OpChangeFlightControllerQuad;
-import core.operations.OpGCSTerminationHandler;
-import core.operations.OpStartMissionQuad;
-import core.operations.OpTakeoffQuad;
-import main.java.is.devices.SerialConnection;
-import main.java.is.validations.RuntimeValidator;
-import main.java.mavlink_core.mavlink.core.connection.helper.GCSLocationData;
-import main.java.mavlink_core.mavlink.core.flightControllers.FlightController;
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import main.java.is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import main.java.is.mavlink.drone.DroneInterfaces.OnParameterManagerListener;
-import main.java.is.mavlink.drone.parameters.Parameter;
-import main.java.is.mavlink.protocol.msg_metadata.ApmModes;
-import main.java.is.mavlink.protocol.msgbuilder.MavLinkArm;
-import main.java.is.mavlink.protocol.msgbuilder.MavLinkModes;
+import operations.core.operations.OpArmQuad;
+import operations.core.operations.OpChangeFlightControllerQuad;
+import operations.core.operations.OpGCSTerminationHandler;
+import operations.core.operations.OpStartMissionQuad;
+import operations.core.operations.OpTakeoffQuad;
+import is.devices.SerialConnection;
+import is.validations.RuntimeValidator;
+import mavlink.core.connection.helper.GCSLocationData;
+import mavlink.core.flightControllers.FlightController;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.DroneInterfaces.OnParameterManagerListener;
+import is.mavlink.drone.parameters.Parameter;
+import is.mavlink.protocol.msg_metadata.ApmModes;
+import is.mavlink.protocol.msgbuilder.MavLinkArm;
+import is.mavlink.protocol.msgbuilder.MavLinkModes;
 
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("core.operations.internal")
+@ComponentScan("operations.core.operations.internal")
 @ComponentScan("mavlink.core.drone")
-@ComponentScan("gui.services")
-@ComponentScan("core.operations")
+@ComponentScan("is.gui.services")
+@ComponentScan("operations.core.operations")
 @Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
 	

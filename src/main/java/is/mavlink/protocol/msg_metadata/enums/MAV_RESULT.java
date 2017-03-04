@@ -1,6 +1,6 @@
 /** result from a mavlink command
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_RESULT {
 	public static final int MAV_RESULT_ACCEPTED = 0; /* Command ACCEPTED and EXECUTED | */

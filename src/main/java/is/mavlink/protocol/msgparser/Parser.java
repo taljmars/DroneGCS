@@ -1,7 +1,7 @@
-package mavlink.protocol.msgparser;
+package is.mavlink.protocol.msgparser;
 
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkStats;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkStats;
 
 public class Parser {
 

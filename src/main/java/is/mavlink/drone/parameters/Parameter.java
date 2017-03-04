@@ -1,9 +1,9 @@
-package mavlink.drone.parameters;
+package is.mavlink.drone.parameters;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_param_value;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_param_value;
 
 public class Parameter implements Comparable<Parameter>, Serializable {
 

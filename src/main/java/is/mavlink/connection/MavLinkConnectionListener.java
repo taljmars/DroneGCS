@@ -1,6 +1,6 @@
-package mavlink.connection;
+package is.mavlink.connection;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
 
 /**
  * Provides updates about the mavlink connection.

@@ -1,4 +1,4 @@
-package mavlink.connection;
+package is.mavlink.connection;
 
 /**
  * List the supported mavlink connection types.

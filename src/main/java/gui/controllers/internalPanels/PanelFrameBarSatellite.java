@@ -1,7 +1,7 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
-import main.java.is.gui.events.QuadGuiEvent;
-import main.java.is.gui.services.DialogManagerSvc;
+import is.gui.events.QuadGuiEvent;
+import is.gui.services.DialogManagerSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -12,7 +12,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import main.java.is.validations.RuntimeValidator;
+import is.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;

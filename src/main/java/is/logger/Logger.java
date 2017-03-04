@@ -1,4 +1,4 @@
-package logger;
+package is.logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.services.DialogManagerSvc;
+import is.gui.services.DialogManagerSvc;
 import tools.os_utilities.Environment;
 
-@ComponentScan("gui.services")
-@Component("logger")
+@ComponentScan("is.gui.services")
+@Component
 public class Logger {
 	
 	private final String LOG_ENTRY_SUFFIX = ".html";
@@ -28,13 +28,13 @@ public class Logger {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
-	
+
 	private static int called;
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
+
 		try {
 			File logDir = Environment.getRunningEnvLogDirectory();
 			writer = new PrintWriter(logDir + Environment.DIR_SEPERATOR + "log" + LOG_ENTRY_SUFFIX, "UTF-8");
@@ -56,9 +56,9 @@ public class Logger {
 			writer = null;
 			return;
 		}
-		
+
 		Timestamp ts = new Timestamp(new Date().getTime());
-		
+
 		writer.println("<html>");
 		writer.println("<title>");
 		writer.println("QuadCopter Logbook");
@@ -72,7 +72,7 @@ public class Logger {
 		writer.println("<h1></h1>");
 		writer.println("<h3>Log:</h3>");
 	}
-	
+
 	
 
 	int recordNumber = 0;
@@ -128,8 +128,8 @@ public class Logger {
 			e.printStackTrace();
 		}
 	}
-	
-	public static enum Type {
+
+    public static enum Type {
 		GENERAL,
 		ERROR,
 		INCOMING,

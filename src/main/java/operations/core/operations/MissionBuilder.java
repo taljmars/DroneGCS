@@ -1,4 +1,4 @@
-package core.operations;
+package operations.core.operations;
 
 import javax.validation.constraints.NotNull;
 
@@ -6,20 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import gui.events.QuadGuiEvent;
-import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
-import gui.services.DialogManagerSvc;
-import gui.services.EventPublisherSvc;
-import gui.services.LoggerDisplayerSvc;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItem;
-import mavlink.drone.mission.commands.ReturnToHome;
-import mavlink.drone.mission.commands.Takeoff;
-import mavlink.drone.mission.waypoints.Circle;
-import mavlink.drone.mission.waypoints.Land;
-import mavlink.drone.mission.waypoints.RegionOfInterest;
-import mavlink.drone.mission.waypoints.Waypoint;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.EventPublisherSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItem;
+import is.mavlink.drone.mission.commands.ReturnToHome;
+import is.mavlink.drone.mission.commands.Takeoff;
+import is.mavlink.drone.mission.waypoints.Circle;
+import is.mavlink.drone.mission.waypoints.Land;
+import is.mavlink.drone.mission.waypoints.RegionOfInterest;
+import is.mavlink.drone.mission.waypoints.Waypoint;
 import tools.geoTools.Coordinate;
 
 @ComponentScan("gui.is.services")

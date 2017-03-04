@@ -1,4 +1,4 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -6,12 +6,12 @@ import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
-import logger.Logger;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.ApmModes;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.logger.Logger;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.ApmModes;
 import tools.geoTools.Coordinate;
 
 @ComponentScan("tools.logger")

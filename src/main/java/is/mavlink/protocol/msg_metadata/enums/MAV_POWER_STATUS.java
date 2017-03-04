@@ -1,6 +1,6 @@
 /** Power supply status flags (bitmask)
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_POWER_STATUS {
 	public static final int MAV_POWER_STATUS_BRICK_VALID = 1; /* main brick power supply valid | */

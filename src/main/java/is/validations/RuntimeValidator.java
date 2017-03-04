@@ -1,4 +1,4 @@
-package validations;
+package is.validations;
 
 import java.util.Set;
 
@@ -10,9 +10,9 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.services.DialogManagerSvc;
+import is.gui.services.DialogManagerSvc;
 
-@Component("validator")
+@Component
 public class RuntimeValidator {
 	
 	@Autowired

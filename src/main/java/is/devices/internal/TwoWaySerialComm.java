@@ -1,13 +1,13 @@
-package devices.internal;
+package is.devices.internal;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import gui.services.DialogManagerSvc;
-import logger.Logger;
-import springConfig.AppConfig;
+import is.gui.services.DialogManagerSvc;
+import is.logger.Logger;
+import is.springConfig.AppConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.SerialConnection;
+import is.devices.SerialConnection;
 
 /**
  * TwoWaySerialComm have the ability to send and receive packets using USB serial device.

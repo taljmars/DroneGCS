@@ -1,4 +1,4 @@
-package objects.json;
+package is.objects.json;
 
 import java.io.BufferedReader;
 import org.json.simple.parser.*;

@@ -1,12 +1,12 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.Drone;
-import mavlink.drone.DroneInterfaces;
-import mavlink.drone.DroneVariable;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces;
+import is.mavlink.drone.DroneVariable;
 import tools.geoTools.MathUtil;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 
 @Component("radio")
 public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener {

@@ -1,4 +1,4 @@
-package springConfig;
+package is.springConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.util.Callback;
 import mavlink.core.drone.MyDroneImpl;
-import mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.Mission;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -22,19 +22,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 
-import com.dronedb.ws.DroneDbCrudSvcRemote;
+//import com.dronedb.ws.DroneDbCrudSvcRemote;
 
-import controllers.dashboard.Dashboard;
-import controllers.internalFrames.InternalFrameMap;
-import core.operations.OpGCSTerminationHandler;
+import gui.controllers.dashboard.Dashboard;
+import gui.controllers.internalFrames.InternalFrameMap;
+import operations.core.operations.OpGCSTerminationHandler;
 
-@ComponentScan("controllers.droneEye")
-@ComponentScan("controllers.internalPanels")
-@ComponentScan("controllers.internalFrames")
+@ComponentScan("gui.controllers.droneEye")
+@ComponentScan("gui.controllers.internalPanels")
+@ComponentScan("gui.controllers.internalFrames")
 @ComponentScan("gui.core.operations")
 @ComponentScan("gui.services")
-@ComponentScan("mavlink.core.gcs")
-@ComponentScan("com.dronedb.services.DroneDbCrudSvc")
+@ComponentScan("is.mavlink.core.gcs")
 @Import({InternalFrameMap.class , MyDroneImpl.class , OpGCSTerminationHandler.class})
 @Configuration
 public class AppConfig {
@@ -130,8 +129,8 @@ public class AppConfig {
 		return null;
 	}
 	
-	@Bean
-	public DroneDbCrudSvcRemote droneDbCrudSvcRemote() {
-		return LoadServices(DroneDbCrudSvcRemote.class);
-	}
+//	@Bean
+//	public DroneDbCrudSvcRemote droneDbCrudSvcRemote() {
+//		return LoadServices(DroneDbCrudSvcRemote.class);
+//	}
 }

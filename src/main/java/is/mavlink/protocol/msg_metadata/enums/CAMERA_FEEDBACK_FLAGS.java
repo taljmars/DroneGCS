@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class CAMERA_FEEDBACK_FLAGS {
 	public static final int VIDEO = 1; /* Shooting video, not stills | */

@@ -1,12 +1,12 @@
-package main.java.mavlink_core.mavlink.core.validations.internal;
+package mavlink.core.validations.internal;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import mavlink.core.validations.MissionCanBeActivated;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItem;
-import mavlink.drone.mission.waypoints.Waypoint;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItem;
+import is.mavlink.drone.mission.waypoints.Waypoint;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 

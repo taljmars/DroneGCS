@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -8,9 +8,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import main.java.is.gui.events.QuadGuiEvent;
-import main.java.is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
-import main.java.is.gui.services.EventPublisherSvc;
+import is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
+import is.gui.services.EventPublisherSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -18,8 +18,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.validations.RuntimeValidator;
 
 @Component
 public class PanelConfigurationBox extends Pane implements Initializable {

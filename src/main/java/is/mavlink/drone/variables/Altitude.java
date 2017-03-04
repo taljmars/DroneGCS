@@ -1,9 +1,9 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneInterfaces;
-import mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces;
+import is.mavlink.drone.DroneVariable;
 
 @Component("altitude")
 public class Altitude extends DroneVariable {

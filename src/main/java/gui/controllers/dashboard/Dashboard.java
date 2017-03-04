@@ -1,13 +1,13 @@
-package main.java.gui_controllers.controllers.dashboard;
+package gui.controllers.dashboard;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import main.java.is.gui.events.QuadGuiEvent;
-import main.java.is.gui.services.EventPublisherSvc;
-import main.java.is.gui.services.LoggerDisplayerSvc;
-import main.java.is.gui.services.TextNotificationPublisherSvc;
+import is.gui.events.QuadGuiEvent;
+import is.gui.services.EventPublisherSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.gui.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
@@ -29,22 +29,20 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.dronedb.ws.DroneDbCrudSvcRemote;
-
-import controllers.internalFrames.InternalFrameMap;
-import core.operations.OpGCSTerminationHandler;
+import gui.controllers.internalFrames.InternalFrameMap;
+import operations.core.operations.OpGCSTerminationHandler;
 
 import javax.validation.constraints.NotNull;
 
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.*;
-import main.java.is.mavlink.drone.parameters.Parameter;
-import main.java.is.mavlink.protocol.msg_metadata.ApmModes;
-import main.java.is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import main.java.is.springConfig.AppConfig;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.*;
+import is.mavlink.drone.parameters.Parameter;
+import is.mavlink.protocol.msg_metadata.ApmModes;
+import is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import is.springConfig.AppConfig;
+import is.validations.RuntimeValidator;
 
-@ComponentScan("controllers.internalFrames")
+@ComponentScan("gui.controllers.internalFrames")
 @ComponentScan("gui.core.operations")
 @Component("dashboard")
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
@@ -72,9 +70,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
-	@Autowired
-	private DroneDbCrudSvcRemote droneDbCrudSvcRemote;
-	
 	@FXML private HBox frameContainer;
 	@FXML private ProgressBar progressBar;
 	
@@ -93,7 +88,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		
 		initializeDefinitions();
 		
-		System.out.println(droneDbCrudSvcRemote.CheckConnection());
+		//System.out.println(droneDbCrudSvcRemote.CheckConnection());
 	}
 	
 	@Override
@@ -320,15 +315,15 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 		}
 	}
 	
-	private void handleFrameContainerRequest(String springInstanciation, int index) {
-		if (springInstanciation.isEmpty())
+	private void handleFrameContainerRequest(String springInstansiation, int index) {
+		if (springInstansiation.isEmpty())
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstanciation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
-		selectedPane.setUserData(springInstanciation);
+		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
+		selectedPane.setUserData(springInstansiation);
 		if (selectedPane != null) {
-			selectedPane.setUserData(springInstanciation);
+			selectedPane.setUserData(springInstansiation);
 			Platform.runLater(() -> {
 				if (maxFramesAmount.get() == 1 || isFrameAlreadyOpen(children, selectedPane))
 					children.clear();

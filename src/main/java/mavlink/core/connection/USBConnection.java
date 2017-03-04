@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.connection;
+package mavlink.core.connection;
 
 import java.io.IOException;
 
@@ -8,9 +8,9 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.SerialConnection;
-import mavlink.connection.MavLinkConnection;
-import mavlink.connection.MavLinkConnectionTypes;
+import is.devices.SerialConnection;
+import is.mavlink.connection.MavLinkConnection;
+import is.mavlink.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via udp.

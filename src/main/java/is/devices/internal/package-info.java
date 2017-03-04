@@ -5,4 +5,4 @@
  * @author taljmars
  *
  */
-package devices.internal;
+package main.java.is.devices.internal;

@@ -1,9 +1,9 @@
 // MESSAGE SET_POSITION_TARGET_GLOBAL_INT PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Set vehicle position, velocity and acceleration setpoint in the WGS84 coordinate system.

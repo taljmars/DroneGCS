@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalFrames.internal;
+package gui.controllers.internalFrames.internal;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -7,30 +7,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import core.validations.LegalTreeView;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import operations.core.validations.LegalTreeView;
 import gui.core.mapTree.CheckBoxViewTree;
 import gui.core.mapTreeObjects.Layer;
 import gui.core.mapTreeObjects.LayerGroup;
-import main.java.is.gui.events.QuadGuiEvent;
-import main.java.is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
+import is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
 import gui.is.events.GuiEvent;
 import gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
-import main.java.is.gui.services.EventPublisherSvc;
-import main.java.is.gui.services.LoggerDisplayerSvc;
-import main.java.is.gui.services.TextNotificationPublisherSvc;
+import is.gui.services.EventPublisherSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.gui.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.OnWaypointManagerListener;
-import main.java.is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import main.java.is.springConfig.AppConfig;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.OnWaypointManagerListener;
+import is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import is.springConfig.AppConfig;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("gui.core.mapTree")
 @ComponentScan("gui.is.services")
@@ -281,7 +281,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 					return;
 				}
 	
-				LayerMission lm = (LayerMission) AppConfig.context.getBean("layerMission");
+				LayerMission lm = AppConfig.context.getBean(LayerMission.class);
 				lm.setName("UnnamedMission");
 				lm.setMission(drone.getMission());
 				addLayer(lm);

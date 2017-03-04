@@ -1,24 +1,24 @@
-package mavlink.drone.mission;
+package is.mavlink.drone.mission;
 
-import mavlink.drone.Drone;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.mission.commands.CameraTrigger;
-import mavlink.drone.mission.commands.ChangeSpeed;
-import mavlink.drone.mission.commands.EpmGripper;
-import mavlink.drone.mission.commands.ReturnToHome;
-import mavlink.drone.mission.commands.Takeoff;
-import mavlink.drone.mission.waypoints.Circle;
-import mavlink.drone.mission.waypoints.Land;
-import mavlink.drone.mission.waypoints.RegionOfInterest;
-import mavlink.drone.mission.waypoints.SpatialCoordItem;
-import mavlink.drone.mission.waypoints.SplineWaypoint;
-import mavlink.drone.mission.waypoints.Waypoint;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import mavlink.utils.units.Speed;
-import springConfig.AppConfig;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.mission.commands.CameraTrigger;
+import is.mavlink.drone.mission.commands.ChangeSpeed;
+import is.mavlink.drone.mission.commands.EpmGripper;
+import is.mavlink.drone.mission.commands.ReturnToHome;
+import is.mavlink.drone.mission.commands.Takeoff;
+import is.mavlink.drone.mission.waypoints.Circle;
+import is.mavlink.drone.mission.waypoints.Land;
+import is.mavlink.drone.mission.waypoints.RegionOfInterest;
+import is.mavlink.drone.mission.waypoints.SpatialCoordItem;
+import is.mavlink.drone.mission.waypoints.SplineWaypoint;
+import is.mavlink.drone.mission.waypoints.Waypoint;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.utils.units.Speed;
+import is.springConfig.AppConfig;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 
@@ -68,8 +68,7 @@ public class Mission extends DroneVariable implements Serializable {
 	/**
 	 * Sets the mission default altitude.
 	 * 
-	 * @param newAltitude
-	 *            {@link Altitude} value
+	 * @param newAltitude value
 	 */
 	public void setDefaultAlt(double newAltitude) {
 		defaultAlt = newAltitude;
@@ -389,7 +388,7 @@ public class Mission extends DroneVariable implements Serializable {
 
 	public Mission duplicate() {
 		//Mission ans = new Mission();
-		Mission ans = (Mission) AppConfig.context.getBean("mission");
+		Mission ans = AppConfig.context.getBean(Mission.class);
 		ans.setDrone(drone);
 		Iterator<MissionItem> it = this.items.iterator();
 		while (it.hasNext()) {

@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_STATE {
 	public static final int MAV_STATE_UNINIT = 0; /* Uninitialized system, state is unknown. | */

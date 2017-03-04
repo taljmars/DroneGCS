@@ -1,14 +1,14 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.Drone;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import mavlink.protocol.msg_metadata.ApmModes;
-import mavlink.protocol.msgbuilder.MavLinkModes;
-import mavlink.protocol.msgbuilder.MavLinkTakeoff;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.protocol.msg_metadata.ApmModes;
+import is.mavlink.protocol.msgbuilder.MavLinkModes;
+import is.mavlink.protocol.msgbuilder.MavLinkTakeoff;
 import tools.geoTools.Coordinate;
 
 @Component("guidedPoint")

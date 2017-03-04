@@ -1,11 +1,11 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
 
 @Component("rc")
 public class RC extends DroneVariable {

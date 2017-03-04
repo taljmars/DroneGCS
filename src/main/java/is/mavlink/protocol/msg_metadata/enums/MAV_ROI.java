@@ -2,7 +2,7 @@
                 be used by the vehicle for camera/vehicle attitude alignment (see
                 MAV_CMD_NAV_ROI).
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_ROI {
 	public static final int MAV_ROI_NONE = 0; /* No region of interest. | */

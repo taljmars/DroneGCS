@@ -1,6 +1,6 @@
 /** These encode the sensors whose status is sent as part of the SYS_STATUS message.
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_SYS_STATUS_SENSOR {
 	public static final int MAV_SYS_STATUS_SENSOR_3D_GYRO = 1; /* 0x01 3D gyro | */

@@ -1,11 +1,11 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.parameters.Parameter;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.parameters.Parameter;
 
 @Component("battery")
 public class Battery extends DroneVariable {

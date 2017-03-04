@@ -1,7 +1,7 @@
-package main.java.mavlink_core.mavlink.core.location;
+package mavlink.core.location;
 
-import gui.services.LoggerDisplayerSvc;
-import logger.Logger;
+import is.gui.services.LoggerDisplayerSvc;
+import is.logger.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,9 +15,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.location.Location;
-import mavlink.location.LocationFinder;
-import mavlink.location.LocationReceiver;
+import is.mavlink.location.Location;
+import is.mavlink.location.LocationFinder;
+import is.mavlink.location.LocationReceiver;
 import tools.geoTools.Coordinate;
 
 @Component("locationFinder")

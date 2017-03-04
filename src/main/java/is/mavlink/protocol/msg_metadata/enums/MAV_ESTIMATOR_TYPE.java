@@ -1,6 +1,6 @@
 /** Enumeration of estimator types
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_ESTIMATOR_TYPE {
 	public static final int MAV_ESTIMATOR_TYPE_NAIVE = 1; /* This is a naive estimator without any real covariance feedback. | */

@@ -1,4 +1,4 @@
-package mavlink.drone.mission.waypoints.interfaces;
+package is.mavlink.drone.mission.waypoints.interfaces;
 
 public interface Altitudable {
 	

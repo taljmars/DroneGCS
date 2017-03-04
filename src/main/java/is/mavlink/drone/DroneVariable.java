@@ -1,4 +1,4 @@
-package mavlink.drone;
+package is.mavlink.drone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

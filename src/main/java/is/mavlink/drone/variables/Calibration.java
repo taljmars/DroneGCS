@@ -1,13 +1,13 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_statustext;
-import mavlink.protocol.msgbuilder.MavLinkCalibration;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_statustext;
+import is.mavlink.protocol.msgbuilder.MavLinkCalibration;
 
 @Component("calibrationSetup")
 public class Calibration extends DroneVariable {

@@ -1,8 +1,8 @@
-package core.operations;
+package operations.core.operations;
 
-import gui.operations.OperationHandler;
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
+import is.gui.operations.OperationHandler;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 
 import javax.annotation.PostConstruct;
@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.Drone;
-import mavlink.protocol.msgbuilder.MavLinkArm;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msgbuilder.MavLinkArm;
 
 @ComponentScan("gui.services")
 @Component("opArmQuad")

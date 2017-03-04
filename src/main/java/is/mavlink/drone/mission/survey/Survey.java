@@ -1,18 +1,18 @@
-package mavlink.drone.mission.survey;
+package is.mavlink.drone.mission.survey;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import gui.is.shapes.Polygon;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItem;
-import mavlink.drone.mission.MissionItemType;
-import mavlink.drone.mission.commands.CameraTrigger;
-import mavlink.drone.mission.survey.grid.Grid;
-import mavlink.drone.mission.survey.grid.GridBuilder;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItem;
+import is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.drone.mission.commands.CameraTrigger;
+import is.mavlink.drone.mission.survey.grid.Grid;
+import is.mavlink.drone.mission.survey.grid.GridBuilder;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.protocol.msg_metadata.enums.MAV_FRAME;
 import tools.geoTools.Coordinate;
 
 public class Survey extends MissionItem {

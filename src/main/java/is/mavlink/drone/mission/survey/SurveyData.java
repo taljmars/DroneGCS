@@ -1,4 +1,4 @@
-package mavlink.drone.mission.survey;
+package is.mavlink.drone.mission.survey;
 
 import java.util.Locale;
 

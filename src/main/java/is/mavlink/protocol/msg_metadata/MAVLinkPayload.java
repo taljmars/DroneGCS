@@ -1,4 +1,4 @@
-package mavlink.protocol.msg_metadata;
+package is.mavlink.protocol.msg_metadata;
 
 import java.nio.ByteBuffer;
 

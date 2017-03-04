@@ -1,4 +1,4 @@
-package core.validations;
+package operations.core.validations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import core.validations.internal.LegalTreeViewValidator;
+import operations.core.validations.internal.LegalTreeViewValidator;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

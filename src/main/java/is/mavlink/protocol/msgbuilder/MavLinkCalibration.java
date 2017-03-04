@@ -1,10 +1,10 @@
-package mavlink.protocol.msgbuilder;
+package is.mavlink.protocol.msgbuilder;
 
-import mavlink.drone.Drone;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_command_ack;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD_ACK;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_command_ack;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD_ACK;
 
 public class MavLinkCalibration {
 

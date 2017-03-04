@@ -1,9 +1,9 @@
-package mavlink.protocol.msg_metadata;
+package is.mavlink.protocol.msg_metadata;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mavlink.protocol.msg_metadata.enums.MAV_TYPE;
+import is.mavlink.protocol.msg_metadata.enums.MAV_TYPE;
 
 public enum ApmModes {
 	FIXED_WING_MANUAL (0,"Manual",MAV_TYPE.MAV_TYPE_FIXED_WING),

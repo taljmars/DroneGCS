@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers;
+package gui.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapPolygonImpl;

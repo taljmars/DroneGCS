@@ -1,4 +1,4 @@
-package gui.services;
+package is.gui.services;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.KeyBoardController;
+import is.devices.KeyBoardController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;

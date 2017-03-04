@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalPanels.internal;
+package gui.controllers.internalPanels.internal;
 
 public enum MissionItemTableColumn {
 	Order ("Order"), 

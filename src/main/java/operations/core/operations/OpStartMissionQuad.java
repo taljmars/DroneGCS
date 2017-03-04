@@ -1,7 +1,7 @@
-package core.operations;
+package operations.core.operations;
 
-import gui.operations.OperationHandler;
-import gui.services.LoggerDisplayerSvc;
+import is.gui.operations.OperationHandler;
+import is.gui.services.LoggerDisplayerSvc;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 
 import mavlink.core.validations.MissionCanBeActivated;
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.drone.Drone;
-import mavlink.drone.mission.Mission;
-import mavlink.protocol.msg_metadata.ApmModes;
-import validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.protocol.msg_metadata.ApmModes;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
 @ComponentScan("gui.services")

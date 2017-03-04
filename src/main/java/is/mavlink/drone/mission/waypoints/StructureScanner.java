@@ -1,17 +1,17 @@
-package mavlink.drone.mission.waypoints;
+package is.mavlink.drone.mission.waypoints;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import gui.is.shapes.Polygon;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItemType;
-import mavlink.drone.mission.survey.CameraInfo;
-import mavlink.drone.mission.survey.Survey;
-import mavlink.drone.mission.survey.SurveyData;
-import mavlink.drone.mission.survey.grid.GridBuilder;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.drone.mission.survey.CameraInfo;
+import is.mavlink.drone.mission.survey.Survey;
+import is.mavlink.drone.mission.survey.SurveyData;
+import is.mavlink.drone.mission.survey.grid.GridBuilder;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 

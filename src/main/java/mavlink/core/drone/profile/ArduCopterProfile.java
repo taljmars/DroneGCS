@@ -1,6 +1,6 @@
-package main.java.mavlink_core.mavlink.core.drone.profile;
+package mavlink.core.drone.profile;
 
-import mavlink.drone.profiles.VehicleProfile;
+import is.mavlink.drone.profiles.VehicleProfile;
 
 public class ArduCopterProfile extends VehicleProfile {
 	

@@ -1,11 +1,11 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import java.util.Vector;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 
 @Component("messeges")
 public class Messeges extends DroneVariable {

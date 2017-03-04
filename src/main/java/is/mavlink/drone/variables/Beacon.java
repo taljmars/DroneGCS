@@ -1,12 +1,12 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
-import gui.services.LoggerDisplayerSvc;
-import logger.Logger;
+import is.gui.services.LoggerDisplayerSvc;
+import is.logger.Logger;
 
 import mavlink.core.connection.helper.BeaconData;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.ApmModes;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.ApmModes;
 import tools.geoTools.Coordinate;
 
 import javax.swing.SwingWorker;

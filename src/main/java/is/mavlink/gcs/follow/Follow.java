@@ -1,4 +1,4 @@
-package mavlink.gcs.follow;
+package is.mavlink.gcs.follow;
 
 import javax.validation.constraints.NotNull;
 
@@ -6,18 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import logger.Logger;
-import mavlink.drone.Drone;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import mavlink.drone.variables.GuidedPoint;
-import mavlink.drone.variables.State;
-import mavlink.gcs.follow.FollowAlgorithm.FollowModes;
-import mavlink.location.Location;
-import mavlink.location.LocationFinder;
-import mavlink.location.LocationReceiver;
-import mavlink.protocol.msgbuilder.MavLinkROI;
+import is.logger.Logger;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.variables.GuidedPoint;
+import is.mavlink.drone.variables.State;
+import is.mavlink.gcs.follow.FollowAlgorithm.FollowModes;
+import is.mavlink.location.Location;
+import is.mavlink.location.LocationFinder;
+import is.mavlink.location.LocationReceiver;
+import is.mavlink.protocol.msgbuilder.MavLinkROI;
 
 @ComponentScan("mavlink.is.gcs.roi")
 @Component("follow")

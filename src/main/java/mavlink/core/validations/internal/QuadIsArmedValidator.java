@@ -1,10 +1,10 @@
-package main.java.mavlink_core.mavlink.core.validations.internal;
+package mavlink.core.validations.internal;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import is.mavlink.drone.Drone;
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.drone.*;
 
 public class QuadIsArmedValidator implements ConstraintValidator<QuadIsArmed, Drone> {
 

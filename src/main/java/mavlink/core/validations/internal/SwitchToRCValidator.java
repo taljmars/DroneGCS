@@ -1,9 +1,9 @@
-package main.java.mavlink_core.mavlink.core.validations.internal;
+package mavlink.core.validations.internal;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import core.operations.OpChangeFlightControllerQuad;
+import operations.core.operations.OpChangeFlightControllerQuad;
 import mavlink.core.flightControllers.FlightController;
 import mavlink.core.validations.SwitchToRC;
 

@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.drone;
+package mavlink.core.drone;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneInterfaces.Handler;
+import is.mavlink.drone.DroneInterfaces.Handler;
 
 @Component("handler")
 public class HandlerImpl implements Handler {

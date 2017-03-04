@@ -1,4 +1,4 @@
-package devices;
+package is.devices;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
@@ -19,7 +19,7 @@ public interface KeyBoardController extends EventHandler<KeyEvent> {
 	 */
 	void ReleaseIfNeeded();
 
-	/**
+    /**
 	 * Starting the keyboard controller
 	 */
 	void Activate();

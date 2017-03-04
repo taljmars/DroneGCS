@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_FRAME {
 	public static final int MAV_FRAME_GLOBAL = 0; /* Global coordinate frame, WGS84 coordinate system. First value / x: latitude, second value / y: longitude, third value / z: positive altitude over mean sea level (MSL) | */

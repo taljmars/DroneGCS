@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.flightControllers;
+package mavlink.core.flightControllers;
 
 public enum FlightController {
 	UNKNOWN,

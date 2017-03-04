@@ -1,12 +1,12 @@
-package main.java.mavlink_core.mavlink.core.connection;
+package mavlink.core.connection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import mavlink.connection.MavLinkConnection;
-import mavlink.connection.MavLinkConnectionTypes;
+import is.mavlink.connection.MavLinkConnection;
+import is.mavlink.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via udp.

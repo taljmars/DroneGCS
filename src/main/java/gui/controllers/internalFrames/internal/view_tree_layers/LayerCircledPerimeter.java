@@ -1,9 +1,9 @@
-package main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers;
+package gui.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapMarkerCircle;
-import main.java.is.gui.services.DialogManagerSvc;
-import main.java.is.springConfig.AppConfig;
+import is.gui.services.DialogManagerSvc;
+import is.springConfig.AppConfig;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 
@@ -33,7 +33,7 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 
 	@Override
 	public void add(Coordinate position) {
-		DialogManagerSvc dialogManagerSvc = (DialogManagerSvc) AppConfig.context.getBean("dialogManagerSvc");
+		DialogManagerSvc dialogManagerSvc = (DialogManagerSvc) AppConfig.context.getBean(DialogManagerSvc.class);
 		
 		String val = (String) dialogManagerSvc.showInputDialog("Please choose radius", "Cyclic Perimeter",
 				null, null, "10");

@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.flightControllers;
+package mavlink.core.flightControllers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,16 +14,17 @@ import java.util.Scanner;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import is.springConfig.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.services.DialogManagerSvc;
-import logger.Logger;
-import tools.os_utilities.Environment;
+import is.gui.services.DialogManagerSvc;
+import is.logger.Logger;
 
 @ComponentScan("logger")
 @ComponentScan("gui.services")
+@ComponentScan("is.springConfig")
 @Component
 public class KeyBoardConfigurationParser {
 	
@@ -32,6 +33,9 @@ public class KeyBoardConfigurationParser {
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get dialog manager" )
 	private DialogManagerSvc dialogManagerSvc;
+
+	@Autowired @NotNull( message = "Internal Error: Failed to get environment" )
+	Environment environment;
 	
 	private final String settingsFileName = "quad_setup_arducopter.txt";
 	private Path fFilePath = null;
@@ -92,8 +96,6 @@ public class KeyBoardConfigurationParser {
 	public void init() {
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
-		LoadParams();
 	}
 
 	@SuppressWarnings("resource")
@@ -101,8 +103,9 @@ public class KeyBoardConfigurationParser {
 		logger.LogGeneralMessege("Loading flight controller configuration");
 		paramAmount = 0;
 		try {
-			fFilePath = Paths.get(Environment.getRunningEnvBaseDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
+			fFilePath = Paths.get(Environment.getRunningEnvConfDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
 			if (fFilePath.toFile().exists() == false) {
+				logger.LogErrorMessege("Configuration file wasn't found, start generating default conf file");
 				buildConfigurationFile(fFilePath);
 			}
 		
@@ -205,7 +208,8 @@ public class KeyBoardConfigurationParser {
 			dialogManagerSvc.showErrorMessageDialog("Configuration file is missing, failed to build a default one", e);				
 			logger.close();
 			System.exit(-1);
-		} catch (URISyntaxException e) {
+		}
+		catch (URISyntaxException e) {
 			e.printStackTrace();
 			dialogManagerSvc.showErrorMessageDialog("Failed to file running environment", e);
 			logger.close();

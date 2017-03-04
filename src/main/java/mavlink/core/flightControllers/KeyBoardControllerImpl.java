@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.flightControllers;
+package mavlink.core.flightControllers;
 
 import java.util.Date;
 import javax.annotation.PostConstruct;
@@ -8,20 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.KeyBoardController;
-import devices.SerialConnection;
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
+import is.devices.KeyBoardController;
+import is.devices.SerialConnection;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
 import javafx.scene.input.KeyEvent;
-import logger.Logger;
-import mavlink.drone.Drone;
-import mavlink.protocol.msgbuilder.MavLinkRC;
+import is.logger.Logger;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msgbuilder.MavLinkRC;
 
-@ComponentScan("logger")
-@ComponentScan("devices")
+@ComponentScan("is.logger")
+@ComponentScan("is.devices")
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("gui.services")
-@Component("keyBoardController")
+@Component
 public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to keyboard parser")
@@ -90,35 +90,39 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 	static int called;
 	@PostConstruct
 	public void init() {
+
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
-		
+
+		keyBoardConfigurationParser.LoadParams();
+
 		_STABILIZER_CYCLE = keyBoardConfigurationParser.getStabilizerCycle();
-		
+
 		_MIN_PWM_RANGE = keyBoardConfigurationParser.getMinPwmRange();
 		_MAX_PWM_RANGE = keyBoardConfigurationParser.getMaxPwmRange();
-		
+
 		_MIN_PWM_ANGLE = keyBoardConfigurationParser.getMinPwmAngle();
 		_MAX_PWM_ANGLE = keyBoardConfigurationParser.getMaxPwmAngle();
-		
+
 		_TRIM_ANGLE = keyBoardConfigurationParser.getTrimAngle();
-		
+
 		_PITCH_STEP = keyBoardConfigurationParser.getPitchStep();
 		_TRIM_ANGLE_PITCH = keyBoardConfigurationParser.getTrimAnglePitch();
-		
+
 		_ROLL_STEP = keyBoardConfigurationParser.getRollStep();
 		_TRIM_ANGLE_ROLL = keyBoardConfigurationParser.getTrimAngleRoll();
-		
+
 		_YAW_STEP = keyBoardConfigurationParser.getYawStep();
 		_TRIM_ANGLE_YAW = keyBoardConfigurationParser.getTrimAngleYaw();
-		
+
 		_THR_STEP = keyBoardConfigurationParser.getThrustStep();
 		_INIT_THR = keyBoardConfigurationParser.getInitThrust();
-		
+
 		Reset();
-		
+
 		KeyboardStabilizer = new Thread(this);
 		KeyboardStabilizer.start();
+
 	}
 	
 	@Override

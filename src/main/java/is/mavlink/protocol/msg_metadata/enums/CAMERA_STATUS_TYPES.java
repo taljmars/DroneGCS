@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class CAMERA_STATUS_TYPES {
 	public static final int CAMERA_STATUS_TYPE_HEARTBEAT = 0; /* Camera heartbeat, announce camera component ID at 1hz | */

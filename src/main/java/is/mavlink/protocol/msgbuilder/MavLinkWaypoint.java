@@ -1,12 +1,12 @@
-package mavlink.protocol.msgbuilder;
+package is.mavlink.protocol.msgbuilder;
 
-import mavlink.drone.Drone;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_count;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_request;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_request_list;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_set_current;
-import mavlink.protocol.msg_metadata.enums.MAV_MISSION_RESULT;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_count;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_request;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_request_list;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_set_current;
+import is.mavlink.protocol.msg_metadata.enums.MAV_MISSION_RESULT;
 
 public class MavLinkWaypoint {
 

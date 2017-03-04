@@ -1,11 +1,11 @@
-package mavlink.drone.mission.waypoints;
+package is.mavlink.drone.mission.waypoints;
 
 import java.util.List;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItemType;
-import mavlink.drone.mission.waypoints.interfaces.Delayable;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.drone.mission.waypoints.interfaces.Delayable;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 import tools.geoTools.Coordinate;
 
 public class Waypoint extends SpatialCoordItem implements Delayable {

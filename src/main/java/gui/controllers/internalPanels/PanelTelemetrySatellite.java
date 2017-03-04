@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,10 +8,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import main.java.is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import main.java.is.validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import main.java.is.gui.services.LoggerDisplayerSvc;
-import main.java.is.gui.services.TextNotificationPublisherSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.gui.services.TextNotificationPublisherSvc;
 
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {

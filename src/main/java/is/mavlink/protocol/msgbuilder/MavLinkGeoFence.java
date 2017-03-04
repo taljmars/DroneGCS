@@ -1,8 +1,8 @@
-package mavlink.protocol.msgbuilder;
+package is.mavlink.protocol.msgbuilder;
 
-import mavlink.drone.Drone;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_command_long;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
 
 public class MavLinkGeoFence {
 	public static void setGeoFence(Drone drone, boolean isOn) {

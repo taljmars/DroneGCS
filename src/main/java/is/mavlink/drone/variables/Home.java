@@ -1,12 +1,12 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_CMD;
-import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_CMD;
+import is.mavlink.protocol.msg_metadata.enums.MAV_FRAME;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 

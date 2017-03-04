@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.gcs;
+package mavlink.core.gcs;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,8 +9,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.Drone;
-import mavlink.protocol.msgbuilder.MavLinkHeartbeat;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msgbuilder.MavLinkHeartbeat;
 
 /**
  * This class is used to send periodic heartbeat messages to the drone.

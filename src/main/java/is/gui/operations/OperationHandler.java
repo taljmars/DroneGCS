@@ -1,8 +1,8 @@
-package gui.operations;
+package is.gui.operations;
 
 import javax.annotation.Resource;
 
-import gui.services.LoggerDisplayerSvc;
+import is.gui.services.LoggerDisplayerSvc;
 
 public abstract class OperationHandler
 {

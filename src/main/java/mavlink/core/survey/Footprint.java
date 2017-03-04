@@ -1,10 +1,10 @@
-package main.java.mavlink_core.mavlink.core.survey;
+package mavlink.core.survey;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mavlink.drone.mission.survey.CameraInfo;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
+import is.mavlink.drone.mission.survey.CameraInfo;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 

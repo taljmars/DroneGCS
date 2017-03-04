@@ -1,55 +1,56 @@
-package main.java.mavlink_core.mavlink.core.drone;
+package mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
-import mavlink.connection.MavLinkConnection;
+import is.mavlink.connection.MavLinkConnection;
 import mavlink.core.firmware.FirmwareType;
-import mavlink.drone.Drone;
-import mavlink.drone.DroneEvents;
-import mavlink.drone.DroneInterfaces;
-import mavlink.drone.Preferences;
-import mavlink.drone.mission.Mission;
-import mavlink.drone.profiles.Parameters;
-import mavlink.drone.profiles.VehicleProfile;
-import mavlink.drone.variables.Altitude;
-import mavlink.drone.variables.Battery;
-import mavlink.drone.variables.Beacon;
-import mavlink.drone.variables.Calibration;
-import mavlink.drone.variables.CameraFootprints;
-import mavlink.drone.variables.GCS;
-import mavlink.drone.variables.GPS;
-import mavlink.drone.variables.GuidedPoint;
-import mavlink.drone.variables.HeartBeat;
-import mavlink.drone.variables.Home;
-import mavlink.drone.variables.Magnetometer;
-import mavlink.drone.variables.Messeges;
-import mavlink.drone.variables.MissionStats;
-import mavlink.drone.variables.Navigation;
-import mavlink.drone.variables.Orientation;
-import mavlink.drone.variables.Perimeter;
-import mavlink.drone.variables.RC;
-import mavlink.drone.variables.Radio;
-import mavlink.drone.variables.Speed;
-import mavlink.drone.variables.State;
-import mavlink.drone.variables.StreamRates;
-import mavlink.drone.variables.Type;
-import mavlink.gcs.follow.Follow;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import mavlink.protocol.msgbuilder.WaypointManager;
-import validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneEvents;
+import is.mavlink.drone.DroneInterfaces;
+import is.mavlink.drone.Preferences;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.profiles.Parameters;
+import is.mavlink.drone.profiles.VehicleProfile;
+import is.mavlink.drone.variables.Altitude;
+import is.mavlink.drone.variables.Battery;
+import is.mavlink.drone.variables.Beacon;
+import is.mavlink.drone.variables.Calibration;
+import is.mavlink.drone.variables.CameraFootprints;
+import is.mavlink.drone.variables.GCS;
+import is.mavlink.drone.variables.GPS;
+import is.mavlink.drone.variables.GuidedPoint;
+import is.mavlink.drone.variables.HeartBeat;
+import is.mavlink.drone.variables.Home;
+import is.mavlink.drone.variables.Magnetometer;
+import is.mavlink.drone.variables.Messeges;
+import is.mavlink.drone.variables.MissionStats;
+import is.mavlink.drone.variables.Navigation;
+import is.mavlink.drone.variables.Orientation;
+import is.mavlink.drone.variables.Perimeter;
+import is.mavlink.drone.variables.RC;
+import is.mavlink.drone.variables.Radio;
+import is.mavlink.drone.variables.Speed;
+import is.mavlink.drone.variables.State;
+import is.mavlink.drone.variables.StreamRates;
+import is.mavlink.drone.variables.Type;
+import is.mavlink.gcs.follow.Follow;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import is.mavlink.protocol.msgbuilder.WaypointManager;
+import is.validations.RuntimeValidator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @ComponentScan("tools.validations")
-@ComponentScan("mavlink.drone.variables")
-@ComponentScan("mavlink.drone")
-@ComponentScan("mavlink.gcs.follow")
-@ComponentScan("mavlink.protocol.msgbuilder")
+@ComponentScan("is.mavlink.drone.variables")
+@ComponentScan("is.mavlink.drone")
+@ComponentScan("is.mavlink.gcs.follow")
+@ComponentScan("is.mavlink.protocol.msgbuilder")
 @ComponentScan("mavlink.core.connection")
 @ComponentScan("mavlink.core.location")
 @Component("drone")
@@ -63,121 +64,121 @@ public class MyDroneImpl implements Drone {
 	}
 	
 	@NotNull(message="Missing GPS parameter")
-	@Resource(name = "gps")
+	@Autowired
 	private GPS GPS;
 	
 	@NotNull(message="Missing Preferences parameter")
-	@Resource(name = "preferencesImpl")
+	@Autowired
 	private Preferences preferences;
 	
 	@NotNull(message="Missing RC parameter")
-	@Resource(name = "rc")
+	@Autowired
 	private RC RC;
 
 	@NotNull(message="Missing Beacon parameter")
-	@Resource(name = "beacon")
+	@Autowired
 	private Beacon Beacon;
 
 	@NotNull(message="Missing GCS parameter")
-	@Resource(name = "gcs")
+	@Autowired
 	private GCS GCS;
 	
 	@NotNull(message="Missing Speed parameter")
-	@Resource(name = "speed")
+	@Autowired
 	private Speed speed;
 
 	@NotNull(message="Missing Battery parameter")
-	@Resource(name = "battery")
+	@Autowired
 	private Battery battery;
 
 	@NotNull(message="Missing Radio parameter")
-	@Resource(name = "radio")
+	@Autowired
 	private Radio radio;
 
 	@NotNull(message="Missing Home parameter")
-	@Resource(name = "home")
+	@Autowired
 	private Home home;
 
-	@Resource(name = "mission")
+	@Autowired
 	private Mission mission;
-	
-	@Resource(name = "missionStats")
+
+	@Autowired
 	private MissionStats missionStats;
 
 	@NotNull(message="Missing StreamRates parameter")
-	@Resource(name = "streamRates")
+	@Autowired
 	private StreamRates streamRates;
 
 	@NotNull(message="Missing Altitude parameter")
-	@Resource(name = "altitude")
+	@Autowired
 	private Altitude altitude;
 
 	@NotNull(message="Missing Orientation parameter")
-	@Resource(name = "orientation")
+	@Autowired
 	private Orientation orientation;
 
 	@NotNull(message="Missing Navigation parameter")
-	@Resource(name = "navigation")
+	@Autowired
 	private Navigation navigation;
 
 	@NotNull(message="Missing GuidedPoint parameter")
-	@Resource(name = "guidedPoint")
+	@Autowired
 	private GuidedPoint guidedPoint;
 	
 	@NotNull(message="Missing Calibration parameter")
-	@Resource(name = "calibrationSetup")
+	@Autowired
 	private Calibration calibrationSetup;
 
 	@NotNull(message="Missing WaypointManager parameter")
-	@Resource(name = "waypointManager")
+	@Autowired
 	private WaypointManager waypointManager;
 
 	@NotNull(message="Missing Magnetometer parameter")
-	@Resource(name = "mag")
+	@Autowired
 	private Magnetometer mag;
 
 	@NotNull(message="Missing CameraFootprints parameter")
-	@Resource(name = "footprints")
+	@Autowired
 	private CameraFootprints footprints;
 
 	@NotNull(message="Missing Perimeter parameter")
-	@Resource(name = "perimeter")
+	@Autowired
 	private Perimeter Perimeter;
 	
 	@NotNull(message="Missing Type parameter")
-	@Resource(name = "type")
+	@Autowired
 	private Type type;
 	
 	@NotNull(message="Missing Messege parameter")
-	@Resource(name = "messeges")
+	@Autowired
 	private Messeges messeges;	
 	
 	@NotNull(message="Missing Parameters parameter")
-	@Resource(name = "parameters")
+	@Autowired
 	private Parameters parameters;
 
 	@NotNull(message="Missing DroneEvents parameter")
-	@Resource(name = "events")
+	@Autowired
 	private DroneEvents events;
 	
 	@NotNull(message="Missing HeartBeat parameter")
-	@Resource(name = "heartbeat")
+	@Autowired
 	private HeartBeat heartbeat;
 	
 	@NotNull(message="Missing State parameter")
-	@Resource(name = "state")
+	@Autowired
 	private State state;
 
 	@NotNull(message="Missing Follow parameter")
-	@Resource(name = "follow")
+	@Autowired
 	private Follow follow;
 	
 	@NotNull(message="Missing MavLinkConnection parameter")
-	@Resource(name = "usbConnection")
+	@Autowired
 	private MavLinkConnection mavlinkConnection;
-	
-	@Resource(name = "validator")
+
 	@NotNull(message = "Internal Error: Failed to get validator")
+	@Autowired
 	private RuntimeValidator validator;
 
 	private VehicleProfile profile;

@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class FENCE_BREACH {
 	public static final int FENCE_BREACH_NONE = 0; /* No last fence breach | */

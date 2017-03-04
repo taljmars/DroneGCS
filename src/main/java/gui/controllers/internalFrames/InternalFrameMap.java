@@ -1,12 +1,13 @@
-package main.java.gui_controllers.controllers.internalFrames;
+package gui.controllers.internalFrames;
 
+import gui.controllers.internalFrames.internal.OperationalViewTree;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import main.java.is.validations.RuntimeValidator;
+import is.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import main.java.gui_controllers.controllers.internalFrames.internal.OperationalViewMap;
-import main.java.gui_controllers.controllers.internalFrames.internal.OperationalViewTree;
+import gui.controllers.internalFrames.internal.OperationalViewMap;
 
 @ComponentScan("controllers.internalFrames.internal")
 @ComponentScan("validations")

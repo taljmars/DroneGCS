@@ -1,4 +1,4 @@
-package mavlink.drone.parameters;
+package is.mavlink.drone.parameters;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

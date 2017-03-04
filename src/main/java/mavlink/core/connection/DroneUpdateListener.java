@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.connection;
+package mavlink.core.connection;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -7,31 +7,31 @@ import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import mavlink.connection.MavLinkConnectionListener;
-import mavlink.drone.Drone;
-import mavlink.protocol.msg_metadata.ApmModes;
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_attitude;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_global_position_int;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_gps_raw_int;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_current;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_nav_controller_output;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_radio;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_radio_status;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_raw_imu;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_statustext;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_sys_status;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
-import mavlink.protocol.msg_metadata.enums.MAV_MODE_FLAG;
-import mavlink.protocol.msg_metadata.enums.MAV_STATE;
+import is.mavlink.connection.MavLinkConnectionListener;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msg_metadata.ApmModes;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_attitude;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_global_position_int;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_gps_raw_int;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_current;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_nav_controller_output;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_radio;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_radio_status;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_raw_imu;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_statustext;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_sys_status;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
+import is.mavlink.protocol.msg_metadata.enums.MAV_MODE_FLAG;
+import is.mavlink.protocol.msg_metadata.enums.MAV_STATE;
 import tools.geoTools.Coordinate;
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
-import logger.Logger;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.logger.Logger;
 
 @ComponentScan("tools.logger")
 @ComponentScan("gui.is.service")

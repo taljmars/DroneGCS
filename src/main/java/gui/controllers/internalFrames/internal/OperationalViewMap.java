@@ -19,24 +19,24 @@
 //  For more information, please email jsmith.carlsbad@gmail.com
 //    
 //==============================================================================
-package main.java.gui_controllers.controllers.internalFrames.internal;
+package gui.controllers.internalFrames.internal;
 
 import java.awt.Point;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import core.operations.MissionBuilder;
-import main.java.is.devices.KeyBoardController;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
+import gui.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
+import operations.core.operations.MissionBuilder;
+import is.devices.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import gui.core.mapTreeObjects.Layer;
@@ -45,12 +45,12 @@ import gui.core.mapViewerObjects.MapLineImpl;
 import gui.core.mapViewerObjects.MapMarkerCircle;
 import gui.core.mapViewerObjects.MapMarkerDot;
 import gui.core.mapViewerObjects.MapVectorImpl;
-import main.java.is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent;
 import gui.is.interfaces.mapObjects.MapLine;
 import gui.is.interfaces.mapObjects.MapMarker;
-import main.java.is.gui.services.DialogManagerSvc;
-import main.java.is.gui.services.LoggerDisplayerSvc;
-import main.java.is.gui.services.TextNotificationPublisherSvc;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.gui.services.TextNotificationPublisherSvc;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
@@ -58,16 +58,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import main.java.is.mavlink.drone.Drone;
-import main.java.is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import main.java.is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import main.java.is.mavlink.drone.mission.Mission;
-import main.java.is.mavlink.drone.variables.GuidedPoint;
-import main.java.is.mavlink.drone.variables.Home;
-import main.java.is.springConfig.AppConfig;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.variables.GuidedPoint;
+import is.mavlink.drone.variables.Home;
+import is.springConfig.AppConfig;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
-import main.java.is.validations.RuntimeValidator;
+import is.validations.RuntimeValidator;
 
 /**
  *
@@ -77,6 +77,7 @@ import main.java.is.validations.RuntimeValidator;
 @ComponentScan("tools.validations")
 @ComponentScan("gui.core.mapViewer")
 @ComponentScan("gui.is.services")
+@ComponentScan("gui.controllers.internalFrames.internal")
 @Component("map")
 public class OperationalViewMap extends LayeredViewMap implements
 OnDroneListener, EventHandler<ActionEvent> {
@@ -297,7 +298,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 					// TALMA i am trying not to use bean here
 					modifyiedLayerMission = new LayerMission("New Mission*", this);
 					tree.addLayer(modifyiedLayerMission);
-					Mission msn = (Mission) AppConfig.context.getBean("mission");
+					Mission msn = AppConfig.context.getBean(Mission.class);
 					msn.setDrone(drone);
 					modifyiedLayerMission.setMission(msn);
 					

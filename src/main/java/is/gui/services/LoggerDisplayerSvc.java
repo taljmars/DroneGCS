@@ -1,4 +1,4 @@
-package gui.services;
+package is.gui.services;
 
 import javax.annotation.PostConstruct;
 
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import gui.events.logevents.LogAbstractDisplayerEvent;
-import gui.events.logevents.LogErrorDisplayerEvent;
-import gui.events.logevents.LogGeneralDisplayerEvent;
-import gui.events.logevents.LogIncomingDisplayerEvent;
-import gui.events.logevents.LogOutgoingDisplayerEvent;
+import is.gui.events.logevents.LogAbstractDisplayerEvent;
+import is.gui.events.logevents.LogErrorDisplayerEvent;
+import is.gui.events.logevents.LogGeneralDisplayerEvent;
+import is.gui.events.logevents.LogIncomingDisplayerEvent;
+import is.gui.events.logevents.LogOutgoingDisplayerEvent;
 
 /**
  * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.

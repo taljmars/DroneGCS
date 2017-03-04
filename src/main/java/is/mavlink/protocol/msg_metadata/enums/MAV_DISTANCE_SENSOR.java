@@ -1,6 +1,6 @@
 /** Enumeration of distance sensor types
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_DISTANCE_SENSOR {
 	public static final int MAV_DISTANCE_SENSOR_LASER = 0; /* Laser altimeter, e.g. LightWare SF02/F or PulsedLight units | */

@@ -1,7 +1,7 @@
-package mavlink.drone;
+package is.mavlink.drone;
 
 import mavlink.core.firmware.FirmwareType;
-import mavlink.drone.profiles.VehicleProfile;
+import is.mavlink.drone.profiles.VehicleProfile;
 
 public interface Preferences {
 

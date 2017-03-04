@@ -1,4 +1,4 @@
-package mavlink.drone;
+package is.mavlink.drone;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -9,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.Handler;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import validations.RuntimeValidator;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.Handler;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("mavlink.core.drone")
-@Component("events")
+@ComponentScan("is.validations")
+@Component
 public class DroneEvents extends DroneVariable {
 
 	private final ConcurrentLinkedQueue<DroneEventsType> eventsQueue = new ConcurrentLinkedQueue<DroneEventsType>();

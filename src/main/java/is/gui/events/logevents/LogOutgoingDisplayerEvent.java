@@ -1,6 +1,6 @@
-package gui.events.logevents;
+package is.gui.events.logevents;
 
-import logger.Logger.Type;
+import is.logger.Logger.Type;
 
 /**
  * Outgoing event type

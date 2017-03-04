@@ -1,10 +1,10 @@
-package mavlink.drone.mission;
+package is.mavlink.drone.mission;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import mavlink.protocol.msg_metadata.enums.MAV_FRAME;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.protocol.msg_metadata.enums.MAV_FRAME;
 
 public abstract class MissionItem implements Comparable<MissionItem>  {
 

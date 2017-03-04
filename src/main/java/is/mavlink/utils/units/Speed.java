@@ -1,4 +1,4 @@
-package mavlink.utils.units;
+package is.mavlink.utils.units;
 
 import java.util.Locale;
 

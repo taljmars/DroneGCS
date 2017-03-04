@@ -1,15 +1,15 @@
-package mavlink.drone.variables;
+package is.mavlink.drone.variables;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.services.LoggerDisplayerSvc;
-import mavlink.drone.Drone;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import mavlink.drone.Preferences.Rates;
-import mavlink.protocol.msgbuilder.MavLinkStreamRates;
+import is.gui.services.LoggerDisplayerSvc;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.Preferences.Rates;
+import is.mavlink.protocol.msgbuilder.MavLinkStreamRates;
 
 @Component("streamRates")
 public class StreamRates extends DroneVariable implements OnDroneListener {

@@ -1,4 +1,4 @@
-package mavlink.gcs.follow;
+package is.mavlink.gcs.follow;
 
 import mavlink.core.gcs.follow.FollowAbove;
 import mavlink.core.gcs.follow.FollowCircle;
@@ -6,8 +6,8 @@ import mavlink.core.gcs.follow.FollowLead;
 import mavlink.core.gcs.follow.FollowLeash;
 import mavlink.core.gcs.follow.FollowLeft;
 import mavlink.core.gcs.follow.FollowRight;
-import mavlink.drone.Drone;
-import mavlink.location.Location;
+import is.mavlink.drone.Drone;
+import is.mavlink.location.Location;
 
 public abstract class FollowAlgorithm {
 	public abstract void processNewLocation(Location location);

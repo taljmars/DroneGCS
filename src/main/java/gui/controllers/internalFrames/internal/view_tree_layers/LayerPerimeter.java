@@ -1,8 +1,8 @@
-package main.java.gui_controllers.controllers.internalFrames.internal.view_tree_layers;
+package gui.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapTreeObjects.LayerSingle;
 import gui.core.mapViewer.LayeredViewMap;
-import main.java.is.mavlink.drone.variables.Compound;
+import is.mavlink.drone.variables.Compound;
 import tools.geoTools.Coordinate;
 
 public abstract class LayerPerimeter extends LayerSingle implements Compound {

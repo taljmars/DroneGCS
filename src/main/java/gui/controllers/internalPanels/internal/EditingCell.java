@@ -1,11 +1,11 @@
-package main.java.gui_controllers.controllers.internalPanels.internal;
+package gui.controllers.internalPanels.internal;
 
-import main.java.is.gui.services.DialogManagerSvc;
+import is.gui.services.DialogManagerSvc;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
-import main.java.is.springConfig.AppConfig;
+import is.springConfig.AppConfig;
 
 public class EditingCell<T> extends TableCell<MissionItemTableEntry, T> {
 	private TextField textField;
@@ -66,7 +66,7 @@ public class EditingCell<T> extends TableCell<MissionItemTableEntry, T> {
         			commitEdit(newVal);
         		}
         		catch (NumberFormatException e) {
-        			DialogManagerSvc dialogManager = (DialogManagerSvc) AppConfig.context.getBean("dialogManager");
+        			DialogManagerSvc dialogManager = (DialogManagerSvc) AppConfig.context.getBean(DialogManagerSvc.class);
         			dialogManager.showErrorMessageDialog("Failed to convert value", e);
         		}
         	}

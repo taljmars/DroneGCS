@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAVLINK_DATA_STREAM_TYPE {
 	public static final int MAVLINK_DATA_STREAM_IMG_JPEG = 1; /*  | */

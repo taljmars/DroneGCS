@@ -1,6 +1,6 @@
 /** Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_SEVERITY {
 	public static final int MAV_SEVERITY_EMERGENCY = 0; /* System is unusable. This is a "panic" condition. | */

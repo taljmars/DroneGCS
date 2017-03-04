@@ -1,8 +1,8 @@
-package core.operations;
+package operations.core.operations;
 
-import gui.operations.OperationHandler;
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
+import is.gui.operations.OperationHandler;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 
 import javax.annotation.PostConstruct;
@@ -15,8 +15,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import mavlink.core.validations.QuadIsArmed;
-import mavlink.drone.Drone;
-import validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
 @ComponentScan("gui.services")

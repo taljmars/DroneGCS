@@ -1,6 +1,6 @@
 /** Enumeration of possible mount operation modes
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_MOUNT_MODE {
 	public static final int MAV_MOUNT_MODE_RETRACT = 0; /* Load and keep safe position (Roll,Pitch,Yaw) from permant memory and stop stabilization | */

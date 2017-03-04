@@ -1,6 +1,6 @@
 /** 
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class LIMIT_MODULE {
 	public static final int LIMIT_GPSLOCK = 1; /*  pre-initialization | */

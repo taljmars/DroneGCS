@@ -1,9 +1,9 @@
-// MESSAGE MOUNT_STATUS PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
+// MESSAGE HWSTATUS PACKING
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Message with some status from APM to GCS about camera or antenna mount

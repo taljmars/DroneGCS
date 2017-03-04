@@ -1,9 +1,9 @@
-// MESSAGE RALLY_POINT PACKING
-package mavlink.protocol.msg_metadata.ardupilotmega;
 
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.MAVLinkPayload;
+package is.mavlink.protocol.msg_metadata.ardupilotmega;
+
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * A rally point. Used to set a point when from GCS => MAV. Also used to return a point from MAV => GCS

@@ -4,6 +4,7 @@ ehthumbs.db
 
 # Folder config file
 Desktop.ini
+DroneGCS.iml
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
@@ -14,6 +15,10 @@ ExRunnable/Logs/
 bin/
 Logs/
 Cache/
+.idea/
+CMpub/
+target/
+
 
 # Irrelevant logs - talma
 *.log

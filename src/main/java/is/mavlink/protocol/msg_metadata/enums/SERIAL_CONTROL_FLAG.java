@@ -1,6 +1,6 @@
 /** SERIAL_CONTROL flags (bitmask)
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class SERIAL_CONTROL_FLAG {
 	public static final int SERIAL_CONTROL_FLAG_REPLY = 1; /* Set if this is a reply | */

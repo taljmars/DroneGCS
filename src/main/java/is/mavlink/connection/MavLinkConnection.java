@@ -1,6 +1,6 @@
-package mavlink.connection;
+package is.mavlink.connection;
 
-import logger.Logger;
+import is.logger.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,13 +12,13 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.ComponentScan;
 
-import gui.services.LoggerDisplayerSvc;
-import mavlink.drone.Drone;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.MAVLinkPacket;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import mavlink.protocol.msgparser.Parser;
+import is.gui.services.LoggerDisplayerSvc;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.MAVLinkPacket;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import is.mavlink.protocol.msgparser.Parser;
 
 /**
  * Base for mavlink connection implementations.

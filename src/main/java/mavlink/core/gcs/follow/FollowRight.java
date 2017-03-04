@@ -1,6 +1,6 @@
-package main.java.mavlink_core.mavlink.core.gcs.follow;
+package mavlink.core.gcs.follow;
 
-import mavlink.drone.Drone;
+import is.mavlink.drone.Drone;
 
 public class FollowRight extends FollowHeadingAngle {
 

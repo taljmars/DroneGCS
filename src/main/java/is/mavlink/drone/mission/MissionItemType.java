@@ -1,4 +1,4 @@
-package mavlink.drone.mission;
+package is.mavlink.drone.mission;
 
 public enum MissionItemType {
 	

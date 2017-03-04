@@ -1,4 +1,4 @@
- package mavlink.protocol.msg_metadata;
+ package is.mavlink.protocol.msg_metadata;
 
 /**
  * X.25 CRC calculation for MAVlink messages. The checksum must be initialized,

@@ -1,4 +1,4 @@
-package mavlink.location;
+package is.mavlink.location;
 
 
 public interface LocationReceiver {

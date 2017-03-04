@@ -1,4 +1,4 @@
-package gui_controllers.controllers.droneEye;
+package gui.controllers.droneEye;
 
 import java.net.URL;
 import java.util.ResourceBundle;

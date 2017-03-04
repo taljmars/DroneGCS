@@ -1,10 +1,10 @@
-package main.java.mavlink_core.mavlink.core.connection.helper;
+package mavlink.core.connection.helper;
 
 import org.json.simple.JSONObject;
 
-import logger.Logger;
-import objects.json.JSONHelper;
-import springConfig.AppConfig;
+import is.logger.Logger;
+import is.objects.json.JSONHelper;
+import is.springConfig.AppConfig;
 import tools.geoTools.Coordinate;
 
 public class BeaconData {
@@ -29,7 +29,7 @@ public class BeaconData {
 	
 	public static BeaconData fetch() {
 		long startTimestamp = System.currentTimeMillis();
-		Logger logger = (Logger) AppConfig.context.getBean("logger");
+		Logger logger = (Logger) AppConfig.context.getBean(Logger.class);
 		logger.LogDesignedMessege("Sending request from '" + LOCATION_ADDRESS + "'");
 		JSONObject obj = JSONHelper.makeHttpPostRequest(LOCATION_ADDRESS);
 		if (obj == null) {

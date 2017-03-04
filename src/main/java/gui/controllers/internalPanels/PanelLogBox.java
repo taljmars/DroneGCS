@@ -1,4 +1,4 @@
-package main.java.gui_controllers.controllers.internalPanels;
+package gui.controllers.internalPanels;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -6,9 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import main.java.is.logger.Logger;
-import main.java.is.logger.Logger.Type;
-import main.java.is.validations.RuntimeValidator;
+import is.logger.Logger;
+import is.logger.Logger.Type;
+import is.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import main.java.is.gui.events.logevents.LogAbstractDisplayerEvent;
+import is.gui.events.logevents.LogAbstractDisplayerEvent;
 
 @Component
 public class PanelLogBox extends Pane implements Initializable {
@@ -118,16 +118,16 @@ public class PanelLogBox extends Pane implements Initializable {
 	public void onLogDisplayerEvent(LogAbstractDisplayerEvent event) {
 		Platform.runLater( () -> {
 			switch (event.getType()) {
-			case Type.ERROR:
+			case ERROR:
 				addErrorMessegeToDisplay(event.getEntry());
 				break;
-			case Type.GENERAL:
+			case GENERAL:
 				addGeneralMessegeToDisplay(event.getEntry());
 				break;
-			case Type.INCOMING:
+			case INCOMING:
 				addIncommingMessegeToDisplay(event.getEntry());
 				break;
-			case Type.OUTGOING:
+			case OUTGOING:
 				addOutgoingMessegeToDisplay(event.getEntry());
 				break;
 			}

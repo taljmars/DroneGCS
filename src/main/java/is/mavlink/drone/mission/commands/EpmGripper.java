@@ -1,10 +1,10 @@
-package mavlink.drone.mission.commands;
+package is.mavlink.drone.mission.commands;
 
 import java.util.List;
 
-import mavlink.drone.mission.Mission;
-import mavlink.drone.mission.MissionItemType;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import is.mavlink.drone.mission.Mission;
+import is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 
 public class EpmGripper extends MissionCMD {
 

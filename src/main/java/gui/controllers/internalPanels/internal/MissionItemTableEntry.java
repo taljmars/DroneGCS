@@ -1,11 +1,11 @@
-package main.java.gui_controllers.controllers.internalPanels.internal;
+package gui.controllers.internalPanels.internal;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import main.java.is.mavlink.drone.mission.MissionItem;
-import main.java.is.mavlink.drone.mission.MissionItemType;
+import is.mavlink.drone.mission.MissionItem;
+import is.mavlink.drone.mission.MissionItemType;
 
 public class MissionItemTableEntry {
 	

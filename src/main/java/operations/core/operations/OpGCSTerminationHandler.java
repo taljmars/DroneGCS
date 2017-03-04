@@ -1,4 +1,4 @@
-package core.operations;
+package operations.core.operations;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import gui.events.QuadGuiEvent;
-import gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
-import gui.operations.OperationHandler;
-import gui.services.DialogManagerSvc;
-import gui.services.EventPublisherSvc;
-import logger.Logger;
-import mavlink.drone.Drone;
-import validations.RuntimeValidator;
+import is.gui.events.QuadGuiEvent;
+import is.gui.events.QuadGuiEvent.QUAD_GUI_COMMAND;
+import is.gui.operations.OperationHandler;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.EventPublisherSvc;
+import is.logger.Logger;
+import is.mavlink.drone.Drone;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("mavlink.core.drone")
 @ComponentScan("logger")

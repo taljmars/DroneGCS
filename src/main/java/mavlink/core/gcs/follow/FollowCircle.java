@@ -1,8 +1,8 @@
-package main.java.mavlink_core.mavlink.core.gcs.follow;
+package mavlink.core.gcs.follow;
 
-import mavlink.drone.Drone;
-import mavlink.gcs.follow.FollowAlgorithm;
-import mavlink.location.Location;
+import is.mavlink.drone.Drone;
+import is.mavlink.gcs.follow.FollowAlgorithm;
+import is.mavlink.location.Location;
 import tools.geoTools.Coordinate;
 import tools.geoTools.GeoTools;
 import tools.geoTools.MathUtil;

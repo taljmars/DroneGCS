@@ -1,4 +1,4 @@
-package mavlink.drone.profiles;
+package is.mavlink.drone.profiles;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,17 +9,17 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import gui.services.LoggerDisplayerSvc;
-import mavlink.drone.Drone;
-import mavlink.drone.DroneInterfaces;
-import mavlink.drone.DroneVariable;
-import mavlink.drone.DroneInterfaces.DroneEventsType;
-import mavlink.drone.DroneInterfaces.Handler;
-import mavlink.drone.DroneInterfaces.OnDroneListener;
-import mavlink.drone.parameters.Parameter;
-import mavlink.protocol.msg_metadata.MAVLinkMessage;
-import mavlink.protocol.msg_metadata.ardupilotmega.msg_param_value;
-import mavlink.protocol.msgbuilder.MavLinkParameters;
+import is.gui.services.LoggerDisplayerSvc;
+import is.mavlink.drone.Drone;
+import is.mavlink.drone.DroneInterfaces;
+import is.mavlink.drone.DroneVariable;
+import is.mavlink.drone.DroneInterfaces.DroneEventsType;
+import is.mavlink.drone.DroneInterfaces.Handler;
+import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import is.mavlink.drone.parameters.Parameter;
+import is.mavlink.protocol.msg_metadata.MAVLinkMessage;
+import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_param_value;
+import is.mavlink.protocol.msgbuilder.MavLinkParameters;
 
 /**
  * Class to manage the communication of parameters to the MAV.

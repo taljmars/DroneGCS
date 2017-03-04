@@ -1,6 +1,6 @@
 /** Specifies the datatype of a MAVLink parameter.
 */
-package mavlink.protocol.msg_metadata.enums;
+package main.java.is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_PARAM_TYPE {
 	public static final int MAV_PARAM_TYPE_UINT8 = 1; /* 8-bit unsigned integer | */

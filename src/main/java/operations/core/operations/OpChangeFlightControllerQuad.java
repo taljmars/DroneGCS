@@ -1,9 +1,9 @@
-package core.operations;
+package operations.core.operations;
 
-import gui.operations.OperationHandler;
-import gui.services.DialogManagerSvc;
-import gui.services.LoggerDisplayerSvc;
-import logger.Logger;
+import is.gui.operations.OperationHandler;
+import is.gui.services.DialogManagerSvc;
+import is.gui.services.LoggerDisplayerSvc;
+import is.logger.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.KeyBoardController;
+import is.devices.KeyBoardController;
 import mavlink.core.flightControllers.FlightController;
 import mavlink.core.validations.SwitchToRC;
-import mavlink.drone.Drone;
-import mavlink.protocol.msgbuilder.MavLinkRC;
-import validations.RuntimeValidator;
+import is.mavlink.drone.Drone;
+import is.mavlink.protocol.msgbuilder.MavLinkRC;
+import is.validations.RuntimeValidator;
 
 @ComponentScan("tools.validations")
 @ComponentScan("mavlink.core.flightControllers")

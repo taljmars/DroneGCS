@@ -1,10 +1,11 @@
-package gui_controllers.controllers.internalFrames;
+package gui.controllers.internalFrames;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import is.springConfig.Environment;
 import is.validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import ObjectsDetector.Trackers.ColorTrackerLockSingleObject.ColorTrackerLockSin
 import ObjectsDetector.Trackers.FakeTracker.FakeTracker;
 import ObjectsDetector.Trackers.MovementTracker.MovmentTracker;
 import ObjectsDetector.Utilities.DetectionResults;
-import gui_controllers.controllers.droneEye.DroneEye;
+import gui.controllers.droneEye.DroneEye;
 import is.gui.events.QuadGuiEvent;
 import is.gui.services.LoggerDisplayerSvc;
 import javafx.collections.FXCollections;
@@ -45,8 +46,9 @@ import is.mavlink.drone.DroneInterfaces.DroneEventsType;
 import is.mavlink.drone.DroneInterfaces.OnDroneListener;
 import is.springConfig.AppConfig;
 
-@ComponentScan("gui.services")
-@ComponentScan("validations")
+@ComponentScan("is.gui.services")
+@ComponentScan("is.validations")
+@ComponentScan("is.springConfig")
 @Component
 public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectDetectorListener, Initializable {
 

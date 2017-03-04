@@ -1,6 +1,6 @@
 /** result in a mavlink mission ack
 */
-package mavlink.protocol.msg_metadata.enums;
+package is.mavlink.protocol.msg_metadata.enums;
 
 public class MAV_MISSION_RESULT {
 	public static final int MAV_MISSION_ACCEPTED = 0; /* mission accepted OK | */

@@ -1,4 +1,4 @@
-package mavlink.drone.profiles;
+package is.mavlink.drone.profiles;
 
 public class VehicleProfile {
 	private String parameterMetadataType;

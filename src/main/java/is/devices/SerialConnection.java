@@ -1,4 +1,4 @@
-package devices;
+package is.devices;
 
 public interface SerialConnection {
 	

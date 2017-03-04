@@ -1,4 +1,4 @@
-package main.java.mavlink_core.mavlink.core.connection;
+package mavlink.core.connection;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -7,8 +7,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import mavlink.connection.MavLinkConnection;
-import mavlink.connection.MavLinkConnectionTypes;
+import is.mavlink.connection.MavLinkConnection;
+import is.mavlink.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for mavlink connection via TCP.
