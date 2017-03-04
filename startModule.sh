@@ -78,6 +78,7 @@ function clearDirectories {
 
 echo "Creating external modules directory '${EXT_MODULE_DIR}'"
 mkdir -p $EXT_MODULE_DIR
+mkdir -p CMpub/lib
 
 file="./ModulesDep"
 while read -r line; do
