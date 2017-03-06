@@ -105,9 +105,9 @@
         <!-- Private JARS -->
 
         <dependency>
-            <groupId>Detector</groupId>
+            <groupId>ImageProcessing</groupId>
             <artifactId>Detector</artifactId>
-            <version>RELEASE</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
