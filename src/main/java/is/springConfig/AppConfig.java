@@ -14,6 +14,7 @@ import javafx.util.Callback;
 import mavlink.core.drone.MyDroneImpl;
 import is.mavlink.drone.mission.Mission;
 
+import org.junit.experimental.categories.Category;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;

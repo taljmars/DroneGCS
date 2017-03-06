@@ -3,6 +3,7 @@ package gui.controllers.internalFrames.internal;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import gui.core.mapViewer.LayeredViewMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -32,10 +33,9 @@ import is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import is.springConfig.AppConfig;
 import is.validations.RuntimeValidator;
 
-@ComponentScan("gui.core.mapTree")
 @ComponentScan("gui.is.services")
 @LegalTreeView
-@Component("tree")
+@Component
 public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointManagerListener {
 	
 	public static final String UPLOADED_PREFIX = "(CURR) ";
@@ -68,16 +68,22 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	public OperationalViewTree() {
 		super();
 	}
-	
+
+	@Autowired
+	public void setOperationalViewMap(OperationalViewMap operationalViewMap) {
+		super.setLayeredViewMap(operationalViewMap);
+	}
+
+
 	private static int called;
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
 		LayerGroup rootLayer = new LayerGroup("Layers");
-		map.setRootLayer(rootLayer);
+		getLayeredViewMap().setRootLayer(rootLayer);
 		CheckBoxTreeItem<Layer> rootItem = new CheckBoxTreeItem<Layer> (rootLayer);
 		rootItem.setExpanded(true);
 		
@@ -107,7 +113,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 				(event) -> {
 					CheckBoxTreeItem<Layer> cbItem = (CheckBoxTreeItem<Layer>) event.getTreeItem();
 					if (!cbItem.isIndeterminate())
-						map.setLayerVisibie(cbItem.getValue(), cbItem.isSelected());
+						getLayeredViewMap().setLayerVisibie(cbItem.getValue(), cbItem.isSelected());
 				}
 		);
 	}
@@ -116,22 +122,22 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		CheckBoxTreeItem<Layer> ti = null;
 		if (layer instanceof LayerPerimeter) {
 			ti = addTreeNode(layer, perimetersGroup);
-			map.addLayer(layer, perimetersGroup);
+			getLayeredViewMap().addLayer(layer, perimetersGroup);
 		}
 		
 		else if (layer instanceof LayerMission) {
 			ti = addTreeNode(layer, missionsGroup);
-			map.addLayer(layer, missionsGroup);
+			getLayeredViewMap().addLayer(layer, missionsGroup);
 		}
 		else
-			map.addLayer(layer, generalGroup);
+			getLayeredViewMap().addLayer(layer, generalGroup);
 		
 		addSelectionHandler(ti);
 	}
 
 	public void removeLayer(Layer layer) {
 		removeFromTreeGroup(layer);
-		map.removeLayer(layer);
+		getLayeredViewMap().removeLayer(layer);
 	}
 
 	@Override

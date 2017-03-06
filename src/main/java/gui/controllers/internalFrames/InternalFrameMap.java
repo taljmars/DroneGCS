@@ -27,11 +27,21 @@ import gui.controllers.internalFrames.internal.OperationalViewMap;
 @Component
 public class InternalFrameMap extends Pane implements ChangeListener<Number>, Initializable {
 	
-	@Autowired @NotNull(message = "Internal Error: Missing tree view")
-	private OperationalViewTree tree;
-	
-	@Autowired @NotNull(message = "Internal Error: Missing map view")
-	private OperationalViewMap map;
+	@NotNull(message = "Internal Error: Missing operationalViewTree")
+	private OperationalViewTree operationalViewTree;
+
+	@Autowired
+	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
+		this.operationalViewTree = operationalViewTree;
+	}
+
+	@Autowired
+	public void setOperationalViewMap(OperationalViewMap operationalViewMap) {
+		this.operationalViewMap = operationalViewMap;
+	}
+
+	@NotNull(message = "Internal Error: Missing operationalViewMap")
+	private OperationalViewMap operationalViewMap;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -52,8 +62,8 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	public void initialize(URL location, ResourceBundle resources) {
 		splitPane.setPrefWidth(root.getPrefWidth());
 		splitPane.setPrefHeight(root.getPrefHeight());
-		left.getChildren().add(tree);
-		right.getChildren().add(map);
+		left.getChildren().add(operationalViewTree);
+		right.getChildren().add(operationalViewMap);
 		if (splitPane.getDividers().size() == 1)
 			splitPane.getDividers().get(0).positionProperty().addListener(this);
 		
@@ -63,7 +73,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	
 	@Override
 	public void changed(ObservableValue<? extends Number> property, Number fromPrecentage, Number toPrecentage) {
-		map.setMapBounds(0, 0, (int) (splitPane.getPrefWidth() - splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
-		tree.setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
+		operationalViewMap.setMapBounds(0, 0, (int) (splitPane.getPrefWidth() - splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
+		operationalViewTree.setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 	}	
 }

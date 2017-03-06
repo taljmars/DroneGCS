@@ -75,10 +75,9 @@ import is.validations.RuntimeValidator;
  */
 
 @ComponentScan("tools.validations")
-@ComponentScan("gui.core.mapViewer")
 @ComponentScan("gui.is.services")
 @ComponentScan("gui.controllers.internalFrames.internal")
-@Component("map")
+@Component
 public class OperationalViewMap extends LayeredViewMap implements
 OnDroneListener, EventHandler<ActionEvent> {
 	
@@ -94,14 +93,20 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull( message = "Internal Error: Failed to get notification publisher" )
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull( message = "Internal Error: Failed to get loggger displayer" )
+	@Autowired @NotNull( message = "Internal Error: Failed to get logger displayer" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
-	
-	@Resource(name = "tree") @NotNull( message = "Internal Error: Failed to get tree view" )
-	private OperationalViewTree tree;
+
+	@Resource(type = OperationalViewTree.class)
+	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
+		super.setCheckBoxViewTree(operationalViewTree);
+	}
+
+	public OperationalViewTree getOperationalViewTree() {
+		return (OperationalViewTree) super.getCheckBoxViewTree();
+	}
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -265,8 +270,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 					
 					if (modifyiedLayerPerimeter == null) {
 						modifyiedLayerPerimeter = new LayerCircledPerimeter("New Circled Perimeter*", this);
-						tree.addLayer(modifyiedLayerPerimeter);
-						System.err.println(tree.dumpTree());
+						getOperationalViewTree().addLayer(modifyiedLayerPerimeter);
+						System.err.println(getOperationalViewTree().dumpTree());
 						super.startModifiedLayerMode(modifyiedLayerPerimeter);
 					}
 					isPerimeterBuildMode = true;
@@ -280,7 +285,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 					if (modifyiedLayerPerimeter == null) {
 						modifyiedLayerPerimeter = new LayerPolygonPerimeter("New Perimeter*", this);
-						tree.addLayer(modifyiedLayerPerimeter);
+						getOperationalViewTree().addLayer(modifyiedLayerPerimeter);
 						super.startModifiedLayerMode(modifyiedLayerPerimeter);
 					}
 					isPerimeterBuildMode = true;
@@ -297,7 +302,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					// TALMA i am trying not to use bean here
 					modifyiedLayerMission = new LayerMission("New Mission*", this);
-					tree.addLayer(modifyiedLayerMission);
+					getOperationalViewTree().addLayer(modifyiedLayerMission);
 					Mission msn = AppConfig.context.getBean(Mission.class);
 					msn.setDrone(drone);
 					modifyiedLayerMission.setMission(msn);
@@ -620,22 +625,22 @@ OnDroneListener, EventHandler<ActionEvent> {
 	public void LayerEditorCancel() {
 		// Missions
 		if (modifyiedLayerMission != null) {
-			tree.removeLayer(modifyiedLayerMission);
+			getOperationalViewTree().removeLayer(modifyiedLayerMission);
 			modifyiedLayerMission = null;
 		}
 		if (modifyiedLayerMissionOriginal != null) {
-			tree.addLayer(modifyiedLayerMissionOriginal);
+			getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
 			modifyiedLayerMissionOriginal = null;
 		}
 
 		// Perimeters
 		if (modifyiedLayerPerimeter != null) {
-			tree.removeLayer(modifyiedLayerPerimeter);
+			getOperationalViewTree().removeLayer(modifyiedLayerPerimeter);
 			modifyiedLayerPerimeter = null;
 		}
 		if (modifyiedLayerPerimeterOriginal != null) {
 			modifyiedLayerPerimeterOriginal.setName(modifyiedLayerPerimeterOriginal.getName().substring(0,modifyiedLayerPerimeterOriginal.getName().length()));
-			tree.addLayer(modifyiedLayerPerimeterOriginal);
+			getOperationalViewTree().addLayer(modifyiedLayerPerimeterOriginal);
 			modifyiedLayerPerimeterOriginal = null;
 		}
 
@@ -650,7 +655,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 	@Override
 	public void LayerEditorSave() {
-		if (!runtimeValidator.validate(tree)) {
+		if (!runtimeValidator.validate(getOperationalViewTree())) {
 			throw new RuntimeException("Failed to save layer, validatio failed");
 		}
 		
@@ -672,8 +677,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 		
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
-		
-		tree.refresh();
+
+		getOperationalViewTree().refresh();
 	}
 
 	@Override
