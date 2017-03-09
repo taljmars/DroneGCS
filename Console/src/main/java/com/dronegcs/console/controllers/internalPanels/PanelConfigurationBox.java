@@ -1,4 +1,4 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import services.EventPublisherSvc;
+import com.dronegcs.console.services.EventPublisherSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,10 +14,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import is.mavlink.drone.Drone;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component
 public class PanelConfigurationBox extends Pane implements Initializable {

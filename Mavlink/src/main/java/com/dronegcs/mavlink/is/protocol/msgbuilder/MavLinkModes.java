@@ -1,11 +1,11 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
-import is.drone.Drone;
-import is.protocol.msg_metadata.ApmModes;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import is.protocol.msg_metadata.ardupilotmega.msg_set_mode;
-import is.protocol.msg_metadata.enums.MAV_CMD;
-import is.protocol.msg_metadata.enums.MAV_FRAME;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_set_mode;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
 public class MavLinkModes {
 	public static void setGuidedMode(Drone drone, double latitude, double longitude, double d) {

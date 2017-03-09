@@ -1,4 +1,4 @@
-package controllers.droneEye;
+package com.dronegcs.console.controllers.droneEye;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import ObjectsDetector.ObjectDetectorListener;
@@ -19,15 +18,14 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import logger.Logger;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.gcsis.logger.Logger;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import geoTools.GeoTools;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan(basePackages = "logger")
 @Component
 public class DroneEye extends StackPane implements ObjectDetectorListener, OnDroneListener, Initializable {
 

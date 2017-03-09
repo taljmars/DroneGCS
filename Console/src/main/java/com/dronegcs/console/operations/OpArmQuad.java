@@ -1,24 +1,22 @@
-package operations;
+package com.dronegcs.console.operations;
 
-import services.DialogManagerSvc;
-import services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import is.mavlink.drone.Drone;
-import is.mavlink.protocol.msgbuilder.MavLinkArm;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 
-@ComponentScan("gui.services")
-@Component("opArmQuad")
+@Component
 public class OpArmQuad extends OperationHandler {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when arming quad")
@@ -28,7 +26,7 @@ public class OpArmQuad extends OperationHandler {
 	@PostConstruct
 	public void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 	
 	@Override

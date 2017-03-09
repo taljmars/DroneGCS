@@ -1,13 +1,13 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import com.dronegcs.gcsis.logger.Logger;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import geoTools.Coordinate;
 
 @ComponentScan("tools.com.dronegcs.gcsis.logger")

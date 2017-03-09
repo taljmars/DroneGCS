@@ -1,20 +1,16 @@
-package controllers.internalFrames;
+package com.dronegcs.console.controllers.internalFrames;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-
-import controllers.AppConfig;
+import com.dronegcs.console.controllers.AppConfig;
 import org.springframework.context.ApplicationContext;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
 import ObjectsDetector.Detector;
 import ObjectsDetector.ObjectDetectorListener;
 import ObjectsDetector.Trackers.TrackersEnum;
@@ -23,8 +19,8 @@ import ObjectsDetector.Trackers.ColorTrackerLockSingleObject.ColorTrackerLockSin
 import ObjectsDetector.Trackers.FakeTracker.FakeTracker;
 import ObjectsDetector.Trackers.MovementTracker.MovmentTracker;
 import ObjectsDetector.Utilities.DetectionResults;
-import controllers.droneEye.DroneEye;
-import services.LoggerDisplayerSvc;
+import com.dronegcs.console.controllers.droneEye.DroneEye;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,21 +38,15 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-import static services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID;
-import static services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EXIT;
-
-@ComponentScan("services")
-@ComponentScan("validations")
-@ComponentScan("is.springConfig")
 @Component
 public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectDetectorListener, Initializable {
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message="Internal Error: Failed to get drone")

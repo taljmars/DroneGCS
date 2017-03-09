@@ -1,13 +1,13 @@
-package controllers.dashboard;
+package com.dronegcs.console.controllers.dashboard;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import controllers.AppConfig;
-import services.EventPublisherSvc;
-import services.LoggerDisplayerSvc;
-import services.TextNotificationPublisherSvc;
+import com.dronegcs.console.controllers.AppConfig;
+import com.dronegcs.console.services.EventPublisherSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
@@ -29,22 +29,20 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.InternalFrameMap;
-import operations.OpGCSTerminationHandler;
+import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 
 import javax.validation.constraints.NotNull;
 
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.*;
-import is.mavlink.drone.parameters.Parameter;
-import is.mavlink.protocol.msg_metadata.ApmModes;
-import is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.*;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("controllers.internalFrames")
-@ComponentScan("gui.mavlink.operations")
 @Component
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
 
@@ -56,7 +54,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GCS terminator handler")
@@ -82,7 +80,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())

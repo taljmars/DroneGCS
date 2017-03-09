@@ -1,9 +1,9 @@
 // MESSAGE PING PACKING
-package is.protocol.msg_metadata.ardupilotmega;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkPayload;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 /**
 * A ping message either requesting or responding to a ping. This allows to measure the system latencies, including serial port, radio modem and UDP connections.
 */

@@ -1,6 +1,6 @@
-package com.dronegcs.mavlink.core.mavlink.gcs.follow;
+package com.dronegcs.mavlink.core.gcs.follow;
 
-import com.dronegcs.mavlink.is.mavlink.drone.Drone;
+import com.dronegcs.mavlink.is.drone.Drone;
 
 public class FollowLeft extends FollowHeadingAngle {
 

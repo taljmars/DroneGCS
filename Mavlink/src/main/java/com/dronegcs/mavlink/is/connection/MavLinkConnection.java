@@ -1,4 +1,4 @@
-package is.connection;
+package com.dronegcs.mavlink.is.connection;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,17 +8,16 @@ import javax.validation.constraints.NotNull;
 import com.dronegcs.gcsis.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import is.drone.Drone;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import is.protocol.msgparser.Parser;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import com.dronegcs.mavlink.is.protocol.msgparser.Parser;
 
 /**
  * Base for com.dronegcs.mavlink.is.mavlink connection implementations.
  */
-@ComponentScan("tools.com.dronegcs.gcsis.logger")
 public abstract class MavLinkConnection {
 
 	@SuppressWarnings("unused")

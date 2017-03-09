@@ -1,4 +1,4 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import geoTools.Coordinate;
 

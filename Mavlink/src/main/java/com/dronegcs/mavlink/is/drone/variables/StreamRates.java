@@ -1,14 +1,14 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import com.dronegcs.gcsis.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import is.drone.Drone;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.OnDroneListener;
-import is.drone.Preferences.Rates;
-import is.protocol.msgbuilder.MavLinkStreamRates;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.Preferences.Rates;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 

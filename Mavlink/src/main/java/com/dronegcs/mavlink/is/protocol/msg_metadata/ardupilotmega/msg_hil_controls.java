@@ -1,9 +1,9 @@
 // MESSAGE HIL_CONTROLS PACKING
-package is.protocol.msg_metadata.ardupilotmega;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkPayload;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 /**
 * Sent from autopilot to simulation. Hardware in the loop control outputs
 */

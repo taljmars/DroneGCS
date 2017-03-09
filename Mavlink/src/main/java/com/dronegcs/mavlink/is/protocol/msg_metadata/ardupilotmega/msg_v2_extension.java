@@ -1,9 +1,9 @@
 // MESSAGE V2_EXTENSION PACKING
-package is.protocol.msg_metadata.ardupilotmega;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkPayload;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
 * Message implementing parts of the V2 payload specs in V1 frames for transitional support.

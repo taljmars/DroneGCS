@@ -1,42 +1,42 @@
-package com.dronegcs.mavlink.core.mavlink.drone;
+package com.dronegcs.mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import com.dronegcs.mavlink.is.mavlink.connection.MavLinkConnection;
-import com.dronegcs.mavlink.core.mavlink.firmware.FirmwareType;
-import com.dronegcs.mavlink.is.mavlink.drone.Drone;
-import com.dronegcs.mavlink.is.mavlink.drone.DroneEvents;
-import com.dronegcs.mavlink.is.mavlink.drone.DroneInterfaces;
-import com.dronegcs.mavlink.is.mavlink.drone.Preferences;
-import com.dronegcs.mavlink.is.mavlink.drone.mission.Mission;
-import com.dronegcs.mavlink.is.mavlink.drone.profiles.Parameters;
-import com.dronegcs.mavlink.is.mavlink.drone.profiles.VehicleProfile;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Altitude;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Battery;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Beacon;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Calibration;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.CameraFootprints;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.GCS;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.GPS;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.GuidedPoint;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.HeartBeat;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Home;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Magnetometer;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Messeges;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.MissionStats;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Navigation;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Orientation;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Perimeter;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.RC;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Radio;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Speed;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.State;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.StreamRates;
-import com.dronegcs.mavlink.is.mavlink.drone.variables.Type;
-import com.dronegcs.mavlink.is.mavlink.gcs.follow.Follow;
-import com.dronegcs.mavlink.is.mavlink.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import com.dronegcs.mavlink.is.mavlink.protocol.msgbuilder.WaypointManager;
+import com.dronegcs.mavlink.is.connection.MavLinkConnection;
+import com.dronegcs.mavlink.core.firmware.FirmwareType;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneEvents;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces;
+import com.dronegcs.mavlink.is.drone.Preferences;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.profiles.Parameters;
+import com.dronegcs.mavlink.is.drone.profiles.VehicleProfile;
+import com.dronegcs.mavlink.is.drone.variables.Altitude;
+import com.dronegcs.mavlink.is.drone.variables.Battery;
+import com.dronegcs.mavlink.is.drone.variables.Beacon;
+import com.dronegcs.mavlink.is.drone.variables.Calibration;
+import com.dronegcs.mavlink.is.drone.variables.CameraFootprints;
+import com.dronegcs.mavlink.is.drone.variables.GCS;
+import com.dronegcs.mavlink.is.drone.variables.GPS;
+import com.dronegcs.mavlink.is.drone.variables.GuidedPoint;
+import com.dronegcs.mavlink.is.drone.variables.HeartBeat;
+import com.dronegcs.mavlink.is.drone.variables.Home;
+import com.dronegcs.mavlink.is.drone.variables.Magnetometer;
+import com.dronegcs.mavlink.is.drone.variables.Messeges;
+import com.dronegcs.mavlink.is.drone.variables.MissionStats;
+import com.dronegcs.mavlink.is.drone.variables.Navigation;
+import com.dronegcs.mavlink.is.drone.variables.Orientation;
+import com.dronegcs.mavlink.is.drone.variables.Perimeter;
+import com.dronegcs.mavlink.is.drone.variables.RC;
+import com.dronegcs.mavlink.is.drone.variables.Radio;
+import com.dronegcs.mavlink.is.drone.variables.Speed;
+import com.dronegcs.mavlink.is.drone.variables.State;
+import com.dronegcs.mavlink.is.drone.variables.StreamRates;
+import com.dronegcs.mavlink.is.drone.variables.Type;
+import com.dronegcs.mavlink.is.gcs.follow.Follow;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,13 +45,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("tools.com.dronegcs.console.validations")
-@ComponentScan("com.dronegcs.mavlink.is.mavlink.drone.variables")
-@ComponentScan("com.dronegcs.mavlink.is.mavlink.drone")
-@ComponentScan("com.dronegcs.mavlink.is.mavlink.gcs.follow")
-@ComponentScan("com.dronegcs.mavlink.is.mavlink.protocol.msgbuilder")
-@ComponentScan("mavlink.mavlink.connection")
-@ComponentScan("mavlink.mavlink.location")
+@ComponentScan(basePackages = "com.dronegcs.mavlink")
 @Component
 public class MyDroneImpl implements Drone {
 

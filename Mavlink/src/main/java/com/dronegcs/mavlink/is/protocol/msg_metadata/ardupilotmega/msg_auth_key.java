@@ -1,9 +1,9 @@
 // MESSAGE AUTH_KEY PACKING
-package is.protocol.msg_metadata.ardupilotmega;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkPayload;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 /**
 * Emit an encrypted signature / key identifying this system. PLEASE NOTE: This protocol has been kept simple, so transmitting the key requires an encrypted channel for true safety.
 */

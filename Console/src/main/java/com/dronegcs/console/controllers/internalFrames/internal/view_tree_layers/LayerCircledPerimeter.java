@@ -1,10 +1,10 @@
-package controllers.internalFrames.internal.view_tree_layers;
+package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapMarkerCircle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import services.DialogManagerSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 

@@ -1,6 +1,6 @@
-package com.dronegcs.mavlink.core.mavlink.location;
+package com.dronegcs.mavlink.core.location;
 
-import com.dronegcs.mavlink.core.mavlink.connection.helper.BeaconDataFactory;
+import com.dronegcs.mavlink.core.connection.helper.BeaconDataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.dronegcs.gcsis.logger.Logger;
 import java.util.HashSet;
@@ -10,10 +10,10 @@ import java.util.TimerTask;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
-import com.dronegcs.mavlink.core.mavlink.connection.helper.BeaconData;
-import com.dronegcs.mavlink.is.mavlink.location.Location;
-import com.dronegcs.mavlink.is.mavlink.location.LocationFinder;
-import com.dronegcs.mavlink.is.mavlink.location.LocationReceiver;
+import com.dronegcs.mavlink.core.connection.helper.BeaconData;
+import com.dronegcs.mavlink.is.location.Location;
+import com.dronegcs.mavlink.is.location.LocationFinder;
+import com.dronegcs.mavlink.is.location.LocationReceiver;
 import geoTools.Coordinate;
 
 @Component

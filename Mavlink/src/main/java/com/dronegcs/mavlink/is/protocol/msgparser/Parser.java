@@ -1,7 +1,7 @@
-package is.protocol.msgparser;
+package com.dronegcs.mavlink.is.protocol.msgparser;
 
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkStats;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkStats;
 
 public class Parser {
 

@@ -1,4 +1,4 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.mavlink.core.survey.Footprint;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.mission.survey.CameraInfo;
-import is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.mission.survey.CameraInfo;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
 
 @Component("footprints")
 public class CameraFootprints extends DroneVariable {

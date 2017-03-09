@@ -1,9 +1,9 @@
 // MESSAGE GLOBAL_POSITION_SETPOINT_INT PACKING
-package is.protocol.msg_metadata.ardupilotmega;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.MAVLinkPayload;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 /**
 * Transmit the current local setpoint of the controller to other MAVs (collision avoidance) and to the GCS.
 */

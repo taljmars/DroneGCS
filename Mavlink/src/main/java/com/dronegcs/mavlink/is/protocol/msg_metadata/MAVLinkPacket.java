@@ -1,8 +1,8 @@
-package is.protocol.msg_metadata;
+package com.dronegcs.mavlink.is.protocol.msg_metadata;
 
 import java.io.Serializable;
 
-import is.protocol.msg_metadata.ardupilotmega.*;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.*;
 
 /**
  * Common interface for all MAVLink Messages

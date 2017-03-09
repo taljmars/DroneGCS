@@ -1,11 +1,11 @@
-package devices.internal;
+package com.dronegcs.gcsis.devices.internal;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import logger.Logger;
+import com.dronegcs.gcsis.logger.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import devices.SerialConnection;
+import com.dronegcs.gcsis.devices.SerialConnection;
 
 /**
  * TwoWaySerialComm have the ability to send and receive packets using USB serial device.
@@ -30,9 +30,6 @@ import devices.SerialConnection;
  * @author taljmars
  *
  */
-
-@ComponentScan("logger")
-@ComponentScan("gui.services")
 @Component
 public class TwoWaySerialComm implements SerialConnection {
 
@@ -45,7 +42,7 @@ public class TwoWaySerialComm implements SerialConnection {
 	private InputStream in;
 	private OutputStream out;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
 	private Logger logger;
 
 	private static int called;
@@ -237,7 +234,7 @@ public class TwoWaySerialComm implements SerialConnection {
 	}
 
 	/**
-	 * get available USB port with devices connected to the machine
+	 * get available USB port with com.dronegcs.gcsis.devices connected to the machine
 	 * 
 	 * @return String array of available ports
 	 */

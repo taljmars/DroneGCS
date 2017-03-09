@@ -1,4 +1,4 @@
-package is.drone.profiles;
+package com.dronegcs.mavlink.is.drone.profiles;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +10,16 @@ import com.dronegcs.gcsis.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import is.drone.Drone;
-import is.drone.DroneInterfaces;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.Handler;
-import is.drone.DroneInterfaces.OnDroneListener;
-import is.drone.parameters.Parameter;
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.ardupilotmega.msg_param_value;
-import is.protocol.msgbuilder.MavLinkParameters;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_value;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkParameters;
 
 import javax.validation.constraints.NotNull;
 

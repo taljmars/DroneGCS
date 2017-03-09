@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.flightControllers;
+package com.dronegcs.mavlink.core.flightControllers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-@ComponentScan("com/dronegcs/gcsis/logger")
-@ComponentScan("gui.com.dronegcs.console.services")
-@ComponentScan("is.springConfig")
 @Component
 public class KeyBoardConfigurationParser {
 	

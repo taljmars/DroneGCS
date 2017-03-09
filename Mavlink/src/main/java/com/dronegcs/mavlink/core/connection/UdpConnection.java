@@ -1,12 +1,12 @@
-package com.dronegcs.mavlink.core.mavlink.connection;
+package com.dronegcs.mavlink.core.connection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import com.dronegcs.mavlink.is.mavlink.connection.MavLinkConnection;
-import com.dronegcs.mavlink.is.mavlink.connection.MavLinkConnectionTypes;
+import com.dronegcs.mavlink.is.connection.MavLinkConnection;
+import com.dronegcs.mavlink.is.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for com.dronegcs.mavlink.is.mavlink connection via udp.

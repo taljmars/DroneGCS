@@ -1,6 +1,6 @@
-package com.dronegcs.mavlink.core.mavlink.drone.profile;
+package com.dronegcs.mavlink.core.drone.profile;
 
-import com.dronegcs.mavlink.is.mavlink.drone.profiles.VehicleProfile;
+import com.dronegcs.mavlink.is.drone.profiles.VehicleProfile;
 
 public class ArduCopterProfile extends VehicleProfile {
 	

@@ -1,4 +1,4 @@
-package controllers.internalFrames.internal;
+package com.dronegcs.console.controllers.internalFrames.internal;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -8,31 +8,30 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import services.internal.QuadGuiEvent;
-import validations.LegalTreeView;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.console.validations.LegalTreeView;
 import gui.core.mapTree.CheckBoxViewTree;
 import gui.core.mapTreeObjects.Layer;
 import gui.core.mapTreeObjects.LayerGroup;
 import gui.is.events.GuiEvent;
 import gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
-import services.EventPublisherSvc;
-import services.LoggerDisplayerSvc;
-import services.TextNotificationPublisherSvc;
+import com.dronegcs.console.services.EventPublisherSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.OnWaypointManagerListener;
-import is.mavlink.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("gui.is.services")
 @LegalTreeView
 @Component
 public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointManagerListener {
@@ -49,7 +48,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")

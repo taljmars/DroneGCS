@@ -1,4 +1,4 @@
-package services.internal;
+package com.dronegcs.console.services.internal;
 
 import org.springframework.context.ApplicationEvent;
 

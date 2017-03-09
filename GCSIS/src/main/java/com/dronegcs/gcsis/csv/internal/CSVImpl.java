@@ -1,4 +1,4 @@
-package csv.internal;
+package com.dronegcs.gcsis.csv.internal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import csv.CSV;
+import com.dronegcs.gcsis.csv.CSV;
 
 public class CSVImpl implements CSV {
 	

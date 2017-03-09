@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.flightControllers;
+package com.dronegcs.mavlink.core.flightControllers;
 
 public enum FlightController {
 	UNKNOWN,

@@ -1,14 +1,14 @@
-package is.drone.mission.waypoints;
+package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import is.drone.mission.Mission;
-import is.drone.mission.MissionItemType;
-import is.drone.mission.waypoints.interfaces.Radiusable;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import is.protocol.msg_metadata.enums.MAV_CMD;
-import is.protocol.msg_metadata.enums.MAV_FRAME;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import geoTools.Coordinate;
 
 public class Circle extends SpatialCoordItem implements Radiusable {

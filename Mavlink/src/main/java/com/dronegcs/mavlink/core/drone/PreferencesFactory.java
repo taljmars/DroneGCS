@@ -1,7 +1,7 @@
-package com.dronegcs.mavlink.core.mavlink.drone;
+package com.dronegcs.mavlink.core.drone;
 
-import com.dronegcs.mavlink.core.mavlink.firmware.FirmwareType;
-import com.dronegcs.mavlink.is.mavlink.drone.Preferences;
+import com.dronegcs.mavlink.core.firmware.FirmwareType;
+import com.dronegcs.mavlink.is.drone.Preferences;
 
 public class PreferencesFactory {
 

@@ -1,8 +1,8 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import org.springframework.stereotype.Component;
-import is.drone.DroneVariable;
-import is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 
 @Component("speed")
 public class Speed extends DroneVariable {
@@ -10,43 +10,43 @@ public class Speed extends DroneVariable {
 	public static final int COLLISION_SECONDS_BEFORE_COLLISION = 2;
 	public static final double COLLISION_DANGEROUS_SPEED_METERS_PER_SECOND = -3.0;
 	public static final double COLLISION_SAFE_ALTITUDE_METERS = 1.0;
-	private is.units.Speed verticalSpeed = new is.units.Speed(0);
-	private is.units.Speed groundSpeed = new is.units.Speed(0);
-	private is.units.Speed airSpeed = new is.units.Speed(0);
-	private is.units.Speed targetSpeed = new is.units.Speed(0);
+	private com.dronegcs.mavlink.is.units.Speed verticalSpeed = new com.dronegcs.mavlink.is.units.Speed(0);
+	private com.dronegcs.mavlink.is.units.Speed groundSpeed = new com.dronegcs.mavlink.is.units.Speed(0);
+	private com.dronegcs.mavlink.is.units.Speed airSpeed = new com.dronegcs.mavlink.is.units.Speed(0);
+	private com.dronegcs.mavlink.is.units.Speed targetSpeed = new com.dronegcs.mavlink.is.units.Speed(0);
 	
-	private is.units.Speed maxAirSpeed = new is.units.Speed(0);
+	private com.dronegcs.mavlink.is.units.Speed maxAirSpeed = new com.dronegcs.mavlink.is.units.Speed(0);
 
 
-	public is.units.Speed getVerticalSpeed() {
+	public com.dronegcs.mavlink.is.units.Speed getVerticalSpeed() {
 		return verticalSpeed;
 	}
 
-	public is.units.Speed getGroundSpeed() {
+	public com.dronegcs.mavlink.is.units.Speed getGroundSpeed() {
 		return groundSpeed;
 	}
 
-	public is.units.Speed getAirSpeed() {
+	public com.dronegcs.mavlink.is.units.Speed getAirSpeed() {
 		return airSpeed;
 	}
 
-	public is.units.Speed getTargetSpeed() {
+	public com.dronegcs.mavlink.is.units.Speed getTargetSpeed() {
 		return targetSpeed;
 	}
 	
-	public is.units.Speed getMaxAirSpeed() {
+	public com.dronegcs.mavlink.is.units.Speed getMaxAirSpeed() {
 		return maxAirSpeed;
 	}
 
 	public void setSpeedError(double aspd_error) {
-		targetSpeed = new is.units.Speed(aspd_error
+		targetSpeed = new com.dronegcs.mavlink.is.units.Speed(aspd_error
 				+ airSpeed.valueInMetersPerSecond());
 	}
 
 	public void setGroundAndAirSpeeds(double groundSpeed, double airSpeed, double climb) {
-		this.groundSpeed = new is.units.Speed(groundSpeed);
-		this.airSpeed = new is.units.Speed(airSpeed);
-		this.verticalSpeed = new is.units.Speed(climb);
+		this.groundSpeed = new com.dronegcs.mavlink.is.units.Speed(groundSpeed);
+		this.airSpeed = new com.dronegcs.mavlink.is.units.Speed(airSpeed);
+		this.verticalSpeed = new com.dronegcs.mavlink.is.units.Speed(climb);
 		checkCollisionIsImminent();
 		
 		if (this.maxAirSpeed.valueInMetersPerSecond() < airSpeed) {
@@ -54,12 +54,12 @@ public class Speed extends DroneVariable {
 		}
 	}
 
-	public is.units.Speed getSpeedParameter(){
+	public com.dronegcs.mavlink.is.units.Speed getSpeedParameter(){
 		Parameter param = drone.getParameters().getParameter("WPNAV_SPEED");
 		if (param == null ) {
 			return null;			
 		}else{
-			return new is.units.Speed(param.value/100);
+			return new com.dronegcs.mavlink.is.units.Speed(param.value/100);
 		}
 			
 	}

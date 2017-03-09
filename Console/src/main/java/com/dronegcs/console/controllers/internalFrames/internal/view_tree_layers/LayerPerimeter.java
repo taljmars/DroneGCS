@@ -1,8 +1,8 @@
-package controllers.internalFrames.internal.view_tree_layers;
+package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapTreeObjects.LayerSingle;
 import gui.core.mapViewer.LayeredViewMap;
-import is.mavlink.drone.variables.Compound;
+import com.dronegcs.mavlink.is.drone.variables.Compound;
 import geoTools.Coordinate;
 
 public abstract class LayerPerimeter extends LayerSingle implements Compound {

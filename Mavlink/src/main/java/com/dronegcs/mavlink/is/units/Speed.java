@@ -1,4 +1,4 @@
-package is.units;
+package com.dronegcs.mavlink.is.units;
 
 import java.util.Locale;
 

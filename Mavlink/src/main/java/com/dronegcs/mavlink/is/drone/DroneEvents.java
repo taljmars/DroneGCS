@@ -1,4 +1,4 @@
-package is.drone;
+package com.dronegcs.mavlink.is.drone;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.Handler;
-import is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 

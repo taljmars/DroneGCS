@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.drone;
+package com.dronegcs.mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -8,12 +8,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.gcsis.logger.Logger;
-import com.dronegcs.mavlink.core.mavlink.drone.profile.ArduCopterProfile;
-import com.dronegcs.mavlink.core.mavlink.firmware.FirmwareType;
-import com.dronegcs.mavlink.is.mavlink.drone.Preferences;
-import com.dronegcs.mavlink.is.mavlink.drone.profiles.VehicleProfile;
+import com.dronegcs.mavlink.core.drone.profile.ArduCopterProfile;
+import com.dronegcs.mavlink.core.firmware.FirmwareType;
+import com.dronegcs.mavlink.is.drone.Preferences;
+import com.dronegcs.mavlink.is.drone.profiles.VehicleProfile;
 
-@ComponentScan("com/dronegcs/gcsis/logger")
+@ComponentScan(basePackages = "com.dronegcs.gcsis")
 @Component
 public class PreferencesImpl implements Preferences {
 	

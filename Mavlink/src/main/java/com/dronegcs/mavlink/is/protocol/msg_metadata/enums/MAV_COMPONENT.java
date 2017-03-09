@@ -1,6 +1,6 @@
 /** 
 */
-package is.protocol.msg_metadata.enums;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.enums;
 
 public class MAV_COMPONENT {
 	public static final int MAV_COMP_ID_ALL = 0; /*  | */

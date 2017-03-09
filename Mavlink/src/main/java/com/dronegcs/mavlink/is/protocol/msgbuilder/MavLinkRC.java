@@ -1,7 +1,7 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
-import is.drone.Drone;
-import is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_override;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_override;
 
 public class MavLinkRC {
 	public static void sendRcOverrideMsg(Drone drone, int[] rcOutputs) {

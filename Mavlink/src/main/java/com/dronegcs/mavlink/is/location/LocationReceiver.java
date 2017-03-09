@@ -1,4 +1,4 @@
-package is.location;
+package com.dronegcs.mavlink.is.location;
 
 
 public interface LocationReceiver {

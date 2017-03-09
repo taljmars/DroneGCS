@@ -1,16 +1,16 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
-import core.mavlink.connection.helper.GCSLocationDataFactory;
-import operations.*;
-import services.DialogManagerSvc;
-import services.EventPublisherSvc;
-import services.LoggerDisplayerSvc;
-import services.TextNotificationPublisherSvc;
+import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
+import com.dronegcs.console.operations.*;
+import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console.services.EventPublisherSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -24,33 +24,25 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.util.Pair;
-import logger.Logger;
-
+import com.dronegcs.gcsis.logger.Logger;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import devices.SerialConnection;
-import validations.RuntimeValidator;
-import core.mavlink.connection.helper.GCSLocationData;
-import core.mavlink.flightControllers.FlightController;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import is.mavlink.drone.DroneInterfaces.OnParameterManagerListener;
-import is.mavlink.drone.parameters.Parameter;
-import is.mavlink.protocol.msg_metadata.ApmModes;
-import is.mavlink.protocol.msgbuilder.MavLinkArm;
-import is.mavlink.protocol.msgbuilder.MavLinkModes;
-import validations.ValidatorResponse;
+import com.dronegcs.gcsis.devices.SerialConnection;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
+import com.dronegcs.mavlink.core.flightControllers.FlightController;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("mavlink.mavlink.drone")
-@ComponentScan("operations.mavlink.operations.internal")
-@ComponentScan("mavlink.mavlink.drone")
-@ComponentScan("services")
-@ComponentScan("operations.mavlink.operations")
 @Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
 	
@@ -98,10 +90,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Autowired @NotNull(message = "Internal Error: Failed to get serial communication")
 	private SerialConnection serialConnection;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
 	private Logger logger;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
@@ -183,12 +175,12 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         	if (n == 0) {
         		opChangeFlightControllerQuad.setFlightMode(FlightController.KEYBOARD);
         		btnControllerText = FlightController.KEYBOARD.name();
-        		imagePath = "/guiImages/Keyboard.png";
+        		imagePath = "/com/dronegcs/console/guiImages/Keyboard.png";
         	}
         	if (n == 1) {
         		opChangeFlightControllerQuad.setFlightMode(FlightController.REMOTE);
         		btnControllerText = FlightController.REMOTE.name();
-        		imagePath = "/guiImages/Remote.png";
+        		imagePath = "/com/dronegcs/console/guiImages/Remote.png";
         		
         	}
 			if (opChangeFlightControllerQuad.go()) {
@@ -483,14 +475,14 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					loggerDisplayerSvc.logGeneral("Connected");
 					connected = true;
 					btnConnect.setText("Disconnect");
-					SetImageButton(btnConnect, this.getClass().getResource("/guiImages/Connected.png"), "Disconnect");
+					SetImageButton(btnConnect, this.getClass().getResource("/com/dronegcs/console/guiImages/Connected.png"), "Disconnect");
 					btnSyncDrone.setDisable(!connected);
 					return;
 				case DISCONNECTED:
 					loggerDisplayerSvc.logGeneral("Disonnected");
 					connected = false;
 					btnConnect.setText("Connect");
-					SetImageButton(btnConnect, this.getClass().getResource("/guiImages/Disconnected.png"), "Connect");
+					SetImageButton(btnConnect, this.getClass().getResource("/com/dronegcs/console/guiImages/Disconnected.png"), "Connect");
 					btnSyncDrone.setDisable(!connected);
 					setButtonControl(connected);
 					return;

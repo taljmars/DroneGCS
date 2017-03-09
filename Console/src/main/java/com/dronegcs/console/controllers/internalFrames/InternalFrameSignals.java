@@ -1,4 +1,4 @@
-package controllers.internalFrames;
+package com.dronegcs.console.controllers.internalFrames;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -8,9 +8,9 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import environment.Environment;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
+import com.dronegcs.gcsis.environment.Environment;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import csv.CSV;
-import csv.internal.CSVImpl;
-import validations.ValidatorResponse;
-
-import static services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EXIT;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.gcsis.csv.CSV;
+import com.dronegcs.gcsis.csv.internal.CSVImpl;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component
 public class InternalFrameSignals extends Pane implements OnDroneListener, Initializable {
@@ -35,7 +33,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 
-	@Autowired @NotNull(message="Internal Error: Failed to get environment")
+	@Autowired @NotNull(message="Internal Error: Failed to get com.dronegcs.gcsis.environment")
 	private Environment environment;
 	
 	@Autowired
@@ -69,7 +67,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "signals.csv");
+		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "signals.com.dronegcs.gcsis.csv");
 		csv.open(Arrays.asList("Time", "distance", "signal", "noise", "rssi"));
 		
 		drone.addDroneListener(this);

@@ -1,9 +1,9 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
 @Component("navigation")
 public class Navigation extends DroneVariable {

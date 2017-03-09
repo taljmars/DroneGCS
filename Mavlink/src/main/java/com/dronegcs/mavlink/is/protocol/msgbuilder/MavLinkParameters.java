@@ -1,10 +1,10 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
-import is.drone.Drone;
-import is.drone.parameters.Parameter;
-import is.protocol.msg_metadata.ardupilotmega.msg_param_request_list;
-import is.protocol.msg_metadata.ardupilotmega.msg_param_request_read;
-import is.protocol.msg_metadata.ardupilotmega.msg_param_set;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_request_list;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_request_read;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_param_set;
 
 public class MavLinkParameters {
 	public static void requestParametersList(Drone drone) {

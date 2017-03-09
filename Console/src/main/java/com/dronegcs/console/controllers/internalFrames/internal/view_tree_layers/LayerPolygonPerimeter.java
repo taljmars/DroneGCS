@@ -1,4 +1,4 @@
-package controllers.internalFrames.internal.view_tree_layers;
+package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import gui.core.mapViewer.LayeredViewMap;
 import gui.core.mapViewerObjects.MapPolygonImpl;

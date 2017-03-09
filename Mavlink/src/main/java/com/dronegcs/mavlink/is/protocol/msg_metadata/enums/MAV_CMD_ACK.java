@@ -1,6 +1,6 @@
 /** ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.
 */
-package is.protocol.msg_metadata.enums;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.enums;
 
 public class MAV_CMD_ACK {
 	public static final int MAV_CMD_ACK_OK = 1; /* Command / mission item is ok. | */

@@ -1,10 +1,10 @@
-package services;
+package com.dronegcs.console.services;
 
 import gui.is.events.GuiEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import services.internal.QuadGuiEvent;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
 
 /**
  * Service that responsible of publishing GUI events.

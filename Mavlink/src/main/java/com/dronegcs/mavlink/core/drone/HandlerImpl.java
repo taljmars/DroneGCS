@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.drone;
+package com.dronegcs.mavlink.core.drone;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +11,9 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.mavlink.is.mavlink.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
 
-@Component("handler")
+@Component
 public class HandlerImpl implements Handler {
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

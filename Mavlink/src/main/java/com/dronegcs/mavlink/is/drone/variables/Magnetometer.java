@@ -1,12 +1,12 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 
 import org.springframework.stereotype.Component;
 
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.parameters.Parameter;
-import is.protocol.msg_metadata.ardupilotmega.msg_raw_imu;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_raw_imu;
 
 @Component("mag")
 public class Magnetometer extends DroneVariable {

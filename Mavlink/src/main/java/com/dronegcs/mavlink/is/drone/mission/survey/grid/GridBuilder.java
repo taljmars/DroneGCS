@@ -1,10 +1,10 @@
-package is.drone.mission.survey.grid;
+package com.dronegcs.mavlink.is.drone.mission.survey.grid;
 
 import java.util.List;
 
 import gui.is.shapes.LineCoordinates;
 import gui.is.shapes.Polygon;
-import is.drone.mission.survey.SurveyData;
+import com.dronegcs.mavlink.is.drone.mission.survey.SurveyData;
 import geoTools.Coordinate;
 
 public class GridBuilder {

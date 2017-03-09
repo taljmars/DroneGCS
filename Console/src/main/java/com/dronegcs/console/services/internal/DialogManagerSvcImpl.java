@@ -1,6 +1,6 @@
-package services.internal;
+package com.dronegcs.console.services.internal;
 
-import devices.KeyBoardController;
+import com.dronegcs.gcsis.devices.KeyBoardController;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -8,7 +8,7 @@ import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import services.DialogManagerSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
 
 import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
@@ -20,7 +20,6 @@ import java.util.Vector;
 /**
  * Created by taljmars on 3/8/17.
  */
-@ComponentScan("mavlink.mavlink.flightControllers")
 @Component
 public class DialogManagerSvcImpl implements DialogManagerSvc
 {

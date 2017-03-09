@@ -1,17 +1,17 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import controllers.internalPanels.internal.EditingCell;
-import controllers.internalPanels.internal.MissionItemTableEntry;
+import com.dronegcs.console.controllers.internalPanels.internal.EditingCell;
+import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import services.EventPublisherSvc;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console.services.EventPublisherSvc;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,19 +26,19 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
-import is.mavlink.drone.mission.Mission;
-import is.mavlink.drone.mission.MissionItem;
-import is.mavlink.drone.mission.MissionItemType;
-import is.mavlink.drone.mission.waypoints.Circle;
-import is.mavlink.drone.mission.waypoints.RegionOfInterest;
-import is.mavlink.drone.mission.waypoints.Waypoint;
-import is.mavlink.drone.mission.waypoints.interfaces.Altitudable;
-import is.mavlink.drone.mission.waypoints.interfaces.Delayable;
-import is.mavlink.drone.mission.waypoints.interfaces.Radiusable;
-import is.mavlink.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.MissionItem;
+import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Delayable;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component
 public class PanelMissionBox extends Pane implements Initializable {

@@ -1,4 +1,4 @@
-package validations;
+package com.dronegcs.gcsis.validations;
 
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -6,8 +6,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.springframework.stereotype.Component;
-import static validations.ValidatorResponse.Status.FAILURE;
-import static validations.ValidatorResponse.Status.SUCCESS;
 
 @Component
 public class RuntimeValidator {
@@ -17,7 +15,7 @@ public class RuntimeValidator {
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Object>> constraints = validator.validate(obj);
 		if (constraints.isEmpty()) {
-			return new ValidatorResponse(SUCCESS);
+			return new ValidatorResponse(ValidatorResponse.Status.SUCCESS);
 		}
 		
 		String error_messege = "";
@@ -25,6 +23,6 @@ public class RuntimeValidator {
 			error_messege += constraint.getMessage() + "\n";
 		}
 		
-		return new ValidatorResponse(FAILURE, "Runtime validation error:\n" + error_messege);
+		return new ValidatorResponse(ValidatorResponse.Status.FAILURE, "Runtime validation error:\n" + error_messege);
 	}
 }

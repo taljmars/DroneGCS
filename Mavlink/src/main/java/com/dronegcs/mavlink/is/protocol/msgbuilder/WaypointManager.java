@@ -1,4 +1,4 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,16 +12,16 @@ import javax.validation.constraints.NotNull;
 import com.dronegcs.gcsis.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.OnTimeout;
-import is.drone.DroneInterfaces.OnWaypointManagerListener;
-import is.protocol.msg_metadata.MAVLinkMessage;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_count;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_current;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item_reached;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_request;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnTimeout;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_count;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_current;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item_reached;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_request;
 
 /**
  * Class to manage the communication of waypoints to the MAV.

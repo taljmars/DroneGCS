@@ -1,6 +1,6 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
-import services.DialogManagerSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,8 +11,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
@@ -21,15 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import validations.ValidatorResponse;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-import static services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EXIT;
-
-@ComponentScan("gui.mavlink.internalFrames")
 @Component
 public class PanelFrameBarSatellite extends FlowPane implements Initializable {	
 	
-	private static String INTERNAL_FRAME_PATH = "/views/internalFrames/";
+	private static String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
 	
 	@NotNull @FXML private Button btnMap;
 	private static String MAP_VIEW = "InternalFrameMapAndTreeView.fxml";
@@ -59,7 +56,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 	
 	@Override

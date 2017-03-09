@@ -1,4 +1,4 @@
-package devices;
+package com.dronegcs.gcsis.devices;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;

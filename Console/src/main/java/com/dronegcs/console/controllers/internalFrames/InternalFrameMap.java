@@ -1,13 +1,13 @@
-package controllers.internalFrames;
+package com.dronegcs.console.controllers.internalFrames;
 
-import controllers.internalFrames.internal.OperationalViewTree;
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,12 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.internal.OperationalViewMap;
-import validations.ValidatorResponse;
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("controllers.internalFrames.internal")
-@ComponentScan("validations")
-@ComponentScan("gui.services")
 @Component
 public class InternalFrameMap extends Pane implements ChangeListener<Number>, Initializable {
 	

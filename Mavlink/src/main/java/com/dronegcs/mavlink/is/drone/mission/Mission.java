@@ -1,23 +1,23 @@
-package is.drone.mission;
+package com.dronegcs.mavlink.is.drone.mission;
 
-import is.drone.Drone;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.mission.commands.CameraTrigger;
-import is.drone.mission.commands.ChangeSpeed;
-import is.drone.mission.commands.EpmGripper;
-import is.drone.mission.commands.ReturnToHome;
-import is.drone.mission.commands.Takeoff;
-import is.drone.mission.waypoints.Circle;
-import is.drone.mission.waypoints.Land;
-import is.drone.mission.waypoints.RegionOfInterest;
-import is.drone.mission.waypoints.SpatialCoordItem;
-import is.drone.mission.waypoints.SplineWaypoint;
-import is.drone.mission.waypoints.Waypoint;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import is.protocol.msg_metadata.enums.MAV_CMD;
-import is.units.Speed;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.mission.commands.CameraTrigger;
+import com.dronegcs.mavlink.is.drone.mission.commands.ChangeSpeed;
+import com.dronegcs.mavlink.is.drone.mission.commands.EpmGripper;
+import com.dronegcs.mavlink.is.drone.mission.commands.ReturnToHome;
+import com.dronegcs.mavlink.is.drone.mission.commands.Takeoff;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.SpatialCoordItem;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.SplineWaypoint;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
+import com.dronegcs.mavlink.is.units.Speed;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 
@@ -45,7 +45,7 @@ public class Mission extends DroneVariable implements Serializable {
 
 	private static final long serialVersionUID = 8399081979944818494L;
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get applcation context")
+	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	private ApplicationContext applicationContext;
 
 	/**

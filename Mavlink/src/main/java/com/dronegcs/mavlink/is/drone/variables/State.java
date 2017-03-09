@@ -1,4 +1,4 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import javax.validation.constraints.NotNull;
 
@@ -6,12 +6,12 @@ import com.dronegcs.gcsis.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.Clock;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.Handler;
-import is.protocol.msg_metadata.ApmModes;
-import is.protocol.msgbuilder.MavLinkModes;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Clock;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
 import geoTools.Coordinate;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;

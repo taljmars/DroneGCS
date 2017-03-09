@@ -1,28 +1,25 @@
-package operations;
+package com.dronegcs.console.operations;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import services.DialogManagerSvc;
-import services.EventPublisherSvc;
-import logger.Logger;
-import is.mavlink.drone.Drone;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console.services.EventPublisherSvc;
+import com.dronegcs.gcsis.logger.Logger;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("mavlink.mavlink.drone")
-@ComponentScan("logger")
-@ComponentScan("gui.services")
 @Component
 public class OpGCSTerminationHandler extends OperationHandler {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
 	protected EventPublisherSvc eventPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
 	private Logger logger;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")

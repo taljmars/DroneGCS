@@ -1,4 +1,4 @@
-package environment;
+package com.dronegcs.gcsis.environment;
 
 import org.springframework.stereotype.Component;
 import java.io.File;

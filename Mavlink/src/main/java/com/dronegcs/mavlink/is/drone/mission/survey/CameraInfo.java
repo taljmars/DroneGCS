@@ -1,4 +1,4 @@
-package is.drone.mission.survey;
+package com.dronegcs.mavlink.is.drone.mission.survey;
 
 public class CameraInfo {
 	public String name = "Canon SX260";

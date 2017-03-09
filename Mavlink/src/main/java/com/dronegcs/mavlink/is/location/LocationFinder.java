@@ -1,12 +1,12 @@
-package is.location;
+package com.dronegcs.mavlink.is.location;
 
 public interface LocationFinder {
 	
-	public void enableLocationUpdates();
+	void enableLocationUpdates();
 
-	public void disableLocationUpdates();
+	void disableLocationUpdates();
 
-	public void addLocationListener(LocationReceiver receiver);
+	void addLocationListener(LocationReceiver receiver);
 	
-	public void removeLocationListener(LocationReceiver receiver);
+	void removeLocationListener(LocationReceiver receiver);
 }

@@ -1,4 +1,4 @@
-package is.gcs.follow;
+package com.dronegcs.mavlink.is.gcs.follow;
 
 import javax.validation.constraints.NotNull;
 
@@ -7,23 +7,22 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.gcsis.logger.Logger;
-import is.drone.Drone;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.OnDroneListener;
-import is.drone.variables.GuidedPoint;
-import is.drone.variables.State;
-import is.gcs.follow.FollowAlgorithm.FollowModes;
-import is.location.Location;
-import is.location.LocationFinder;
-import is.location.LocationReceiver;
-import is.protocol.msgbuilder.MavLinkROI;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.variables.GuidedPoint;
+import com.dronegcs.mavlink.is.drone.variables.State;
+import com.dronegcs.mavlink.is.gcs.follow.FollowAlgorithm.FollowModes;
+import com.dronegcs.mavlink.is.location.Location;
+import com.dronegcs.mavlink.is.location.LocationFinder;
+import com.dronegcs.mavlink.is.location.LocationReceiver;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkROI;
 
-@ComponentScan("com.dronegcs.mavlink.is.mavlink.is.gcs.roi")
-@Component("follow")
+@Component
 public class Follow extends DroneVariable implements OnDroneListener, LocationReceiver {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
 	private Logger logger;
 
 	/** Set of return value for the 'toggleFollowMeState' method.*/
@@ -32,13 +31,11 @@ public class Follow extends DroneVariable implements OnDroneListener, LocationRe
 	}
 
 	private FollowStates state = FollowStates.FOLLOW_INVALID_STATE;
-	
-	//@Resource(name = "locationFinder")
-	@Autowired
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get location finder")
 	private LocationFinder locationFinder;
 
-	//@Resource(name = "roiEstimator")
-	@Autowired
+	@Autowired @NotNull(message = "Internal Error: Failed to get location receiver")
 	private LocationReceiver roiEstimator;
 	
 	private FollowAlgorithm followAlgorithm;
@@ -46,7 +43,7 @@ public class Follow extends DroneVariable implements OnDroneListener, LocationRe
 	static int called;
 	public void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		followAlgorithm = FollowAlgorithm.FollowModes.ABOVE.getAlgorithmType(drone);
 		locationFinder.addLocationListener(this);
 		drone.addDroneListener(this);

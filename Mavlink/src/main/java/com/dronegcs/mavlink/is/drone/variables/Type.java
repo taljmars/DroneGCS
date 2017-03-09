@@ -1,4 +1,4 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import javax.validation.constraints.NotNull;
 
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import com.dronegcs.gcsis.logger.Logger;
 import com.dronegcs.mavlink.core.firmware.FirmwareType;
-import is.drone.Drone;
-import is.drone.DroneInterfaces;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.protocol.msg_metadata.enums.MAV_TYPE;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 
 @Component("type")
 public class Type extends DroneVariable implements DroneInterfaces.OnDroneListener {

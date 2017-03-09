@@ -1,4 +1,4 @@
-package is.drone.mission.waypoints.interfaces;
+package com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces;
 
 public interface Delayable {
 	

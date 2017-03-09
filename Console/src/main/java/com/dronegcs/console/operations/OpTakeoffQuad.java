@@ -1,8 +1,8 @@
-package operations;
+package com.dronegcs.console.operations;
 
 
-import services.DialogManagerSvc;
-import services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
@@ -11,17 +11,17 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import core.mavlink.validations.QuadIsArmed;
-import is.mavlink.drone.Drone;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.mavlink.core.validations.QuadIsArmed;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("tools.validations")
-@ComponentScan("gui.services")
+@ComponentScan("tools.com.dronegcs.console.validations")
+@ComponentScan("gui.com.dronegcs.console.services")
 @Component("opTakeoffQuad")
 public class OpTakeoffQuad extends OperationHandler {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")

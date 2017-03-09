@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.connection.helper;
+package com.dronegcs.mavlink.core.connection.helper;
 
 import geoTools.Coordinate;
 

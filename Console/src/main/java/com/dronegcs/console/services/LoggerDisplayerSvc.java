@@ -1,4 +1,4 @@
-package services;
+package com.dronegcs.console.services;
 
 import javax.annotation.PostConstruct;
 
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import services.internal.logevents.LogAbstractDisplayerEvent;
-import services.internal.logevents.LogErrorDisplayerEvent;
-import services.internal.logevents.LogGeneralDisplayerEvent;
-import services.internal.logevents.LogIncomingDisplayerEvent;
-import services.internal.logevents.LogOutgoingDisplayerEvent;
+import com.dronegcs.console.services.internal.logevents.LogAbstractDisplayerEvent;
+import com.dronegcs.console.services.internal.logevents.LogErrorDisplayerEvent;
+import com.dronegcs.console.services.internal.logevents.LogGeneralDisplayerEvent;
+import com.dronegcs.console.services.internal.logevents.LogIncomingDisplayerEvent;
+import com.dronegcs.console.services.internal.logevents.LogOutgoingDisplayerEvent;
 
 /**
  * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.
@@ -18,7 +18,7 @@ import services.internal.logevents.LogOutgoingDisplayerEvent;
  * @author taljmars
  *
  */
-@Component("loggerDisplayerSvc")
+@Component
 public class LoggerDisplayerSvc {
 	
 	@Autowired

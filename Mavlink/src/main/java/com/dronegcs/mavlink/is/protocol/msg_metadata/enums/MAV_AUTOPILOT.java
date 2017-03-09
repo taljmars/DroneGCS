@@ -1,6 +1,6 @@
 /** Micro air vehicle / autopilot classes. This identifies the individual model.
 */
-package is.protocol.msg_metadata.enums;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.enums;
 
 public class MAV_AUTOPILOT {
 	public static final int MAV_AUTOPILOT_GENERIC = 0; /* Generic autopilot, full support for everything | */

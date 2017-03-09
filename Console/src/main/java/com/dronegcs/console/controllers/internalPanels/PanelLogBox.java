@@ -1,4 +1,4 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -6,9 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import logger.Logger;
-import logger.Logger.Type;
-import validations.RuntimeValidator;
+import com.dronegcs.gcsis.logger.Logger;
+import com.dronegcs.gcsis.logger.Logger.Type;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -21,13 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import services.internal.logevents.LogAbstractDisplayerEvent;
-import validations.ValidatorResponse;
+import com.dronegcs.console.services.internal.logevents.LogAbstractDisplayerEvent;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component
 public class PanelLogBox extends Pane implements Initializable {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
 	private Logger logger;
 	
 	@NotNull @FXML private TextFlow logTextBox;

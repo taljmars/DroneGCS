@@ -1,12 +1,12 @@
-package com.dronegcs.mavlink.core.mavlink.drone;
+package com.dronegcs.mavlink.core.drone;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.mavlink.is.mavlink.drone.DroneInterfaces.Clock;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Clock;
 
-@Component("clock")
+@Component
 public class ClockImpl implements Clock {
 	
 	@Override

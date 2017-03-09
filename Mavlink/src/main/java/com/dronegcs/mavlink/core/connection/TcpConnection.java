@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.connection;
+package com.dronegcs.mavlink.core.connection;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -7,8 +7,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import com.dronegcs.mavlink.is.mavlink.connection.MavLinkConnection;
-import com.dronegcs.mavlink.is.mavlink.connection.MavLinkConnectionTypes;
+import com.dronegcs.mavlink.is.connection.MavLinkConnection;
+import com.dronegcs.mavlink.is.connection.MavLinkConnectionTypes;
 
 /**
  * Provides support for com.dronegcs.mavlink.is.mavlink connection via TCP.

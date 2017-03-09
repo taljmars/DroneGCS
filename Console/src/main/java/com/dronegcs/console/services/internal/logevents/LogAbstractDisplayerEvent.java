@@ -1,11 +1,11 @@
-package services.internal.logevents;
+package com.dronegcs.console.services.internal.logevents;
 
-import logger.Logger.Type;
+import com.dronegcs.gcsis.logger.Logger.Type;
 
 
 /**
- * Used for passing events log event that should be display for the user in any logger displayer clients
- * This is usually being using in our logger displayer box in the GUI.
+ * Used for passing events log event that should be display for the user in any com.dronegcs.gcsis.logger displayer clients
+ * This is usually being using in our com.dronegcs.gcsis.logger displayer box in the GUI.
  * 
  * @author taljmars
  *

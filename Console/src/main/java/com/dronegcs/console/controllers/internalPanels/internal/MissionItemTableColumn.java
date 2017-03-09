@@ -1,4 +1,4 @@
-package controllers.internalPanels.internal;
+package com.dronegcs.console.controllers.internalPanels.internal;
 
 public enum MissionItemTableColumn {
 	Order ("Order"), 

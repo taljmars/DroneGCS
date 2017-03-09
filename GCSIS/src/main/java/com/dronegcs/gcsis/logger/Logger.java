@@ -1,4 +1,4 @@
-package logger;
+package com.dronegcs.gcsis.logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,12 +9,11 @@ import java.sql.Timestamp;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import environment.Environment;
+import com.dronegcs.gcsis.environment.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-@ComponentScan(basePackages = "environment")
 @Component
 public class Logger {
 	
@@ -22,7 +21,7 @@ public class Logger {
 	
 	private PrintWriter writer = null;
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get environment")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.environment")
 	private Environment environment;
 
 	private static int called;

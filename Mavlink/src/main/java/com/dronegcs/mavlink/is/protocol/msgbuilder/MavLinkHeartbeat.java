@@ -1,14 +1,14 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
-import is.drone.Drone;
-import is.protocol.msg_metadata.MAVLinkPacket;
-import is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
-import is.protocol.msg_metadata.enums.MAV_AUTOPILOT;
-import is.protocol.msg_metadata.enums.MAV_TYPE;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_AUTOPILOT;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 
 /**
  * This class contains logic used to send an heartbeat to a
- * {@link is.drone.Drone}.
+ * {@link com.dronegcs.mavlink.is.drone.Drone}.
  */
 public class MavLinkHeartbeat {
 
@@ -29,7 +29,7 @@ public class MavLinkHeartbeat {
 	private static final MAVLinkPacket sMsgPacket = sMsg.pack();
 
 	/**
-	 * Sends the heartbeat to the {@link is.drone.Drone}
+	 * Sends the heartbeat to the {@link com.dronegcs.mavlink.is.drone.Drone}
 	 * object.
 	 * 
 	 * @param drone

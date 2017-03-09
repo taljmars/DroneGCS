@@ -1,11 +1,11 @@
-package controllers;
+package com.dronegcs.console.controllers;
 
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import controllers.dashboard.Dashboard;
-import devices.KeyBoardController;
-import environment.Environment;
+import com.dronegcs.console.controllers.dashboard.Dashboard;
+import com.dronegcs.gcsis.devices.KeyBoardController;
+import com.dronegcs.gcsis.environment.Environment;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,10 +38,10 @@ public class DroneLaunch extends Application {
 	        //DroneDbCrudSvc droneDbCrudSvc = (DroneDbCrudSvc) AppConfig.context.getBean("droneDbCrudSvc");
 	        //System.out.println(droneDbCrudSvc.CheckConnection() + " ASASDASDASDASD");
 	        dashboard.setViewManager(primaryStage);
-	        Parent root = (Parent) AppConfig.loader.load("/views/DashboardView.fxml");
+	        Parent root = (Parent) AppConfig.loader.load("/com/dronegcs/console/views/DashboardView.fxml");
 			root.setStyle("-fx-background-color: whitesmoke;");
 			Scene scene = new Scene(root, 800, 650);
-			scene.getStylesheets().add(getClass().getResource("/application.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/com/dronegcs/console/application.css").toExternalForm());
 	        KeyBoardController keyboardController = AppConfig.context.getBean(KeyBoardController.class);
 	        scene.setOnKeyPressed(keyboardController);
 	        primaryStage.setResizable(false);

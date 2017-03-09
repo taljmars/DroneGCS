@@ -1,4 +1,4 @@
-package controllers.internalFrames.internal.view_tree_layers;
+package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,12 +10,12 @@ import gui.core.mapViewerObjects.MapMarkerCircle;
 import gui.core.mapViewerObjects.MapMarkerDot;
 import gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
-import is.mavlink.drone.mission.Mission;
-import is.mavlink.drone.mission.MissionItem;
-import is.mavlink.drone.mission.waypoints.Circle;
-import is.mavlink.drone.mission.waypoints.Land;
-import is.mavlink.drone.mission.waypoints.RegionOfInterest;
-import is.mavlink.drone.mission.waypoints.Waypoint;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.MissionItem;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 

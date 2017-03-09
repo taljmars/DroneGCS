@@ -1,4 +1,4 @@
-package devices;
+package com.dronegcs.gcsis.devices;
 
 public interface SerialConnection {
 	

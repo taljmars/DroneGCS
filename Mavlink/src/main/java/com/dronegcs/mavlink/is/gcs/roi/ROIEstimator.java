@@ -1,14 +1,16 @@
-package is.gcs.roi;
+package com.dronegcs.mavlink.is.gcs.roi;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import is.drone.Drone;
-import is.drone.DroneInterfaces.Handler;
-import is.location.Location;
-import is.location.LocationReceiver;
-import is.protocol.msgbuilder.MavLinkROI;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.location.Location;
+import com.dronegcs.mavlink.is.location.LocationReceiver;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkROI;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 
@@ -17,17 +19,17 @@ import geoTools.GeoTools;
  * calculates new points at 10Hz based on Last Location and Last Velocity.
  * 
  */
-@Component("roiEstimator")
+@Component
 public class ROIEstimator implements LocationReceiver {
 
 	private static final int TIMEOUT = 100;
 	private Location realLocation;
 	private long timeOfLastLocation;
 
-	@Resource(name = "drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
-	@Resource(name = "handler")
+	@Autowired @NotNull(message = "Internal Error: Failed to get connection handler")
 	private Handler handler;
 	
 	public Runnable watchdogCallback = () -> updateROI();

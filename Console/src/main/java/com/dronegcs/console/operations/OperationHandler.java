@@ -1,12 +1,14 @@
-package operations;
+package com.dronegcs.console.operations;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
-import services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class OperationHandler
 {
-	@Resource(name = "loggerDisplayerSvc")
+	@Autowired @NotNull(message = "Internal Error: Failed to get log displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	protected OperationHandler next;

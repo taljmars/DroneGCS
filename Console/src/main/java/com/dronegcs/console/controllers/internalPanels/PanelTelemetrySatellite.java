@@ -1,4 +1,4 @@
-package controllers.internalPanels;
+package com.dronegcs.console.controllers.internalPanels;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,10 +8,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import validations.RuntimeValidator;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -23,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import services.LoggerDisplayerSvc;
-import services.TextNotificationPublisherSvc;
-import validations.ValidatorResponse;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.TextNotificationPublisherSvc;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
@@ -33,7 +33,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")

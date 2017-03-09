@@ -1,21 +1,23 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import is.drone.Drone;
-import is.drone.DroneVariable;
-import is.drone.DroneInterfaces.DroneEventsType;
-import is.drone.DroneInterfaces.Handler;
-import is.drone.DroneInterfaces.OnDroneListener;
-import is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 
 /**
  * @author taljmars
  * @see #init
  **/
-@Component("heartbeat")
+@Component
 public class HeartBeat extends DroneVariable implements OnDroneListener {
 
 	private static final long HEARTBEAT_NORMAL_TIMEOUT = 5000; //ms
@@ -38,7 +40,7 @@ public class HeartBeat extends DroneVariable implements OnDroneListener {
 		FIRST_HEARTBEAT, LOST_HEARTBEAT, NORMAL_HEARTBEAT, IMU_CALIBRATION
 	}
 
-	@Resource(name = "handler")
+	@Autowired @NotNull(message = "Internal Error: Failed to get handler")
 	private Handler handler;
 	
 	private final Runnable watchdogCallback = new Runnable() {

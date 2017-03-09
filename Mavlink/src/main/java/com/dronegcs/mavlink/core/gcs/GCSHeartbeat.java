@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.gcs;
+package com.dronegcs.mavlink.core.gcs;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -6,23 +6,25 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.mavlink.is.mavlink.drone.Drone;
-import com.dronegcs.mavlink.is.mavlink.protocol.msgbuilder.MavLinkHeartbeat;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkHeartbeat;
 
 /**
  * This class is used to send periodic heartbeat messages to the drone.
  */
 
-@Component("gcsHeartbeat")
+@Component
 public class GCSHeartbeat {
 
 	/**
 	 * This is the drone to send the heartbeat message to.
 	 */
-	@Resource(name = "drone")
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 
 	/**

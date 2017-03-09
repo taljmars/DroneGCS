@@ -1,4 +1,4 @@
-package com.dronegcs.mavlink.core.mavlink.firmware;
+package com.dronegcs.mavlink.core.firmware;
 
 public enum FirmwareType {
 	ARDU_PLANE("ArduPlane"), ARDU_COPTER("ArduCopter");

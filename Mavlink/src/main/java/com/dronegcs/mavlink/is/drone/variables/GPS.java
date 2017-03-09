@@ -1,11 +1,11 @@
-package is.drone.variables;
+package com.dronegcs.mavlink.is.drone.variables;
 
 import org.springframework.stereotype.Component;
 
-import is.drone.DroneVariable;
+import com.dronegcs.mavlink.is.drone.DroneVariable;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
-import is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
 @Component("gps")
 public class GPS extends DroneVariable {

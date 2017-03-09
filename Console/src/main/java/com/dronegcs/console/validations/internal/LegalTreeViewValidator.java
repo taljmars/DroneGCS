@@ -1,4 +1,4 @@
-package validations.internal;
+package com.dronegcs.console.validations.internal;
 
 import gui.core.mapTreeObjects.Layer;
 import javafx.scene.control.TreeItem;
@@ -9,8 +9,8 @@ import java.util.Set;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import controllers.internalFrames.internal.OperationalViewTree;
-import validations.LegalTreeView;
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
+import com.dronegcs.console.validations.LegalTreeView;
 
 public class LegalTreeViewValidator implements ConstraintValidator<LegalTreeView, OperationalViewTree> {
 	

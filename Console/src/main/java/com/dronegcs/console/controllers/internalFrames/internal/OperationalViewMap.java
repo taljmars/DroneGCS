@@ -19,25 +19,25 @@
 //  For more information, please email jsmith.carlsbad@gmail.com
 //    
 //==============================================================================
-package controllers.internalFrames.internal;
+package com.dronegcs.console.controllers.internalFrames.internal;
 
 import java.awt.Point;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
-import controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import operations.MissionBuilder;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import com.dronegcs.console.operations.MissionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
-import controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import devices.KeyBoardController;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
+import com.dronegcs.gcsis.devices.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import gui.core.mapTreeObjects.Layer;
@@ -48,9 +48,9 @@ import gui.core.mapViewerObjects.MapMarkerDot;
 import gui.core.mapViewerObjects.MapVectorImpl;
 import gui.is.interfaces.mapObjects.MapLine;
 import gui.is.interfaces.mapObjects.MapMarker;
-import services.DialogManagerSvc;
-import services.LoggerDisplayerSvc;
-import services.TextNotificationPublisherSvc;
+import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console.services.LoggerDisplayerSvc;
+import com.dronegcs.console.services.TextNotificationPublisherSvc;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
@@ -58,26 +58,23 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import is.mavlink.drone.Drone;
-import is.mavlink.drone.DroneInterfaces.DroneEventsType;
-import is.mavlink.drone.DroneInterfaces.OnDroneListener;
-import is.mavlink.drone.mission.Mission;
-import is.mavlink.drone.variables.GuidedPoint;
-import is.mavlink.drone.variables.Home;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.variables.GuidedPoint;
+import com.dronegcs.mavlink.is.drone.variables.Home;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
-import services.internal.QuadGuiEvent;
-import validations.RuntimeValidator;
-import validations.ValidatorResponse;
+import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 /**
  *
  * @author taljmars
  */
 
-@ComponentScan("tools.validations")
-@ComponentScan("gui.is.services")
-@ComponentScan("controllers.internalFrames.internal")
 @Component
 public class OperationalViewMap extends LayeredViewMap implements
 OnDroneListener, EventHandler<ActionEvent> {
@@ -94,7 +91,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull( message = "Internal Error: Failed to get notification publisher" )
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull( message = "Internal Error: Failed to get logger displayer" )
+	@Autowired @NotNull( message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")

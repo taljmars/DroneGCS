@@ -1,4 +1,4 @@
-package controllers;
+package com.dronegcs.console.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +11,10 @@ import javax.xml.ws.Service;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.util.Callback;
-import core.mavlink.drone.MyDroneImpl;
-import is.mavlink.drone.mission.Mission;
+import com.dronegcs.mavlink.core.drone.MyDroneImpl;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
 
-import operations.OpGCSTerminationHandler;
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -22,15 +22,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
-import controllers.dashboard.Dashboard;
-import controllers.internalFrames.InternalFrameMap;
+import com.dronegcs.console.controllers.dashboard.Dashboard;
+import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 
-@ComponentScan("controllers.droneEye")
-@ComponentScan("controllers.internalPanels")
-@ComponentScan("controllers.internalFrames")
-@ComponentScan("gui.mavlink.operations")
-@ComponentScan("gui.services")
-@ComponentScan("mavlink.mavlink.gcs")
+@ComponentScan(basePackages = "com.dronegcs.console")
 @Import({InternalFrameMap.class , MyDroneImpl.class , OpGCSTerminationHandler.class})
 @Configuration
 public class AppConfig {

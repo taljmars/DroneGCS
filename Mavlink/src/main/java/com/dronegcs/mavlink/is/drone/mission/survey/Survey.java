@@ -1,18 +1,18 @@
-package is.drone.mission.survey;
+package com.dronegcs.mavlink.is.drone.mission.survey;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import gui.is.shapes.Polygon;
-import is.drone.mission.Mission;
-import is.drone.mission.MissionItem;
-import is.drone.mission.MissionItemType;
-import is.drone.mission.commands.CameraTrigger;
-import is.drone.mission.survey.grid.Grid;
-import is.drone.mission.survey.grid.GridBuilder;
-import is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import is.protocol.msg_metadata.enums.MAV_CMD;
-import is.protocol.msg_metadata.enums.MAV_FRAME;
+import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.MissionItem;
+import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
+import com.dronegcs.mavlink.is.drone.mission.commands.CameraTrigger;
+import com.dronegcs.mavlink.is.drone.mission.survey.grid.Grid;
+import com.dronegcs.mavlink.is.drone.mission.survey.grid.GridBuilder;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import geoTools.Coordinate;
 
 public class Survey extends MissionItem {

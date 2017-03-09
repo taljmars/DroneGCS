@@ -1,6 +1,6 @@
 /** 
 */
-package is.protocol.msg_metadata.enums;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.enums;
 
 public class MAV_TYPE {
 	public static final int MAV_TYPE_GENERIC = 0; /* Generic micro air vehicle. | */

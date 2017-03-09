@@ -1,8 +1,8 @@
-package is.protocol.msgbuilder;
+package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
-import is.connection.MavLinkConnection;
-import is.protocol.msg_metadata.ardupilotmega.msg_request_data_stream;
-import is.protocol.msg_metadata.enums.MAV_DATA_STREAM;
+import com.dronegcs.mavlink.is.connection.MavLinkConnection;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_request_data_stream;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_DATA_STREAM;
 
 public class MavLinkStreamRates {
 

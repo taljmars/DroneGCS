@@ -1,6 +1,6 @@
-package is.connection;
+package com.dronegcs.mavlink.is.connection;
 
-import is.protocol.msg_metadata.MAVLinkMessage;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 
 /**
  * Provides updates about the com.dronegcs.mavlink.is.mavlink connection.

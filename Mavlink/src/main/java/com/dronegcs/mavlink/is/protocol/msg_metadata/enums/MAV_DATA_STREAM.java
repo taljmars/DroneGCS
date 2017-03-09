@@ -2,7 +2,7 @@
      recommendation to the autopilot software. Individual autopilots may or may not obey
      the recommended messages.
 */
-package is.protocol.msg_metadata.enums;
+package com.dronegcs.mavlink.is.protocol.msg_metadata.enums;
 
 public class MAV_DATA_STREAM {
 	public static final int MAV_DATA_STREAM_ALL = 0; /* Enable all data streams | */

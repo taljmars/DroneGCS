@@ -1,8 +1,8 @@
-package com.dronegcs.mavlink.core.mavlink.gcs.follow;
+package com.dronegcs.mavlink.core.gcs.follow;
 
-import com.dronegcs.mavlink.is.mavlink.drone.Drone;
-import com.dronegcs.mavlink.is.mavlink.gcs.follow.FollowAlgorithm;
-import com.dronegcs.mavlink.is.mavlink.location.Location;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.gcs.follow.FollowAlgorithm;
+import com.dronegcs.mavlink.is.location.Location;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 import geoTools.MathUtil;
