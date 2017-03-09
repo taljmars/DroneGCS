@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by oem on 3/9/17.
+ * Created by taljmars on 3/9/17.
  */
 @Component
 public class BeaconDataFactory {

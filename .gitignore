@@ -30,6 +30,7 @@ target/
 *.msi
 *.msm
 *.msp
+*.iml
 
 # Windows shortcuts
 *.lnk

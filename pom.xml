@@ -7,6 +7,14 @@
     <groupId>DroneGCS</groupId>
     <artifactId>DroneGCS</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>GCSIS</module>
+        <module>Console</module>
+        <module>Drone</module>
+        <module>Mavlink</module>
+    </modules>
 
     <dependencies>
 
@@ -163,7 +171,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>is.springConfig.DroneLaunch</mainClass>
+                            <mainClass>com.dronegcs.console.controllers.DroneLaunch</mainClass>
                         </manifest>
                     </archive>
                     <outputDirectory>${build.output}/jars</outputDirectory>
@@ -196,6 +204,7 @@
                     </execution>
                     <execution>
                         <id>2</id>
+                        <inherited>false</inherited>
                         <phase>compile</phase>
                         <configuration>
                             <target>
