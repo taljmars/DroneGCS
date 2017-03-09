@@ -21,7 +21,7 @@ public class JSONHelper {
 	      url = new URL(addr);
 	      connection = (HttpURLConnection)url.openConnection();
 	      connection.setRequestMethod("POST");
-	      connection.setRequestProperty("Content-Type", "application/com.dronegcs.gcsis.json");
+	      connection.setRequestProperty("Content-Type", "json");
 	      connection.setRequestProperty("Content-Language", "en-US");  
 				
 	      connection.setUseCaches (false);
