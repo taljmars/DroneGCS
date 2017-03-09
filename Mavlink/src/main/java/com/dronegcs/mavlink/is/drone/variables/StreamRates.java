@@ -1,0 +1,70 @@
+package is.drone.variables;
+
+import com.dronegcs.gcsis.logger.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import is.drone.Drone;
+import is.drone.DroneVariable;
+import is.drone.DroneInterfaces.DroneEventsType;
+import is.drone.DroneInterfaces.OnDroneListener;
+import is.drone.Preferences.Rates;
+import is.protocol.msgbuilder.MavLinkStreamRates;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
+
+import javax.validation.constraints.NotNull;
+
+@Component
+public class StreamRates extends DroneVariable implements OnDroneListener
+{
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	private Logger logger;
+
+	@Autowired
+	private RuntimeValidator runtimeValidator;
+
+	private boolean streamRatesWasSet = false;
+	
+	static int called;
+	public void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singleton");
+
+		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+		if (validatorResponse.isFailed())
+			throw new RuntimeException(validatorResponse.toString());
+
+		drone.addDroneListener(this);
+	}
+
+	@Override
+	public void onDroneEvent(DroneEventsType event, Drone drone) {
+		switch (event) {
+		case HEARTBEAT_FIRST:
+		case HEARTBEAT_RESTORED:
+			setupStreamRatesFromPref();
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void setupStreamRatesFromPref() {
+		if (streamRatesWasSet)
+			return;
+		
+		logger.LogGeneralMessege("Setting up stream rates");
+		Rates rates = drone.getPreferences().getRates();
+
+		MavLinkStreamRates.setupStreamRates(drone.getMavClient(), rates.extendedStatus,
+				rates.extra1, rates.extra2, rates.extra3, rates.position, rates.rcChannels,
+				rates.rawSensors, rates.rawController);
+		
+		streamRatesWasSet = true;
+	}
+	
+	public void prepareStreamRates() {
+		streamRatesWasSet = false;
+	}
+
+}
