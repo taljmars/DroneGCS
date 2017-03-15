@@ -8,7 +8,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_raw_imu;
 
-@Component("mag")
+@Component
 public class Magnetometer extends DroneVariable {
 
 	private int x;

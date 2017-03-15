@@ -7,7 +7,7 @@ import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 
-@Component("battery")
+@Component
 public class Battery extends DroneVariable {
 
 	private double battVolt = -1;

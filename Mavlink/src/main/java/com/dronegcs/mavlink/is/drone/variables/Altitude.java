@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 
-@Component("altitude")
+@Component
 public class Altitude extends DroneVariable {
 
 	private static final double FOUR_HUNDRED_FEET_IN_METERS = 121.92;

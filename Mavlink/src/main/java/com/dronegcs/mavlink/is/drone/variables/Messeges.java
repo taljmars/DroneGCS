@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("messeges")
+@Component
 public class Messeges extends DroneVariable {
 
 	private Vector<String> messeges;

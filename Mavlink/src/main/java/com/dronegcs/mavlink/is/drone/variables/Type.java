@@ -13,7 +13,7 @@ import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 
-@Component("type")
+@Component
 public class Type extends DroneVariable implements DroneInterfaces.OnDroneListener {
 	
 	private static final int DEFAULT_TYPE = MAV_TYPE.MAV_TYPE_GENERIC;

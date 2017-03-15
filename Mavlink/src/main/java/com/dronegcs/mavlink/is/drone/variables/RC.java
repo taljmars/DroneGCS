@@ -7,7 +7,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_rc_channels_raw;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_servo_output_raw;
 
-@Component("rc")
+@Component
 public class RC extends DroneVariable {
 
 	public int in[] = new int[8];

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("missionStats")
+@Component
 public class MissionStats extends DroneVariable {
 
 	private double distanceToWp = 0;

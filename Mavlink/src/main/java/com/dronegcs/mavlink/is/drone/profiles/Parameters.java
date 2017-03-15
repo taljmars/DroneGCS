@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
  * MAV Message.
  * 
  */
-@Component("parameters")
+@Component
 public class Parameters extends DroneVariable implements OnDroneListener {
 
 	private static final int TIMEOUT = 2000; //TALMA original is 1000;

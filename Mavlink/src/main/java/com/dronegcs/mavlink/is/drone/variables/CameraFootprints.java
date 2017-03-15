@@ -11,7 +11,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.mission.survey.CameraInfo;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_camera_feedback;
 
-@Component("footprints")
+@Component
 public class CameraFootprints extends DroneVariable {
 
 	private CameraInfo camera = new CameraInfo();

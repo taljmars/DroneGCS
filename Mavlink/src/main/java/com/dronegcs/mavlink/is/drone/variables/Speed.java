@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 
-@Component("speed")
+@Component
 public class Speed extends DroneVariable {
 
 	public static final int COLLISION_SECONDS_BEFORE_COLLISION = 2;

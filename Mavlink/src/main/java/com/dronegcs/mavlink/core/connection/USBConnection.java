@@ -15,8 +15,7 @@ import com.dronegcs.mavlink.is.connection.MavLinkConnectionTypes;
 /**
  * Provides support for com.dronegcs.mavlink.is.mavlink connection via udp.
  */
-@ComponentScan("tools.comm.internal")
-@Component("usbConnection")
+@Component
 public class USBConnection extends MavLinkConnection {
 
 	@Resource(name = "twoWaySerialComm")

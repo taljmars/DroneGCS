@@ -68,7 +68,8 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.com.dronegcs.gcsis.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.com.dronegcs.gcsis.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.com.dronegcs.gcsis.csv");
 		csv.open(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);

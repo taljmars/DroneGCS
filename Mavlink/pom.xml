@@ -5,23 +5,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>DroneGCS</groupId>
+        <groupId>com.dronegcs</groupId>
         <artifactId>DroneGCS</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${version}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>Mavlink</artifactId>
     <packaging>jar</packaging>
+    <name>Mavlink Protocol</name>
 
     <dependencies>
 
         <dependency>
-            <groupId>DroneGCS</groupId>
+            <groupId>com.dronegcs</groupId>
             <artifactId>GCSIS</artifactId>
             <version>${version}</version>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <outputDirectory>../${build.output}/classes/</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>../${build.output}/jars</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     
 </project>

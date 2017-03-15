@@ -66,7 +66,8 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.com.dronegcs.gcsis.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.com.dronegcs.gcsis.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.com.dronegcs.gcsis.csv");
 		csv.open(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
 		
 		drone.addDroneListener(this);

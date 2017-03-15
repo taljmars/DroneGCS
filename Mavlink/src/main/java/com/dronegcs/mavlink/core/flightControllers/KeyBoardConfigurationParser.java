@@ -93,7 +93,8 @@ public class KeyBoardConfigurationParser {
 		logger.LogGeneralMessege("Loading flight controller configuration");
 		paramAmount = 0;
 		try {
-			fFilePath = Paths.get(Environment.getRunningEnvConfDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
+			//fFilePath = Paths.get(Environment.getRunningEnvConfDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
+			fFilePath = Paths.get(environment.getRunningEnvConfDirectory() + Environment.DIR_SEPERATOR + settingsFileName);
 			if (fFilePath.toFile().exists() == false) {
 				logger.LogErrorMessege("Configuration file wasn't found, start generating default conf file");
 				buildConfigurationFile(fFilePath);

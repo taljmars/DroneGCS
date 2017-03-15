@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.dronegcs.console.controllers.AppConfig;
+import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.services.EventPublisherSvc;
 import com.dronegcs.console.services.LoggerDisplayerSvc;
 import com.dronegcs.console.services.TextNotificationPublisherSvc;
@@ -25,6 +26,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -65,6 +67,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get current frames amount")
 	private EventPublisherSvc eventPublisherSvc;
+
+	@Autowired
+	private GuiAppConfig guiAppConfig;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -320,7 +325,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 			return;
 		
 		ObservableList<Node> children = frameContainer.getChildren();
-		Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
+		//Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
+		Node selectedPane = (Node) guiAppConfig.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
 		selectedPane.setUserData(springInstansiation);
 		if (selectedPane != null) {
 			selectedPane.setUserData(springInstansiation);

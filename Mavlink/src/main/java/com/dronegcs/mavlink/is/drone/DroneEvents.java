@@ -15,8 +15,6 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("mavlink.mavlink.drone")
-@ComponentScan("com/dronegcs/console/validations")
 @Component
 public class DroneEvents extends DroneVariable {
 

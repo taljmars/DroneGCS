@@ -9,7 +9,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkMessage;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_statustext;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkCalibration;
 
-@Component("calibrationSetup")
+@Component
 public class Calibration extends DroneVariable {
 
 	private String mavMsg;

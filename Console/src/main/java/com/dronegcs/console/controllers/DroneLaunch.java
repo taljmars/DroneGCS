@@ -3,12 +3,8 @@ package com.dronegcs.console.controllers;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import com.dronegcs.console.controllers.dashboard.Dashboard;
-import com.dronegcs.gcsis.devices.KeyBoardController;
 import com.dronegcs.gcsis.environment.Environment;
 import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class DroneLaunch extends Application {
@@ -16,9 +12,6 @@ public class DroneLaunch extends Application {
 	@Override
     public void start(Stage primaryStage) {
 		try {
-			if (AppConfig.DEBUG_SYMBOL.equals(System.getenv(AppConfig.ENV_SYMBOL)))
-				AppConfig.DebugMode = true;
-
 			//Validating serial device exists
 			if (Paths.get("/dev/ttyACM0").toFile().exists() &&
 					!Paths.get("/dev/ttyS85").toFile().exists() ) {
@@ -31,23 +24,15 @@ public class DroneLaunch extends Application {
 				System.exit(-1);
 			}
 
-			Environment.setBaseRunningDirectoryByClass(this.getClass());
-			System.err.println("Setting Running base directory as '" + Environment.getRunningEnvBaseDirectory() + "'");
+			Environment environment = AppConfig.context.getBean(Environment.class);
+			environment.setBaseRunningDirectoryByClass(this.getClass());
+			System.err.println("Setting Running base directory as '" + environment.getRunningEnvBaseDirectory() + "'");
 
-	        Dashboard dashboard = AppConfig.context.getBean(Dashboard.class);
-	        //DroneDbCrudSvc droneDbCrudSvc = (DroneDbCrudSvc) AppConfig.context.getBean("droneDbCrudSvc");
-	        //System.out.println(droneDbCrudSvc.CheckConnection() + " ASASDASDASDASD");
-	        dashboard.setViewManager(primaryStage);
-	        Parent root = (Parent) AppConfig.loader.load("/com/dronegcs/console/views/DashboardView.fxml");
-			root.setStyle("-fx-background-color: whitesmoke;");
-			Scene scene = new Scene(root, 800, 650);
-			scene.getStylesheets().add(getClass().getResource("/com/dronegcs/console/application.css").toExternalForm());
-	        KeyBoardController keyboardController = AppConfig.context.getBean(KeyBoardController.class);
-	        scene.setOnKeyPressed(keyboardController);
-	        primaryStage.setResizable(false);
-	        primaryStage.setScene(scene);
-	        primaryStage.setMaximized(true);
-	        primaryStage.show();
+			GuiAppConfig guiAppConfig = AppConfig.context.getBean(GuiAppConfig.class);
+
+			guiAppConfig.setPrimaryStage(primaryStage);
+			guiAppConfig.showMainScreen();
+
 		}
 		catch (URISyntaxException e) {
 			// TODO Auto-generated catch block

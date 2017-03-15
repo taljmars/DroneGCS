@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.drone.DroneVariable;
 import geoTools.Coordinate;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("gcs")
+@Component
 public class GCS extends DroneVariable {
 	
 	private Coordinate pLastPosition = null;

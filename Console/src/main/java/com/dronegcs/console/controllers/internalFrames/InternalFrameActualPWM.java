@@ -67,7 +67,8 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 		if (called++ > 1)
 			throw new RuntimeException("Not a Singletone");
 		
-		csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.dronegcs.gcsis.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.dronegcs.gcsis.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.dronegcs.gcsis.csv");
 		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
 		
 		drone.addDroneListener(this);

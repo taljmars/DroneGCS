@@ -53,7 +53,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 	
 	@Override
@@ -68,11 +68,16 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		reloadMissionDatabase();
 	}
-	
+
 	@Override
 	public void changed(ObservableValue<? extends Number> property, Number fromPrecentage, Number toPrecentage) {
 		operationalViewMap.setMapBounds(0, 0, (int) (splitPane.getPrefWidth() - splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 		operationalViewTree.setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
-	}	
+	}
+
+	private void reloadMissionDatabase() {
+	}
 }

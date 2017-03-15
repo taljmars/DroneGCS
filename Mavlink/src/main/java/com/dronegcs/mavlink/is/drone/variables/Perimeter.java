@@ -10,7 +10,6 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import geoTools.Coordinate;
 
-@ComponentScan("tools.com.dronegcs.gcsis.logger")
 @Component
 public class Perimeter extends DroneVariable {
 

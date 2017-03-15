@@ -5,37 +5,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>DroneGCS</groupId>
+        <groupId>com.dronegcs</groupId>
         <artifactId>DroneGCS</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${version}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>Console</artifactId>
     <packaging>jar</packaging>
+    <name>Console</name>
 
     <dependencies>
 
         <dependency>
-            <groupId>DroneGCS</groupId>
+            <groupId>com.dronegcs</groupId>
             <artifactId>GCSIS</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>DroneGCS</groupId>
-            <artifactId>Drone</artifactId>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>Mavlink</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>DroneGCS</groupId>
-            <artifactId>Mavlink</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
     </dependencies>
 
     <build>
+        <outputDirectory>../${build.output}/classes/</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -45,6 +47,32 @@
                     <skip>true</skip>
                 </configuration>
                 <inherited>false</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>../${build.output}/jars</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.dronegcs.console.controllers.DroneLaunch</mainClass>
+                        </manifest>
+                    </archive>
+                    <outputDirectory>../${build.output}/jars</outputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

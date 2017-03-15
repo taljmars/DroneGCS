@@ -8,7 +8,7 @@ import com.dronegcs.mavlink.is.drone.DroneVariable;
 import geoTools.MathUtil;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("radio")
+@Component
 public class Radio extends DroneVariable implements DroneInterfaces.OnDroneListener {
 
 	public static final int MAX_FADE_MARGIN = 50;

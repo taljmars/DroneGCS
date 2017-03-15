@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("navigation")
+@Component
 public class Navigation extends DroneVariable {
 	
 	private double nav_pitch;

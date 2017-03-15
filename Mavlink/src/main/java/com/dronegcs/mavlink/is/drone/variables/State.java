@@ -16,7 +16,6 @@ import geoTools.Coordinate;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
-@ComponentScan("com/dronegcs/console/validations")
 @Component
 public class State extends DroneVariable
 {

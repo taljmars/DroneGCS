@@ -7,7 +7,7 @@ import geoTools.Coordinate;
 import geoTools.GeoTools;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("gps")
+@Component
 public class GPS extends DroneVariable {
 	
 	public final static int LOCK_2D = 2;

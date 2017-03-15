@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
-@Component("orientation")
+@Component
 public class Orientation extends DroneVariable {
 	
 	private double roll = 0;

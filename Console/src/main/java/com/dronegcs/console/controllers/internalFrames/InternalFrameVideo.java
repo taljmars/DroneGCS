@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import com.dronegcs.console.controllers.AppConfig;
+import com.dronegcs.console.controllers.GuiAppConfig;
 import org.springframework.context.ApplicationContext;
 import com.dronegcs.console.services.internal.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
@@ -57,6 +58,9 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	private GuiAppConfig guiAppConfig;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -108,7 +112,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 			double ratio = primaryScreenBounds.getHeight() /  originalVideoHeight;
 			double height = primaryScreenBounds.getHeight();
 			double width = originalVideoWidth * ratio;
-			Parent droneEyeView = (Parent) AppConfig.loader.loadInternalFrame("/views/DroneEyeView.fxml" ,width ,height );
+			Parent droneEyeView = (Parent) guiAppConfig.loadInternalFrame("/views/DroneEyeView.fxml" ,width ,height );
 			loggerDisplayerSvc.logGeneral("add drone listening to drone eye view");
 			drone.addDroneListener(externalFrameVideo);
 			detector.addListener(externalFrameVideo);

@@ -31,8 +31,6 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
 import geoTools.Coordinate;
 import com.dronegcs.gcsis.logger.Logger;
 
-@ComponentScan("tools.com.dronegcs.gcsis.logger")
-@ComponentScan("gui.is.service")
 @Component
 public class DroneUpdateListener implements MavLinkConnectionListener {
 

@@ -11,7 +11,7 @@ import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkTakeoff;
 import geoTools.Coordinate;
 
-@Component("guidedPoint")
+@Component
 public class GuidedPoint extends DroneVariable implements OnDroneListener {
 
 	private GuidedStates state = GuidedStates.UNINITIALIZED;

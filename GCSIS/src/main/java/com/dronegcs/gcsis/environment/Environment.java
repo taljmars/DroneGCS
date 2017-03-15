@@ -25,7 +25,7 @@ public class Environment {
 
     private static String externalBaseDirectory;
 
-    public static File getRunningEnvLogDirectory() throws URISyntaxException {
+    public File getRunningEnvLogDirectory() throws URISyntaxException {
         File file = getRunningEnvBaseDirectory();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM_dd_hhmmss");
         String dateAsString = simpleDateFormat.format(dateTimestemp);
@@ -36,7 +36,7 @@ public class Environment {
         return file;
     }
 
-    public static File getRunningEnvConfDirectory() throws URISyntaxException {
+    public File getRunningEnvConfDirectory() throws URISyntaxException {
 
         File file = getRunningEnvBaseDirectory();
         file = new File(file.toString() + DIR_SEPERATOR + CONF_MAIN_DIRECTORY);
@@ -46,7 +46,7 @@ public class Environment {
         return file;
     }
 
-    public static File getRunningEnvCacheDirectory() throws URISyntaxException {
+    public File getRunningEnvCacheDirectory() throws URISyntaxException {
 
         File file = getRunningEnvBaseDirectory();
         file = new File(file.toString() + DIR_SEPERATOR + CACHE_MAIN_DIRECTORY);
@@ -56,7 +56,7 @@ public class Environment {
         return file;
     }
 
-    public static File getRunningEnvBaseDirectory() throws URISyntaxException {
+    public File getRunningEnvBaseDirectory() throws URISyntaxException {
         if (externalBaseDirectory != null && !externalBaseDirectory.isEmpty())
             return new File(externalBaseDirectory);
 
@@ -68,7 +68,7 @@ public class Environment {
         return file;
     }
 
-    public static void setBaseRunningDirectoryByClass(Class<?> clz) throws URISyntaxException {
+    public void setBaseRunningDirectoryByClass(Class<?> clz) throws URISyntaxException {
         File file = new File(clz.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
         externalBaseDirectory = file.getParent().toString();
     }

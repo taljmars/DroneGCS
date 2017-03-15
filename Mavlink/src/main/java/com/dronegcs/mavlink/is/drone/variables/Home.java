@@ -10,7 +10,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import geoTools.Coordinate;
 import geoTools.GeoTools;
 
-@Component("home")
+@Component
 public class Home extends DroneVariable {
 	
 	private Coordinate coordinate;

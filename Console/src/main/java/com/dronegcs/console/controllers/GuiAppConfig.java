@@ -5,12 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,8 +19,8 @@ import static com.dronegcs.console.controllers.AppConfig.context;
 /**
  * Created by taljmars on 3/13/17.
  */
-@Configuration
 @Lazy
+@SpringBootApplication
 public class GuiAppConfig
 {
     public static final int WIDTH = 800;
@@ -30,14 +29,13 @@ public class GuiAppConfig
 
     private Stage stage;
     private Scene scene;
-    private StackPane root;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
     public void showMainScreen() {
-        Parent root = (Parent) getScreen("/com/dronegcs/console/views/DashboardView.fxml");
+        Parent root = (Parent) load("/com/dronegcs/console/views/DashboardView.fxml");
         root.setStyle("-fx-background-color: whitesmoke;");
         root.getStylesheets().add(STYLE_FILE);
         scene = new Scene(root, WIDTH, HEIGHT);
@@ -47,10 +45,6 @@ public class GuiAppConfig
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
-    }
-
-    private Object getScreen(String url) {
-        return load(url);
     }
 
     private FXMLLoader getFXMLLoaderForUrl(String url) {
