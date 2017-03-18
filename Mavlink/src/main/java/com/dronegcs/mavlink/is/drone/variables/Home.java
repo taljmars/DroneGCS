@@ -7,8 +7,8 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 
 @Component
 public class Home extends DroneVariable {

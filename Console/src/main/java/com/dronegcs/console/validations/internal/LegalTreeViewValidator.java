@@ -1,6 +1,6 @@
 package com.dronegcs.console.validations.internal;
 
-import gui.core.mapTreeObjects.Layer;
+import com.gui.core.mapTreeObjects.Layer;
 import javafx.scene.control.TreeItem;
 
 import java.util.HashSet;

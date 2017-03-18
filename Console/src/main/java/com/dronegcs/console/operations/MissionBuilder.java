@@ -18,7 +18,7 @@ import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 import com.dronegcs.console.services.internal.QuadGuiEvent;
 
 @Component

@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.drone.mission.MissionItem;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class Land extends SpatialCoordItem {
 

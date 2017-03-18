@@ -7,7 +7,7 @@
     <groupId>com.dronegcs</groupId>
     <artifactId>DroneGCS</artifactId>
     <packaging>pom</packaging>
-    <version>${version}</version>
+    <version>${myversion}</version>
 
     <modules>
         <module>GCSIS</module>
@@ -20,6 +20,13 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.2.RELEASE</version>
     </parent>
+
+    <properties>
+        <myversion>1.0</myversion>
+        <build.output>CMpub</build.output>
+        <github.global.server>github</github.global.server>
+    </properties>
+
 
     <dependencies>
 
@@ -104,30 +111,12 @@
         <!-- Private Repo -->
 
         <dependency>
-            <groupId>MapViewer</groupId>
+            <groupId>com.mapviewer</groupId>
             <artifactId>GeoTools</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>MapViewer</groupId>
-            <artifactId>Viewer</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <!-- Private JARS -->
-
-        <dependency>
-            <groupId>ImageProcessing</groupId>
-            <artifactId>Detector</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>RXTXcomm</groupId>
-            <artifactId>RXTXcomm</artifactId>
-            <version>RELEASE</version>
-        </dependency>
 
         <dependency>
             <groupId>com.oracle</groupId>
@@ -143,14 +132,13 @@
             <version>RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.dronedb</groupId>
+            <artifactId>DroneServerCore</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
-
-    <properties>
-        <version>1</version>
-        <build.output>CMpub</build.output>
-        <github.global.server>github</github.global.server>
-    </properties>
-
 
     <build>
         <outputDirectory>${build.output}/classes</outputDirectory>
@@ -226,7 +214,7 @@
             <url>https://raw.githubusercontent.com/taljmars/mvn-repo/master/</url>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
 

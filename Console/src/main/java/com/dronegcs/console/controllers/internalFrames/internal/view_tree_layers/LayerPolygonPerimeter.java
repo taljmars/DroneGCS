@@ -1,9 +1,9 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import gui.core.mapViewer.LayeredViewMap;
-import gui.core.mapViewerObjects.MapPolygonImpl;
-import gui.is.interfaces.mapObjects.MapPolygon;
-import geoTools.Coordinate;
+import com.gui.core.mapViewer.LayeredViewMap;
+import com.gui.core.mapViewerObjects.MapPolygonImpl;
+import com.gui.is.interfaces.mapObjects.MapPolygon;
+import com.geo_tools.Coordinate;
 
 public class LayerPolygonPerimeter extends LayerPerimeter {
 

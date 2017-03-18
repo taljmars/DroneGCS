@@ -3,8 +3,8 @@ package com.dronegcs.mavlink.is.drone.variables;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.mavlink.is.drone.DroneVariable;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
 @Component

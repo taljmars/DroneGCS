@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
-import geoTools.MathUtil;
+import com.geo_tools.MathUtil;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 
 @Component

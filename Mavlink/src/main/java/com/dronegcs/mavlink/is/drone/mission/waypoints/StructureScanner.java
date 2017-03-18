@@ -3,7 +3,7 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.shapes.Polygon;
+import com.gui.is.shapes.Polygon;
 import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.drone.mission.survey.CameraInfo;
@@ -12,8 +12,8 @@ import com.dronegcs.mavlink.is.drone.mission.survey.SurveyData;
 import com.dronegcs.mavlink.is.drone.mission.survey.grid.GridBuilder;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 
 public class StructureScanner extends SpatialCoordItem {
 	

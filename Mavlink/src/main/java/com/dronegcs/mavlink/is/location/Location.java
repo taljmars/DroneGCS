@@ -1,6 +1,6 @@
 package com.dronegcs.mavlink.is.location;
 
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class Location {
 

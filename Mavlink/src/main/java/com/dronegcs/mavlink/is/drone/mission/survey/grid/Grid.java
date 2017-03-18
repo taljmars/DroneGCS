@@ -3,8 +3,8 @@ package com.dronegcs.mavlink.is.drone.mission.survey.grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.shapes.PolylineTools;
-import geoTools.Coordinate;
+import com.gui.is.shapes.PolylineTools;
+import com.geo_tools.Coordinate;
 
 public class Grid {
 	public List<Coordinate> gridPoints;

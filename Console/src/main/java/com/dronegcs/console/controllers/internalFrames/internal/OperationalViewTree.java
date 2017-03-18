@@ -13,11 +13,11 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console.services.internal.QuadGuiEvent;
 import com.dronegcs.console.validations.LegalTreeView;
-import gui.core.mapTree.CheckBoxViewTree;
-import gui.core.mapTreeObjects.Layer;
-import gui.core.mapTreeObjects.LayerGroup;
-import gui.is.events.GuiEvent;
-import gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
+import com.gui.core.mapTree.CheckBoxViewTree;
+import com.gui.core.mapTreeObjects.Layer;
+import com.gui.core.mapTreeObjects.LayerGroup;
+import com.gui.is.events.GuiEvent;
+import com.gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
 import com.dronegcs.console.services.EventPublisherSvc;
 import com.dronegcs.console.services.LoggerDisplayerSvc;
 import com.dronegcs.console.services.TextNotificationPublisherSvc;

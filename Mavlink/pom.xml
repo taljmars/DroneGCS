@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.dronegcs</groupId>
         <artifactId>DroneGCS</artifactId>
-        <version>${version}</version>
+        <version>${myversion}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,9 +18,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.dronegcs</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>GCSIS</artifactId>
-            <version>${version}</version>
+            <version>${myversion}</version>
         </dependency>
 
     </dependencies>

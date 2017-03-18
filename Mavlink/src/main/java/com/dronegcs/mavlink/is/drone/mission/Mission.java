@@ -18,8 +18,8 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_a
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.units.Speed;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 
 import java.io.Serializable;
 import java.util.ArrayList;

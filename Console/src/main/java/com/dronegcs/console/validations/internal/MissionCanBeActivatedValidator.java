@@ -1,7 +1,7 @@
 package com.dronegcs.console.validations.internal;
 
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItem;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;

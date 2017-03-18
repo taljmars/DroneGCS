@@ -3,12 +3,12 @@ package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layer
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import gui.core.mapTreeObjects.LayerSingle;
-import gui.core.mapViewer.LayeredViewMap;
-import gui.core.mapViewerObjects.MapLineImpl;
-import gui.core.mapViewerObjects.MapMarkerCircle;
-import gui.core.mapViewerObjects.MapMarkerDot;
-import gui.is.interfaces.mapObjects.MapLine;
+import com.gui.core.mapTreeObjects.LayerSingle;
+import com.gui.core.mapViewer.LayeredViewMap;
+import com.gui.core.mapViewerObjects.MapLineImpl;
+import com.gui.core.mapViewerObjects.MapMarkerCircle;
+import com.gui.core.mapViewerObjects.MapMarkerDot;
+import com.gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
 import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItem;
@@ -16,8 +16,8 @@ import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 
 public class LayerMission extends LayerSingle {
 	

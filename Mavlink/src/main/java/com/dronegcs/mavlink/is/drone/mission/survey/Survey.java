@@ -3,7 +3,7 @@ package com.dronegcs.mavlink.is.drone.mission.survey;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.is.shapes.Polygon;
+import com.gui.is.shapes.Polygon;
 import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItem;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
@@ -13,7 +13,7 @@ import com.dronegcs.mavlink.is.drone.mission.survey.grid.GridBuilder;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class Survey extends MissionItem {
 

@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ObjectsDetector.ObjectDetectorListener;
-import ObjectsDetector.Utilities.DetectionResults;
+import com.objects_detector.ObjectDetectorListener;
+import com.objects_detector.utilities.DetectionResults;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,7 +22,7 @@ import com.dronegcs.gcsis.logger.Logger;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import geoTools.GeoTools;
+import com.geo_tools.GeoTools;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 

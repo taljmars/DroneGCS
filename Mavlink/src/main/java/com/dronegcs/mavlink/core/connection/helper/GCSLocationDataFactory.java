@@ -1,6 +1,6 @@
 package com.dronegcs.mavlink.core.connection.helper;
 
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 import com.dronegcs.gcsis.json.JSONHelper;
 import com.dronegcs.gcsis.logger.Logger;
 import org.json.simple.JSONObject;

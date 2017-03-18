@@ -12,14 +12,14 @@ import com.dronegcs.gcsis.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import ObjectsDetector.Detector;
-import ObjectsDetector.ObjectDetectorListener;
-import ObjectsDetector.Trackers.TrackersEnum;
-import ObjectsDetector.Trackers.ColorTracker.ColorTracker;
-import ObjectsDetector.Trackers.ColorTrackerLockSingleObject.ColorTrackerLockSingleObject;
-import ObjectsDetector.Trackers.FakeTracker.FakeTracker;
-import ObjectsDetector.Trackers.MovementTracker.MovmentTracker;
-import ObjectsDetector.Utilities.DetectionResults;
+import com.objects_detector.Detector;
+import com.objects_detector.ObjectDetectorListener;
+import com.objects_detector.trackers.TrackersEnum;
+import com.objects_detector.trackers.ColorTracker.ColorTracker;
+import com.objects_detector.trackers.ColorTrackerLockSingleObject.ColorTrackerLockSingleObject;
+import com.objects_detector.trackers.FakeTracker.FakeTracker;
+import com.objects_detector.trackers.MovementTracker.MovmentTracker;
+import com.objects_detector.utilities.DetectionResults;
 import com.dronegcs.console.controllers.droneEye.DroneEye;
 import com.dronegcs.console.services.LoggerDisplayerSvc;
 import javafx.collections.FXCollections;
@@ -81,7 +81,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
 		drone.addDroneListener(this);
 		

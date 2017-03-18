@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItem;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public abstract class SpatialCoordItem extends MissionItem implements Altitudable {
 

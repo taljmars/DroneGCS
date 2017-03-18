@@ -9,7 +9,7 @@ import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class Circle extends SpatialCoordItem implements Radiusable {
 

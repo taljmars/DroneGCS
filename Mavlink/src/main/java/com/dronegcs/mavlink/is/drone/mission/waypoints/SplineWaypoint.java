@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 /**
  * Handle spline waypoint com.dronegcs.mavlink.is.mavlink packet generation.

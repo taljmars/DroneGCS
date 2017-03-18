@@ -9,7 +9,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkTakeoff;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 @Component
 public class GuidedPoint extends DroneVariable implements OnDroneListener {

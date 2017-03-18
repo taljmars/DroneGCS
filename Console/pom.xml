@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.dronegcs</groupId>
         <artifactId>DroneGCS</artifactId>
-        <version>${version}</version>
+        <version>${myversion}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,15 +18,15 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.dronegcs</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>GCSIS</artifactId>
-            <version>${project.version}</version>
+            <version>${myversion}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.dronegcs</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>Mavlink</artifactId>
-            <version>${project.version}</version>
+            <version>${myversion}</version>
         </dependency>
 
         <dependency>
@@ -34,7 +34,33 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.mapviewer</groupId>
+            <artifactId>Viewer</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dronedb</groupId>
+            <artifactId>DroneServerCore</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.image_processing</groupId>
+            <artifactId>Detector</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <outputDirectory>../${build.output}/classes/</outputDirectory>

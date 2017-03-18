@@ -28,7 +28,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_sys_statu
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_vfr_hud;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_MODE_FLAG;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_STATE;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 import com.dronegcs.gcsis.logger.Logger;
 
 @Component

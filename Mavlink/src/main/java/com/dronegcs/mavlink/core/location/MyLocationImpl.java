@@ -14,7 +14,7 @@ import com.dronegcs.mavlink.core.connection.helper.BeaconData;
 import com.dronegcs.mavlink.is.location.Location;
 import com.dronegcs.mavlink.is.location.LocationFinder;
 import com.dronegcs.mavlink.is.location.LocationReceiver;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 @Component
 public class MyLocationImpl implements LocationFinder {

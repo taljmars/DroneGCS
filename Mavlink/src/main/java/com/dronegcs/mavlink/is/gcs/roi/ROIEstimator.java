@@ -11,8 +11,8 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.Handler;
 import com.dronegcs.mavlink.is.location.Location;
 import com.dronegcs.mavlink.is.location.LocationReceiver;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkROI;
-import geoTools.Coordinate;
-import geoTools.GeoTools;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 
 /**
  * Uses location data from Android's FusedLocation LocationManager at 1Hz and

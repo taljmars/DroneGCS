@@ -1,6 +1,6 @@
 package com.dronegcs.mavlink.core.connection.helper;
 
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class BeaconData {
 	

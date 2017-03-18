@@ -6,7 +6,7 @@ import com.dronegcs.gcsis.logger.Logger;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 import javax.swing.SwingWorker;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

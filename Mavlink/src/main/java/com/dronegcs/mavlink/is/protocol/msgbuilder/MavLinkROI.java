@@ -5,7 +5,7 @@ import com.dronegcs.mavlink.is.drone.mission.commands.EpmGripper;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_digicam_control;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class MavLinkROI {
 	public static void setROI(Drone drone, Coordinate coord) {

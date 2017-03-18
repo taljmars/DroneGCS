@@ -3,7 +3,7 @@ package com.dronegcs.mavlink.is.protocol.msgbuilder;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
-import geoTools.Coordinate;
+import com.geo_tools.Coordinate;
 
 public class MavLinkLand {
 	
