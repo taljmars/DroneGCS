@@ -3,7 +3,7 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -11,7 +11,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import com.geo_tools.Coordinate;
 
-public class Circle extends SpatialCoordItem implements Radiusable {
+public class Circle extends SpatialCoordItemDrone implements Radiusable {
 
 	private double radius = 10.0;
 	private int turns = 1;
@@ -22,12 +22,12 @@ public class Circle extends SpatialCoordItem implements Radiusable {
 		this.turns = circle.turns;
 	}
 
-	public Circle(Mission mission, Coordinate coord) {
-		super(mission, coord);
+	public Circle(DroneMission droneMission, Coordinate coord) {
+		super(droneMission, coord);
 	}
 
-	public Circle(msg_mission_item msg, Mission mission) {
-		super(mission, null);
+	public Circle(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
 
@@ -84,9 +84,9 @@ public class Circle extends SpatialCoordItem implements Radiusable {
 	}
 
 	@Override
-	public Circle clone(Mission mission) {
+	public Circle clone(DroneMission droneMission) {
 		Circle circle = new Circle(this);
-		circle.setMission(mission);
+		circle.setDroneMission(droneMission);
 		return circle;
 	}
 

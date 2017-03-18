@@ -2,7 +2,7 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItem;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -12,8 +12,8 @@ public abstract class SpatialCoordItem extends MissionItem implements Altitudabl
 
 	protected Coordinate coordinate;
 
-	public SpatialCoordItem(Mission mission, Coordinate coord) {
-		super(mission);
+	public SpatialCoordItem(DroneMission droneMission, Coordinate coord) {
+		super(droneMission);
 		this.coordinate = coord;
 	}
 

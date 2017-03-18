@@ -8,14 +8,14 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
 public abstract class MissionItem implements Comparable<MissionItem>  {
 
-	protected Mission mission;
+	protected DroneMission droneMission;
 
-	public MissionItem(Mission mission) {
-		this.mission = mission;
+	public MissionItem(DroneMission droneMission) {
+		this.droneMission = droneMission;
 	}
 
 	public MissionItem(MissionItem item) {
-		this(item.mission);
+		this(item.droneMission);
 	}
 
 	/**
@@ -44,19 +44,19 @@ public abstract class MissionItem implements Comparable<MissionItem>  {
 
 	public abstract MissionItemType getType();
 
-	public Mission getMission() {
-		return mission;
+	public DroneMission getDroneMission() {
+		return droneMission;
 	}
 	
-	public void setMission(Mission mission) {
-		this.mission = mission;
+	public void setDroneMission(DroneMission droneMission) {
+		this.droneMission = droneMission;
 	}
 
 	@Override
 	public int compareTo(MissionItem another) {
-		return mission.getOrder(this) - mission.getOrder(another);
+		return droneMission.getOrder(this) - droneMission.getOrder(another);
 	}
 	
-	public abstract MissionItem clone(Mission mission);
+	public abstract MissionItem clone(DroneMission droneMission);
 
 }

@@ -1,7 +1,8 @@
 package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Delayable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -20,12 +21,12 @@ public class Waypoint extends SpatialCoordItem implements Delayable {
 		super(referenceItem);
 	}
 
-	public Waypoint(Mission mission, Coordinate coord) {
-		super(mission, coord);
+	public Waypoint(DroneMission droneMission, Coordinate coord) {
+		super(droneMission, coord);
 	}
 
-	public Waypoint(msg_mission_item msg, Mission mission) {
-		super(mission, null);
+	public Waypoint(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
 
@@ -99,9 +100,9 @@ public class Waypoint extends SpatialCoordItem implements Delayable {
 	}
 
 	@Override
-	public Waypoint clone(Mission mission) {
+	public Waypoint clone(DroneMission droneMission) {
 		Waypoint waypoint = new Waypoint(this);
-		waypoint.setMission(mission);
+		waypoint.setDroneMission(droneMission);
 		return waypoint;
 	}
 
