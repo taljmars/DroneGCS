@@ -181,6 +181,16 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	}
 
 	@Override
+	public void updateTreeItemName(TreeItem<Layer> treeItem) {
+		if (treeItem.getValue() instanceof LayerMission) {
+			System.out.println("Found mission to remove");
+			Mission mission = ((LayerMission) treeItem.getValue()).getMission();
+			mission.setName(treeItem.getValue().getName());
+			missionFacadeRemote.write(mission);
+		}
+	}
+
+	@Override
 	public void handleRemoveTreeItem(TreeItem<Layer> treeItem) {
 		if (treeItem.getValue() instanceof LayerMission) {
 			System.out.println("Found mission to remove");
