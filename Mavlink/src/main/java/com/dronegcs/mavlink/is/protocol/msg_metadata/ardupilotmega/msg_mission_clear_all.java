@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* Delete all mission items at once.
+* Delete all droneMission items at once.
 */
 public class msg_mission_clear_all extends MAVLinkMessage{
 

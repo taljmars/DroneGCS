@@ -1,11 +1,11 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
+import com.dronedb.persistence.scheme.MissionItem;
+import com.dronedb.persistence.scheme.MissionItemType;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import com.dronegcs.mavlink.is.drone.mission.MissionItem;
-import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 
 public class MissionItemTableEntry {
 	
@@ -15,18 +15,18 @@ public class MissionItemTableEntry {
     private final SimpleObjectProperty<MissionItem> missionItem;
  
     public MissionItemTableEntry(	Integer pOrder, 
-    				MissionItemType missionItemType, 
+    				MissionItemType missionItemType,
     				Double pLat, Double pLon, Double pHeight, Double pDelay, Double pRadius,
-    				MissionItem pMissionItem) {
+    				MissionItem pDroneMissionItem) {
     	
         this.order = new SimpleIntegerProperty(pOrder);
-        this.type = new SimpleStringProperty(missionItemType.getName());
+        this.type = new SimpleStringProperty(missionItemType.name());
         this.lat = new SimpleDoubleProperty(pLat);
         this.lon = new SimpleDoubleProperty(pLon);
         this.height = new SimpleDoubleProperty(pHeight);
         this.delay = new SimpleDoubleProperty(pDelay);
         this.radius = new SimpleDoubleProperty(pRadius);
-        this.missionItem = new SimpleObjectProperty<MissionItem>(pMissionItem);
+        this.missionItem = new SimpleObjectProperty<MissionItem>(pDroneMissionItem);
     }
 
 
@@ -52,5 +52,5 @@ public class MissionItemTableEntry {
     public void setRadius(Double pRadius) {this.radius.set(pRadius);}  
     
     public MissionItem getMissionItem() {return this.missionItem.get();}
-    public void setMissionItem(MissionItem missionItem) {this.missionItem.set(missionItem);}
+    public void setMissionItem(MissionItem droneMissionItem) {this.missionItem.set(droneMissionItem);}
 }

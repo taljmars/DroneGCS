@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* Set the mission item with sequence number seq as current item. This means that the MAV will continue to this mission item on the shortest path (not following the mission items in-between).
+* Set the droneMission item with sequence number seq as current item. This means that the MAV will continue to this droneMission item on the shortest path (not following the droneMission items in-between).
 */
 public class msg_mission_set_current extends MAVLinkMessage{
 

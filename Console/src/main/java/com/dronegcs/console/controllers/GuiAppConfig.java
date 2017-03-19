@@ -20,7 +20,8 @@ import static com.dronegcs.console.controllers.AppConfig.context;
  * Created by taljmars on 3/13/17.
  */
 @Lazy
-@SpringBootApplication
+//@SpringBootApplication
+@Configuration
 public class GuiAppConfig
 {
     public static final int WIDTH = 800;

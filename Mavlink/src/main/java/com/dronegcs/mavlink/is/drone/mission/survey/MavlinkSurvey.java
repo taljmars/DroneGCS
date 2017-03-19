@@ -3,11 +3,12 @@ package com.dronegcs.mavlink.is.drone.mission.survey;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkCameraTrigger;
 import com.gui.is.shapes.Polygon;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
-import com.dronegcs.mavlink.is.drone.mission.MissionItem;
+import com.dronegcs.mavlink.is.drone.mission.DroneMissionItem;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
-import com.dronegcs.mavlink.is.drone.mission.commands.CameraTrigger;
 import com.dronegcs.mavlink.is.drone.mission.survey.grid.Grid;
 import com.dronegcs.mavlink.is.drone.mission.survey.grid.GridBuilder;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -15,32 +16,32 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import com.geo_tools.Coordinate;
 
-public class Survey extends MissionItem {
+public class MavlinkSurvey extends DroneMissionItem {
 
 	public Polygon polygon = new Polygon();
 	public SurveyData surveyData = new SurveyData();
 	public Grid grid;
 	
-	public Survey(Survey survey) {
-		super(survey);
-		this.polygon = new Polygon(survey.polygon);
-		this.surveyData = new SurveyData(survey.surveyData);
-		this.grid = new Grid(survey.grid);
+	public MavlinkSurvey(MavlinkSurvey mavlinkSurvey) {
+		super(mavlinkSurvey);
+		this.polygon = new Polygon(mavlinkSurvey.polygon);
+		this.surveyData = new SurveyData(mavlinkSurvey.surveyData);
+		this.grid = new Grid(mavlinkSurvey.grid);
 	}
 
-	public Survey(Mission mission, List<Coordinate> points) {
-		super(mission);
+	public MavlinkSurvey(DroneMission droneMission, List<Coordinate> points) {
+		super(droneMission);
 		polygon.addPoints(points);
 	}
 
 	public void update(double angle, double altitude, double overlap, double sidelap) {
 		surveyData.update(angle, altitude, overlap, sidelap);
-		mission.notifyMissionUpdate();
+		droneMission.notifyMissionUpdate();
 	}
 
 	public void setCameraInfo(CameraInfo camera) {
 		surveyData.setCameraInfo(camera);
-		mission.notifyMissionUpdate();
+		droneMission.notifyMissionUpdate();
 	}
 
 	public void build() throws Exception {
@@ -57,9 +58,9 @@ public class Survey extends MissionItem {
 			List<msg_mission_item> list = new ArrayList<msg_mission_item>();
 			build();
 
-			list.addAll((new CameraTrigger(mission, surveyData.getLongitudinalPictureDistance())).packMissionItem());
+			list.addAll((new MavlinkCameraTrigger(droneMission, surveyData.getLongitudinalPictureDistance())).packMissionItem());
 			packGridPoints(list);
-			list.addAll((new CameraTrigger(mission, 0).packMissionItem()));
+			list.addAll((new MavlinkCameraTrigger(droneMission, 0).packMissionItem()));
 			
 			return list;
 		} catch (Exception e) {
@@ -103,10 +104,14 @@ public class Survey extends MissionItem {
 	}
 
 	@Override
-	public Survey clone(Mission mission) {
-		Survey survey = new Survey(this);
-		survey.setMission(mission);
-		return survey;
+	public MavlinkSurvey clone(DroneMission droneMission) {
+		MavlinkSurvey mavlinkSurvey = new MavlinkSurvey(this);
+		mavlinkSurvey.setDroneMission(droneMission);
+		return mavlinkSurvey;
 	}
 
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
+	}
 }

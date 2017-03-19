@@ -9,7 +9,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneEvents;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.Preferences;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.profiles.Parameters;
 import com.dronegcs.mavlink.is.drone.profiles.VehicleProfile;
 import com.dronegcs.mavlink.is.drone.variables.Altitude;
@@ -92,7 +92,7 @@ public class MyDroneImpl implements Drone {
 	private Home home;
 
 	@Autowired
-	private Mission mission;
+	private DroneMission droneMission;
 
 	@Autowired
 	private MissionStats missionStats;
@@ -316,9 +316,8 @@ public class MyDroneImpl implements Drone {
 		return home;
 	}
 
-	@Override
-	public Mission getMission() {
-		return mission;
+	public DroneMission getDroneMission() {
+		return droneMission;
 	}
 
 	@Override

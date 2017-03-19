@@ -26,12 +26,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.ws.MissionFacadeRemote;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console.operations.MissionBuilder;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import javafx.scene.input.MouseButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +64,6 @@ import javafx.scene.paint.Color;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.variables.GuidedPoint;
 import com.dronegcs.mavlink.is.drone.variables.Home;
 import com.geo_tools.Coordinate;
@@ -100,6 +102,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	public ApplicationContext applicationContext;
 
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission facade")
+	public MissionFacadeRemote missionFacadeRemote;
+
 	@Resource(type = OperationalViewTree.class)
 	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
 		super.setCheckBoxViewTree(operationalViewTree);
@@ -123,7 +128,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private MapMarkerDot myBeacon = null;
 	private MapMarkerDot myGCS = null;
 	
-	// Mission Builder
+	// DroneMission Builder
 	private LayerMission modifyiedLayerMission = null;
 	private LayerMission modifyiedLayerMissionOriginal = null;
 
@@ -143,7 +148,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
 		setDisplayPosition(new Coordinate(32.0684, 34.8248), 10);
 		drone.addDroneListener(this);
@@ -154,6 +159,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 	}
 	
 	private ContextMenu buildPopup(Point point) {
+		// TODO: remove it
+		System.out.println("Building popup");
 		ContextMenu popup = new ContextMenu();		
 		
 		MenuItem menuItemFlyTo = new MenuItem("Fly to Position");
@@ -164,7 +171,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		MenuItem menuItemMissionSetHome = new MenuItem("Set Home");
 		MenuItem menuItemMissionSetLandPoint = new MenuItem("Set Land Point");
 		MenuItem menuItemMissionSetRTL = new MenuItem("Set RTL");
-		MenuItem menuItemMissionSetTakeOff = new MenuItem("Set Takeoff");
+		MenuItem menuItemMissionSetTakeOff = new MenuItem("Set MavlinkTakeoff");
 		MenuItem menuItemDist = new MenuItem("Distance -m");
 		MenuItem menuItemPerimeterBuild = new MenuItem("Build Perimeter");
 		MenuItem menuItemPerimeterAddPoint = new MenuItem("Add Point");
@@ -250,7 +257,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		);
 
 		menuItemSyncMission.setOnAction( arg -> {
-				System.out.println(getClass().getName() + " Start Sync Mission");
+				System.out.println(getClass().getName() + " Start Sync DroneMission");
 				drone.getWaypointManager().getWaypoints();
 				loggerDisplayerSvc.logOutgoing("Send Sync Request");
 			}
@@ -303,11 +310,13 @@ OnDroneListener, EventHandler<ActionEvent> {
 				if (modifyiedLayerMission == null) {
 					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					// TALMA i am trying not to use bean here
-					modifyiedLayerMission = new LayerMission("New Mission*", this);
+					modifyiedLayerMission = new LayerMission("New DroneMission*", this);
 					getOperationalViewTree().addLayer(modifyiedLayerMission);
-					Mission msn = applicationContext.getBean(Mission.class);
-					msn.setDrone(drone);
-					modifyiedLayerMission.setMission(msn);
+					//TODO: Fix after handling db
+//					DroneMission msn = applicationContext.getBean(DroneMission.class);
+//					msn.setDrone(drone);
+//					modifyiedLayerMission.setMission(msn);
+					modifyiedLayerMission.setMission(new Mission());
 					
 					super.startModifiedLayerMode(modifyiedLayerMission);
 					
@@ -336,12 +345,15 @@ OnDroneListener, EventHandler<ActionEvent> {
 	
 	@Override
 	protected void HandleMouseClick(MouseEvent me) {
+		// TODO: remove peint
+		System.out.println("Mouse click " + me);
 		if (popup != null)
 			popup.hide();
 		
-		if (!me.isPopupTrigger())
+		if (!me.getButton().equals(MouseButton.SECONDARY))
 			return;
-		
+
+		System.out.println("Get point");
 		Point point = new Point((int) me.getX(), (int) me.getY());
 		popup = buildPopup(point);
 		//this.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {if (e.getButton() == MouseButton.SECONDARY)   popup.show(this, e.getScreenX(), e.getScreenY()); else popup.hide();});
@@ -597,7 +609,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 			EditModeOn();
 			Layer layer = (Layer) command.getSource();
 			if (layer instanceof LayerMission) {
-				System.out.println("Working on Mission Layer");
+				System.out.println("Working on DroneMission Layer");
 				modifyiedLayerMission = (LayerMission) layer;
 				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, this);
 				super.startModifiedLayerMode(modifyiedLayerMission);
@@ -611,6 +623,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 				isPerimeterBuildMode = true;
 				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + OperationalViewTree.EDIT_SUFFIX);
 			} else {
+				System.out.println("Unrecognized Layer");
 				EditModeOff();
 				return;
 			}
@@ -660,22 +673,31 @@ OnDroneListener, EventHandler<ActionEvent> {
 		ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
-		
-		if (modifyiedLayerMission != null)
-			modifyiedLayerMission.setName(modifyiedLayerMission.getName().substring(0,modifyiedLayerMission.getName().length() - 1));
+
+		String missionName = null;
+		Mission mission = null;
+		if (modifyiedLayerMission != null) {
+			modifyiedLayerMission.setName(modifyiedLayerMission.getName().substring(0, modifyiedLayerMission.getName().length() - 1));
+			missionName = modifyiedLayerMission.getName();
+			mission = modifyiedLayerMission.getMission();
+		}
 
 		if (modifyiedLayerPerimeter != null)
 			modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName().substring(0,modifyiedLayerPerimeter.getName().length() - 1));
+		
+		super.finishModifiedLayerMode();
+		if (isMissionBuildMode) {
+			missionBuilder.stopBuildMission();
+			mission.setName(missionName);
+			mission = missionFacadeRemote.write(mission);
+			modifyiedLayerMission.setMission(mission);
+		}
 
 		modifyiedLayerMissionOriginal = null;
 		modifyiedLayerMission = null;
 
 		modifyiedLayerPerimeterOriginal = null;
 		modifyiedLayerPerimeter = null;
-		
-		super.finishModifiedLayerMode();
-		if (isMissionBuildMode)
-			missionBuilder.stopBuildMission();
 		
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;

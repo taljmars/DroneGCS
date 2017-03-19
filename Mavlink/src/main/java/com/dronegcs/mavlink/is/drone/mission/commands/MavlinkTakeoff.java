@@ -3,13 +3,15 @@ package com.dronegcs.mavlink.is.drone.mission.commands;
 import java.io.Serializable;
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisited;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
-public class Takeoff extends MissionCMD implements Serializable {
+public class MavlinkTakeoff extends DroneMissionCMD implements Serializable {
 
     /**
 	 * 
@@ -20,18 +22,18 @@ public class Takeoff extends MissionCMD implements Serializable {
 
 	private double finishedAlt = 10;
 
-	public Takeoff(Takeoff item) {
+	public MavlinkTakeoff(MavlinkTakeoff item) {
 		super(item);
 		finishedAlt = item.finishedAlt;
 	}
 
-	public Takeoff(msg_mission_item msg, Mission mission) {
-		super(mission);
+	public MavlinkTakeoff(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission);
 		unpackMAVMessage(msg);
 	}
 
-	public Takeoff(Mission mission, double altitude) {
-		super(mission);
+	public MavlinkTakeoff(DroneMission droneMission, double altitude) {
+		super(droneMission);
 		finishedAlt = altitude;
 	}
 
@@ -64,9 +66,14 @@ public class Takeoff extends MissionCMD implements Serializable {
 	}
 
 	@Override
-	public Takeoff clone(Mission mission) {
-		Takeoff takeoff = new Takeoff(this);
-		takeoff.setMission(mission);
-		return takeoff;
+	public MavlinkTakeoff clone(DroneMission droneMission) {
+		MavlinkTakeoff mavlinkTakeoff = new MavlinkTakeoff(this);
+		mavlinkTakeoff.setDroneMission(droneMission);
+		return mavlinkTakeoff;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 }

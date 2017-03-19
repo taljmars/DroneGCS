@@ -2,7 +2,8 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -11,7 +12,7 @@ import com.geo_tools.Coordinate;
 /**
  * Handle spline waypoint com.dronegcs.mavlink.is.mavlink packet generation.
  */
-public class SplineWaypoint extends SpatialCoordItem {
+public class MavlinkSplineWaypoint extends SpatialCoordItemDrone {
 
 	/**
 	 * Hold time in decimal seconds. (ignored by fixed wing, time to stay at
@@ -19,17 +20,17 @@ public class SplineWaypoint extends SpatialCoordItem {
 	 */
 	private double delay;
 
-	public SplineWaypoint(SplineWaypoint splineWaypoint) {
-		super(splineWaypoint);
-		this.delay = splineWaypoint.delay;
+	public MavlinkSplineWaypoint(MavlinkSplineWaypoint mavlinkSplineWaypoint) {
+		super(mavlinkSplineWaypoint);
+		this.delay = mavlinkSplineWaypoint.delay;
 	}
 
-	public SplineWaypoint(Mission mission, Coordinate coord) {
-		super(mission, coord);
+	public MavlinkSplineWaypoint(DroneMission droneMission, Coordinate coord) {
+		super(droneMission, coord);
 	}
 
-	public SplineWaypoint(msg_mission_item msg, Mission mission) {
-		super(mission, null);
+	public MavlinkSplineWaypoint(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
 
@@ -62,9 +63,14 @@ public class SplineWaypoint extends SpatialCoordItem {
 	}
 	
 	@Override
-	public SplineWaypoint clone(Mission mission) {
-		SplineWaypoint splineWaypoint = new SplineWaypoint(this);
-		splineWaypoint.setMission(mission);
-		return splineWaypoint;
+	public MavlinkSplineWaypoint clone(DroneMission droneMission) {
+		MavlinkSplineWaypoint mavlinkSplineWaypoint = new MavlinkSplineWaypoint(this);
+		mavlinkSplineWaypoint.setDroneMission(droneMission);
+		return mavlinkSplineWaypoint;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 }

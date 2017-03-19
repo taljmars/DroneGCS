@@ -2,14 +2,14 @@ package com.dronegcs.mavlink.is.drone.mission;
 
 public enum MissionItemType {
 	
-	WAYPOINT("Waypoint"), 
-	SPLINE_WAYPOINT("Spline Waypoint"), 
-	TAKEOFF("Takeoff"), 
+	WAYPOINT("MavlinkWaypoint"),
+	SPLINE_WAYPOINT("Spline MavlinkWaypoint"),
+	TAKEOFF("MavlinkTakeoff"),
 	RTL("Return to Launch"), 
-	LAND("Land"), 
-	CIRCLE("Circle"), 
+	LAND("MavlinkLand"),
+	CIRCLE("MavlinkCircle"),
 	ROI("Region of Interest"), 
-	SURVEY("Survey"), 
+	SURVEY("MavlinkSurvey"),
 	CYLINDRICAL_SURVEY("Structure Scan"), 
 	CHANGE_SPEED("Change Speed"), 
 	CAMERA_TRIGGER("Camera Trigger"), 
@@ -25,34 +25,34 @@ public enum MissionItemType {
 		return name;
 	}
 
-//	public MissionItem getNewItem(MissionItem referenceItem) throws IllegalArgumentException {
+//	public DroneMissionItem getNewItem(DroneMissionItem referenceItem) throws IllegalArgumentException {
 //		switch (this) {
 //		case WAYPOINT:
-//			return new Waypoint(referenceItem);
+//			return new MavlinkWaypoint(referenceItem);
 //		case SPLINE_WAYPOINT:
-//			return new SplineWaypoint(referenceItem);
+//			return new MavlinkSplineWaypoint(referenceItem);
 //		case TAKEOFF:
-//			return new Takeoff(referenceItem);
+//			return new MavlinkTakeoff(referenceItem);
 //		case CHANGE_SPEED:
-//			return new ChangeSpeed(referenceItem);
+//			return new MavlinkChangeSpeed(referenceItem);
 //		case CAMERA_TRIGGER:
-//			return new CameraTrigger(referenceItem);
+//			return new MavlinkCameraTrigger(referenceItem);
 //		case EPM_GRIPPER:
-//			return new EpmGripper(referenceItem);
+//			return new MavlinkEpmGripper(referenceItem);
 //		case RTL:
-//			return new ReturnToHome(referenceItem);
+//			return new MavlinkReturnToHome(referenceItem);
 //		case LAND:
-//			return new Land(referenceItem);
+//			return new MavlinkLand(referenceItem);
 //		case CIRCLE:
-//			return new Circle(referenceItem);
+//			return new MavlinkCircle(referenceItem);
 //		case ROI:
-//			return new RegionOfInterest(referenceItem);
+//			return new MavlinkRegionOfInterest(referenceItem);
 //		case SURVEY:
-//			return new Survey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
+//			return new MavlinkSurvey(referenceItem.getDroneMission(), Collections.<Coord2D> emptyList());
 //		case CYLINDRICAL_SURVEY:
-//			return new StructureScanner(referenceItem);
+//			return new MavlinkStructureScanner(referenceItem);
 //		default:
-//			throw new IllegalArgumentException("Unrecognized mission item type (" + name + ")"
+//			throw new IllegalArgumentException("Unrecognized droneMission item type (" + name + ")"
 //					+ ".");
 //		}
 //	}

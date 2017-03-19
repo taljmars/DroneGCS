@@ -3,30 +3,32 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisited;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.MavlinkRadiusable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import com.geo_tools.Coordinate;
 
-public class Circle extends SpatialCoordItemDrone implements Radiusable {
+public class MavlinkCircle extends SpatialCoordItemDrone implements MavlinkRadiusable {
 
 	private double radius = 10.0;
 	private int turns = 1;
 
-	public Circle(Circle circle) {
-		super(circle);
-		this.radius = circle.radius;
-		this.turns = circle.turns;
+	public MavlinkCircle(MavlinkCircle mavlinkCircle) {
+		super(mavlinkCircle);
+		this.radius = mavlinkCircle.radius;
+		this.turns = mavlinkCircle.turns;
 	}
 
-	public Circle(DroneMission droneMission, Coordinate coord) {
+	public MavlinkCircle(DroneMission droneMission, Coordinate coord) {
 		super(droneMission, coord);
 	}
 
-	public Circle(msg_mission_item msg, DroneMission droneMission) {
+	public MavlinkCircle(msg_mission_item msg, DroneMission droneMission) {
 		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
@@ -84,10 +86,15 @@ public class Circle extends SpatialCoordItemDrone implements Radiusable {
 	}
 
 	@Override
-	public Circle clone(DroneMission droneMission) {
-		Circle circle = new Circle(this);
-		circle.setDroneMission(droneMission);
-		return circle;
+	public MavlinkCircle clone(DroneMission droneMission) {
+		MavlinkCircle mavlinkCircle = new MavlinkCircle(this);
+		mavlinkCircle.setDroneMission(droneMission);
+		return mavlinkCircle;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 
 }

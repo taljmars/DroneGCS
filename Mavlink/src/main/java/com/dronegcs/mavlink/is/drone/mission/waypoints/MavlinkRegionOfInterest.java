@@ -2,24 +2,25 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
 
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.geo_tools.Coordinate;
 
-public class RegionOfInterest extends SpatialCoordItemDrone {
+public class MavlinkRegionOfInterest extends SpatialCoordItemDrone {
 
-	public RegionOfInterest(RegionOfInterest regionOfInterest) {
-		super(regionOfInterest);
+	public MavlinkRegionOfInterest(MavlinkRegionOfInterest mavlinkRegionOfInterest) {
+		super(mavlinkRegionOfInterest);
 	}
 	
-	public RegionOfInterest(DroneMission droneMission, Coordinate coord) {
+	public MavlinkRegionOfInterest(DroneMission droneMission, Coordinate coord) {
 		super(droneMission,coord);
 	}
 	
 
-	public RegionOfInterest(msg_mission_item msg, DroneMission droneMission) {
+	public MavlinkRegionOfInterest(msg_mission_item msg, DroneMission droneMission) {
 		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
@@ -43,10 +44,14 @@ public class RegionOfInterest extends SpatialCoordItemDrone {
 	}
 
 	@Override
-	public RegionOfInterest clone(DroneMission droneMission) {
-		RegionOfInterest regionOfInterest = new RegionOfInterest(this);
-		regionOfInterest.setDroneMission(droneMission);
-		return regionOfInterest;
+	public MavlinkRegionOfInterest clone(DroneMission droneMission) {
+		MavlinkRegionOfInterest mavlinkRegionOfInterest = new MavlinkRegionOfInterest(this);
+		mavlinkRegionOfInterest.setDroneMission(droneMission);
+		return mavlinkRegionOfInterest;
 	}
 
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
+	}
 }

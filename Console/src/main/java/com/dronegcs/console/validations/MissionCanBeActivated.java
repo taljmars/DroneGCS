@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = { MissionCanBeActivatedValidator.class })
 public @interface MissionCanBeActivated {
 	
-	String message() default "Mission cannot be activated";
+	String message() default "DroneMission cannot be activated";
 
     Class<?>[] groups() default {};
 

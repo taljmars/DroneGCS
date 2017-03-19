@@ -1,11 +1,14 @@
 package com.dronegcs.console.services;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 
 /**
  * Created by taljmars on 3/16/17.
  */
 public interface MissionCompilerSvc
 {
-    Mission compile(Mission mission);
+    DroneMission compile(Mission mission);
+
+    Mission decompile(DroneMission mission);
 }

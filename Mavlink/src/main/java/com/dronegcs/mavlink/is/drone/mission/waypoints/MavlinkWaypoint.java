@@ -2,14 +2,16 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
 
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisited;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Delayable;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.MavlinkDelayable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.geo_tools.Coordinate;
 
-public class Waypoint extends SpatialCoordItem implements Delayable {
+public class MavlinkWaypoint extends SpatialCoordItemDrone implements MavlinkDelayable {
 
 	private double delay;
 	private double acceptanceRadius;
@@ -17,15 +19,15 @@ public class Waypoint extends SpatialCoordItem implements Delayable {
 	private double orbitalRadius;
 	private boolean orbitCCW;
 
-	public Waypoint(Waypoint referenceItem) {
+	public MavlinkWaypoint(MavlinkWaypoint referenceItem) {
 		super(referenceItem);
 	}
 
-	public Waypoint(DroneMission droneMission, Coordinate coord) {
+	public MavlinkWaypoint(DroneMission droneMission, Coordinate coord) {
 		super(droneMission, coord);
 	}
 
-	public Waypoint(msg_mission_item msg, DroneMission droneMission) {
+	public MavlinkWaypoint(msg_mission_item msg, DroneMission droneMission) {
 		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
@@ -100,10 +102,14 @@ public class Waypoint extends SpatialCoordItem implements Delayable {
 	}
 
 	@Override
-	public Waypoint clone(DroneMission droneMission) {
-		Waypoint waypoint = new Waypoint(this);
-		waypoint.setDroneMission(droneMission);
-		return waypoint;
+	public MavlinkWaypoint clone(DroneMission droneMission) {
+		MavlinkWaypoint mavlinkWaypoint = new MavlinkWaypoint(this);
+		mavlinkWaypoint.setDroneMission(droneMission);
+		return mavlinkWaypoint;
 	}
 
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
+	}
 }

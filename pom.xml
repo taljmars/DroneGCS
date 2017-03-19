@@ -132,12 +132,6 @@
             <version>RELEASE</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.dronedb</groupId>
-            <artifactId>DroneServerCore</artifactId>
-            <version>1.0</version>
-        </dependency>
-
     </dependencies>
 
     <build>

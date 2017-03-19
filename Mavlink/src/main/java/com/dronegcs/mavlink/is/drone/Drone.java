@@ -1,10 +1,10 @@
 package com.dronegcs.mavlink.is.drone;
 
 import com.dronegcs.mavlink.is.connection.MavLinkConnection;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_heartbeat;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager;
 import com.dronegcs.mavlink.core.firmware.FirmwareType;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.profiles.Parameters;
 import com.dronegcs.mavlink.is.drone.profiles.VehicleProfile;
 import com.dronegcs.mavlink.is.drone.variables.Altitude;
@@ -79,7 +79,7 @@ public interface Drone {
 
 	public Navigation getNavigation();
 
-	public Mission getMission();
+	public DroneMission getDroneMission();
 
 	public StreamRates getStreamRates();
 

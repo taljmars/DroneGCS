@@ -2,27 +2,28 @@ package com.dronegcs.mavlink.is.drone.mission.commands;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 
-public class CameraTrigger extends MissionCMD {
+public class MavlinkCameraTrigger extends DroneMissionCMD {
 
 	private double distance = 0;
 
-	public CameraTrigger(CameraTrigger item) {
+	public MavlinkCameraTrigger(MavlinkCameraTrigger item) {
 		super(item);
 		this.distance = item.distance;
 	}
 
-	public CameraTrigger(msg_mission_item msg, Mission mission) {
-		super(mission);
+	public MavlinkCameraTrigger(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission);
 		unpackMAVMessage(msg);
 	}
 
-	public CameraTrigger(Mission mission, double triggerDistance) {
-		super(mission);
+	public MavlinkCameraTrigger(DroneMission droneMission, double triggerDistance) {
+		super(droneMission);
 		this.distance = triggerDistance;
 	}
 
@@ -54,9 +55,14 @@ public class CameraTrigger extends MissionCMD {
 	}
 
 	@Override
-	public CameraTrigger clone(Mission mission) {
-		CameraTrigger cameraTrigger = new CameraTrigger(this);
-		cameraTrigger.setMission(mission);
-		return cameraTrigger;
+	public MavlinkCameraTrigger clone(DroneMission droneMission) {
+		MavlinkCameraTrigger mavlinkCameraTrigger = new MavlinkCameraTrigger(this);
+		mavlinkCameraTrigger.setDroneMission(droneMission);
+		return mavlinkCameraTrigger;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 }

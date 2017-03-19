@@ -3,11 +3,12 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.drone.mission.survey.MavlinkSurvey;
 import com.gui.is.shapes.Polygon;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.drone.mission.survey.CameraInfo;
-import com.dronegcs.mavlink.is.drone.mission.survey.Survey;
 import com.dronegcs.mavlink.is.drone.mission.survey.SurveyData;
 import com.dronegcs.mavlink.is.drone.mission.survey.grid.GridBuilder;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
@@ -15,7 +16,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
 
-public class StructureScanner extends SpatialCoordItem {
+public class MavlinkStructureScanner extends SpatialCoordItemDrone {
 	
 	private double radius = 10.0;
 	private double heightStep = 5;
@@ -23,16 +24,16 @@ public class StructureScanner extends SpatialCoordItem {
 	private boolean crossHatch = false;
 	SurveyData survey = new SurveyData();
 
-	public StructureScanner(Mission mission, Coordinate coord) {
-		super(mission,coord);
+	public MavlinkStructureScanner(DroneMission droneMission, Coordinate coord) {
+		super(droneMission,coord);
 	}
 
-	public StructureScanner(StructureScanner structureScanner) {
-		super(structureScanner);
-		this.radius = structureScanner.radius;
-		this.heightStep = structureScanner.heightStep;
-		this.numberOfSteps = structureScanner.numberOfSteps;
-		this.crossHatch = structureScanner.crossHatch;
+	public MavlinkStructureScanner(MavlinkStructureScanner mavlinkStructureScanner) {
+		super(mavlinkStructureScanner);
+		this.radius = mavlinkStructureScanner.radius;
+		this.heightStep = mavlinkStructureScanner.heightStep;
+		this.numberOfSteps = mavlinkStructureScanner.numberOfSteps;
+		this.crossHatch = mavlinkStructureScanner.crossHatch;
 		this.survey = new SurveyData(survey);
 	}
 
@@ -48,15 +49,15 @@ public class StructureScanner extends SpatialCoordItem {
 	}
 
 	private void packROI(List<msg_mission_item> list) {
-		RegionOfInterest roi = new RegionOfInterest(mission, new Coordinate(coordinate, 0.0));
+		MavlinkRegionOfInterest roi = new MavlinkRegionOfInterest(droneMission, new Coordinate(coordinate, 0.0));
 		list.addAll(roi.packMissionItem());
 	}
 
 	private void packCircles(List<msg_mission_item> list) {
 		for (double altitude = coordinate.getAltitude(); altitude <= getTopHeight(); altitude += heightStep) {
-			Circle circle = new Circle(mission, new Coordinate(coordinate,	altitude));
-			circle.setRadius(radius);
-			list.addAll(circle.packMissionItem());
+			MavlinkCircle mavlinkCircle = new MavlinkCircle(droneMission, new Coordinate(coordinate,	altitude));
+			mavlinkCircle.setRadius(radius);
+			list.addAll(mavlinkCircle.packMissionItem());
 		}
 	}
 
@@ -74,13 +75,13 @@ public class StructureScanner extends SpatialCoordItem {
 			survey.update(0.0, survey.getAltitude(), survey.getOverlap(), survey.getSidelap());
 			GridBuilder grid = new GridBuilder(polygon, survey, corner);
 			for (Coordinate point : grid.generate(false).gridPoints) {
-				list.add(Survey.packSurveyPoint(point, getTopHeight()));
+				list.add(MavlinkSurvey.packSurveyPoint(point, getTopHeight()));
 			}
 			
 			survey.update(90.0, survey.getAltitude(), survey.getOverlap(), survey.getSidelap());
 			GridBuilder grid2 = new GridBuilder(polygon, survey, corner);
 			for (Coordinate point : grid2.generate(false).gridPoints) {
-				list.add(Survey.packSurveyPoint(point, getTopHeight()));
+				list.add(MavlinkSurvey.packSurveyPoint(point, getTopHeight()));
 			}
 		} catch (Exception e) { // Should never fail, since it has good polygons
 		}
@@ -164,10 +165,14 @@ public class StructureScanner extends SpatialCoordItem {
 	}
 	
 	@Override
-	public StructureScanner clone(Mission mission) {
-		StructureScanner structureScanner = new StructureScanner(this);
-		structureScanner.setMission(mission);
-		return structureScanner;
+	public MavlinkStructureScanner clone(DroneMission droneMission) {
+		MavlinkStructureScanner mavlinkStructureScanner = new MavlinkStructureScanner(this);
+		mavlinkStructureScanner.setDroneMission(droneMission);
+		return mavlinkStructureScanner;
 	}
 
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
+	}
 }

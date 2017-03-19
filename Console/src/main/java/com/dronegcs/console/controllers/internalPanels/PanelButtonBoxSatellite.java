@@ -81,7 +81,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Autowired @NotNull(message = "Internal Error: Failed to get takeoff handler")
 	private OpTakeoffQuad opTakeoffQuad;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get mission handler") 
+	@Autowired @NotNull(message = "Internal Error: Failed to get droneMission handler")
 	private OpStartMissionQuad opStartMissionQuad;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get flight controller service")
@@ -222,13 +222,13 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@FXML
 	public void ButtonTakeOffOnAction(ActionEvent actionEvent) {
 		if (takeOffThreadRunning) {
-    		dialogManagerSvc.showAlertMessageDialog("Takeoff procedure was already started");
+    		dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff procedure was already started");
     		return;
     	}
 
     	takeOffThreadRunning = true;
 		    		
-		logger.LogGeneralMessege("Takeoff thread Stated!");
+		logger.LogGeneralMessege("MavlinkTakeoff thread Stated!");
 	    if (!drone.getState().isArmed()) {
 	    	if (dialogManagerSvc.showAlertMessageDialog("Quad will automatically be armed")) {
 	    		System.out.println("User notified quad was armed");
@@ -237,9 +237,9 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					
 		String val = dialogManagerSvc.showInputDialog("Choose altitude", "", null, null, "5");
 		if (val == null) {
-			System.out.println(getClass().getName() + " Takeoff canceled");
+			System.out.println(getClass().getName() + " MavlinkTakeoff canceled");
 			takeOffThreadRunning = false;
-				logger.LogGeneralMessege("Takeoff thread Done!");
+				logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
 			return;
 		}
     
@@ -252,7 +252,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					opTakeoffQuad.setNext(null);
 					opArmQuad.go();
 					takeOffThreadRunning = false;
-	   				logger.LogGeneralMessege("Takeoff thread Done!");
+	   				logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
         		}
         		catch (Exception exp) {
         			exp.printStackTrace();
@@ -296,7 +296,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         		
     		String val = dialogManagerSvc.showInputDialog("Choose altitude", "", null, null, "5");
     		if (val == null) {
-    			loggerDisplayerSvc.logError("Takeoff canceled");
+    			loggerDisplayerSvc.logError("MavlinkTakeoff canceled");
     			btnFollowBeaconStart.setSelected(false);				        			
     			return;
     		}
@@ -370,12 +370,12 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		Platform.runLater( () -> {
 			if (btnStartMission.isSelected()) {
         		try {
-        			opStartMissionQuad.setMission(drone.getMission());
+        			opStartMissionQuad.setDroneMission(drone.getDroneMission());
         			opStartMissionQuad.setNext(null);
 					if (!opStartMissionQuad.go())
 						btnStartMission.setSelected(false);
 				} catch (Exception e1) {
-					dialogManagerSvc.showErrorMessageDialog("Failed to start mission, please resolve issue and try again", e1);
+					dialogManagerSvc.showErrorMessageDialog("Failed to start droneMission, please resolve issue and try again", e1);
 					btnStartMission.setSelected(false);
 				}
         	}
@@ -412,8 +412,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 
 	private boolean TryLand() {
 		boolean result = true;
-		String[] options = {"Land", "RTL", "Cancel"};
-		int n = dialogManagerSvc.showOptionsDialog("Choose Land Option", "", null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
+		String[] options = {"MavlinkLand", "RTL", "Cancel"};
+		int n = dialogManagerSvc.showOptionsDialog("Choose MavlinkLand Option", "", null, options, drone.getGps().isPositionValid() ? options[1] : options[0]);
 		if (n == 0) {
 			MavLinkModes.changeFlightMode(drone, ApmModes.ROTOR_LAND);
 			loggerDisplayerSvc.logGeneral("Landing");

@@ -2,29 +2,30 @@ package com.dronegcs.mavlink.is.drone.mission.commands;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 import com.dronegcs.mavlink.is.units.Speed;
 
-public class ChangeSpeed extends MissionCMD {
+public class MavlinkChangeSpeed extends DroneMissionCMD {
 
 	private Speed speed = new Speed(5);
 
-	public ChangeSpeed(ChangeSpeed item) {
+	public MavlinkChangeSpeed(MavlinkChangeSpeed item) {
 		super(item);
 		this.speed = new Speed(item.speed);
 	}
 
-	public ChangeSpeed(msg_mission_item msg, Mission mission) {
-		super(mission);
+	public MavlinkChangeSpeed(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission);
 		unpackMAVMessage(msg);
 	}
 
-	public ChangeSpeed(Mission mission, Speed speed) {
-		super(mission);
+	public MavlinkChangeSpeed(DroneMission droneMission, Speed speed) {
+		super(droneMission);
 		this.speed = speed;
 	}
 
@@ -57,9 +58,14 @@ public class ChangeSpeed extends MissionCMD {
 	}
 
 	@Override
-	public ChangeSpeed clone(Mission mission) {
-		ChangeSpeed changeSpeed = new ChangeSpeed(this);
-		changeSpeed.setMission(mission);
-		return changeSpeed;
+	public MavlinkChangeSpeed clone(DroneMission droneMission) {
+		MavlinkChangeSpeed mavlinkChangeSpeed = new MavlinkChangeSpeed(this);
+		mavlinkChangeSpeed.setDroneMission(droneMission);
+		return mavlinkChangeSpeed;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 }

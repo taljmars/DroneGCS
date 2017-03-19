@@ -95,7 +95,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout
 		timeOut.setTimeOutRetry(RETRIES_AMOUNT);
 		state = WaypointStates.READ_REQUEST;
 		timeOut.setTimeOut();
-		logger.LogOutgoingMessage("Sending Sync Waypoint request");
+		logger.LogOutgoingMessage("Sending Sync MavlinkWaypoint request");
 		MavLinkWaypoint.requestWaypointsList(drone);
 	}
 
@@ -173,7 +173,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout
 	private List<msg_mission_item> mission = new ArrayList<msg_mission_item>();
 
 	/**
-	 * Try to process a Mavlink message if it is a mission related message
+	 * Try to process a Mavlink message if it is a droneMission related message
 	 * 
 	 * @param msg
 	 *            Mavlink message to process
@@ -206,7 +206,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout
 					timeOut.resetTimeOut();
 					state = WaypointStates.IDLE;
 					MavLinkWaypoint.sendAck(drone);
-					drone.getMission().onMissionReceived(mission);
+					drone.getDroneMission().onMissionReceived(mission);
 					doEndWaypointEvent(WaypointEvent_Type.WP_DOWNLOAD);
 				}
 				return true;
@@ -225,7 +225,7 @@ public class WaypointManager extends DroneVariable implements OnTimeout
 		case WAITING_WRITE_ACK:
 			if (msg.msgid == msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK) {
 				timeOut.resetTimeOut();
-				drone.getMission().onWriteWaypoints((msg_mission_ack) msg);
+				drone.getDroneMission().onWriteWaypoints((msg_mission_ack) msg);
 				state = WaypointStates.IDLE;
 				doEndWaypointEvent(WaypointEvent_Type.WP_UPLOAD);
 				return true;

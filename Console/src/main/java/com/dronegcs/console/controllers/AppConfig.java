@@ -5,19 +5,25 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+
+import com.dronedb.persistence.services.DroneDbCrudSvc;
+import com.dronedb.persistence.ws.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.MissionFacadeRemote;
+import com.dronedb.persistence.ws.QuerySvcRemote;
 import com.dronegcs.mavlink.core.drone.MyDroneImpl;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 
 @Import({GuiAppConfig.class, InternalFrameMap.class , MyDroneImpl.class , OpGCSTerminationHandler.class})
-@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
+//@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
+@Configuration
+@ComponentScan(value = {
+		"com.dronegcs.console"
+})
 public class AppConfig {
 	
 	public static final AppConfig loader = new AppConfig();
@@ -28,8 +34,8 @@ public class AppConfig {
 	public static ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 	
 	@Bean @Scope("prototype")
-	public Mission mission() {
-		return new Mission();
+	public DroneMission mission() {
+		return new DroneMission();
 	}
 	
 	// DB Access
@@ -37,8 +43,8 @@ public class AppConfig {
 	private static <T> T LoadServices(Class<T> clz) {
 		try {
 			System.err.println("Got " + clz.getSimpleName());
-			URL url = new URL("http://localhost:9999/ws/droneServer?wsdl");
-			QName qName = new QName("http://internal.ws.dronedb.com/", clz.getSimpleName() + "ImplService");
+			URL url = new URL("http://localhost:9999/ws/" + clz.getSimpleName() + "?wsdl");
+			QName qName = new QName("http://internal.ws.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
 			Service service = Service.create(url, qName);
 			return service.getPort(clz);
 		} 
@@ -48,8 +54,18 @@ public class AppConfig {
 		return null;
 	}
 	
-//	@Bean
-//	public DroneDbCrudSvcRemote droneDbCrudSvcRemote() {
-//		return LoadServices(DroneDbCrudSvcRemote.class);
-//	}
+	@Bean
+	public MissionFacadeRemote missionFacadeRemote() {
+		return LoadServices(MissionFacadeRemote.class);
+	}
+
+	@Bean
+	public QuerySvcRemote querySvcRemote() {
+		return LoadServices(QuerySvcRemote.class);
+	}
+
+	@Bean
+	public DroneDbCrudSvcRemote droneDbCrudSvcRemote() {
+		return LoadServices(DroneDbCrudSvcRemote.class);
+	}
 }

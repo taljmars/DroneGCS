@@ -2,11 +2,12 @@ package com.dronegcs.mavlink.is.drone.mission.commands;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 
-public class EpmGripper extends MissionCMD {
+public class MavlinkEpmGripper extends DroneMissionCMD {
 
 	// TODO Update com.dronegcs.mavlink.is.mavlink and use the correct enum here
 	public final static short MAV_CMD_DO_GRIPPER = 211;
@@ -15,18 +16,18 @@ public class EpmGripper extends MissionCMD {
 
 	private boolean release = true;
 
-	public EpmGripper(EpmGripper item) {
+	public MavlinkEpmGripper(MavlinkEpmGripper item) {
 		super(item);
 		this.release = item.release;
 	}
 
-	public EpmGripper(msg_mission_item msg, Mission mission) {
-		super(mission);
+	public MavlinkEpmGripper(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission);
 		unpackMAVMessage(msg);
 	}
 
-	public EpmGripper(Mission mission, boolean release) {
-		super(mission);
+	public MavlinkEpmGripper(DroneMission droneMission, boolean release) {
+		super(droneMission);
 		this.release = release;
 	}
 
@@ -62,9 +63,14 @@ public class EpmGripper extends MissionCMD {
 	}
 
 	@Override
-	public EpmGripper clone(Mission mission) {
-		EpmGripper epmGripper = new EpmGripper(this);
-		epmGripper.setMission(mission);
-		return epmGripper;
+	public MavlinkEpmGripper clone(DroneMission droneMission) {
+		MavlinkEpmGripper mavlinkEpmGripper = new MavlinkEpmGripper(this);
+		mavlinkEpmGripper.setDroneMission(droneMission);
+		return mavlinkEpmGripper;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 }

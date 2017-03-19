@@ -1,29 +1,28 @@
 package com.dronegcs.mavlink.is.drone.mission.waypoints;
 
 import java.util.List;
-import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import com.dronegcs.mavlink.is.drone.mission.DroneMissionItem;
-import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
+
+import com.dronegcs.mavlink.is.drone.mission.*;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.geo_tools.Coordinate;
 
-public class Land extends SpatialCoordItemDrone {
+public class MavlinkLand extends SpatialCoordItemDrone {
 
-	public Land(DroneMissionItem item) {
+	public MavlinkLand(DroneMissionItem item) {
 		super(item);
 		setAltitude(0);
 	}
 
-	public Land(DroneMission droneMission) {
+	public MavlinkLand(DroneMission droneMission) {
 		this(droneMission,new Coordinate(0,0));
 	}
 
-	public Land(DroneMission mDroneMission, Coordinate coord) {
+	public MavlinkLand(DroneMission mDroneMission, Coordinate coord) {
 		super(mDroneMission, new Coordinate(coord, 0));
 	}
 	
-	public Land(msg_mission_item msg, DroneMission droneMission) {
+	public MavlinkLand(msg_mission_item msg, DroneMission droneMission) {
 		super(droneMission, null);
 		unpackMAVMessage(msg);
 	}
@@ -48,10 +47,15 @@ public class Land extends SpatialCoordItemDrone {
 	}
 	
 	@Override
-	public Land clone(DroneMission droneMission) {
-		Land land = new Land(this);
-		land.setDroneMission(droneMission);
-		return land;
+	public MavlinkLand clone(DroneMission droneMission) {
+		MavlinkLand mavlinkLand = new MavlinkLand(this);
+		mavlinkLand.setDroneMission(droneMission);
+		return mavlinkLand;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 
 }

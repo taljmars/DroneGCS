@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* Request that the vehicle report terrain height at the given location. Used by GCS to check if vehicle has all terrain data needed for a mission.
+* Request that the vehicle report terrain height at the given location. Used by GCS to check if vehicle has all terrain data needed for a droneMission.
 */
 public class msg_terrain_check extends MAVLinkMessage{
 

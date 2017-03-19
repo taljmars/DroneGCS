@@ -1,7 +1,7 @@
 package com.dronegcs.mavlink.is.protocol.msgbuilder;
 
 import com.dronegcs.mavlink.is.drone.Drone;
-import com.dronegcs.mavlink.is.drone.mission.commands.EpmGripper;
+import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkEpmGripper;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_command_long;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_digicam_control;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -46,8 +46,8 @@ public class MavLinkROI {
 		msg_command_long msg = new msg_command_long();
 		msg.target_system = 1;
 		msg.target_component = 1;
-		msg.command = EpmGripper.MAV_CMD_DO_GRIPPER;
-		msg.param2 = release ? EpmGripper.GRIPPER_ACTION_RELEASE : EpmGripper.GRIPPER_ACTION_GRAB;
+		msg.command = MavlinkEpmGripper.MAV_CMD_DO_GRIPPER;
+		msg.param2 = release ? MavlinkEpmGripper.GRIPPER_ACTION_RELEASE : MavlinkEpmGripper.GRIPPER_ACTION_GRAB;
 
 		drone.getMavClient().sendMavPacket(msg.pack());
 	}

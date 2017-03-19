@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* This message is emitted as response to MISSION_REQUEST_LIST by the MAV and to initiate a write transaction. The GCS can then request the individual mission item based on the knowledge of the total number of MISSIONs.
+* This message is emitted as response to MISSION_REQUEST_LIST by the MAV and to initiate a write transaction. The GCS can then request the individual droneMission item based on the knowledge of the total number of MISSIONs.
 */
 public class msg_mission_count extends MAVLinkMessage{
 
@@ -16,7 +16,7 @@ public class msg_mission_count extends MAVLinkMessage{
 	
 
  	/**
-	* Number of mission items in the sequence
+	* Number of droneMission items in the sequence
 	*/
 	public short count; 
  	/**

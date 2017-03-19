@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* Request the overall list of mission items from the system/component.
+* Request the overall list of droneMission items from the system/component.
 */
 public class msg_mission_request_list extends MAVLinkMessage{
 

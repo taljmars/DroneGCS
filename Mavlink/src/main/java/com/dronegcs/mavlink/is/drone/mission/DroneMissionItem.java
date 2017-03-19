@@ -6,21 +6,21 @@ import java.util.List;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
-public abstract class MissionItem implements Comparable<MissionItem>  {
+public abstract class DroneMissionItem implements ConvertMavlinkVisited, Comparable<DroneMissionItem>  {
 
 	protected DroneMission droneMission;
 
-	public MissionItem(DroneMission droneMission) {
+	public DroneMissionItem(DroneMission droneMission) {
 		this.droneMission = droneMission;
 	}
 
-	public MissionItem(MissionItem item) {
+	public DroneMissionItem(DroneMissionItem item) {
 		this(item.droneMission);
 	}
 
 	/**
 	 * Return a new list (one or more) of MAVLinkMessage msg_mission_item that
-	 * represent this MissionItem
+	 * represent this DroneMissionItem
 	 * 
 	 * @return
 	 */
@@ -36,7 +36,7 @@ public abstract class MissionItem implements Comparable<MissionItem>  {
 	}
 
 	/**
-	 * Gets data from MAVLinkMessage msg_mission_item for this MissionItem
+	 * Gets data from MAVLinkMessage msg_mission_item for this DroneMissionItem
 	 * 
 	 * @return
 	 */
@@ -53,10 +53,10 @@ public abstract class MissionItem implements Comparable<MissionItem>  {
 	}
 
 	@Override
-	public int compareTo(MissionItem another) {
+	public int compareTo(DroneMissionItem another) {
 		return droneMission.getOrder(this) - droneMission.getOrder(another);
 	}
 	
-	public abstract MissionItem clone(DroneMission droneMission);
+	public abstract DroneMissionItem clone(DroneMission droneMission);
 
 }

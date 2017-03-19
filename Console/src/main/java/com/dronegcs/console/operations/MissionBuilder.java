@@ -2,22 +2,13 @@ package com.dronegcs.console.operations;
 
 import javax.validation.constraints.NotNull;
 
+import com.dronedb.persistence.scheme.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.services.DialogManagerSvc;
 import com.dronegcs.console.services.EventPublisherSvc;
 import com.dronegcs.console.services.LoggerDisplayerSvc;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
-import com.dronegcs.mavlink.is.drone.mission.MissionItem;
-import com.dronegcs.mavlink.is.drone.mission.commands.ReturnToHome;
-import com.dronegcs.mavlink.is.drone.mission.commands.Takeoff;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
 import com.geo_tools.Coordinate;
 import com.dronegcs.console.services.internal.QuadGuiEvent;
 
@@ -45,62 +36,70 @@ public class MissionBuilder {
 
 	public void addWayPoint(Coordinate iCoord) {
 		Coordinate c3 = new Coordinate(iCoord, 20);
-		if (mission.isLastItemLandOrRTL()) {
+		if (isLastItemLandOrRTL()) {
 			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
 			return;
 		}
-		updateMissionItem(new Waypoint(mission, c3));
+		Waypoint waypoint = new Waypoint();
+		waypoint.setLat(c3.getLat());
+		waypoint.setLon(c3.getLon());
+		waypoint.setAltitude(c3.getAltitude());
+		updateMissionItem(waypoint);
 	}
 
 	public void addCircle(Coordinate coord) {
 		Coordinate c3 = new Coordinate(coord, 20);
-		if (mission.isLastItemLandOrRTL()) {
+		if (isLastItemLandOrRTL()) {
 			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
 			return;
 		}
-		updateMissionItem(new Circle(mission, c3));
+		Circle circle = new Circle();
+		circle.setLon(c3.getLon());
+		circle.setLat(c3.getLat());
+		circle.setAltitude(c3.getAltitude());
+		updateMissionItem(circle);
 	}
 
 	public void addLandPoint(Coordinate coord) {
-		Coordinate c3 = new Coordinate(coord, 20);
-		if (mission.isLastItemLandOrRTL()) {
-			dialogManagerSvc.showAlertMessageDialog("RTL/Land point was already defined");
-			return;
-		}
-		updateMissionItem(new Land(mission, c3));
+//		Coordinate c3 = new Coordinate(coord, 20);
+//		if (mission.isLastItemLandOrRTL()) {
+//			dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
+//			return;
+//		}
+//		updateMissionItem(new Land(mission, c3));
 	}
 
 	public void addRTL() {
-		if (mission.isLastItemLandOrRTL()) {
-			dialogManagerSvc.showAlertMessageDialog("RTL/Land point was already defined");
-			return;
-		}
-		updateMissionItem(new ReturnToHome(mission));
+//		if (mission.isLastItemLandOrRTL()) {
+//			dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
+//			return;
+//		}
+//		updateMissionItem(new MavlinkReturnToHome(mission));
 	}
 
 	public void addTakeOff() {
-		if (mission.isFirstItemTakeoff()) {
-			dialogManagerSvc.showAlertMessageDialog("Takeoff point was already defined");
-			return;
-		}
-
-		String val = dialogManagerSvc.showInputDialog("Choose altitude", "",null, null, "5");
-		if (val == null) {
-			System.out.println(getClass().getName() + " Takeoff canceled");
-			dialogManagerSvc.showAlertMessageDialog("Takeoff must be defined with height");
-			return;
-		}
-		double altitude = Double.parseDouble((String) val);
-		updateMissionItem(new Takeoff(mission, altitude));
+//		if (mission.isFirstItemTakeoff()) {
+//			dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff point was already defined");
+//			return;
+//		}
+//
+//		String val = dialogManagerSvc.showInputDialog("Choose altitude", "",null, null, "5");
+//		if (val == null) {
+//			System.out.println(getClass().getName() + " MavlinkTakeoff canceled");
+//			dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff must be defined with height");
+//			return;
+//		}
+//		double altitude = Double.parseDouble((String) val);
+//		updateMissionItem(new MavlinkTakeoff(mission, altitude));
 	}
 	
 	public void addROI(Coordinate coord) {
-		Coordinate c3 = new Coordinate(coord, 20);
-		if (mission.isLastItemLandOrRTL()) {
-			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
-			return;
-		}
-		updateMissionItem(new RegionOfInterest(mission, c3));
+//		Coordinate c3 = new Coordinate(coord, 20);
+//		if (mission.isLastItemLandOrRTL()) {
+//			dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a MavlinkLand/RTL point");
+//			return;
+//		}
+//		updateMissionItem(new RegionOfInterest(mission, c3));
 	}
 	
 	private void updateMissionItem(MissionItem missionItem) {
@@ -113,6 +112,20 @@ public class MissionBuilder {
 		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.layerMission));
 		this.layerMission = null;
 		this.mission = null;
-		loggerDisplayerSvc.logGeneral("Mission editor finished");
+		loggerDisplayerSvc.logGeneral("DroneMission editor finished");
+	}
+
+	// Utilities
+
+	private boolean isLastItemLandOrRTL() {
+		if(mission.getMissionItems().isEmpty())
+			return false;
+
+		MissionItem last = mission.getMissionItems().get(mission.getMissionItems().size() - 1);
+		return (last instanceof ReturnToHome) || (last instanceof Land);
+	}
+
+	public boolean isFirstItemTakeoff() {
+		return !mission.getMissionItems().isEmpty() && mission.getMissionItems().get(0) instanceof Takeoff;
 	}
 }

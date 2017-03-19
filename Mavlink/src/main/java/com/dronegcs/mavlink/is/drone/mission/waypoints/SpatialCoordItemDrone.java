@@ -3,24 +3,24 @@ package com.dronegcs.mavlink.is.drone.mission.waypoints;
 import java.util.List;
 
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import com.dronegcs.mavlink.is.drone.mission.MissionItem;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
+import com.dronegcs.mavlink.is.drone.mission.DroneMissionItem;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.MavlinkAltitudable;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.geo_tools.Coordinate;
 
-public abstract class SpatialCoordItem extends MissionItem implements Altitudable {
+public abstract class SpatialCoordItemDrone extends DroneMissionItem implements MavlinkAltitudable {
 
 	protected Coordinate coordinate;
 
-	public SpatialCoordItem(DroneMission droneMission, Coordinate coord) {
+	public SpatialCoordItemDrone(DroneMission droneMission, Coordinate coord) {
 		super(droneMission);
 		this.coordinate = coord;
 	}
 
-	public SpatialCoordItem(MissionItem item) {
+	public SpatialCoordItemDrone(DroneMissionItem item) {
 		super(item);
-		if (item instanceof SpatialCoordItem) {
-			coordinate = ((SpatialCoordItem) item).getCoordinate();
+		if (item instanceof SpatialCoordItemDrone) {
+			coordinate = ((SpatialCoordItemDrone) item).getCoordinate();
 		} else {
 			coordinate = new Coordinate(0, 0, 0);
 		}

@@ -1,6 +1,6 @@
 package com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces;
 
-public interface Radiusable {
+public interface MavlinkRadiusable {
 
 	public double getRadius();
 	

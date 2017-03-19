@@ -47,7 +47,7 @@ public class OpTakeoffQuad extends OperationHandler {
 	
 	@Override
 	public boolean go() throws InterruptedException {
-		loggerDisplayerSvc.logGeneral("Start Takeoff Phase");
+		loggerDisplayerSvc.logGeneral("Start MavlinkTakeoff Phase");
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
@@ -75,7 +75,7 @@ public class OpTakeoffQuad extends OperationHandler {
 			return false;
 		}
 		
-		loggerDisplayerSvc.logGeneral("Takeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
+		loggerDisplayerSvc.logGeneral("MavlinkTakeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
 		
 		return super.go();
 	}

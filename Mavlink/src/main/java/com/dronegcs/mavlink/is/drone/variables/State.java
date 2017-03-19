@@ -135,7 +135,7 @@ public class State extends DroneVariable
 		}
 		
 		if (ApmModes.isValid(mode)) {
-			logger.LogGeneralMessege("Start Mission - Change to " + mode.getName());
+			logger.LogGeneralMessege("Start DroneMission - Change to " + mode.getName());
 			System.out.println(getClass().getName() + mode.getName());
 			MavLinkModes.changeFlightMode(drone, mode);
 		}

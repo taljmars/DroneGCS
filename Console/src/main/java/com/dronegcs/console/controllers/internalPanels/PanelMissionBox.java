@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalPanels.internal.EditingCell;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +28,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
-import com.dronegcs.mavlink.is.drone.mission.Mission;
-import com.dronegcs.mavlink.is.drone.mission.MissionItem;
-import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Altitudable;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Delayable;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.interfaces.Radiusable;
-import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.console.services.internal.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
@@ -68,7 +60,7 @@ public class PanelMissionBox extends Pane implements Initializable {
 	@PostConstruct
 	public void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 
 	@Override
@@ -135,11 +127,11 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty && getIndex() > 0 ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-                        	Mission mission = entry.getMissionItem().getMission();
-                            mission.getItems().remove(getIndex());
-                            mission.getItems().add(getIndex() - 1, entry.getMissionItem());
-                            generateMissionTable(true);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+//                        	Mission mission = entry.getMissionItem().getMission();
+//                            mission.getMissionItems().remove(getIndex());
+//                            mission.getMissionItems().add(getIndex() - 1, entry.getMissionItem());
+//                            generateMissionTable(true);
+//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -159,11 +151,11 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty && getIndex() < getTableView().getItems().size() - 1 ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-                        	Mission mission = entry.getMissionItem().getMission();
-                            mission.getItems().remove(getIndex());
-                            mission.getItems().add(getIndex() + 1, entry.getMissionItem());
-                            generateMissionTable(true);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+//                        	Mission mission = entry.getMissionItem().getMission();
+//                            mission.getMissionItems().remove(getIndex());
+//                            mission.getMissionItems().add(getIndex() + 1, entry.getMissionItem());
+//                            generateMissionTable(true);
+//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -183,10 +175,10 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-                        	Mission mission = entry.getMissionItem().getMission();
-                            mission.getItems().remove(getIndex());
-                            generateMissionTable(true);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+//                        	Mission mission = entry.getMissionItem().getMission();
+//                            mission.getMissionItems().remove(getIndex());
+//                            generateMissionTable(true);
+//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -209,8 +201,8 @@ public class PanelMissionBox extends Pane implements Initializable {
 			return;
 		}
 		
-		Mission mission = layerMission.getMission();
-		if (mission == null) {
+		Mission droneMission = layerMission.getMission();
+		if (droneMission == null) {
 			table.setItems(null);
 			return;
 		}
@@ -229,56 +221,52 @@ public class PanelMissionBox extends Pane implements Initializable {
 		// Start loading items
 		ObservableList<MissionItemTableEntry> data = FXCollections.observableArrayList();
 
-		Iterator<MissionItem> it = mission.getItems().iterator();
+		Iterator<MissionItem> it = droneMission.getMissionItems().iterator();
 		int i = 0;
 		while (it.hasNext()) {
-			System.out.println("Loop ");
 			MissionItem mItem = it.next();
-			
-			switch (mItem.getType()) {
-				case WAYPOINT: {
-					Waypoint wp = (Waypoint) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getCoordinate().getLat(), wp.getCoordinate().getLon(), wp.getCoordinate().getAltitude(), wp.getDelay(), 0.0, mItem);
-					break;
-				}
-				case SPLINE_WAYPOINT:
-					//return new SplineWaypoint(referenceItem);
-					break;
-				case TAKEOFF: {
-					msg_mission_item msg = mItem.packMissionItem().get(0);
-					double alt = (double) msg.z;
-					entry = new MissionItemTableEntry(i, MissionItemType.TAKEOFF, 0.0, 0.0, alt, 0.0, 0.0,  mItem); 
-					break;	
-				}
-				case CHANGE_SPEED:
-					//return new ChangeSpeed(referenceItem);
-				case CAMERA_TRIGGER:
-					//return new CameraTrigger(referenceItem);
-				case EPM_GRIPPER:
-					//return new EpmGripper(referenceItem);
-				case RTL: {
-					entry = new MissionItemTableEntry(i, MissionItemType.RTL, 0.0, 0.0, 0.0, 0.0, 0.0, mItem); 
-					break;
-				}
-				case LAND: {
-					entry = new MissionItemTableEntry(i, MissionItemType.LAND, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
-					break;
-				}
-				case CIRCLE: { // Loiter
-					Circle wp = (Circle) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getCoordinate().getLat(), wp.getCoordinate().getLon(), wp.getCoordinate().getAltitude(), 0.0, wp.getRadius(), mItem);
-					break;
-				}
-				case ROI:
-					RegionOfInterest roi = (RegionOfInterest) mItem;
-					entry = new MissionItemTableEntry(i, MissionItemType.ROI, roi.getCoordinate().getLat(), roi.getCoordinate().getLon(), roi.getCoordinate().getAltitude(), 0.0, 0.0, mItem);
-					break;
-				case SURVEY:
-					//return new Survey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
-				case CYLINDRICAL_SURVEY:
-					//return new StructureScanner(referenceItem);
-				default:
-					break;
+
+			if (mItem instanceof Waypoint) {
+				Waypoint wp = (Waypoint) mItem;
+				entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getDelay(), 0.0, mItem);
+			}
+			else if (mItem instanceof Circle) {
+				Circle wp = (Circle) mItem;
+				entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, wp.getRadius(), mItem);
+			}
+			else if (mItem instanceof Land) {
+				entry = new MissionItemTableEntry(i, MissionItemType.LAND, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
+			}
+			else if (mItem instanceof ReturnToHome) {
+				entry = new MissionItemTableEntry(i, MissionItemType.RTL, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
+			}
+			else if (mItem instanceof Takeoff) {
+//				msg_mission_item msg = mItem.packMissionItem().get(0);
+//				double alt = (double) msg.z;
+//				entry = new MissionItemTableEntry(i, MissionItemType.TAKEOFF, 0.0, 0.0, alt, 0.0, 0.0,  mItem);
+			}
+//				case SPLINE_WAYPOINT:
+					//return new MavlinkSplineWaypoint(referenceItem);
+//					break;
+//				case CHANGE_SPEED:
+					//return new MavlinkChangeSpeed(referenceItem);
+//				case CAMERA_TRIGGER:
+					//return new MavlinkCameraTrigger(referenceItem);
+//				case EPM_GRIPPER:
+//					return new MavlinkEpmGripper(referenceItem);
+//				case ROI:
+//					MavlinkRegionOfInterest roi = (MavlinkRegionOfInterest) mItem;
+//					entry = new MissionItemTableEntry(i, MissionItemType.ROI, roi.getCoordinate().getLat(), roi.getCoordinate().getLon(), roi.getCoordinate().getAltitude(), 0.0, 0.0, mItem);
+//					break;
+//				case SURVEY:
+					//return new MavlinkSurvey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
+//				case CYLINDRICAL_SURVEY:
+					//return new MavlinkStructureScanner(referenceItem);
+//				default:
+//					break;
+
+			else {
+				System.out.println("Unepectd");
 			}
 			
 			i++;

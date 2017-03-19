@@ -43,7 +43,7 @@ public class msg_command_int extends MAVLinkMessage{
 	*/
 	public float z; 
  	/**
-	* The scheduled action for the mission item. see MAV_CMD in common.xml MAVLink specs
+	* The scheduled action for the droneMission item. see MAV_CMD in common.xml MAVLink specs
 	*/
 	public short command; 
  	/**

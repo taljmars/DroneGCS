@@ -42,7 +42,7 @@
 
         <dependency>
             <groupId>com.dronedb</groupId>
-            <artifactId>DroneServerCore</artifactId>
+            <artifactId>Scheme</artifactId>
             <version>1.0</version>
         </dependency>
 

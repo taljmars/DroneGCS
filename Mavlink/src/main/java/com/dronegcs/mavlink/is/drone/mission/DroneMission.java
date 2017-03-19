@@ -3,17 +3,10 @@ package com.dronegcs.mavlink.is.drone.mission;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneVariable;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
-import com.dronegcs.mavlink.is.drone.mission.commands.CameraTrigger;
-import com.dronegcs.mavlink.is.drone.mission.commands.ChangeSpeed;
-import com.dronegcs.mavlink.is.drone.mission.commands.EpmGripper;
-import com.dronegcs.mavlink.is.drone.mission.commands.ReturnToHome;
-import com.dronegcs.mavlink.is.drone.mission.commands.Takeoff;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Circle;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Land;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.RegionOfInterest;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.SpatialCoordItem;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.SplineWaypoint;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.Waypoint;
+import com.dronegcs.mavlink.is.drone.mission.commands.*;
+import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkTakeoff;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.*;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkWaypoint;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_ack;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
@@ -35,13 +28,13 @@ import javafx.util.Pair;
 import javax.validation.constraints.NotNull;
 
 /**
- * This implements a com.dronegcs.mavlink.is.mavlink mission. A com.dronegcs.mavlink.is.mavlink mission is a set of
- * commands/mission items to be carried out by the drone. TODO: rename the
+ * This implements a com.dronegcs.mavlink.is.mavlink droneMission. A com.dronegcs.mavlink.is.mavlink droneMission is a set of
+ * commands/droneMission items to be carried out by the drone. TODO: rename the
  * 'waypoint' method to 'missionItem' (i.e: addMissionItem)
  */
 
 @Scope("prototype")
-public class Mission extends DroneVariable implements Serializable {
+public class DroneMission extends DroneVariable implements Serializable {
 
 	private static final long serialVersionUID = 8399081979944818494L;
 
@@ -49,30 +42,30 @@ public class Mission extends DroneVariable implements Serializable {
 	private ApplicationContext applicationContext;
 
 	/**
-	 * Stores the set of mission items belonging to this mission.
+	 * Stores the set of droneMission items belonging to this droneMission.
 	 */
-	private List<MissionItem> items = new ArrayList<MissionItem>();
+	private List<DroneMissionItem> items = new ArrayList<DroneMissionItem>();
 	private double defaultAlt = 20.0;
 
-	public Mission(){
+	public DroneMission(){
 		super();
 	}
 
-	public Mission(Mission mission) {
-		super(mission);
-		defaultAlt = mission.getDefaultAlt();
-		for (MissionItem mi : mission.getItems()) items.add((MissionItem) mi.clone(this));
+	public DroneMission(DroneMission droneMission) {
+		super(droneMission);
+		defaultAlt = droneMission.getDefaultAlt();
+		for (DroneMissionItem mi : droneMission.getItems()) items.add((DroneMissionItem) mi.clone(this));
 	}
 
 	/**
-	 * @return the mission's default altitude
+	 * @return the droneMission's default altitude
 	 */
 	public double getDefaultAlt() {
 		return defaultAlt;
 	}
 
 	/**
-	 * Sets the mission default altitude.
+	 * Sets the droneMission default altitude.
 	 * 
 	 * @param newAltitude value
 	 */
@@ -81,56 +74,56 @@ public class Mission extends DroneVariable implements Serializable {
 	}
 
 	/**
-	 * Removes a waypoint from the mission's set of mission items.
+	 * Removes a waypoint from the droneMission's set of droneMission items.
 	 * 
 	 * @param item
 	 *            waypoint to remove
 	 */
-	public void removeWaypoint(MissionItem item) {
+	public void removeWaypoint(DroneMissionItem item) {
 		items.remove(item);
 		notifyMissionUpdate();
 	}
 
 	/**
-	 * Removes a list of waypoints from the mission's set of mission items.
+	 * Removes a list of waypoints from the droneMission's set of droneMission items.
 	 * 
 	 * @param toRemove
 	 *            list of waypoints to remove
 	 */
-	public void removeWaypoints(List<MissionItem> toRemove) {
+	public void removeWaypoints(List<DroneMissionItem> toRemove) {
 		items.removeAll(toRemove);
 		notifyMissionUpdate();
 	}
 
 	/**
-	 * Add a list of waypoints to the mission's set of mission items.
+	 * Add a list of waypoints to the droneMission's set of droneMission items.
 	 * 
-	 * @param missionItems
+	 * @param droneMissionItems
 	 *            list of waypoints to add
 	 */
-	public void addMissionItems(List<MissionItem> missionItems) {
-		items.addAll(missionItems);
+	public void addMissionItems(List<DroneMissionItem> droneMissionItems) {
+		items.addAll(droneMissionItems);
 		notifyMissionUpdate();
 	}
 
 	/**
-	 * Add a waypoint to the mission's set of mission item.
+	 * Add a waypoint to the droneMission's set of droneMission item.
 	 * 
-	 * @param missionItem
+	 * @param droneMissionItem
 	 *            waypoint to add
 	 */
-	public void addMissionItem(MissionItem missionItem) {
-		items.add(missionItem);
+	public void addMissionItem(DroneMissionItem droneMissionItem) {
+		items.add(droneMissionItem);
 		notifyMissionUpdate();
 	}
 
-	public void addMissionItem(int index, MissionItem missionItem) {
-		items.add(index, missionItem);
+	public void addMissionItem(int index, DroneMissionItem droneMissionItem) {
+		items.add(index, droneMissionItem);
 		notifyMissionUpdate();
 	}
 
 	/**
-	 * Signals that this mission object was updated. //TODO: maybe move outside
+	 * Signals that this droneMission object was updated. //TODO: maybe move outside
 	 * of this class
 	 */
 	public void notifyMissionUpdate() {
@@ -138,12 +131,12 @@ public class Mission extends DroneVariable implements Serializable {
 	}
 
 	/**
-	 * @return the altitude of the last added mission item.
+	 * @return the altitude of the last added droneMission item.
 	 */
 	public double getLastAltitude() {
 		double alt;
 		try {
-			SpatialCoordItem lastItem = (SpatialCoordItem) items.get(items.size() - 1);
+			SpatialCoordItemDrone lastItem = (SpatialCoordItemDrone) items.get(items.size() - 1);
 			alt = lastItem.getCoordinate().getAltitude();
 		} catch (Exception e) {
 			alt = defaultAlt;
@@ -152,14 +145,14 @@ public class Mission extends DroneVariable implements Serializable {
 	}
 
 	/**
-	 * Updates a mission item
+	 * Updates a droneMission item
 	 * 
 	 * @param oldItem
-	 *            mission item to update
+	 *            droneMission item to update
 	 * @param newItem
-	 *            new mission item
+	 *            new droneMission item
 	 */
-	public void replace(MissionItem oldItem, MissionItem newItem) {
+	public void replace(DroneMissionItem oldItem, DroneMissionItem newItem) {
 		final int index = items.indexOf(oldItem);
 		if (index == -1) {
 			return;
@@ -170,20 +163,20 @@ public class Mission extends DroneVariable implements Serializable {
 		notifyMissionUpdate();
 	}
 
-	public void replaceAll(List<Pair<MissionItem, MissionItem>> updatesList) {
+	public void replaceAll(List<Pair<DroneMissionItem, DroneMissionItem>> updatesList) {
 		if (updatesList == null || updatesList.isEmpty()) {
 			return;
 		}
 
 		boolean wasUpdated = false;
-		for (Pair<MissionItem, MissionItem> updatePair : updatesList) {
-			final MissionItem oldItem = updatePair.getKey();
+		for (Pair<DroneMissionItem, DroneMissionItem> updatePair : updatesList) {
+			final DroneMissionItem oldItem = updatePair.getKey();
 			final int index = items.indexOf(oldItem);
 			if (index == -1) {
 				continue;
 			}
 
-			final MissionItem newItem = updatePair.getValue();
+			final DroneMissionItem newItem = updatePair.getValue();
 			items.remove(index);
 			items.add(index, newItem);
 
@@ -196,7 +189,7 @@ public class Mission extends DroneVariable implements Serializable {
 	}
 
 	/**
-	 * Reverse the order of the mission items.
+	 * Reverse the order of the droneMission items.
 	 */
 	public void reverse() {
 		Collections.reverse(items);
@@ -207,42 +200,42 @@ public class Mission extends DroneVariable implements Serializable {
 		drone.notifyDroneEvent(DroneEventsType.MISSION_SENT);
 	}
 
-	public List<MissionItem> getItems() {
+	public List<DroneMissionItem> getItems() {
 		return items;
 	}
 
-	public int getOrder(MissionItem waypoint) {
+	public int getOrder(DroneMissionItem waypoint) {
 		return items.indexOf(waypoint) + 1; // plus one to account for the fact
 											// that this is an index
 	}
 
-	public double getAltitudeDiffFromPreviousItem(SpatialCoordItem waypoint)
+	public double getAltitudeDiffFromPreviousItem(SpatialCoordItemDrone waypoint)
 			throws IllegalArgumentException {
 		int i = items.indexOf(waypoint);
 		if (i > 0) {
-			MissionItem previous = items.get(i - 1);
-			if (previous instanceof SpatialCoordItem) {
-				double aa = ((SpatialCoordItem) previous).getCoordinate().getAltitude();
+			DroneMissionItem previous = items.get(i - 1);
+			if (previous instanceof SpatialCoordItemDrone) {
+				double aa = ((SpatialCoordItemDrone) previous).getCoordinate().getAltitude();
 				return waypoint.getCoordinate().getAltitude() - aa;
 			}
 		}
 		throw new IllegalArgumentException("Last waypoint doesn't have an altitude");
 	}
 
-	public double getDistanceFromLastWaypoint(SpatialCoordItem waypoint)
+	public double getDistanceFromLastWaypoint(SpatialCoordItemDrone waypoint)
 			throws IllegalArgumentException {
 		int i = items.indexOf(waypoint);
 		if (i > 0) {
-			MissionItem previous = items.get(i - 1);
-			if (previous instanceof SpatialCoordItem) {
+			DroneMissionItem previous = items.get(i - 1);
+			if (previous instanceof SpatialCoordItemDrone) {
 				return GeoTools.getDistance(waypoint.getCoordinate(),
-						((SpatialCoordItem) previous).getCoordinate());
+						((SpatialCoordItemDrone) previous).getCoordinate());
 			}
 		}
 		throw new IllegalArgumentException("Last waypoint doesn't have a coordinate");
 	}
 
-	public boolean hasItem(MissionItem item) {
+	public boolean hasItem(DroneMissionItem item) {
 		return items.contains(item);
 	}
 
@@ -268,40 +261,40 @@ public class Mission extends DroneVariable implements Serializable {
 		}
 	}
 
-	private List<MissionItem> processMavLinkMessages(List<msg_mission_item> msgs) {
-		List<MissionItem> received = new ArrayList<MissionItem>();
+	private List<DroneMissionItem> processMavLinkMessages(List<msg_mission_item> msgs) {
+		List<DroneMissionItem> received = new ArrayList<DroneMissionItem>();
 
 		for (msg_mission_item msg : msgs) {
 			switch (msg.command) {
 			case MAV_CMD.MAV_CMD_NAV_WAYPOINT:
-				received.add(new Waypoint(msg, this));
+				received.add(new MavlinkWaypoint(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_NAV_SPLINE_WAYPOINT:
-				received.add(new SplineWaypoint(msg, this));
+				received.add(new MavlinkSplineWaypoint(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_NAV_LAND:
-				received.add(new Land(msg, this));
+				received.add(new MavlinkLand(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_NAV_TAKEOFF:
-				received.add(new Takeoff(msg, this));
+				received.add(new MavlinkTakeoff(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_DO_CHANGE_SPEED:
-				received.add(new ChangeSpeed(msg, this));
+				received.add(new MavlinkChangeSpeed(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_DO_SET_CAM_TRIGG_DIST:
-				received.add(new CameraTrigger(msg,this));
+				received.add(new MavlinkCameraTrigger(msg,this));
 				break;
-			case EpmGripper.MAV_CMD_DO_GRIPPER:
-				received.add(new EpmGripper(msg, this));
+			case MavlinkEpmGripper.MAV_CMD_DO_GRIPPER:
+				received.add(new MavlinkEpmGripper(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_DO_SET_ROI:
-				received.add(new RegionOfInterest(msg, this));
+				received.add(new MavlinkRegionOfInterest(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_NAV_LOITER_TURNS:
-				received.add(new Circle(msg, this));
+				received.add(new MavlinkCircle(msg, this));
 				break;
 			case MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH:
-				received.add(new ReturnToHome(msg, this));
+				received.add(new MavlinkReturnToHome(msg, this));
 			default:
 				break;
 			}
@@ -310,7 +303,7 @@ public class Mission extends DroneVariable implements Serializable {
 	}
 
 	/**
-	 * Sends the mission to the drone using the com.dronegcs.mavlink.is.mavlink protocol.
+	 * Sends the droneMission to the drone using the com.dronegcs.mavlink.is.mavlink protocol.
 	 */
 	public void sendMissionToAPM() {
 		drone.getWaypointManager().writeWaypoints(getMsgMissionItems());
@@ -319,14 +312,14 @@ public class Mission extends DroneVariable implements Serializable {
 	public List<msg_mission_item> getMsgMissionItems() {
 		final List<msg_mission_item> data = new ArrayList<msg_mission_item>();
 		data.add(drone.getHome().packMavlink());
-		for (MissionItem item : items) {
+		for (DroneMissionItem item : items) {
 			data.addAll(item.packMissionItem());
 		}
 		return data;
 	}
 
 	/**
-	 * Create and upload a dronie mission to the drone
+	 * Create and upload a dronie droneMission to the drone
 	 * 
 	 * @return the bearing in degrees the drone trajectory will take.
 	 */
@@ -347,7 +340,7 @@ public class Mission extends DroneVariable implements Serializable {
 		return bearing;
 	}
 
-	public List<MissionItem> createDronie(Coordinate start, Coordinate end) {
+	public List<DroneMissionItem> createDronie(Coordinate start, Coordinate end) {
 		final int startAltitude = 4;
 		final int roiDistance = -8;
 		Coordinate slowDownPoint = GeoTools.pointAlongTheLine(start, end, 5);
@@ -357,46 +350,25 @@ public class Mission extends DroneVariable implements Serializable {
 			defaultSpeed = new Speed(5);
 		}
 
-		List<MissionItem> dronieItems = new ArrayList<MissionItem>();
+		List<DroneMissionItem> dronieItems = new ArrayList<DroneMissionItem>();
 		
-		dronieItems.add(new Takeoff(this, 1.0 * startAltitude));
+		dronieItems.add(new MavlinkTakeoff(this, 1.0 * startAltitude));
 		
-		dronieItems.add(new RegionOfInterest(this, new Coordinate(GeoTools.pointAlongTheLine(start, end, roiDistance), 1)));
-		dronieItems.add(new Waypoint(this, new Coordinate(end, startAltitude + GeoTools.getDistance(start, end)/ 2.0)));
-		dronieItems.add(new Waypoint(this, new Coordinate(slowDownPoint, startAltitude + GeoTools.getDistance(start, slowDownPoint) / 2.0)));
-		dronieItems.add(new ChangeSpeed(this, new Speed(1.0)));
-		dronieItems.add(new Waypoint(this, new Coordinate(start, startAltitude)));
-		dronieItems.add(new ChangeSpeed(this, defaultSpeed));
-		dronieItems.add(new Land(this, start));
+		dronieItems.add(new MavlinkRegionOfInterest(this, new Coordinate(GeoTools.pointAlongTheLine(start, end, roiDistance), 1)));
+		dronieItems.add(new MavlinkWaypoint(this, new Coordinate(end, startAltitude + GeoTools.getDistance(start, end)/ 2.0)));
+		dronieItems.add(new MavlinkWaypoint(this, new Coordinate(slowDownPoint, startAltitude + GeoTools.getDistance(start, slowDownPoint) / 2.0)));
+		dronieItems.add(new MavlinkChangeSpeed(this, new Speed(1.0)));
+		dronieItems.add(new MavlinkWaypoint(this, new Coordinate(start, startAltitude)));
+		dronieItems.add(new MavlinkChangeSpeed(this, defaultSpeed));
+		dronieItems.add(new MavlinkLand(this, start));
 		return dronieItems;
 	}
 
-	public boolean hasTakeoffAndLandOrRTL() {
-		if (items.size() >= 2) {
-			if (isFirstItemTakeoff() && isLastItemLandOrRTL()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isFirstItemTakeoff() {
-		return !items.isEmpty() && items.get(0) instanceof Takeoff;
-	}
-
-	public boolean isLastItemLandOrRTL() {
-        if(items.isEmpty())
-            return false;
-
-		MissionItem last = items.get(items.size() - 1);
-		return (last instanceof ReturnToHome) || (last instanceof Land);
-	}
-
-	public Mission duplicate() {
-		//Mission ans = new Mission();
-		Mission ans = applicationContext.getBean(Mission.class);
+	public DroneMission duplicate() {
+		//DroneMission ans = new DroneMission();
+		DroneMission ans = applicationContext.getBean(DroneMission.class);
 		ans.setDrone(drone);
-		Iterator<MissionItem> it = this.items.iterator();
+		Iterator<DroneMissionItem> it = this.items.iterator();
 		while (it.hasNext()) {
 			ans.addMissionItem(it.next());
 		}
@@ -407,10 +379,10 @@ public class Mission extends DroneVariable implements Serializable {
 		return drone;
 	}
 	
-	public boolean equals(Mission mission) {
-		if (mission == null)
+	public boolean equals(DroneMission droneMission) {
+		if (droneMission == null)
 			return false;
 		
-		return mission.getItems().equals(this.getItems());
+		return droneMission.getItems().equals(this.getItems());
 	}
 }

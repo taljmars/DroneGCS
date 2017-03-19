@@ -2,28 +2,30 @@ package com.dronegcs.mavlink.is.drone.mission.commands;
 
 import java.util.List;
 
-import com.dronegcs.mavlink.is.drone.mission.Mission;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisited;
+import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.MissionItemType;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ardupilotmega.msg_mission_item;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_CMD;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME;
 
-public class ReturnToHome extends MissionCMD {
+public class MavlinkReturnToHome extends DroneMissionCMD {
 
 	private double returnAltitude;
 
-	public ReturnToHome(ReturnToHome item) {
+	public MavlinkReturnToHome(MavlinkReturnToHome item) {
 		super(item);
 		returnAltitude = item.returnAltitude;
 	}
 
-	public ReturnToHome(msg_mission_item msg, Mission mission) {
-		super(mission);
+	public MavlinkReturnToHome(msg_mission_item msg, DroneMission droneMission) {
+		super(droneMission);
 		unpackMAVMessage(msg);
 	}
 
-	public ReturnToHome(Mission mission) {
-		super(mission);
+	public MavlinkReturnToHome(DroneMission droneMission) {
+		super(droneMission);
 		returnAltitude = 0.0;
 	}
 
@@ -56,10 +58,15 @@ public class ReturnToHome extends MissionCMD {
 	}
 	
 	@Override
-	public ReturnToHome clone(Mission mission) {
-		ReturnToHome returnToHome = new ReturnToHome(this);
-		returnToHome.setMission(mission);
-		return returnToHome;
+	public MavlinkReturnToHome clone(DroneMission droneMission) {
+		MavlinkReturnToHome mavlinkReturnToHome = new MavlinkReturnToHome(this);
+		mavlinkReturnToHome.setDroneMission(droneMission);
+		return mavlinkReturnToHome;
+	}
+
+	@Override
+	public void accept(ConvertMavlinkVisitor convertMavlinkVisitor) {
+		convertMavlinkVisitor.visit(this);
 	}
 
 }

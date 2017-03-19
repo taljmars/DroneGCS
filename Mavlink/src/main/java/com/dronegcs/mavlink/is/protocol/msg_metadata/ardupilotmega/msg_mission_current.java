@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPacket;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.MAVLinkPayload;
 
 /**
-* Message that announces the sequence number of the current active mission item. The MAV will fly towards this mission item.
+* Message that announces the sequence number of the current active droneMission item. The MAV will fly towards this droneMission item.
 */
 public class msg_mission_current extends MAVLinkMessage{
 

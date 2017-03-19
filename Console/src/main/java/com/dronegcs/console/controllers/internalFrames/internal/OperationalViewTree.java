@@ -3,9 +3,16 @@ package com.dronegcs.console.controllers.internalFrames.internal;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import com.dronedb.persistence.scheme.BaseObject;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.ws.MissionFacadeRemote;
+import com.dronedb.persistence.ws.QueryRequestRemote;
+import com.dronedb.persistence.ws.QueryResponseRemote;
+import com.dronedb.persistence.ws.QuerySvcRemote;
+import com.dronegcs.console.services.MissionCompilerSvc;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
@@ -16,8 +23,6 @@ import com.dronegcs.console.validations.LegalTreeView;
 import com.gui.core.mapTree.CheckBoxViewTree;
 import com.gui.core.mapTreeObjects.Layer;
 import com.gui.core.mapTreeObjects.LayerGroup;
-import com.gui.is.events.GuiEvent;
-import com.gui.is.events.GuiEvent.MAPVIEWER_GUI_COMMAND;
 import com.dronegcs.console.services.EventPublisherSvc;
 import com.dronegcs.console.services.LoggerDisplayerSvc;
 import com.dronegcs.console.services.TextNotificationPublisherSvc;
@@ -31,6 +36,11 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.dronegcs.console.services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
 
 @LegalTreeView
 @Component
@@ -50,9 +60,19 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission compiler")
+	private MissionCompilerSvc missionCompilerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission facade")
+	public MissionFacadeRemote missionFacadeRemote;
+
+	//TODO: Move it to facade
+	@Autowired @NotNull(message = "Internal Error: Failed to get query servce")
+	public QuerySvcRemote querySvcRemote;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -108,6 +128,24 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		try {
+			QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+			queryRequestRemote.setClz(Mission.class);
+			queryRequestRemote.setQuery("GetAllMissions");
+			QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+			List<BaseObject> missionList = queryResponseRemote.getResultList();
+			LayerMission layerMission;
+			for (BaseObject mission : missionList) {
+				System.err.println("Loading existing mission: " + mission);
+				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap());
+				addLayer(layerMission);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void addSelectionHandler(TreeItem<Layer> cbox) {
@@ -143,6 +181,16 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	}
 
 	@Override
+	public void handleRemoveTreeItem(TreeItem<Layer> treeItem) {
+		if (treeItem.getValue() instanceof LayerMission) {
+			System.out.println("Found mission to remove");
+			missionFacadeRemote.delete(((LayerMission) treeItem.getValue()).getMission());
+		}
+		super.handleRemoveTreeItem(treeItem);
+
+	}
+
+	@Override
 	public ContextMenu getPopupMenu(TreeItem<Layer> treeItem) {
 		ContextMenu popup = super.getPopupMenu(treeItem);
 		if (!(treeItem.getValue() instanceof Layer))
@@ -152,17 +200,18 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		
 		Layer layer = treeItem.getValue();
 		
-		MenuItem menuItemUploadMission = new MenuItem("Upload Mission");
-		MenuItem menuItemEditMission = new MenuItem("Edit Mission");
+		MenuItem menuItemUploadMission = new MenuItem("Upload DroneMission");
+		MenuItem menuItemEditMission = new MenuItem("Edit DroneMission");
 		MenuItem menuItemUploadPerimeter = new MenuItem("Upload Perimeter");
 		
 		menuItemUploadMission.setOnAction( e -> {
 			if (layer instanceof LayerMission) {
 				uploadedLayerMissionCandidate = (LayerMission) layer;
 				if (uploadedLayerMissionCandidate.getMission() != null) {
-					loggerDisplayerSvc.logOutgoing("Uploading Mission To APM");
-					uploadedLayerMissionCandidate.getMission().sendMissionToAPM();
-					textNotificationPublisherSvc.publish("Uploading Mission");
+					loggerDisplayerSvc.logOutgoing("Uploading DroneMission To APM");
+					DroneMission droneMission = missionCompilerSvc.compile(uploadedLayerMissionCandidate.getMission());
+					droneMission.sendMissionToAPM();
+					textNotificationPublisherSvc.publish("Uploading DroneMission");
 				}
 			}
 		});
@@ -170,7 +219,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		menuItemEditMission.setOnAction( e -> {
 			if (layer instanceof LayerMission) {
 				LayerMission layerMission = (LayerMission) layer;
-				eventPublisherSvc.publish(new GuiEvent(MAPVIEWER_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START, layerMission));
+				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layerMission));
 			}
 		});
 
@@ -212,22 +261,22 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		Layer finalLayer = null;
 
 		if (toLayer.equals(fromLayer)) {
-			loggerDisplayerSvc.logGeneral("Current mission layer is updated");
+			loggerDisplayerSvc.logGeneral("Current droneMission layer is updated");
 			return finalLayer;
 		}
 
 		finalLayer = toLayer;
 
 		if (fromLayer != null) {
-			// Means the GUI is updated with old uploaded mission
+			// Means the GUI is updated with old uploaded droneMission
 			CurrentPrefixRemove(fromLayer);
-			loggerDisplayerSvc.logGeneral("Previous mission prefix was removed");
+			loggerDisplayerSvc.logGeneral("Previous droneMission prefix was removed");
 		}
 		else {
-			// Means we are not aware of any uploaded mission
+			// Means we are not aware of any uploaded droneMission
 			//addLayer(finalLayer);
 			finalLayer.regenerateMapObjects();
-			loggerDisplayerSvc.logGeneral("A new layer was created for current mission");
+			loggerDisplayerSvc.logGeneral("A new layer was created for current droneMission");
 		}
 
 		CurrentPrefixAdd(finalLayer);
@@ -260,23 +309,23 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		}
 
 		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
-		textNotificationPublisherSvc.publish("Mission Sync failed");
+		textNotificationPublisherSvc.publish("DroneMission Sync failed");
 	}
 
 	@Override
 	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
 		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
-			loggerDisplayerSvc.logIncoming("Downloading Waypoint " + index + "/" + count);
+			loggerDisplayerSvc.logIncoming("Downloading MavlinkWaypoint " + index + "/" + count);
 			return;
 		}
 
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Uploading Waypoint " + index + "/" + count);
+			loggerDisplayerSvc.logIncoming("Uploading MavlinkWaypoint " + index + "/" + count);
 			return;
 		}
 
 		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
-		textNotificationPublisherSvc.publish("Mission Sync failed");
+		textNotificationPublisherSvc.publish("DroneMission Sync failed");
 	}
 
 	@Override
@@ -284,37 +333,38 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		Platform.runLater( () -> { 
 			if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
 				loggerDisplayerSvc.logIncoming("Waypoints downloaded");
-				if (drone.getMission() == null) {
-					loggerDisplayerSvc.logError("Failed to find mission");
+				if (drone.getDroneMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find droneMission");
 					return;
 				}
 	
 				LayerMission lm = applicationContext.getBean(LayerMission.class);
 				lm.setName("UnnamedMission");
-				lm.setMission(drone.getMission());
+				Mission mission = missionCompilerSvc.decompile(drone.getDroneMission());
+				lm.setMission(mission);
 				addLayer(lm);
 				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, lm);
 	
-				loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
-				textNotificationPublisherSvc.publish("Mission successfully downloaded");
+				loggerDisplayerSvc.logGeneral("DroneMission was updated in droneMission tree");
+				textNotificationPublisherSvc.publish("DroneMission successfully downloaded");
 				return;
 			}
 	
 			if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
 				loggerDisplayerSvc.logIncoming("Waypoints uploaded");
-				if (drone.getMission() == null) {
-					loggerDisplayerSvc.logError("Failed to find mission");
+				if (drone.getDroneMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find droneMission");
 					return;
 				}
 				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, uploadedLayerMissionCandidate);
 				uploadedLayerMissionCandidate = null;
-				loggerDisplayerSvc.logGeneral("Mission was updated in mission tree");
-				textNotificationPublisherSvc.publish("Mission successfully uploaded");
+				loggerDisplayerSvc.logGeneral("DroneMission was updated in droneMission tree");
+				textNotificationPublisherSvc.publish("DroneMission successfully uploaded");
 				return;
 			}
 			
 			loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
-			textNotificationPublisherSvc.publish("Mission Sync failed");
+			textNotificationPublisherSvc.publish("DroneMission Sync failed");
 		});
 	}
 }
