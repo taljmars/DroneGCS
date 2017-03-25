@@ -1,7 +1,8 @@
 package com.dronegcs.console.services.internal;
 
-import com.dronedb.persistence.scheme.Mission;
-import com.dronedb.persistence.scheme.MissionItem;
+import com.dronedb.persistence.scheme.mission.Mission;
+import com.dronedb.persistence.scheme.mission.MissionItem;
+import com.dronegcs.console.mission_editor.MissionsManager;
 import com.dronegcs.console.services.MissionCompilerSvc;
 import com.dronegcs.console.services.internal.convertors.DatabaseToMavlinkItemConvertor;
 import com.dronegcs.console.services.internal.convertors.MavlinkItemToDatabaseConvertor;
@@ -25,11 +26,13 @@ public class MissionCompilerSvcImpl implements MissionCompilerSvc
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
+    @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+    private MissionsManager missionsManager;
+
     @PostConstruct
     private void init() {
         System.err.println("Mission Compiler started");
     }
-
 
     @Override
     public DroneMission compile(Mission mission) {
@@ -42,7 +45,7 @@ public class MissionCompilerSvcImpl implements MissionCompilerSvc
         DatabaseToMavlinkItemConvertor databaseToMavlinkItemConvertor = new DatabaseToMavlinkItemConvertor();
         databaseToMavlinkItemConvertor.setDroneMission(droneMission);
 
-        Iterator<MissionItem> itr = mission.getMissionItems().iterator();
+        Iterator<MissionItem> itr = missionsManager.getMissionItems(mission).iterator();
         while (itr.hasNext())
             itr.next().accept(databaseToMavlinkItemConvertor);
 

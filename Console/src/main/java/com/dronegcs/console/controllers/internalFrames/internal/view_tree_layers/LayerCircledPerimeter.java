@@ -1,5 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
+import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.perimeter.Point;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapMarkerCircle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,14 @@ import com.geo_tools.GeoTools;
 import javax.validation.constraints.NotNull;
 
 public class LayerCircledPerimeter extends LayerPerimeter {
-
-	@Autowired @NotNull(message = "Internal Error: Fail to gett application context")
-	private ApplicationContext applicationContext;
 	
 	private MapMarkerCircle currentMarker;
+
+	private CirclePerimeter circlePerimeter;
 	
-	public LayerCircledPerimeter(String name, LayeredViewMap viewMap) {
-		super(name, viewMap);
+	public LayerCircledPerimeter(CirclePerimeter circlePerimeter, LayeredViewMap viewMap) {
+		super(circlePerimeter.getName(), viewMap);
+		this.circlePerimeter = circlePerimeter;
 	}
 	
 	public LayerCircledPerimeter(LayerCircledPerimeter layerCirclePerimeter, LayeredViewMap viewMap) {
@@ -39,7 +41,7 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 
 	@Override
 	public void add(Coordinate position) {
-		DialogManagerSvc dialogManagerSvc = applicationContext.getBean(DialogManagerSvc.class);
+		DialogManagerSvc dialogManagerSvc = getApplicationContext().getBean(DialogManagerSvc.class);
 		
 		String val = (String) dialogManagerSvc.showInputDialog("Please choose radius", "Cyclic Perimeter",
 				null, null, "10");
@@ -50,5 +52,16 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 		int radi = Integer.parseInt(val);
 		currentMarker = new MapMarkerCircle("GeoFence: " + radi + "m", position, radi);
 		addMapMarker(currentMarker);
+
+		circlePerimeter.setCenter(new Point(position.getLat(), position.getLon()));
+		circlePerimeter.setRadius(radi * 1.0);
+	}
+
+    public CirclePerimeter getCirclePerimeter() {
+        return this.circlePerimeter;
+    }
+
+	public void setCirclePerimeter(CirclePerimeter circlePerimeter) {
+		this.circlePerimeter = circlePerimeter;
 	}
 }

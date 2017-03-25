@@ -4,17 +4,18 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.Mission;
-import com.dronedb.persistence.ws.MissionFacadeRemote;
-import com.dronedb.persistence.ws.QueryRequestRemote;
-import com.dronedb.persistence.ws.QueryResponseRemote;
-import com.dronedb.persistence.ws.QuerySvcRemote;
+import com.dronedb.persistence.scheme.mission.Mission;
+import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
+import com.dronegcs.console.mission_editor.MissionsManager;
+import com.dronegcs.console.mission_editor.MissionsManagerImpl;
 import com.dronegcs.console.services.MissionCompilerSvc;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
@@ -38,7 +39,6 @@ import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.dronegcs.console.services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
 
@@ -47,7 +47,7 @@ import static com.dronegcs.console.services.internal.QuadGuiEvent.QUAD_GUI_COMMA
 public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointManagerListener {
 	
 	public static final String UPLOADED_PREFIX = "(CURR) ";
-	public static final String EDIT_SUFFIX = "*";
+	public static final String EDIT_PREFIX = "*";
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	protected ApplicationContext applicationContext;
@@ -63,16 +63,12 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission compiler")
 	private MissionCompilerSvc missionCompilerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+	private MissionsManager missionsManager;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
-
-	@Autowired @NotNull(message = "Internal Error: Failed to get mission facade")
-	public MissionFacadeRemote missionFacadeRemote;
-
-	//TODO: Move it to facade
-	@Autowired @NotNull(message = "Internal Error: Failed to get query servce")
-	public QuerySvcRemote querySvcRemote;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -130,15 +126,12 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			throw new RuntimeException(validatorResponse.toString());
 
 		try {
-			QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-			queryRequestRemote.setClz(Mission.class);
-			queryRequestRemote.setQuery("GetAllMissions");
-			QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-			List<BaseObject> missionList = queryResponseRemote.getResultList();
+			List<BaseObject> missionsList = missionsManager.getAllMissions();
 			LayerMission layerMission;
-			for (BaseObject mission : missionList) {
+			for (BaseObject mission : missionsList) {
 				System.err.println("Loading existing mission: " + mission);
 				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap());
+				layerMission.setApplicationContext(applicationContext);
 				addLayer(layerMission);
 			}
 		}
@@ -183,10 +176,27 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	@Override
 	public void updateTreeItemName(TreeItem<Layer> treeItem) {
 		if (treeItem.getValue() instanceof LayerMission) {
-			System.out.println("Found mission to remove");
+			System.out.println("Found mission to update it name");
 			Mission mission = ((LayerMission) treeItem.getValue()).getMission();
 			mission.setName(treeItem.getValue().getName());
-			missionFacadeRemote.write(mission);
+
+			((LayerMission) treeItem.getValue()).setMission(missionsManager.update(mission));
+		}
+
+		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+			System.out.println("Found polygon perimeter to update it name");
+			PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter();
+			polygonPerimeter.setName(treeItem.getValue().getName());
+			//polygonPerimeter = droneDbCrudSvcRemote.update(polygonPerimeter);
+			((LayerPolygonPerimeter) treeItem.getValue()).setPolygonPerimeter(polygonPerimeter);
+		}
+
+		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
+			System.out.println("Found circle perimeter to update it name");
+			CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter();
+			circlePerimeter.setName(treeItem.getValue().getName());
+			//circlePerimeter = droneDbCrudSvcRemote.update(circlePerimeter);
+			((LayerCircledPerimeter) treeItem.getValue()).setCirclePerimeter(circlePerimeter);
 		}
 	}
 
@@ -194,7 +204,16 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	public void handleRemoveTreeItem(TreeItem<Layer> treeItem) {
 		if (treeItem.getValue() instanceof LayerMission) {
 			System.out.println("Found mission to remove");
-			missionFacadeRemote.delete(((LayerMission) treeItem.getValue()).getMission());
+			missionsManager.delete(((LayerMission) treeItem.getValue()).getMission());
+		}
+		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+			System.out.println("Found perimeter to remove");
+			//droneDbCrudSvcRemote.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
+		}
+
+		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
+			System.out.println("Found circle to remove");
+			//droneDbCrudSvcRemote.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
 		}
 		super.handleRemoveTreeItem(treeItem);
 
@@ -229,6 +248,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		menuItemEditMission.setOnAction( e -> {
 			if (layer instanceof LayerMission) {
 				LayerMission layerMission = (LayerMission) layer;
+				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
+				refresh();
 				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layerMission));
 			}
 		});
@@ -236,7 +257,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		menuItemUploadPerimeter.setOnAction( e -> {
 			if (layer instanceof LayerPerimeter) {
 				uploadedLayerPerimeterCandidate = (LayerPolygonPerimeter) layer;
-				if (((LayerPolygonPerimeter) uploadedLayerPerimeterCandidate).getPerimeter() != null) {
+				if (((LayerPolygonPerimeter) uploadedLayerPerimeterCandidate).getPolygon() != null) {
 					loggerDisplayerSvc.logOutgoing("Uploading Perimeter To APM");
 					drone.getPerimeter().setCompound(uploadedLayerPerimeterCandidate);
 					uploadedLayerPerimeter = (LayerPerimeter) switchCurrentLayer(perimetersGroup, uploadedLayerPerimeter, uploadedLayerPerimeterCandidate);
@@ -261,8 +282,12 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	@Override
 	public void handleTreeItemClick(TreeItem<Layer> node) {
 		Layer layer = node.getValue();
-		if (layer instanceof LayerMission)
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+		if (layer instanceof LayerMission) {
+			if (missionsManager.getMissionEditor(((LayerMission) layer).getMission()) == null)
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+			else
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
+		}
 		else 
 			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
 	}
@@ -375,6 +400,24 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			
 			loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 			textNotificationPublisherSvc.publish("DroneMission Sync failed");
+		});
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	@EventListener
+	public void onApplicationEvent(QuadGuiEvent command) {
+		Platform.runLater( () -> {
+			LayerMission layerMission = null;
+			switch (command.getCommand()) {
+				case MISSION_EDITING_FINISHED:
+					layerMission = (LayerMission) command.getSource();
+					String missionName = layerMission.getMission().getName();
+					if (missionName.startsWith(EDIT_PREFIX))
+						missionName = missionName.substring(1, missionName.length());
+					layerMission.setName(missionName);
+					refresh();
+					break;
+			}
 		});
 	}
 }

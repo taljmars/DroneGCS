@@ -1,5 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
+import com.dronedb.persistence.scheme.perimeter.Point;
+import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapPolygonImpl;
 import com.gui.is.interfaces.mapObjects.MapPolygon;
@@ -8,9 +10,12 @@ import com.geo_tools.Coordinate;
 public class LayerPolygonPerimeter extends LayerPerimeter {
 
 	private MapPolygon currentPolygon;
+
+	private PolygonPerimeter polygonPerimeter;
 	
-	public LayerPolygonPerimeter(String name, LayeredViewMap viewMap) {
-		super(name, viewMap);
+	public LayerPolygonPerimeter(PolygonPerimeter polygonPerimeter, LayeredViewMap viewMap) {
+		super(polygonPerimeter.getName(), viewMap);
+		this.polygonPerimeter = polygonPerimeter;
 	}
 	
 	public LayerPolygonPerimeter(LayerPolygonPerimeter layerPerimeter, LayeredViewMap viewMap) {
@@ -28,6 +33,7 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 			currentPolygon = new MapPolygonImpl();
 		
 		currentPolygon.addCoordinate(position);
+		this.polygonPerimeter.addPoint(new Point(position.getLat(), position.getLon()));
 		regenerateMapObjects();
 		
 	}
@@ -37,11 +43,15 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 		addMapPolygon(currentPolygon);
 	}
 
-	public MapPolygon getPerimeter() {
+	public MapPolygon getPolygon() {
 		if (getMapPolygons().size() == 0)
 			return null;
 		
 		return getMapPolygons().get(0);
+	}
+
+	public PolygonPerimeter getPolygonPerimeter() {
+		return this.polygonPerimeter;
 	}
 
 	@Override
@@ -52,5 +62,9 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 	@Override
 	public Coordinate getClosestPointOnEdge(Coordinate coord) {
 		return currentPolygon.getClosestPointOnEdge(coord);
+	}
+
+	public void setPolygonPerimeter(PolygonPerimeter polygonPerimeter) {
+		this.polygonPerimeter = polygonPerimeter;
 	}
 }

@@ -1,6 +1,6 @@
 package com.dronegcs.console.services.internal.convertors;
 
-import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.scheme.mission.*;
 import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.commands.*;
 import com.dronegcs.mavlink.is.drone.mission.survey.MavlinkSurvey;

@@ -26,12 +26,16 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.Mission;
-import com.dronedb.persistence.ws.MissionFacadeRemote;
+import com.dronedb.persistence.scheme.mission.Mission;
+import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.perimeter.Perimeter;
+import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import com.dronegcs.console.operations.MissionBuilder;
-import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.console.mission_editor.MissionEditor;
+import com.dronegcs.console.mission_editor.MissionsManager;
+import com.dronegcs.console.mission_editor.MissionsManagerImpl;
+import com.dronegcs.console.services.EventPublisherSvc;
 import javafx.scene.input.MouseButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -85,7 +89,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private Drone drone;
 
 	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
-	private MissionBuilder missionBuilder;
+	private MissionsManager missionsManager;
 	
 	@Autowired @NotNull( message = "Internal Error: Failed to get keyboard controler" )
 	private KeyBoardController keyboardController;
@@ -99,11 +103,11 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
 
+	@Autowired @NotNull( message = "Internal Error: Failed to get event publisher service" )
+	protected EventPublisherSvc eventPublisherSvc;
+
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	public ApplicationContext applicationContext;
-
-	@Autowired @NotNull(message = "Internal Error: Failed to get mission facade")
-	public MissionFacadeRemote missionFacadeRemote;
 
 	@Resource(type = OperationalViewTree.class)
 	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
@@ -129,7 +133,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private MapMarkerDot myGCS = null;
 	
 	// DroneMission Builder
-	private LayerMission modifyiedLayerMission = null;
 	private LayerMission modifyiedLayerMissionOriginal = null;
 
 	// Perimeter Builder
@@ -143,6 +146,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 	private CheckBox cbFollowTrail;
 	
 	private ContextMenu popup;
+
+	private MissionEditor missionEditor;
 	
 	private static int called;
 	@PostConstruct
@@ -278,7 +283,10 @@ OnDroneListener, EventHandler<ActionEvent> {
 					loggerDisplayerSvc.logGeneral("Start GeoFence of perimeter type");
 					
 					if (modifyiedLayerPerimeter == null) {
-						modifyiedLayerPerimeter = new LayerCircledPerimeter("New Circled Perimeter*", this);
+						CirclePerimeter circlePerimeter = new CirclePerimeter();
+						circlePerimeter.setName("New Circled Perimeter*");
+						modifyiedLayerPerimeter = new LayerCircledPerimeter(circlePerimeter, this);
+						modifyiedLayerPerimeter.setApplicationContext(applicationContext);
 						getOperationalViewTree().addLayer(modifyiedLayerPerimeter);
 						System.err.println(getOperationalViewTree().dumpTree());
 						super.startModifiedLayerMode(modifyiedLayerPerimeter);
@@ -293,7 +301,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 					loggerDisplayerSvc.logGeneral("Start GeoFence of perimeter type");
 
 					if (modifyiedLayerPerimeter == null) {
-						modifyiedLayerPerimeter = new LayerPolygonPerimeter("New Perimeter*", this);
+						PolygonPerimeter polygonPerimeter = new PolygonPerimeter();
+						polygonPerimeter.setName("New Perimeter*");
+						modifyiedLayerPerimeter = new LayerPolygonPerimeter(polygonPerimeter, this);
 						getOperationalViewTree().addLayer(modifyiedLayerPerimeter);
 						super.startModifiedLayerMode(modifyiedLayerPerimeter);
 					}
@@ -307,36 +317,61 @@ OnDroneListener, EventHandler<ActionEvent> {
 		);
 
 		menuItemMissionBuild.setOnAction( arg -> {
-				if (modifyiedLayerMission == null) {
+				if (modifyiedLayerMissionOriginal == null) {
 					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					// TALMA i am trying not to use bean here
-					modifyiedLayerMission = new LayerMission("New DroneMission*", this);
-					getOperationalViewTree().addLayer(modifyiedLayerMission);
+					modifyiedLayerMissionOriginal = new LayerMission(OperationalViewTree.EDIT_PREFIX + "New DroneMission", this);
+					modifyiedLayerMissionOriginal.setApplicationContext(applicationContext);
+					getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
 					//TODO: Fix after handling db
 //					DroneMission msn = applicationContext.getBean(DroneMission.class);
 //					msn.setDrone(drone);
 //					modifyiedLayerMission.setMission(msn);
-					modifyiedLayerMission.setMission(new Mission());
-					
-					super.startModifiedLayerMode(modifyiedLayerMission);
-					
 					isMissionBuildMode = true;
-					missionBuilder.startMissionLayer(modifyiedLayerMission);
+					missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getName());
+					modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+					
+					super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
+					eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
 				}
 			}
 		);
 
-		menuItemMissionAddWayPoint.setOnAction( arg -> missionBuilder.addWayPoint(getPosition(point)));
+		menuItemMissionAddWayPoint.setOnAction( arg -> {
+			missionEditor.addWaypoint(getPosition(point));
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 
-		menuItemMissionAddCircle.setOnAction( arg -> missionBuilder.addCircle(getPosition(point)));
+		menuItemMissionAddCircle.setOnAction( arg -> {
+			missionEditor.addCirclePoint(getPosition(point));
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 
-		menuItemMissionSetLandPoint.setOnAction( arg -> missionBuilder.addLandPoint(getPosition(point)));
+		menuItemMissionSetLandPoint.setOnAction( arg -> {
+			missionEditor.addLandPoint(getPosition(point));
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 		
-		menuItemMissionAddROI.setOnAction( arg -> missionBuilder.addROI(getPosition(point)));
+		menuItemMissionAddROI.setOnAction( arg -> {
+			missionEditor.addRegionOfInterest(getPosition(point));
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 
-		menuItemMissionSetRTL.setOnAction( arg -> missionBuilder.addRTL());
+		menuItemMissionSetRTL.setOnAction( arg -> {
+			missionEditor.addReturnToLunch();
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 
-		menuItemMissionSetTakeOff.setOnAction( arg -> missionBuilder.addTakeOff());
+		menuItemMissionSetTakeOff.setOnAction( arg -> {
+			missionEditor.addTakeOff();
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+		});
 
 		menuItemPerimeterAddPoint.setOnAction( arg -> modifyiedLayerPerimeter.add(getPosition(point)));
 
@@ -610,18 +645,19 @@ OnDroneListener, EventHandler<ActionEvent> {
 			Layer layer = (Layer) command.getSource();
 			if (layer instanceof LayerMission) {
 				System.out.println("Working on DroneMission Layer");
-				modifyiedLayerMission = (LayerMission) layer;
-				modifyiedLayerMissionOriginal = new LayerMission(modifyiedLayerMission, this);
-				super.startModifiedLayerMode(modifyiedLayerMission);
+				modifyiedLayerMissionOriginal = (LayerMission) layer;
+				super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
 				isMissionBuildMode = true;
-				missionBuilder.startMissionLayer(modifyiedLayerMission);
-				modifyiedLayerMission.setName(modifyiedLayerMission.getName() + OperationalViewTree.EDIT_SUFFIX);
+				missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getMission());
+				Mission mission = missionEditor.getModifiedMission();
+				modifyiedLayerMissionOriginal.setName(mission.getName());
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
 			} else if (layer instanceof LayerPolygonPerimeter) {
 				System.out.println("Working on Perimeter Layer");
 				modifyiedLayerPerimeter = (LayerPolygonPerimeter) layer;
 				modifyiedLayerPerimeterOriginal = new LayerPolygonPerimeter((LayerPolygonPerimeter) modifyiedLayerPerimeter, this);
 				isPerimeterBuildMode = true;
-				modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + OperationalViewTree.EDIT_SUFFIX);
+				//modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName() + OperationalViewTree.EDIT_SUFFIX);
 			} else {
 				System.out.println("Unrecognized Layer");
 				EditModeOff();
@@ -639,14 +675,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Override
 	public void LayerEditorCancel() {
 		// Missions
-		if (modifyiedLayerMission != null) {
-			getOperationalViewTree().removeLayer(modifyiedLayerMission);
-			modifyiedLayerMission = null;
-		}
-		if (modifyiedLayerMissionOriginal != null) {
-			getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
-			modifyiedLayerMissionOriginal = null;
-		}
 
 		// Perimeters
 		if (modifyiedLayerPerimeter != null) {
@@ -661,8 +689,15 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 		//missionBox.clear();
 		super.finishModifiedLayerMode();
-		if (isMissionBuildMode)
-			missionBuilder.stopBuildMission();
+		if (isMissionBuildMode) {
+			Mission mission = missionsManager.closeMissionEditor(missionEditor, false);
+			missionEditor = null;
+			modifyiedLayerMissionOriginal.setMission(mission);
+			//modifyiedLayerMissionOriginal.setName(mission.getName());
+			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
+			modifyiedLayerMissionOriginal = null;
+		}
 		
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
@@ -674,27 +709,35 @@ OnDroneListener, EventHandler<ActionEvent> {
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 
-		String missionName = null;
-		Mission mission = null;
-		if (modifyiedLayerMission != null) {
-			modifyiedLayerMission.setName(modifyiedLayerMission.getName().substring(0, modifyiedLayerMission.getName().length() - 1));
-			missionName = modifyiedLayerMission.getName();
-			mission = modifyiedLayerMission.getMission();
-		}
+//		String missionName = null;
+//		if (modifyiedLayerMissionOriginal != null) {
+//			modifyiedLayerMissionOriginal.setName(modifyiedLayerMissionOriginal.getName().substring(0, modifyiedLayerMissionOriginal.getName().length() - 1));
+//			missionName = modifyiedLayerMissionOriginal.getName();
+//		}
 
-		if (modifyiedLayerPerimeter != null)
-			modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName().substring(0,modifyiedLayerPerimeter.getName().length() - 1));
+		if (modifyiedLayerPerimeter != null) {
+			modifyiedLayerPerimeter.setName(modifyiedLayerPerimeter.getName().substring(0, modifyiedLayerPerimeter.getName().length() - 1));
+			Perimeter perimeter = null;
+			if (modifyiedLayerPerimeter instanceof LayerCircledPerimeter) {
+				perimeter = ((LayerCircledPerimeter) modifyiedLayerPerimeter).getCirclePerimeter();
+			}
+			if (modifyiedLayerPerimeter instanceof LayerPolygonPerimeter) {
+				perimeter = ((LayerPolygonPerimeter) modifyiedLayerPerimeter).getPolygonPerimeter();
+			}
+			perimeter.setName(modifyiedLayerPerimeter.getName());
+			//droneDbCrudSvcRemote.update(perimeter);
+		}
 		
 		super.finishModifiedLayerMode();
 		if (isMissionBuildMode) {
-			missionBuilder.stopBuildMission();
-			mission.setName(missionName);
-			mission = missionFacadeRemote.write(mission);
-			modifyiedLayerMission.setMission(mission);
+			Mission mission = missionsManager.closeMissionEditor(missionEditor, true);
+			missionEditor = null;
+			modifyiedLayerMissionOriginal.setMission(mission);
+			modifyiedLayerMissionOriginal.setName(mission.getName());
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
 		}
 
 		modifyiedLayerMissionOriginal = null;
-		modifyiedLayerMission = null;
 
 		modifyiedLayerPerimeterOriginal = null;
 		modifyiedLayerPerimeter = null;

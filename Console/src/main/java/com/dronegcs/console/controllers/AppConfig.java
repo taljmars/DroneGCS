@@ -6,10 +6,9 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import com.dronedb.persistence.services.DroneDbCrudSvc;
-import com.dronedb.persistence.ws.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.MissionFacadeRemote;
-import com.dronedb.persistence.ws.QuerySvcRemote;
+import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.scheme.apis.MissionCrudSvcRemote;
+import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
 import com.dronegcs.mavlink.core.drone.MyDroneImpl;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.console.operations.OpGCSTerminationHandler;
@@ -53,10 +52,10 @@ public class AppConfig {
 		}
 		return null;
 	}
-	
+
 	@Bean
-	public MissionFacadeRemote missionFacadeRemote() {
-		return LoadServices(MissionFacadeRemote.class);
+	public MissionCrudSvcRemote missionCrudSvcRemote() {
+		return LoadServices(MissionCrudSvcRemote.class);
 	}
 
 	@Bean

@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
-import com.dronedb.persistence.scheme.MissionItem;
-import com.dronedb.persistence.scheme.MissionItemType;
+import com.dronedb.persistence.scheme.mission.MissionItem;
+import com.dronedb.persistence.scheme.mission.MissionItemType;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;

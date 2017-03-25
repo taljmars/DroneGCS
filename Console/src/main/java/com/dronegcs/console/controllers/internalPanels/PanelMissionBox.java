@@ -2,13 +2,18 @@ package com.dronegcs.console.controllers.internalPanels;
 
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.scheme.mission.*;
 import com.dronegcs.console.controllers.internalPanels.internal.EditingCell;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
+import com.dronegcs.console.mission_editor.MissionEditor;
+import com.dronegcs.console.mission_editor.MissionsManager;
+import com.dronegcs.console.mission_editor.MissionsManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -50,7 +55,10 @@ public class PanelMissionBox extends Pane implements Initializable {
 	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> setUp;
 	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> setDown;
 	@NotNull @FXML private TableColumn<MissionItemTableEntry,String> remove;
-	
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+	private MissionsManager missionsManager;
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
@@ -175,10 +183,10 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-//                        	Mission mission = entry.getMissionItem().getMission();
-//                            mission.getMissionItems().remove(getIndex());
-//                            generateMissionTable(true);
-//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+							MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
+							missionEditor.removeMissionItem(entry.getMissionItem());
+                            generateMissionTable(true);
+                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -221,10 +229,14 @@ public class PanelMissionBox extends Pane implements Initializable {
 		// Start loading items
 		ObservableList<MissionItemTableEntry> data = FXCollections.observableArrayList();
 
-		Iterator<MissionItem> it = droneMission.getMissionItems().iterator();
+		List<MissionItem> missionItemList = missionsManager.getMissionItems(layerMission.getMission());
+
+		Iterator<MissionItem> it = missionItemList.iterator();
+
 		int i = 0;
 		while (it.hasNext()) {
-			MissionItem mItem = it.next();
+
+			MissionItem mItem = (it.next());
 
 			if (mItem instanceof Waypoint) {
 				Waypoint wp = (Waypoint) mItem;

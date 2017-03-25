@@ -2,8 +2,10 @@ package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layer
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.scheme.mission.*;
+import com.dronegcs.console.mission_editor.MissionsManager;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapLineImpl;
@@ -13,10 +15,12 @@ import com.gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
+import org.springframework.context.ApplicationContext;
 
 public class LayerMission extends LayerSingle {
 	
 	private Mission mission;
+	private ApplicationContext applicationContext;
 
 	public LayerMission(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
@@ -24,7 +28,9 @@ public class LayerMission extends LayerSingle {
 
 	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) {
 		super(layerMission, viewMap);
-		mission = new Mission();
+		System.out.println("Before copy " + layerMission.getMission());
+		mission = new Mission(layerMission.getMission());
+		System.out.println("After copy " + mission);
 	}
 
 	public LayerMission(Mission mission, LayeredViewMap layeredViewMap) {
@@ -47,8 +53,11 @@ public class LayerMission extends LayerSingle {
 		if (mission == null)
 			return;
 
+		MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
+		List<MissionItem> missionItemList = missionsManager.getMissionItems(mission);
+
 		MapLine route = null;
-		Iterator<MissionItem> it = mission.getMissionItems().iterator();
+		Iterator<MissionItem> it = missionItemList.iterator();
 		ArrayList<Coordinate> points = new ArrayList<Coordinate>();
 		int i = 0;
 		while (it.hasNext()) {
@@ -103,6 +112,12 @@ public class LayerMission extends LayerSingle {
 				MapMarkerDot m = new MapMarkerDot(Color.MAGENTA, c);
 				addMapMarker(m);
 			}
+			else if (item instanceof RegionOfInterest) {
+				RegionOfInterest regionOfInterest = (RegionOfInterest) item;
+				Coordinate coordinate = new Coordinate(regionOfInterest.getLat(), regionOfInterest.getLon());
+				MapMarkerDot m = new MapMarkerDot(Color.MAGENTA, coordinate);
+				addMapMarker(m);
+			}
 			else if (item instanceof Takeoff) {
 				//if (!mission.getDrone().getGps().isPositionValid())
 //					return;
@@ -113,7 +128,7 @@ public class LayerMission extends LayerSingle {
 				//points.add(curr);
 			}
 			else {
-				System.out.println("Uexpected");
+				System.err.println("UNEXPECTED TYPE");
 			}
 			i++;
 			System.err.println("Generate " + i + " points");
@@ -122,5 +137,9 @@ public class LayerMission extends LayerSingle {
 		route = new MapLineImpl(points);
 		addMapLine(route);
 		System.err.println("updateLine");
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 }

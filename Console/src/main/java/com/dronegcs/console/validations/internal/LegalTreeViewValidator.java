@@ -35,8 +35,8 @@ public class LegalTreeViewValidator implements ConstraintValidator<LegalTreeView
 	
 	public String verifyUniqueLayerNames(TreeItem<Layer> treeItem, Set<String> nameList) {
 		String name = treeItem.getValue().getName();
-		if (name.endsWith(OperationalViewTree.EDIT_SUFFIX))
-			name = name.substring(0, name.length() - OperationalViewTree.EDIT_SUFFIX.length());
+		if (name.startsWith(OperationalViewTree.EDIT_PREFIX))
+			name = name.substring(1, name.length());
 		
 		if (name.startsWith(OperationalViewTree.UPLOADED_PREFIX))
 			name = name.substring(OperationalViewTree.UPLOADED_PREFIX.length(), name.length());
