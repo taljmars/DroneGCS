@@ -1,16 +1,25 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Vector;
-
+import com.dronegcs.console_plugin.operations.*;
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
+import com.dronegcs.gcsis.devices.SerialConnection;
+import com.dronegcs.gcsis.logger.Logger;
+import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
-import com.dronegcs.console.operations.*;
-import com.dronegcs.console.services.DialogManagerSvc;
-import com.dronegcs.console.services.EventPublisherSvc;
-import com.dronegcs.console.services.LoggerDisplayerSvc;
-import com.dronegcs.console.services.TextNotificationPublisherSvc;
+import com.dronegcs.mavlink.core.flightControllers.FlightController;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -24,24 +33,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.util.Pair;
-import com.dronegcs.gcsis.logger.Logger;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.dronegcs.gcsis.devices.SerialConnection;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
-import com.dronegcs.mavlink.core.flightControllers.FlightController;
-import com.dronegcs.mavlink.is.drone.Drone;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
-import com.dronegcs.mavlink.is.drone.parameters.Parameter;
-import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
-import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
-import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Vector;
 
 @Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {

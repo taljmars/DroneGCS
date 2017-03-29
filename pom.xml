@@ -13,6 +13,7 @@
         <module>GCSIS</module>
         <module>Console</module>
         <module>Mavlink</module>
+        <module>ConsolePlugin</module>
     </modules>
 
     <parent>

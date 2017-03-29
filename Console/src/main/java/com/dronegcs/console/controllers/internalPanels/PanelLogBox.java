@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.console.services.internal.logevents.LogAbstractDisplayerEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.LogAbstractDisplayerEvent;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component

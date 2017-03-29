@@ -8,10 +8,11 @@ import com.dronedb.persistence.scheme.mission.Mission;
 import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
 import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
-import com.dronegcs.console.mission_editor.MissionsManager;
-import com.dronegcs.console.mission_editor.MissionsManagerImpl;
-import com.dronegcs.console.services.MissionCompilerSvc;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
+import com.dronegcs.console_plugin.services.MissionCompilerSvc;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.drone.variables.Perimeter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
@@ -19,14 +20,13 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import com.dronegcs.console.services.internal.QuadGuiEvent;
-import com.dronegcs.console.validations.LegalTreeView;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.gui.core.mapTree.CheckBoxViewTree;
 import com.gui.core.mapTreeObjects.Layer;
 import com.gui.core.mapTreeObjects.LayerGroup;
-import com.dronegcs.console.services.EventPublisherSvc;
-import com.dronegcs.console.services.LoggerDisplayerSvc;
-import com.dronegcs.console.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ContextMenu;
@@ -40,9 +40,8 @@ import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 import java.util.List;
 
-import static com.dronegcs.console.services.internal.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
+import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
 
-@LegalTreeView
 @Component
 public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointManagerListener {
 	
@@ -66,6 +65,9 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
 	private MissionsManager missionsManager;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get perimeter manager")
+	private PerimetersManager perimetersManager;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -125,6 +127,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 
+		System.err.println("Loading DataBase");
 		try {
 			List<BaseObject> missionsList = missionsManager.getAllMissions();
 			LayerMission layerMission;
@@ -133,6 +136,19 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap());
 				layerMission.setApplicationContext(applicationContext);
 				addLayer(layerMission);
+			}
+
+			List<BaseObject> polygonPerimeter = perimetersManager.getAllPerimeters();
+			LayerPerimeter layerPerimeter;
+			for (BaseObject perimeter : polygonPerimeter) {
+				System.err.println("Loading existing perimeter: " + perimeter);
+				layerPerimeter = LayerPerimeter.generateNew(perimeter, getLayeredViewMap());
+				if (layerPerimeter == null) {
+					loggerDisplayerSvc.logError("Failed to get perimeter");
+					continue;
+				}
+				layerPerimeter.setApplicationContext(applicationContext);
+				addLayer(layerPerimeter);
 			}
 		}
 		catch (Exception e) {
@@ -145,6 +161,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		cbox.addEventHandler(CheckBoxTreeItem.<Layer>checkBoxSelectionChangedEvent(),
 				(event) -> {
 					CheckBoxTreeItem<Layer> cbItem = (CheckBoxTreeItem<Layer>) event.getTreeItem();
+					System.out.println("Selected " + cbItem.isSelected());
 					if (!cbItem.isIndeterminate())
 						getLayeredViewMap().setLayerVisibie(cbItem.getValue(), cbItem.isSelected());
 				}
@@ -164,7 +181,11 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		}
 		else
 			getLayeredViewMap().addLayer(layer, generalGroup);
-		
+
+		ti.selectedProperty().addListener((obs, oldVal, newVal) -> {
+			System.out.println(" selection state: " + newVal);
+		});
+		System.out.println("SIGN");
 		addSelectionHandler(ti);
 	}
 
@@ -187,16 +208,16 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			System.out.println("Found polygon perimeter to update it name");
 			PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter();
 			polygonPerimeter.setName(treeItem.getValue().getName());
-			//polygonPerimeter = droneDbCrudSvcRemote.update(polygonPerimeter);
-			((LayerPolygonPerimeter) treeItem.getValue()).setPolygonPerimeter(polygonPerimeter);
+
+			((LayerPolygonPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(polygonPerimeter));
 		}
 
 		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
 			System.out.println("Found circle perimeter to update it name");
 			CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter();
 			circlePerimeter.setName(treeItem.getValue().getName());
-			//circlePerimeter = droneDbCrudSvcRemote.update(circlePerimeter);
-			((LayerCircledPerimeter) treeItem.getValue()).setCirclePerimeter(circlePerimeter);
+
+			((LayerCircledPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(circlePerimeter));
 		}
 	}
 
@@ -208,12 +229,12 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		}
 		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
 			System.out.println("Found perimeter to remove");
-			//droneDbCrudSvcRemote.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
+			perimetersManager.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
 		}
 
 		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
 			System.out.println("Found circle to remove");
-			//droneDbCrudSvcRemote.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
+			perimetersManager.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
 		}
 		super.handleRemoveTreeItem(treeItem);
 
@@ -407,14 +428,21 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	@EventListener
 	public void onApplicationEvent(QuadGuiEvent command) {
 		Platform.runLater( () -> {
-			LayerMission layerMission = null;
 			switch (command.getCommand()) {
 				case MISSION_EDITING_FINISHED:
-					layerMission = (LayerMission) command.getSource();
+					LayerMission layerMission = (LayerMission) command.getSource();
 					String missionName = layerMission.getMission().getName();
 					if (missionName.startsWith(EDIT_PREFIX))
 						missionName = missionName.substring(1, missionName.length());
 					layerMission.setName(missionName);
+					refresh();
+					break;
+				case LAYER_PERIMETER_EDITING_FINISHED:
+					LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
+					String perimeterName = layerPerimeter.getPerimeter().getName();
+					if (perimeterName.startsWith(EDIT_PREFIX))
+						perimeterName = perimeterName.substring(1, perimeterName.length());
+					layerPerimeter.setName(perimeterName);
 					refresh();
 					break;
 			}

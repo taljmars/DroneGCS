@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.console.services.LoggerDisplayerSvc;
-import com.dronegcs.console.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 
 @Component

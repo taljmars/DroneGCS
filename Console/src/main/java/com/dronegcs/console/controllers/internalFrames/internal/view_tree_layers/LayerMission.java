@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.dronedb.persistence.scheme.mission.*;
-import com.dronegcs.console.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapLineImpl;

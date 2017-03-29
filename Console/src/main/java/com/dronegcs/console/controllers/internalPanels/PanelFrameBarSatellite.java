@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,14 +11,13 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import com.dronegcs.gcsis.validations.ValidatorResponse;

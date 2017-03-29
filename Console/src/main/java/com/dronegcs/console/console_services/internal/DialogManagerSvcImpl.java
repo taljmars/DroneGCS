@@ -1,4 +1,4 @@
-package com.dronegcs.console.services.internal;
+package com.dronegcs.console.console_services.internal;
 
 import com.dronegcs.gcsis.devices.KeyBoardController;
 import javafx.scene.control.*;
@@ -6,9 +6,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
 
 import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;

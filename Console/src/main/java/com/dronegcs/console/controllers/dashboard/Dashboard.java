@@ -4,11 +4,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.dronegcs.console.controllers.AppConfig;
 import com.dronegcs.console.controllers.GuiAppConfig;
-import com.dronegcs.console.services.EventPublisherSvc;
-import com.dronegcs.console.services.LoggerDisplayerSvc;
-import com.dronegcs.console.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
@@ -26,13 +25,11 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
-import com.dronegcs.console.operations.OpGCSTerminationHandler;
+import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
 
 import javax.validation.constraints.NotNull;
 
@@ -41,7 +38,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.*;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import com.dronegcs.gcsis.validations.ValidatorResponse;
 

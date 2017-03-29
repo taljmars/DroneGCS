@@ -73,7 +73,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public List<Perimeter> getAllPerimeters() {
+    public List<BaseObject> getAllPerimeters() {
         QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
         queryRequestRemote.setClz(PolygonPerimeter.class);
         queryRequestRemote.setQuery("GetAllPolygonPerimeters");
@@ -86,9 +86,9 @@ public class PerimetersManagerImpl implements PerimetersManager {
         queryResponseRemote = querySvcRemote.query(queryRequestRemote);
         List<BaseObject> circlePerimeterList = queryResponseRemote.getResultList();
 
-        List<Perimeter> list = new ArrayList<>();
-//        list.addAll((Collection<? extends Perimeter>) polygonPerimeterList);
-//        list.addAll((Collection<? extends Perimeter>) circlePerimeterList);
+        List<BaseObject> list = new ArrayList<>();
+        list.addAll(polygonPerimeterList);
+        list.addAll(circlePerimeterList);
         return list;
     }
 

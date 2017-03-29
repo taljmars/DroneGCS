@@ -15,7 +15,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.mavlink.is.drone.variables.Battery;
 import com.dronegcs.gcsis.csv.CSV;
 import com.dronegcs.gcsis.csv.internal.CSVImpl;
-import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

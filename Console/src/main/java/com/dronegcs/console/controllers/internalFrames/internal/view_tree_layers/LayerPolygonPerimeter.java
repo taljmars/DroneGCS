@@ -2,20 +2,27 @@ package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layer
 
 import com.dronedb.persistence.scheme.perimeter.Point;
 import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapPolygonImpl;
 import com.gui.is.interfaces.mapObjects.MapPolygon;
 import com.geo_tools.Coordinate;
 
+import java.util.List;
+
 public class LayerPolygonPerimeter extends LayerPerimeter {
 
 	private MapPolygon currentPolygon;
 
-	private PolygonPerimeter polygonPerimeter;
+	//private PolygonPerimeter polygonPerimeter;
+
+	public LayerPolygonPerimeter(String name, LayeredViewMap viewMap) {
+		super(name, viewMap);
+	}
 	
 	public LayerPolygonPerimeter(PolygonPerimeter polygonPerimeter, LayeredViewMap viewMap) {
 		super(polygonPerimeter.getName(), viewMap);
-		this.polygonPerimeter = polygonPerimeter;
+		this.perimeter = polygonPerimeter;
 	}
 	
 	public LayerPolygonPerimeter(LayerPolygonPerimeter layerPerimeter, LayeredViewMap viewMap) {
@@ -28,18 +35,19 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 		regenerateMapObjects();
 	}
 
-	public void add(Coordinate position) {
-		if (currentPolygon == null)
-			currentPolygon = new MapPolygonImpl();
-		
-		currentPolygon.addCoordinate(position);
-		this.polygonPerimeter.addPoint(new Point(position.getLat(), position.getLon()));
-		regenerateMapObjects();
-		
-	}
-
 	public void regenerateMapObjects() {
 		removeAllMapObjects();
+
+		if (perimeter == null)
+			return;
+
+		PerimetersManager perimetersManager = applicationContext.getBean(PerimetersManager.class);
+		List<Point> pointList = perimetersManager.getPoints(perimeter);
+
+		MapPolygon mapPolygon = new MapPolygonImpl();
+		for (Point p : pointList)
+			mapPolygon.addCoordinate(new Coordinate(p.getLat(), p.getLon()));
+		currentPolygon = mapPolygon;
 		addMapPolygon(currentPolygon);
 	}
 
@@ -51,7 +59,7 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 	}
 
 	public PolygonPerimeter getPolygonPerimeter() {
-		return this.polygonPerimeter;
+		return (PolygonPerimeter) this.perimeter;
 	}
 
 	@Override
@@ -65,6 +73,6 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 	}
 
 	public void setPolygonPerimeter(PolygonPerimeter polygonPerimeter) {
-		this.polygonPerimeter = polygonPerimeter;
+		this.perimeter = polygonPerimeter;
 	}
 }

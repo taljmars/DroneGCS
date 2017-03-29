@@ -1,5 +1,9 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
+import com.dronedb.persistence.scheme.BaseObject;
+import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.perimeter.Perimeter;
+import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
@@ -8,7 +12,8 @@ import org.springframework.context.ApplicationContext;
 
 public abstract class LayerPerimeter extends LayerSingle implements Compound {
 
-	private ApplicationContext applicationContext;
+	protected ApplicationContext applicationContext;
+	protected Perimeter perimeter;
 
 	public LayerPerimeter(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
@@ -18,7 +23,7 @@ public abstract class LayerPerimeter extends LayerSingle implements Compound {
 		super(layerPerimeter, viewMap);
 	}
 
-	public abstract void add(Coordinate position);
+	public void setPerimeter(Perimeter perimeter) {this.perimeter = perimeter;}
 
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -27,4 +32,18 @@ public abstract class LayerPerimeter extends LayerSingle implements Compound {
 	public ApplicationContext getApplicationContext() {
 		return applicationContext;
 	}
+
+	public Perimeter getPerimeter() {
+		return perimeter;
+	}
+
+    public static LayerPerimeter generateNew(BaseObject perimeter, LayeredViewMap layeredViewMap) {
+		if (perimeter instanceof PolygonPerimeter)
+			return new LayerPolygonPerimeter((PolygonPerimeter) perimeter, layeredViewMap);
+
+		if (perimeter instanceof CirclePerimeter)
+			return new LayerCircledPerimeter((CirclePerimeter) perimeter, layeredViewMap);
+
+		return null;
+    }
 }

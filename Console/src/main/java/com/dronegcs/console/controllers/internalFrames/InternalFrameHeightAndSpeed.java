@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import com.dronegcs.gcsis.environment.Environment;
-import com.dronegcs.console.services.internal.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.gcsis.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

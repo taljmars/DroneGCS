@@ -2,7 +2,7 @@ package com.dronegcs.console.controllers.internalPanels.internal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import com.dronegcs.console.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;

@@ -8,11 +8,11 @@ import javax.xml.ws.Service;
 
 import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.scheme.apis.MissionCrudSvcRemote;
+import com.dronedb.persistence.scheme.apis.PerimeterCrudSvcRemote;
 import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
 import com.dronegcs.mavlink.core.drone.MyDroneImpl;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import com.dronegcs.console.operations.OpGCSTerminationHandler;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
@@ -21,7 +21,8 @@ import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 //@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
 @Configuration
 @ComponentScan(value = {
-		"com.dronegcs.console"
+		"com.dronegcs.console",
+		"com.dronegcs.console_plugin"
 })
 public class AppConfig {
 	
@@ -66,5 +67,10 @@ public class AppConfig {
 	@Bean
 	public DroneDbCrudSvcRemote droneDbCrudSvcRemote() {
 		return LoadServices(DroneDbCrudSvcRemote.class);
+	}
+
+	@Bean
+	public PerimeterCrudSvcRemote perimeterCrudSvcRemote() {
+		return LoadServices(PerimeterCrudSvcRemote.class);
 	}
 }
