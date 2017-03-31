@@ -1,14 +1,8 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.QueryRequestRemote;
-import com.dronedb.persistence.scheme.apis.QueryResponseRemote;
-import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
-import com.dronedb.persistence.scheme.perimeter.Point;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -75,16 +69,16 @@ public class PerimetersManagerImpl implements PerimetersManager {
     @Override
     public List<BaseObject> getAllPerimeters() {
         QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(PolygonPerimeter.class);
+        queryRequestRemote.setClz(PolygonPerimeter.class.getName());
         queryRequestRemote.setQuery("GetAllPolygonPerimeters");
         QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultList();
+        List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultListBase();
 
         queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(CirclePerimeter.class);
+        queryRequestRemote.setClz(CirclePerimeter.class.getName());
         queryRequestRemote.setQuery("GetAllCirclePerimeters");
         queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        List<BaseObject> circlePerimeterList = queryResponseRemote.getResultList();
+        List<BaseObject> circlePerimeterList = queryResponseRemote.getResultListBase();
 
         List<BaseObject> list = new ArrayList<>();
         list.addAll(polygonPerimeterList);
@@ -109,7 +103,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     public Perimeter update(Perimeter perimeter) {
         ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
         if (closablePerimeterEditor == null)
-            return droneDbCrudSvcRemote.update(perimeter);
+            return (Perimeter) droneDbCrudSvcRemote.update(perimeter);
 
         return closablePerimeterEditor.update(perimeter);
     }
@@ -120,15 +114,15 @@ public class PerimetersManagerImpl implements PerimetersManager {
         List<Point> res = new ArrayList<>();
 
         if (perimeter instanceof PolygonPerimeter) {
-            List<UUID> uuidList = ((PolygonPerimeter) perimeter).getPoints();
-            for (UUID uuid : uuidList)
-                res.add(droneDbCrudSvcRemote.readByClass(uuid, Point.class));
+            List<String> uuidList = ((PolygonPerimeter) perimeter).getPoints();
+            for (String uuid : uuidList)
+                res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
             return res;
         }
 
         if (perimeter instanceof CirclePerimeter) {
-            UUID uuid = ((CirclePerimeter) perimeter).getCenter();
-            res.add(droneDbCrudSvcRemote.readByClass(uuid, Point.class));
+            String uuid = ((CirclePerimeter) perimeter).getCenter();
+            res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
             return res;
         }
 

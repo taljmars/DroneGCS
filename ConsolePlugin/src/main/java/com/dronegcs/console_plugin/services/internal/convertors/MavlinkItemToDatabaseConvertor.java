@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.services.internal.convertors;
 
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.commands.*;
 import com.dronegcs.mavlink.is.drone.mission.survey.MavlinkSurvey;
@@ -94,7 +94,7 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
         waypoint.setLat(mavlinkWaypoint.getCoordinate().getLat());
         waypoint.setLon(mavlinkWaypoint.getCoordinate().getLon());
         waypoint.setAltitude(mavlinkWaypoint.getAltitude());
-        mission.addMissionItemUid(waypoint.getObjId());
+        mission.getMissionItemsUids().add(waypoint.getObjId());
         missionItems.add(waypoint);
     }
 
@@ -106,7 +106,7 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
         circle.setLat(mavlinkCircle.getCoordinate().getLat());
         circle.setLon(mavlinkCircle.getCoordinate().getLon());
         circle.setRadius(mavlinkCircle.getRadius());
-        mission.addMissionItemUid(circle.getObjId());
+        mission.getMissionItemsUids().add(circle.getObjId());
         missionItems.add(circle);
     }
 

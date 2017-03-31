@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.services;
 
-import com.dronedb.persistence.scheme.mission.Mission;
+import com.dronedb.persistence.scheme.Mission;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 
 /**

@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapMarkerCircle;
 import com.geo_tools.Coordinate;

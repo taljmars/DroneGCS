@@ -3,16 +3,12 @@ package com.dronegcs.console.controllers.internalFrames.internal;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.mission.Mission;
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import com.dronegcs.mavlink.is.drone.variables.Perimeter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;

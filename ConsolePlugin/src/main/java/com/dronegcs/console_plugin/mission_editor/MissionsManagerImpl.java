@@ -2,9 +2,10 @@ package com.dronegcs.console_plugin.mission_editor;
 
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.apis.*;
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,7 @@ public class MissionsManagerImpl implements MissionsManager {
 	public Mission update(Mission mission) {
 		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
 		if (closableMissionEditor == null)
-			return droneDbCrudSvcRemote.update(mission);
+			return (Mission) droneDbCrudSvcRemote.update(mission);
 
 		return closableMissionEditor.update(mission);
 	}
@@ -81,9 +82,9 @@ public class MissionsManagerImpl implements MissionsManager {
 			leadMission = closableMissionEditor.getModifiedMission();
 
 		List<MissionItem> missionItemList = new ArrayList<>();
-		List<UUID> uuidList = leadMission.getMissionItemsUids();
-		for (UUID uuid : uuidList) {
-			missionItemList.add(droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class));
+		List<String> uuidList = leadMission.getMissionItemsUids();
+		for (String uuid : uuidList) {
+			missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName()));
 		}
 
 		return missionItemList;
@@ -117,10 +118,10 @@ public class MissionsManagerImpl implements MissionsManager {
 	@Override
 	public List<BaseObject> getAllMissions() {
 		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(Mission.class);
+		queryRequestRemote.setClz(Mission.class.getName());
 		queryRequestRemote.setQuery("GetAllMissions");
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-		List<BaseObject> missionList = queryResponseRemote.getResultList();
+		List<BaseObject> missionList = queryResponseRemote.getResultListBase();
 		return missionList;
 	}
 

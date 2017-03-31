@@ -1,9 +1,9 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.MissionCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
+import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;

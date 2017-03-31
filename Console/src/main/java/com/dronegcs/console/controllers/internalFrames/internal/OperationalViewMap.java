@@ -26,10 +26,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.mission.Mission;
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.Perimeter;
+import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;

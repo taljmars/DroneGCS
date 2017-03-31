@@ -1,7 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronedb.persistence.scheme.perimeter.Point;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapPolygonImpl;

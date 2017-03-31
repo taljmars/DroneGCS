@@ -1,7 +1,7 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.scheme.Perimeter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -17,7 +17,7 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
 
     @Override
     public T update(T perimeter) {
-        this.perimeter = droneDbCrudSvcRemote.update(perimeter);
+        this.perimeter = (T) droneDbCrudSvcRemote.update(perimeter);
         return this.perimeter;
     }
 

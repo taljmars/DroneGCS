@@ -6,10 +6,10 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.MissionCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.PerimeterCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronegcs.mavlink.core.drone.MyDroneImpl;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;

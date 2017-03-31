@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
+import com.dronedb.persistence.scheme.Perimeter;
 
 /**
  * Created by taljmars on 3/27/17.

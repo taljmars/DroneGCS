@@ -1,7 +1,7 @@
 package com.dronegcs.console_plugin.services.internal;
 
-import com.dronedb.persistence.scheme.mission.Mission;
-import com.dronedb.persistence.scheme.mission.MissionItem;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.MissionItem;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
 import com.dronegcs.console_plugin.services.internal.convertors.DatabaseToMavlinkItemConvertor;
@@ -47,7 +47,7 @@ public class MissionCompilerSvcImpl implements MissionCompilerSvc
 
         Iterator<MissionItem> itr = missionsManager.getMissionItems(mission).iterator();
         while (itr.hasNext())
-            itr.next().accept(databaseToMavlinkItemConvertor);
+            databaseToMavlinkItemConvertor.eval(itr.next());
 
         return databaseToMavlinkItemConvertor.getDroneMission();
     }

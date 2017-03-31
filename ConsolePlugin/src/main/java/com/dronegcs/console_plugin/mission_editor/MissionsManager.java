@@ -1,8 +1,8 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.mission.Mission;
-import com.dronedb.persistence.scheme.mission.MissionItem;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.MissionItem;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalPanels.internal.EditingCell;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
@@ -90,10 +90,10 @@ public class PanelMissionBox extends Pane implements Initializable {
         height.setCellFactory(cellFactory);
         height.setOnEditCommit( t -> {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-        	if (entry.getMissionItem() instanceof Altitudable) {
-        		Altitudable wp = (Altitudable) entry.getMissionItem();
-        		wp.setAltitude(t.getNewValue());
-        	}
+//        	if (entry.getMissionItem() instanceof Altitudable) {
+//        		Altitudable wp = (Altitudable) entry.getMissionItem();
+//        		wp.setAltitude(t.getNewValue());
+//        	}
         	generateMissionTable(true);
         	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
@@ -102,10 +102,10 @@ public class PanelMissionBox extends Pane implements Initializable {
         delay.setCellFactory(cellFactory);
         delay.setOnEditCommit( t -> {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-        	if (entry.getMissionItem() instanceof Delayable) {
-        		Delayable wp = (Delayable) entry.getMissionItem();
-        		wp.setDelay(t.getNewValue());
-        	}
+//        	if (entry.getMissionItem() instanceof Delayable) {
+//        		Delayable wp = (Delayable) entry.getMissionItem();
+//        		wp.setDelay(t.getNewValue());
+//        	}
         	generateMissionTable(true);
         	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
@@ -114,10 +114,10 @@ public class PanelMissionBox extends Pane implements Initializable {
         radius.setCellFactory(cellFactory);
         radius.setOnEditCommit( t -> {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-        	if (entry.getMissionItem() instanceof Radiusable) {
-        		Radiusable wp = (Radiusable) entry.getMissionItem();
-        		wp.setRadius(t.getNewValue());
-        	}
+//        	if (entry.getMissionItem() instanceof Radiusable) {
+//        		Radiusable wp = (Radiusable) entry.getMissionItem();
+//        		wp.setRadius(t.getNewValue());
+//        	}
         	generateMissionTable(true);
         	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
@@ -238,17 +238,17 @@ public class PanelMissionBox extends Pane implements Initializable {
 
 			if (mItem instanceof Waypoint) {
 				Waypoint wp = (Waypoint) mItem;
-				entry = new MissionItemTableEntry(i, MissionItemType.WAYPOINT, wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getDelay(), 0.0, mItem);
+				entry = new MissionItemTableEntry(i, Waypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getDelay(), 0.0, mItem);
 			}
 			else if (mItem instanceof Circle) {
 				Circle wp = (Circle) mItem;
-				entry = new MissionItemTableEntry(i, MissionItemType.CIRCLE, wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, wp.getRadius(), mItem);
+				entry = new MissionItemTableEntry(i, Circle.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, wp.getRadius(), mItem);
 			}
 			else if (mItem instanceof Land) {
-				entry = new MissionItemTableEntry(i, MissionItemType.LAND, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
+				entry = new MissionItemTableEntry(i, Land.class.getSimpleName(), 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
 			}
 			else if (mItem instanceof ReturnToHome) {
-				entry = new MissionItemTableEntry(i, MissionItemType.RTL, 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
+				entry = new MissionItemTableEntry(i, ReturnToHome.class.getSimpleName(), 0.0, 0.0, 0.0, 0.0, 0.0, mItem);
 			}
 			else if (mItem instanceof Takeoff) {
 //				msg_mission_item msg = mItem.packMissionItem().get(0);

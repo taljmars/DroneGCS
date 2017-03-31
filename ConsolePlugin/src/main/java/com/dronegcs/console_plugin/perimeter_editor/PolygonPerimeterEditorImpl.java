@@ -1,9 +1,9 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.apis.PerimeterCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
-import com.dronedb.persistence.scheme.perimeter.Point;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronedb.persistence.scheme.Point;
+import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.geo_tools.Coordinate;
@@ -36,7 +36,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     public PolygonPerimeter open(PolygonPerimeter perimeter) {
         loggerDisplayerSvc.logGeneral("Setting new perimeter to perimeter editor");
         this.perimeter = (PolygonPerimeter) perimeter;
-        this.originalPerimeter = perimeterCrudSvcRemote.clonePerimeter(this.perimeter);
+        this.originalPerimeter = (PolygonPerimeter) perimeterCrudSvcRemote.clonePerimeter(this.perimeter);
         this.perimeter.setName(perimeter.getName());
         droneDbCrudSvcRemote.update(this.perimeter);
         return this.perimeter;
@@ -77,8 +77,8 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
         point.setLon(coordinate.getLon());
 
         // Update Item
-        Point res = droneDbCrudSvcRemote.update(point);
-        perimeter.addPoint(res.getObjId());
+        Point res = (Point) droneDbCrudSvcRemote.update(point);
+        perimeter.getPoints().add(res.getObjId());
         // Update Mission
         droneDbCrudSvcRemote.update(perimeter);
         return res;

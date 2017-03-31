@@ -1,8 +1,8 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
-import com.dronedb.persistence.scheme.perimeter.Point;
+import com.dronedb.persistence.scheme.Perimeter;
+import com.dronedb.persistence.scheme.Point;
 
 import java.util.List;
 

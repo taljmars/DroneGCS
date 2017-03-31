@@ -1,7 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
-import com.dronedb.persistence.scheme.mission.MissionItem;
-import com.dronedb.persistence.scheme.mission.MissionItemType;
+import com.dronedb.persistence.scheme.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -15,12 +14,12 @@ public class MissionItemTableEntry {
     private final SimpleObjectProperty<MissionItem> missionItem;
  
     public MissionItemTableEntry(	Integer pOrder, 
-    				MissionItemType missionItemType,
+    				String missionItemType,
     				Double pLat, Double pLon, Double pHeight, Double pDelay, Double pRadius,
     				MissionItem pDroneMissionItem) {
     	
         this.order = new SimpleIntegerProperty(pOrder);
-        this.type = new SimpleStringProperty(missionItemType.name());
+        this.type = new SimpleStringProperty(missionItemType);
         this.lat = new SimpleDoubleProperty(pLat);
         this.lon = new SimpleDoubleProperty(pLon);
         this.height = new SimpleDoubleProperty(pHeight);

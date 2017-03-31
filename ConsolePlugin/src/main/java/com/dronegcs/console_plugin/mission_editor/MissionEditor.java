@@ -1,12 +1,12 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
 import com.geo_tools.Coordinate;
 
 import java.util.List;
 
 /**
- * Created by oem on 3/25/17.
+ * Created by taljmars on 3/25/17.
  */
 public interface MissionEditor {
 

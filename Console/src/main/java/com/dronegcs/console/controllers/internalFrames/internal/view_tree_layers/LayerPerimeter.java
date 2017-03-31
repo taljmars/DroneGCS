@@ -1,13 +1,9 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronedb.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.perimeter.CirclePerimeter;
-import com.dronedb.persistence.scheme.perimeter.Perimeter;
-import com.dronedb.persistence.scheme.perimeter.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
-import com.geo_tools.Coordinate;
 import org.springframework.context.ApplicationContext;
 
 public abstract class LayerPerimeter extends LayerSingle implements Compound {

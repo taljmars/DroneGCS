@@ -1,9 +1,9 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-import com.dronedb.persistence.scheme.apis.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.MissionCrudSvcRemote;
-import com.dronedb.persistence.scheme.apis.QuerySvcRemote;
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.geo_tools.Coordinate;
@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Created by oem on 3/25/17.
+ * Created by taljmars on 3/25/17.
  */
 @Scope(scopeName = "prototype")
 @Component
@@ -172,29 +171,29 @@ public class MissionEditorImpl implements ClosableMissionEditor {
 
     @Override
     public Mission update(Mission mission) {
-        this.mission = droneDbCrudSvcRemote.update(mission);
+        this.mission = (Mission) droneDbCrudSvcRemote.update(mission);
         return this.mission;
     }
 
     @Override
     public <T extends MissionItem> void removeMissionItem(T missionItem) {
-        mission.removeMissionItemUid(missionItem.getObjId());
+        mission.getMissionItemsUids().remove(missionItem.getObjId());
         droneDbCrudSvcRemote.update(mission);
     }
 
     @Override
     public List<MissionItem> getMissionItems() {
         List<MissionItem> missionItemList = new ArrayList<>();
-        List<UUID> uuidList = mission.getMissionItemsUids();
-        uuidList.forEach((UUID uuid) -> missionItemList.add(droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class)));
+        List<String> uuidList = mission.getMissionItemsUids();
+        uuidList.forEach((String uuid) -> missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName())));
         return missionItemList;
     }
 
     @Override
     public <T extends MissionItem> T updateMissionItem(T missionItem) {
         // Update Item
-        T res = droneDbCrudSvcRemote.update(missionItem);
-        mission.addMissionItemUid(res.getObjId());
+        T res = (T) droneDbCrudSvcRemote.update(missionItem);
+        mission.getMissionItemsUids().add(res.getObjId());
         // Update Mission
         droneDbCrudSvcRemote.update(mission);
         return res;
@@ -206,8 +205,8 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         if (mission.getMissionItemsUids().isEmpty())
             return false;
 
-        UUID lastUid = mission.getMissionItemsUids().get(mission.getMissionItemsUids().size() - 1);
-        MissionItem last = droneDbCrudSvcRemote.readByClass(lastUid, MissionItem.class);
+        String lastUid = mission.getMissionItemsUids().get(mission.getMissionItemsUids().size() - 1);
+        MissionItem last = (MissionItem) droneDbCrudSvcRemote.readByClass(lastUid, MissionItem.class.getName());
         return (last instanceof ReturnToHome) || (last instanceof Land);
     }
 
@@ -215,8 +214,8 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         if (mission.getMissionItemsUids().isEmpty())
             return false;
 
-        UUID uid = mission.getMissionItemsUids().get(0);
-        MissionItem missionItem = droneDbCrudSvcRemote.readByClass(uid, MissionItem.class);
+        String uid = mission.getMissionItemsUids().get(0);
+        MissionItem missionItem = (MissionItem) droneDbCrudSvcRemote.readByClass(uid, MissionItem.class.getName());
         return missionItem instanceof Takeoff;
     }
 

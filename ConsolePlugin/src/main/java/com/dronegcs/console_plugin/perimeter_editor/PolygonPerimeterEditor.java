@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.perimeter.Point;
+import com.dronedb.persistence.scheme.Point;
 import com.geo_tools.Coordinate;
 
 /**

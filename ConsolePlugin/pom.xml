@@ -6,6 +6,7 @@
         <artifactId>DroneGCS</artifactId>
         <groupId>com.dronegcs</groupId>
         <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +16,7 @@
 
         <dependency>
             <groupId>com.dronedb</groupId>
-            <artifactId>Scheme</artifactId>
+            <artifactId>DroneServerExportedServices</artifactId>
             <version>1.0</version>
         </dependency>
 

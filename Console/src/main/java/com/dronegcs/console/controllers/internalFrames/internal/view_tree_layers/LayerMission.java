@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dronedb.persistence.scheme.mission.*;
+import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -29,7 +30,8 @@ public class LayerMission extends LayerSingle {
 	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) {
 		super(layerMission, viewMap);
 		System.out.println("Before copy " + layerMission.getMission());
-		mission = new Mission(layerMission.getMission());
+		MissionCrudSvcRemote missionCrudSvcRemote = applicationContext.getBean(MissionCrudSvcRemote.class);
+		mission = missionCrudSvcRemote.cloneMission(layerMission.getMission());
 		System.out.println("After copy " + mission);
 	}
 

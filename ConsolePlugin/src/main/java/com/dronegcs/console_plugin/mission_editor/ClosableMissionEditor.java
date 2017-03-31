@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-import com.dronedb.persistence.scheme.mission.Mission;
+
+import com.dronedb.persistence.scheme.Mission;
 
 /**
  * Created by oem on 3/25/17.
