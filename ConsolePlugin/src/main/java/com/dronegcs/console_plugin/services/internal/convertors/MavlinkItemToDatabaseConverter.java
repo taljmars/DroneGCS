@@ -2,16 +2,23 @@ package com.dronegcs.console_plugin.services.internal.convertors;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.drone.mission.DroneMissionItem;
 import com.dronegcs.mavlink.is.drone.mission.commands.*;
 import com.dronegcs.mavlink.is.drone.mission.survey.MavlinkSurvey;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.*;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by taljmars on 3/18/17.
  */
+@Scope(value = "prototype")
+@Component
 public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
 
     private Mission mission;
@@ -21,16 +28,14 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
         missionItems = new ArrayList<>();
     }
 
-    public void setMission(Mission Mission) {
+    public Mission convert(DroneMission droneMission, Mission mission) {
         this.mission = mission;
-    }
-
-    public Mission getMission() {
-        return mission;
-    }
-
-    public List<MissionItem> getMissionItems() {
-        return missionItems;
+        Iterator<DroneMissionItem> itr = droneMission.getItems().iterator();
+        while (itr.hasNext()) {
+            DroneMissionItem droneMissionItem = itr.next();
+            droneMissionItem.accept(this);
+        }
+        return this.mission;
     }
 
     @Override
@@ -45,7 +50,9 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
 
     @Override
     public void visit(MavlinkTakeoff mavlinkTakeoff) {
-
+        Takeoff takeoff = new Takeoff();
+        takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
+        missionItems.add(takeoff);
     }
 
     @Override
@@ -109,5 +116,4 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
         mission.getMissionItemsUids().add(circle.getObjId());
         missionItems.add(circle);
     }
-
 }

@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.services.internal.convertors;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkReturnToHome;
 import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkTakeoff;
@@ -9,28 +10,38 @@ import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkLand;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkRegionOfInterest;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkWaypoint;
 import com.geo_tools.Coordinate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Created by taljmars on 3/18/17.
  */
+@Scope(value = "prototype")
+@Component
 public class DatabaseToMavlinkItemConvertor {
+
+    @Autowired
+    private MissionsManager missionsManager;
 
     private DroneMission droneMission;
 
-    public void setDroneMission(DroneMission droneMission) {
+    public DroneMission convert(Mission mission, DroneMission droneMission) {
         this.droneMission = droneMission;
-    }
+        Iterator<MissionItem> itr = missionsManager.getMissionItems(mission).iterator();
+        while (itr.hasNext())
+            eval(itr.next());
 
-    public DroneMission getDroneMission() {
-        return droneMission;
+        return this.droneMission;
     }
 
     public void eval(MissionItem missionItem) {
-        Class clz = missionItem.getClass();
+        // Using reflection to call the relevant function
+        // It is a factory pattern based on reflection
         Method[] allMethods = this.getClass().getDeclaredMethods();
         for (int i = 0 ; i < allMethods.length ; i++) {
             Method method = allMethods[i];
@@ -52,17 +63,17 @@ public class DatabaseToMavlinkItemConvertor {
         }
     }
 
-    public void visit(Land land) {
+    private void visit(Land land) {
         MavlinkLand mavlinkLand = new MavlinkLand(droneMission, new Coordinate(land.getLat(), land.getLon()));
         droneMission.addMissionItem(mavlinkLand);
     }
 
-    public void visit(Takeoff takeoff) {
+    private void visit(Takeoff takeoff) {
         MavlinkTakeoff mavlinkTakeoff = new MavlinkTakeoff(droneMission, takeoff.getFinishedAlt());
         droneMission.addMissionItem(mavlinkTakeoff);
     }
 
-    public void visit(Waypoint waypoint) {
+    private void visit(Waypoint waypoint) {
         MavlinkWaypoint mavlinkWaypoint = new MavlinkWaypoint(droneMission, new Coordinate(waypoint.getLat(), waypoint.getLon()));
         mavlinkWaypoint.setYawAngle(waypoint.getYawAngle());
         mavlinkWaypoint.setOrbitCCW(waypoint.isOrbitCCW());
@@ -73,7 +84,7 @@ public class DatabaseToMavlinkItemConvertor {
         droneMission.addMissionItem(mavlinkWaypoint);
     }
 
-    public void visit(Circle circle) {
+    private void visit(Circle circle) {
         MavlinkCircle mavlinkCircle = new MavlinkCircle(droneMission, new Coordinate(circle.getLat(), circle.getLon()));
         mavlinkCircle.setAltitude(circle.getAltitude());
         mavlinkCircle.setRadius(circle.getRadius());
@@ -81,13 +92,13 @@ public class DatabaseToMavlinkItemConvertor {
         droneMission.addMissionItem(mavlinkCircle);
     }
 
-    public void visit(ReturnToHome returnToHome) {
+    private void visit(ReturnToHome returnToHome) {
         MavlinkReturnToHome mavlinkReturnToHome = new MavlinkReturnToHome(droneMission);
         mavlinkReturnToHome.setHeight(returnToHome.getAltitude());
         droneMission.addMissionItem(mavlinkReturnToHome);
     }
 
-    public void visit(RegionOfInterest regionOfInterest) {
+    private void visit(RegionOfInterest regionOfInterest) {
         // TODO: handle position value
         Coordinate coordinate = new Coordinate(regionOfInterest.getLat() ,regionOfInterest.getLon());
         MavlinkRegionOfInterest mavlinkRegionOfInterest = new MavlinkRegionOfInterest(droneMission, coordinate);
