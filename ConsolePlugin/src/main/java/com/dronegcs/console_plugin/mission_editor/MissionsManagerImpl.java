@@ -56,13 +56,15 @@ public class MissionsManagerImpl implements MissionsManager {
 	public void delete(Mission mission) {
 		Mission oldMission = null;
 		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
-		if (closableMissionEditor == null)
-			return;
-
-		oldMission = closableMissionEditor.close(false);
-		if (oldMission != null) {
-			droneDbCrudSvcRemote.delete(oldMission);
+		if (closableMissionEditor != null) {
+			oldMission = closableMissionEditor.close(false);
+			if (oldMission == null)
+				oldMission = mission;
 		}
+		else
+			oldMission = mission;
+
+		droneDbCrudSvcRemote.delete(oldMission);
 	}
 
 	@Override
