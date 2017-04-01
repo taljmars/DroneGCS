@@ -1,41 +1,45 @@
 package com.dronegcs.console_plugin.services.internal.convertors;
 
-import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.scheme.Circle;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.Takeoff;
+import com.dronedb.persistence.scheme.Waypoint;
+import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.mavlink.is.drone.mission.ConvertMavlinkVisitor;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.DroneMissionItem;
 import com.dronegcs.mavlink.is.drone.mission.commands.*;
 import com.dronegcs.mavlink.is.drone.mission.survey.MavlinkSurvey;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by taljmars on 3/18/17.
  */
 @Scope(value = "prototype")
 @Component
-public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
+public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
+{
+    @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+    private MissionsManager missionsManager;
 
-    private Mission mission;
-    private List<MissionItem> missionItems;
-
-    public MavlinkItemToDatabaseConvertor() {
-        missionItems = new ArrayList<>();
-    }
+    private MissionEditor missionEditor;
 
     public Mission convert(DroneMission droneMission, Mission mission) {
-        this.mission = mission;
+        missionEditor = missionsManager.openMissionEditor(mission);
+
         Iterator<DroneMissionItem> itr = droneMission.getItems().iterator();
         while (itr.hasNext()) {
             DroneMissionItem droneMissionItem = itr.next();
             droneMissionItem.accept(this);
         }
-        return this.mission;
+        return missionsManager.closeMissionEditor(missionEditor, true);
     }
 
     @Override
@@ -50,9 +54,11 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
 
     @Override
     public void visit(MavlinkTakeoff mavlinkTakeoff) {
-        Takeoff takeoff = new Takeoff();
+        Takeoff takeoff = missionEditor.createTakeOff();
+
         takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
-        missionItems.add(takeoff);
+
+        missionEditor.updateMissionItem(takeoff);
     }
 
     @Override
@@ -92,7 +98,8 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
 
     @Override
     public void visit(MavlinkWaypoint mavlinkWaypoint) {
-        Waypoint waypoint = new Waypoint();
+        Waypoint waypoint = missionEditor.createWaypoint();
+
         waypoint.setDelay(mavlinkWaypoint.getDelay());
         waypoint.setAcceptanceRadius(mavlinkWaypoint.getAcceptanceRadius());
         waypoint.setOrbitalRadius(mavlinkWaypoint.getOrbitalRadius());
@@ -101,19 +108,20 @@ public class MavlinkItemToDatabaseConvertor implements ConvertMavlinkVisitor {
         waypoint.setLat(mavlinkWaypoint.getCoordinate().getLat());
         waypoint.setLon(mavlinkWaypoint.getCoordinate().getLon());
         waypoint.setAltitude(mavlinkWaypoint.getAltitude());
-        mission.getMissionItemsUids().add(waypoint.getObjId());
-        missionItems.add(waypoint);
+
+        missionEditor.updateMissionItem(waypoint);
     }
 
     @Override
     public void visit(MavlinkCircle mavlinkCircle) {
-        Circle circle = new Circle();
+        Circle circle = missionEditor.createCirclePoint();
+
         circle.setAltitude(mavlinkCircle.getAltitude());
         circle.setTurns(mavlinkCircle.getNumberOfTurns());
         circle.setLat(mavlinkCircle.getCoordinate().getLat());
         circle.setLon(mavlinkCircle.getCoordinate().getLon());
         circle.setRadius(mavlinkCircle.getRadius());
-        mission.getMissionItemsUids().add(circle.getObjId());
-        missionItems.add(circle);
+
+        missionEditor.updateMissionItem(circle);
     }
 }

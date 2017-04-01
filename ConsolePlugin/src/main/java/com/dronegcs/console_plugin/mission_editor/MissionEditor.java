@@ -10,17 +10,23 @@ import java.util.List;
  */
 public interface MissionEditor {
 
-    Waypoint addWaypoint(Coordinate coord);
+    Waypoint createWaypoint();
+    Waypoint addWaypoint(Coordinate position);
 
-    Circle addCirclePoint(Coordinate coord);
+    Circle createCirclePoint();
+    Circle addCirclePoint(Coordinate position);
 
+    ReturnToHome createReturnToLunch();
     ReturnToHome addReturnToLunch();
 
-    Land addLandPoint(Coordinate coord);
+    Land createLandPoint();
+    Land addLandPoint(Coordinate position);
 
+    Takeoff createTakeOff();
     Takeoff addTakeOff();
 
-    RegionOfInterest addRegionOfInterest(Coordinate coord);
+    RegionOfInterest createRegionOfInterest();
+    RegionOfInterest addRegionOfInterest(Coordinate position);
 
     <T extends MissionItem> void removeMissionItem(T missionItem);
 

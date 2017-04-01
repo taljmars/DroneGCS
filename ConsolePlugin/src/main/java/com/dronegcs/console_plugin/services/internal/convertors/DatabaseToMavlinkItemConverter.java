@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -23,9 +24,9 @@ import java.util.Iterator;
  */
 @Scope(value = "prototype")
 @Component
-public class DatabaseToMavlinkItemConvertor {
+public class DatabaseToMavlinkItemConverter {
 
-    @Autowired
+    @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
     private MissionsManager missionsManager;
 
     private DroneMission droneMission;

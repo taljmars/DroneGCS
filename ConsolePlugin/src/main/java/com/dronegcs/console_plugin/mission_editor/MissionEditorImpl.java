@@ -79,13 +79,18 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Waypoint addWaypoint(Coordinate iCoord) {
-        Coordinate c3 = new Coordinate(iCoord, 20);
+    public Waypoint createWaypoint() {
+        return (Waypoint) missionCrudSvcRemote.createMissionItem(Waypoint.class.getName());
+    }
+
+    @Override
+    public Waypoint addWaypoint(Coordinate position) {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
             return null;
         }
-        Waypoint waypoint = new Waypoint();
+        Waypoint waypoint = createWaypoint();
+        Coordinate c3 = new Coordinate(position, 20);
         waypoint.setLat(c3.getLat());
         waypoint.setLon(c3.getLon());
         waypoint.setAltitude(c3.getAltitude());
@@ -93,13 +98,18 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Circle addCirclePoint(Coordinate coord) {
-        Coordinate c3 = new Coordinate(coord, 20);
+    public Circle createCirclePoint() {
+        return (Circle) missionCrudSvcRemote.createMissionItem(Circle.class.getName());
+    }
+
+    @Override
+    public Circle addCirclePoint(Coordinate position) {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
             return null;
         }
-        Circle circle = new Circle();
+        Circle circle = createCirclePoint();
+        Coordinate c3 = new Coordinate(position, 20);
         circle.setLon(c3.getLon());
         circle.setLat(c3.getLat());
         circle.setAltitude(c3.getAltitude());
@@ -107,17 +117,27 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Land addLandPoint(Coordinate coord) {
+    public Land createLandPoint() {
+        return (Land) missionCrudSvcRemote.createMissionItem(Land.class.getName());
+    }
+
+    @Override
+    public Land addLandPoint(Coordinate position) {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
             return null;
         }
 
-        Land land = new Land();
+        Land land = createLandPoint();
         land.setAltitude(20.0);
-        land.setLat(coord.getLat());
-        land.setLon(coord.getLon());
+        land.setLat(position.getLat());
+        land.setLon(position.getLon());
         return updateMissionItem(land);
+    }
+
+    @Override
+    public ReturnToHome createReturnToLunch() {
+        return (ReturnToHome) missionCrudSvcRemote.createMissionItem(ReturnToHome.class.getName());
     }
 
     @Override
@@ -126,9 +146,14 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
             return null;
         }
-        ReturnToHome returnToHome = new ReturnToHome();
+        ReturnToHome returnToHome = createReturnToLunch();
         returnToHome.setAltitude(0.0);
         return updateMissionItem(returnToHome);
+    }
+
+    @Override
+    public Takeoff createTakeOff() {
+        return (Takeoff) missionCrudSvcRemote.createMissionItem(Takeoff.class.getName());
     }
 
     @Override
@@ -145,22 +170,27 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             return null;
         }
         double altitude = Double.parseDouble((String) val);
-        Takeoff takeoff = new Takeoff();
+        Takeoff takeoff = createTakeOff();
         takeoff.setFinishedAlt(altitude);
         return updateMissionItem(takeoff);
     }
 
     @Override
-    public RegionOfInterest addRegionOfInterest(Coordinate coord) {
+    public RegionOfInterest createRegionOfInterest() {
+        return (RegionOfInterest) missionCrudSvcRemote.createMissionItem(RegionOfInterest.class.getName());
+    }
+
+    @Override
+    public RegionOfInterest addRegionOfInterest(Coordinate position) {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a MavlinkLand/RTL point");
             return null;
         }
 
-        RegionOfInterest regionOfInterest = new RegionOfInterest();
+        RegionOfInterest regionOfInterest = createRegionOfInterest();
         regionOfInterest.setAltitude(20.0);
-        regionOfInterest.setLat(coord.getLat());
-        regionOfInterest.setLon(coord.getLon());
+        regionOfInterest.setLat(position.getLat());
+        regionOfInterest.setLon(position.getLon());
         return updateMissionItem(regionOfInterest);
     }
 
