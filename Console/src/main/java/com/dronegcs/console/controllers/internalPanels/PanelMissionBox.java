@@ -81,15 +81,15 @@ public class PanelMissionBox extends Pane implements Initializable {
              }
          };
         
-        order.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Integer>("order"));
-        type.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,String>("type"));
-        lat.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("lat"));
-        lon.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("lon"));
+        order.setCellValueFactory(new PropertyValueFactory<>("order"));
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+        lat.setCellValueFactory(new PropertyValueFactory<>("lat"));
+        lon.setCellValueFactory(new PropertyValueFactory<>("lon"));
         
-        height.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("height"));
+        height.setCellValueFactory(new PropertyValueFactory<>("height"));
         height.setCellFactory(cellFactory);
         height.setOnEditCommit( t -> {
-        	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
+        	MissionItemTableEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
 //        	if (entry.getMissionItem() instanceof Altitudable) {
 //        		Altitudable wp = (Altitudable) entry.getMissionItem();
 //        		wp.setAltitude(t.getNewValue());
@@ -98,7 +98,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
         
-        delay.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("delay"));
+        delay.setCellValueFactory(new PropertyValueFactory<>("delay"));
         delay.setCellFactory(cellFactory);
         delay.setOnEditCommit( t -> {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
@@ -110,7 +110,7 @@ public class PanelMissionBox extends Pane implements Initializable {
         	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
         
-        radius.setCellValueFactory(new PropertyValueFactory<MissionItemTableEntry,Double>("radius"));
+        radius.setCellValueFactory(new PropertyValueFactory<>("radius"));
         radius.setCellFactory(cellFactory);
         radius.setOnEditCommit( t -> {
         	MissionItemTableEntry entry = (MissionItemTableEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
@@ -133,11 +133,11 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty && getIndex() > 0 ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-//                        	Mission mission = entry.getMissionItem().getMission();
-//                            mission.getMissionItems().remove(getIndex());
-//                            mission.getMissionItems().add(getIndex() - 1, entry.getMissionItem());
-//                            generateMissionTable(true);
-//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                        	Mission mission = layerMission.getMission();
+                        	mission.getMissionItemsUids().remove(getIndex());
+                        	mission.getMissionItemsUids().add(getIndex() - 1, entry.getMissionItem().getObjId());
+                            generateMissionTable(true);
+                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -157,11 +157,11 @@ public class PanelMissionBox extends Pane implements Initializable {
                     if ( !empty && getIndex() < getTableView().getItems().size() - 1 ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-//                        	Mission mission = entry.getMissionItem().getMission();
-//                            mission.getMissionItems().remove(getIndex());
-//                            mission.getMissionItems().add(getIndex() + 1, entry.getMissionItem());
-//                            generateMissionTable(true);
-//                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                        	Mission mission = layerMission.getMission();
+                            mission.getMissionItemsUids().remove(getIndex());
+                            mission.getMissionItemsUids().add(getIndex() + 1, entry.getMissionItem().getObjId());
+                            generateMissionTable(true);
+                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }

@@ -1,20 +1,18 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-import javax.validation.constraints.NotNull;
-
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
-import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
