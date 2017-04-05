@@ -51,6 +51,10 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	@Override
 	public void delete(Mission mission) {
+		if (mission == null) {
+			loggerDisplayerSvc.logError("Received Empty mission, skip deletion");
+			return;
+		}
 		Mission oldMission = null;
 		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
 		if (closableMissionEditor != null) {

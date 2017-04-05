@@ -45,8 +45,6 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         try {
             this.mission = mission;
             this.originalMission = missionCrudSvcRemote.cloneMission(this.mission);
-            this.mission.setName(this.mission.getName());
-            droneDbCrudSvcRemote.update(this.mission);
             return this.mission;
         } catch (DatabaseRemoteValidationException e) {
             throw new MissionUpdateException(e.getMessage());
@@ -57,10 +55,10 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     public Mission open(String missionName) throws MissionUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
         try {
-            this.mission = new Mission();
+            this.mission = (Mission) droneDbCrudSvcRemote.create(Mission.class.getName());
             this.originalMission = null;
             this.mission.setName(missionName);
-            droneDbCrudSvcRemote.update(this.mission);
+            this.mission = (Mission) droneDbCrudSvcRemote.update(this.mission);
             return this.mission;
         }
         catch (DatabaseRemoteValidationException e) {

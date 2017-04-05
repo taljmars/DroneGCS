@@ -1,42 +1,44 @@
 package com.dronegcs.console.controllers.internalFrames.internal;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
-import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.scheme.BaseObject;
+import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
-import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapTree.CheckBoxViewTree;
 import com.gui.core.mapTreeObjects.Layer;
 import com.gui.core.mapTreeObjects.LayerGroup;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
-import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import com.dronegcs.mavlink.is.drone.Drone;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
-import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
-import com.generic_tools.validations.RuntimeValidator;
-import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
@@ -159,7 +161,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	private void addSelectionHandler(TreeItem<Layer> cbox) {
 		cbox.addEventHandler(CheckBoxTreeItem.<Layer>checkBoxSelectionChangedEvent(),
 				(event) -> {
-					CheckBoxTreeItem<Layer> cbItem = (CheckBoxTreeItem<Layer>) event.getTreeItem();
+					CheckBoxTreeItem<Layer> cbItem = event.getTreeItem();
 					System.out.println("Selected " + cbItem.isSelected());
 					if (!cbItem.isIndeterminate())
 						getLayeredViewMap().setLayerVisibie(cbItem.getValue(), cbItem.isSelected());
@@ -194,7 +196,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	}
 
 	@Override
-	public void updateTreeItemName(TreeItem<Layer> treeItem) {
+	public void updateTreeItemName(String fromText, TreeItem<Layer> treeItem) {
 		if (treeItem.getValue() instanceof LayerMission) {
 			System.out.println("Found mission to update it name");
 			Mission mission = ((LayerMission) treeItem.getValue()).getMission();
@@ -203,6 +205,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			try {
 				((LayerMission) treeItem.getValue()).setMission(missionsManager.update(mission));
 			} catch (MissionUpdateException e) {
+                treeItem.getValue().setName(fromText);
+                refresh();
 				loggerDisplayerSvc.logError("Database is out of sync, failed to update mission name , error: " + e.getMessage());
 			}
 		}
@@ -215,6 +219,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			try {
 				((LayerPolygonPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(polygonPerimeter));
 			} catch (PerimeterUpdateException e) {
+                treeItem.getValue().setName(fromText);
+                refresh();
 				loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
 			}
 		}
@@ -227,6 +233,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			try {
 				((LayerCircledPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(circlePerimeter));
 			} catch (PerimeterUpdateException e) {
+                treeItem.getValue().setName(fromText);
+                refresh();
 				loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
 			}
 		}
@@ -447,10 +455,16 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			switch (command.getCommand()) {
 				case MISSION_EDITING_FINISHED:
 					LayerMission layerMission = (LayerMission) command.getSource();
-					String missionName = layerMission.getMission().getName();
-					if (missionName.startsWith(EDIT_PREFIX))
-						missionName = missionName.substring(1, missionName.length());
-					layerMission.setName(missionName);
+					if (layerMission.getMission() == null) {
+					    //Means we were left without a mission, we need to clear the item
+                        removeLayer(layerMission);
+                    }
+                    else {
+                        String missionName = layerMission.getMission().getName();
+                        if (missionName.startsWith(EDIT_PREFIX))
+                            missionName = missionName.substring(1, missionName.length());
+                        layerMission.setName(missionName);
+                    }
 					refresh();
 					break;
 				case LAYER_PERIMETER_EDITING_FINISHED:
