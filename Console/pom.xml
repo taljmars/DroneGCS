@@ -18,15 +18,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>GCSIS</artifactId>
-            <version>${myversion}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Mavlink</artifactId>
-            <version>${myversion}</version>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>MavlinkProtocol</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

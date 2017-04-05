@@ -3,7 +3,7 @@ package com.dronegcs.console.controllers;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import com.dronegcs.gcsis.environment.Environment;
+import com.generic_tools.environment.Environment;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

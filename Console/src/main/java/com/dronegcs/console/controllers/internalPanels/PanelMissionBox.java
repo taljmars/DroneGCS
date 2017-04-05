@@ -32,8 +32,8 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class PanelMissionBox extends Pane implements Initializable {

@@ -39,8 +39,8 @@ import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
@@ -53,7 +53,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GCS terminator handler")

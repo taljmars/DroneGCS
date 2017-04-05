@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import org.springframework.context.ApplicationContext;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.generic_tools.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -42,12 +42,12 @@ import javafx.stage.WindowEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectDetectorListener, Initializable {
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message="Internal Error: Failed to get drone")

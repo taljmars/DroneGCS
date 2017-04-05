@@ -1,4 +1,6 @@
-package com.dronegcs.mavlink.core.validations;
+package com.dronegcs.console_plugin.validations;
+
+import com.dronegcs.console_plugin.validations.internal.QuadIsArmedValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +9,6 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-
-import com.dronegcs.mavlink.core.validations.internal.QuadIsArmedValidator;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

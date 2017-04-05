@@ -11,13 +11,20 @@ import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronegcs.mavlink.core.drone.MyDroneImpl;
+import com.dronegcs.mavlink.core.flightControllers.KeyBoardConfigurationParser;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
+import com.generic_tools.environment.Environment;
+import com.generic_tools.logger.Logger;
+import com.generic_tools.validations.RuntimeValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
+import com.dronegcs.mavlink.spring.MavlinkSpringConfig;
 
-@Import({GuiAppConfig.class, InternalFrameMap.class , MyDroneImpl.class , OpGCSTerminationHandler.class})
+@Import({GuiAppConfig.class, InternalFrameMap.class , OpGCSTerminationHandler.class,
+		MavlinkSpringConfig.class})
 //@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
 @Configuration
 @ComponentScan(value = {
@@ -32,14 +39,29 @@ public class AppConfig {
 	public static final String ENV_SYMBOL = "GCSMode";
 
 	public static ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-	
-	@Bean @Scope("prototype")
-	public DroneMission mission() {
-		return new DroneMission();
+
+//	@Bean @Scope("prototype")
+//	public DroneMission mission() {
+//		return new DroneMission();
+//	}
+
+	@Bean
+	public Environment environment() {
+		return new Environment();
 	}
-	
+
+	@Bean
+	public Logger logger(@Autowired Environment environment) {
+		return new Logger(environment);
+	}
+
+	@Bean
+	public RuntimeValidator runtimeValidator() {
+		return new RuntimeValidator();
+	}
+
 	// DB Access
-	
+
 	private static <T> T LoadServices(Class<T> clz) {
 		try {
 			System.err.println("Got " + clz.getSimpleName());
@@ -47,7 +69,7 @@ public class AppConfig {
 			QName qName = new QName("http://internal.ws.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
 			Service service = Service.create(url, qName);
 			return service.getPort(clz);
-		} 
+		}
 		catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

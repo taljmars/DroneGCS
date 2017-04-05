@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.generic_tools.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class InternalFrameMap extends Pane implements ChangeListener<Number>, Initializable {

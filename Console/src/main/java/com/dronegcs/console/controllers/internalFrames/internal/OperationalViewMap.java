@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import com.dronegcs.gcsis.devices.KeyBoardController;
+import com.generic_tools.devices.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import com.gui.core.mapTreeObjects.Layer;
@@ -75,8 +75,8 @@ import com.dronegcs.mavlink.is.drone.variables.Home;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 /**
  *
@@ -102,7 +102,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull( message = "Internal Error: Failed to get notification publisher" )
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull( message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer" )
+	@Autowired @NotNull( message = "Internal Error: Failed to get com.generic_tools.logger displayer" )
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")

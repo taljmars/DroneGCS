@@ -11,17 +11,17 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import com.dronegcs.mavlink.core.validations.QuadIsArmed;
+import com.dronegcs.console_plugin.validations.QuadIsArmed;
 import com.dronegcs.mavlink.is.drone.Drone;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
 @ComponentScan("gui.com.dronegcs.console_plugin.services")
 @Component("opTakeoffQuad")
 public class OpTakeoffQuad extends OperationHandler {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")

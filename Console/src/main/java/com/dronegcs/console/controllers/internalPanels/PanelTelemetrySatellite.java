@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.generic_tools.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
@@ -33,7 +33,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")

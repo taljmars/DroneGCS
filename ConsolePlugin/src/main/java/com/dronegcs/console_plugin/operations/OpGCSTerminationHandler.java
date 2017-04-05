@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
-import com.dronegcs.gcsis.logger.Logger;
+import com.generic_tools.logger.Logger;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class OpGCSTerminationHandler extends OperationHandler {
@@ -18,7 +18,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
 	protected EventPublisherSvc eventPublisherSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private Logger logger;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")

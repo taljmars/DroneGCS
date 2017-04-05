@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers;
 
-import com.dronegcs.gcsis.devices.KeyBoardController;
+import com.generic_tools.devices.KeyBoardController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;

@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.services.internal.logevents;
 
-import com.dronegcs.gcsis.logger.Logger.Type;
+import com.generic_tools.logger.Logger.Type;
 
 /**
  * Incoming event type

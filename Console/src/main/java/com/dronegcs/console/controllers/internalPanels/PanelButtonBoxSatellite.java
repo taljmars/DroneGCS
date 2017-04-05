@@ -5,10 +5,10 @@ import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
-import com.dronegcs.gcsis.devices.SerialConnection;
-import com.dronegcs.gcsis.logger.Logger;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.devices.SerialConnection;
+import com.generic_tools.logger.Logger;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
 import com.dronegcs.mavlink.core.flightControllers.FlightController;
@@ -90,10 +90,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Autowired @NotNull(message = "Internal Error: Failed to get serial communication")
 	private SerialConnection serialConnection;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private Logger logger;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")

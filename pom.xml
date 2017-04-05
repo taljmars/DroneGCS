@@ -10,9 +10,7 @@
     <version>${myversion}</version>
 
     <modules>
-        <module>GCSIS</module>
         <module>Console</module>
-        <module>Mavlink</module>
         <module>ConsolePlugin</module>
     </modules>
 

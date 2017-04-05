@@ -6,9 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import com.dronegcs.gcsis.logger.Logger;
-import com.dronegcs.gcsis.logger.Logger.Type;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
+import com.generic_tools.logger.Logger;
+import com.generic_tools.logger.Logger.Type;
+import com.generic_tools.validations.RuntimeValidator;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -22,12 +22,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.console_plugin.services.internal.logevents.LogAbstractDisplayerEvent;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class PanelLogBox extends Pane implements Initializable {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private Logger logger;
 	
 	@NotNull @FXML private TextFlow logTextBox;

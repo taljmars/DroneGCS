@@ -2,7 +2,7 @@ package com.dronegcs.console_plugin.operations;
 
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.gcsis.logger.Logger;
+import com.generic_tools.logger.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.gcsis.devices.KeyBoardController;
+import com.generic_tools.devices.KeyBoardController;
 import com.dronegcs.mavlink.core.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkRC;
-import com.dronegcs.gcsis.validations.RuntimeValidator;
-import com.dronegcs.gcsis.validations.ValidatorResponse;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
 @ComponentScan("mavlink.mavlink.flightControllers")
@@ -24,7 +24,7 @@ import com.dronegcs.gcsis.validations.ValidatorResponse;
 @Component("opChangeFlightControllerQuad")
 public class OpChangeFlightControllerQuad extends OperationHandler {
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger displayer")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get keyboard controller")
@@ -36,7 +36,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	@Autowired @NotNull(message = "Internal Error: Failed to get validator")
 	private RuntimeValidator runtimeValidator;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get com.dronegcs.gcsis.logger")
+	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private Logger logger;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when changing flight mode")
