@@ -9,5 +9,5 @@ public interface PerimeterEditor<T extends Perimeter> {
 
     T getModifiedPerimeter();
 
-    T update(T perimeter);
+    T update(T perimeter) throws PerimeterUpdateException;
 }

@@ -11,7 +11,9 @@ import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalPanels.internal.EditingCell;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.generic_tools.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -56,6 +58,9 @@ public class PanelMissionBox extends Pane implements Initializable {
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
 	private MissionsManager missionsManager;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger")
+	private Logger logger;
 
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -180,11 +185,16 @@ public class PanelMissionBox extends Pane implements Initializable {
                     setText( null );
                     if ( !empty ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
-                        	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
-							MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
-							missionEditor.removeMissionItem(entry.getMissionItem());
-                            generateMissionTable(true);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+							try {
+                        		MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
+								MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
+								missionEditor.removeMissionItem(entry.getMissionItem());
+								generateMissionTable(true);
+                            	eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+							}
+							catch (MissionUpdateException e) {
+								logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());
+							}
                         });
                         setGraphic( btn );
                     }

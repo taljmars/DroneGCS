@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface PerimetersManager {
 
-    <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz);
+    <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz) throws PerimeterUpdateException;
 
     <T extends PerimeterEditor> T getPerimeterEditor(Perimeter perimeter);
 
@@ -21,7 +21,7 @@ public interface PerimetersManager {
 
     void delete(Perimeter perimeter);
 
-    Perimeter update(Perimeter perimeter);
+    Perimeter update(Perimeter perimeter) throws PerimeterUpdateException;
 
     List<Point> getPoints(Perimeter perimeter);
 }

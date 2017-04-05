@@ -8,5 +8,5 @@ import com.geo_tools.Coordinate;
  */
 public interface PolygonPerimeterEditor {
 
-    Point addPoint(Coordinate coordinate);
+    Point addPoint(Coordinate coordinate) throws PerimeterUpdateException;
 }

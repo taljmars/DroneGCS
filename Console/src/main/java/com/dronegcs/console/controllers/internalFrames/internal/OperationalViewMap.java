@@ -33,7 +33,9 @@ import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditor;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
@@ -274,6 +276,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 		);
 		
 		menuItemPerimeterBuild.setOnAction( arg -> {
+			try {
 				System.out.println(getClass().getName() + " Start GeoFence");
 				String[] options = { "Cycle", "Polygon", "Cancel" };
 				int n = dialogManagerSvc
@@ -325,9 +328,13 @@ OnDroneListener, EventHandler<ActionEvent> {
 					return;
 				}
 			}
-		);
+			catch (PerimeterUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
+		});
 
 		menuItemMissionBuild.setOnAction( arg -> {
+			try {
 				if (modifyiedLayerMissionOriginal == null) {
 					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					// TALMA i am trying not to use bean here
@@ -346,47 +353,85 @@ OnDroneListener, EventHandler<ActionEvent> {
 					eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
 				}
 			}
-		);
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
+		});
 
 		menuItemMissionAddWayPoint.setOnAction( arg -> {
-			missionEditor.addWaypoint(getPosition(point));
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try {
+				missionEditor.addWaypoint(getPosition(point));
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		menuItemMissionAddCircle.setOnAction( arg -> {
-			missionEditor.addCirclePoint(getPosition(point));
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try {
+				missionEditor.addCirclePoint(getPosition(point));
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		menuItemMissionSetLandPoint.setOnAction( arg -> {
-			missionEditor.addLandPoint(getPosition(point));
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try {
+				missionEditor.addLandPoint(getPosition(point));
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 		
 		menuItemMissionAddROI.setOnAction( arg -> {
-			missionEditor.addRegionOfInterest(getPosition(point));
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try{
+				missionEditor.addRegionOfInterest(getPosition(point));
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+				catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		menuItemMissionSetRTL.setOnAction( arg -> {
-			missionEditor.addReturnToLunch();
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try {
+				missionEditor.addReturnToLunch();
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		menuItemMissionSetTakeOff.setOnAction( arg -> {
-			missionEditor.addTakeOff();
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
+			try {
+				missionEditor.addTakeOff();
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+			}
+			catch (MissionUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		menuItemPerimeterAddPoint.setOnAction( arg -> {
-			((PolygonPerimeterEditor) perimeterEditor).addPoint(getPosition(point));
-			modifyiedLayerPerimeterOriginal.regenerateMapObjects();
+			try {
+				((PolygonPerimeterEditor) perimeterEditor).addPoint(getPosition(point));
+				modifyiedLayerPerimeterOriginal.regenerateMapObjects();
+			}
+			catch (PerimeterUpdateException e) {
+				loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+			}
 		});
 
 		return popup;
@@ -653,38 +698,43 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
 	public void onApplicationEvent(QuadGuiEvent command) {
-		switch (command.getCommand()) {
-		case EDITMODE_EXISTING_LAYER_START:
-			EditModeOn();
-			Layer layer = (Layer) command.getSource();
-			if (layer instanceof LayerMission) {
-				System.out.println("Working on DroneMission Layer");
-				modifyiedLayerMissionOriginal = (LayerMission) layer;
-				super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
-				isMissionBuildMode = true;
-				missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getMission());
-				Mission mission = missionEditor.getModifiedMission();
-				modifyiedLayerMissionOriginal.setName(mission.getName());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
-			} else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
-				System.out.println("Working on Perimeter Layer");
-				modifyiedLayerPerimeterOriginal = (LayerPerimeter) layer;
-				super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
-				isPerimeterBuildMode = true;
-				perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), modifyiedLayerPerimeterOriginal.getPerimeter().getClass());
-				Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
-				modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
-			} else {
-				System.out.println("Unrecognized Layer");
-				EditModeOff();
-				return;
-			}
+		try {
+			switch (command.getCommand()) {
+			case EDITMODE_EXISTING_LAYER_START:
+				EditModeOn();
+				Layer layer = (Layer) command.getSource();
+				if (layer instanceof LayerMission) {
+					System.out.println("Working on DroneMission Layer");
+					modifyiedLayerMissionOriginal = (LayerMission) layer;
+					super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
+					isMissionBuildMode = true;
+					missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getMission());
+					Mission mission = missionEditor.getModifiedMission();
+					modifyiedLayerMissionOriginal.setName(mission.getName());
+					eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
+				} else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
+					System.out.println("Working on Perimeter Layer");
+					modifyiedLayerPerimeterOriginal = (LayerPerimeter) layer;
+					super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
+					isPerimeterBuildMode = true;
+					perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), modifyiedLayerPerimeterOriginal.getPerimeter().getClass());
+					Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
+					modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
+				} else {
+					System.out.println("Unrecognized Layer");
+					EditModeOff();
+					return;
+				}
 
-			break;
-		case MISSION_UPDATED_BY_TABLE:
-			LayerMission layerMission = (LayerMission) command.getSource();
-			layerMission.regenerateMapObjects();
-			break;
+				break;
+			case MISSION_UPDATED_BY_TABLE:
+				LayerMission layerMission = (LayerMission) command.getSource();
+				layerMission.regenerateMapObjects();
+				break;
+			}
+		}
+		catch (MissionUpdateException | PerimeterUpdateException e) {
+			loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
 		}
 	}
 

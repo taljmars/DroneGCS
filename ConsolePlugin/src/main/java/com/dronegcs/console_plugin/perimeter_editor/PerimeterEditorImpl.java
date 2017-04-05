@@ -1,5 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
+import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.scheme.Perimeter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,14 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
     protected T originalPerimeter;
 
     @Override
-    public T update(T perimeter) {
-        this.perimeter = (T) droneDbCrudSvcRemote.update(perimeter);
-        return this.perimeter;
+    public T update(T perimeter) throws PerimeterUpdateException {
+        try {
+            this.perimeter = (T) droneDbCrudSvcRemote.update(perimeter);
+            return this.perimeter;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
     }
 
     @Override

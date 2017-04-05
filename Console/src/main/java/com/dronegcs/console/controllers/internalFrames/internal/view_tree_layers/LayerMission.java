@@ -1,12 +1,10 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
+import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapLineImpl;
@@ -14,9 +12,11 @@ import com.gui.core.mapViewerObjects.MapMarkerCircle;
 import com.gui.core.mapViewerObjects.MapMarkerDot;
 import com.gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
-import com.geo_tools.Coordinate;
-import com.geo_tools.GeoTools;
 import org.springframework.context.ApplicationContext;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class LayerMission extends LayerSingle {
 	
@@ -27,11 +27,11 @@ public class LayerMission extends LayerSingle {
 		super(name, viewMap);
 	}
 
-	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) {
+	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) throws MissionUpdateException {
 		super(layerMission, viewMap);
 		System.out.println("Before copy " + layerMission.getMission());
-		MissionCrudSvcRemote missionCrudSvcRemote = applicationContext.getBean(MissionCrudSvcRemote.class);
-		mission = missionCrudSvcRemote.cloneMission(layerMission.getMission());
+		MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
+		mission = missionsManager.cloneMission(layerMission.getMission());
 		System.out.println("After copy " + mission);
 	}
 

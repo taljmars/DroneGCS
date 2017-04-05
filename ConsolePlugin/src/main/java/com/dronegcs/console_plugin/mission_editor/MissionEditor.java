@@ -11,28 +11,28 @@ import java.util.List;
 public interface MissionEditor {
 
     Waypoint createWaypoint();
-    Waypoint addWaypoint(Coordinate position);
+    Waypoint addWaypoint(Coordinate position) throws MissionUpdateException;
 
     Circle createCirclePoint();
-    Circle addCirclePoint(Coordinate position);
+    Circle addCirclePoint(Coordinate position) throws MissionUpdateException;
 
     ReturnToHome createReturnToLunch();
-    ReturnToHome addReturnToLunch();
+    ReturnToHome addReturnToLunch() throws MissionUpdateException;
 
     Land createLandPoint();
-    Land addLandPoint(Coordinate position);
+    Land addLandPoint(Coordinate position) throws MissionUpdateException;
 
     Takeoff createTakeOff();
-    Takeoff addTakeOff();
+    Takeoff addTakeOff() throws MissionUpdateException;
 
     RegionOfInterest createRegionOfInterest();
-    RegionOfInterest addRegionOfInterest(Coordinate position);
+    RegionOfInterest addRegionOfInterest(Coordinate position) throws MissionUpdateException;
 
-    <T extends MissionItem> void removeMissionItem(T missionItem);
+    <T extends MissionItem> void removeMissionItem(T missionItem) throws MissionUpdateException;
 
-    <T extends MissionItem> T updateMissionItem(T missionItem);
+    <T extends MissionItem> T updateMissionItem(T missionItem) throws MissionUpdateException;
 
-    Mission update(Mission mission);
+    Mission update(Mission mission) throws MissionUpdateException;
 
     Mission getModifiedMission();
 

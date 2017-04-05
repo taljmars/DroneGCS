@@ -7,13 +7,13 @@ import com.dronedb.persistence.scheme.MissionItem;
 import java.util.List;
 
 /**
- * Created by oem on 3/25/17.
+ * Created by taljmars on 3/25/17.
  */
 public interface MissionsManager {
 
-    <T extends MissionEditor> T openMissionEditor(String missionName);
+    <T extends MissionEditor> T openMissionEditor(String missionName) throws MissionUpdateException;
 
-    <T extends MissionEditor> T openMissionEditor(Mission mission);
+    <T extends MissionEditor> T openMissionEditor(Mission mission) throws MissionUpdateException;
 
     <T extends MissionEditor> T getMissionEditor(Mission mission);
 
@@ -23,7 +23,9 @@ public interface MissionsManager {
 
     void delete(Mission mission);
 
-    Mission update(Mission mission);
+    Mission update(Mission mission) throws MissionUpdateException;
 
     List<MissionItem> getMissionItems(Mission mission);
+
+    Mission cloneMission(Mission mission) throws MissionUpdateException;
 }

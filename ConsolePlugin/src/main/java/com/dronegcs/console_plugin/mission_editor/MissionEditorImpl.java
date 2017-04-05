@@ -1,9 +1,8 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronedb.persistence.ws.internal.*;
+import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.geo_tools.Coordinate;
@@ -41,23 +40,32 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     private Mission originalMission;
 
     @Override
-    public Mission open(Mission mission) {
+    public Mission open(Mission mission) throws MissionUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
-        this.mission = mission;
-        this.originalMission = missionCrudSvcRemote.cloneMission(this.mission);
-        this.mission.setName(this.mission.getName());
-        droneDbCrudSvcRemote.update(this.mission);
-        return this.mission;
+        try {
+            this.mission = mission;
+            this.originalMission = missionCrudSvcRemote.cloneMission(this.mission);
+            this.mission.setName(this.mission.getName());
+            droneDbCrudSvcRemote.update(this.mission);
+            return this.mission;
+        } catch (DatabaseRemoteValidationException e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     @Override
-    public Mission open(String missionName) {
+    public Mission open(String missionName) throws MissionUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
-        this.mission = new Mission();
-        this.originalMission = null;
-        this.mission.setName(missionName);
-        droneDbCrudSvcRemote.update(this.mission);
-        return this.mission;
+        try {
+            this.mission = new Mission();
+            this.originalMission = null;
+            this.mission.setName(missionName);
+            droneDbCrudSvcRemote.update(this.mission);
+            return this.mission;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     @Override
@@ -84,7 +92,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Waypoint addWaypoint(Coordinate position) {
+    public Waypoint addWaypoint(Coordinate position) throws MissionUpdateException {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
             return null;
@@ -103,7 +111,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Circle addCirclePoint(Coordinate position) {
+    public Circle addCirclePoint(Coordinate position) throws MissionUpdateException {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a Land/RTL point");
             return null;
@@ -122,7 +130,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Land addLandPoint(Coordinate position) {
+    public Land addLandPoint(Coordinate position) throws MissionUpdateException {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
             return null;
@@ -141,7 +149,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public ReturnToHome addReturnToLunch() {
+    public ReturnToHome addReturnToLunch() throws MissionUpdateException {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("RTL/MavlinkLand point was already defined");
             return null;
@@ -157,7 +165,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Takeoff addTakeOff() {
+    public Takeoff addTakeOff() throws MissionUpdateException {
         if (isFirstItemTakeoff()) {
             dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff point was already defined");
             return null;
@@ -181,7 +189,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public RegionOfInterest addRegionOfInterest(Coordinate position) {
+    public RegionOfInterest addRegionOfInterest(Coordinate position) throws MissionUpdateException {
         if (isLastItemLandOrRTL()) {
             dialogManagerSvc.showAlertMessageDialog("Waypoints cannot be added to once there is a MavlinkLand/RTL point");
             return null;
@@ -200,15 +208,26 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Mission update(Mission mission) {
-        this.mission = (Mission) droneDbCrudSvcRemote.update(mission);
-        return this.mission;
+    public Mission update(Mission mission) throws MissionUpdateException {
+        try {
+            this.mission = (Mission) droneDbCrudSvcRemote.update(mission);
+            return this.mission;
+        }
+        catch (Exception e) {
+            loggerDisplayerSvc.logError(e.getMessage());
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     @Override
-    public <T extends MissionItem> void removeMissionItem(T missionItem) {
+    public <T extends MissionItem> void removeMissionItem(T missionItem) throws MissionUpdateException {
         mission.getMissionItemsUids().remove(missionItem.getObjId());
-        droneDbCrudSvcRemote.update(mission);
+        try {
+            droneDbCrudSvcRemote.update(mission);
+        }
+        catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     @Override
@@ -220,13 +239,19 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public <T extends MissionItem> T updateMissionItem(T missionItem) {
+    public <T extends MissionItem> T updateMissionItem(T missionItem) throws MissionUpdateException {
         // Update Item
-        T res = (T) droneDbCrudSvcRemote.update(missionItem);
-        mission.getMissionItemsUids().add(res.getObjId());
-        // Update Mission
-        droneDbCrudSvcRemote.update(mission);
-        return res;
+        T res = null;
+        try {
+            res = (T) droneDbCrudSvcRemote.update(missionItem);
+            mission.getMissionItemsUids().add(res.getObjId());
+            // Update Mission
+            droneDbCrudSvcRemote.update(mission);
+            return res;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     // Utilities

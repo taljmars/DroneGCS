@@ -1,9 +1,8 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronedb.persistence.ws.internal.*;
+import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public MissionEditor openMissionEditor(String initialName) {
+	public MissionEditor openMissionEditor(String initialName) throws MissionUpdateException {
 		loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
 		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 		missionEditor.open(initialName);
@@ -66,12 +65,17 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public Mission update(Mission mission) {
-		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
-		if (closableMissionEditor == null)
-			return (Mission) droneDbCrudSvcRemote.update(mission);
+	public Mission update(Mission mission) throws MissionUpdateException {
+		try {
+			ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
+			if (closableMissionEditor == null)
+				return (Mission) droneDbCrudSvcRemote.update(mission);
 
-		return closableMissionEditor.update(mission);
+			return closableMissionEditor.update(mission);
+		}
+		catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+			throw new MissionUpdateException(e.getMessage());
+		}
 	}
 
 	@Override
@@ -91,7 +95,17 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public MissionEditor openMissionEditor(Mission mission) {
+	public Mission cloneMission(Mission mission) throws MissionUpdateException {
+		try {
+			return missionCrudSvcRemote.cloneMission(mission);
+		}
+		catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+			throw new MissionUpdateException(e.getMessage());
+		}
+	}
+
+	@Override
+	public MissionEditor openMissionEditor(Mission mission) throws MissionUpdateException {
 		loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
 		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 		missionEditor.open(mission);

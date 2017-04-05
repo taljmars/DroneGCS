@@ -1,8 +1,7 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronedb.persistence.ws.internal.*;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by taljmars on 3/26/17.
@@ -40,7 +38,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz) {
+    public <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz) throws PerimeterUpdateException {
         ClosablePerimeterEditor closablePerimeterEditor = perimeterEditorFactory.getEditor(clz);
         if (closablePerimeterEditor == null)
             throw new RuntimeException("Failed to find perimeter editor");
@@ -100,12 +98,18 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public Perimeter update(Perimeter perimeter) {
-        ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
-        if (closablePerimeterEditor == null)
-            return (Perimeter) droneDbCrudSvcRemote.update(perimeter);
+    public Perimeter update(Perimeter perimeter) throws PerimeterUpdateException {
+        try {
+            ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
+            if (closablePerimeterEditor == null)
+                return (Perimeter) droneDbCrudSvcRemote.update(perimeter);
 
-        return closablePerimeterEditor.update(perimeter);
+            return closablePerimeterEditor.update(perimeter);
+
+        }
+        catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
     }
 
     @Override

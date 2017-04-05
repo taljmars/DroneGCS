@@ -7,9 +7,9 @@ import com.dronedb.persistence.scheme.Perimeter;
  */
 public interface ClosablePerimeterEditor<T extends Perimeter> extends PerimeterEditor<T> {
 
-    T open(T perimeter);
+    T open(T perimeter) throws PerimeterUpdateException;
 
-    T open(String perimeter);
+    T open(String perimeter) throws PerimeterUpdateException;
 
     T close(boolean shouldSave);
 }

@@ -1,5 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
+import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
 import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronedb.persistence.scheme.Point;
@@ -33,23 +34,34 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     private PerimeterCrudSvcRemote perimeterCrudSvcRemote;
 
     @Override
-    public PolygonPerimeter open(PolygonPerimeter perimeter) {
+    public PolygonPerimeter open(PolygonPerimeter perimeter) throws PerimeterUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new perimeter to perimeter editor");
-        this.perimeter = (PolygonPerimeter) perimeter;
-        this.originalPerimeter = (PolygonPerimeter) perimeterCrudSvcRemote.clonePerimeter(this.perimeter);
-        this.perimeter.setName(perimeter.getName());
-        droneDbCrudSvcRemote.update(this.perimeter);
-        return this.perimeter;
+        try {
+            this.perimeter = (PolygonPerimeter) perimeter;
+            this.originalPerimeter = (PolygonPerimeter) perimeterCrudSvcRemote.clonePerimeter(this.perimeter);
+            this.perimeter.setName(perimeter.getName());
+
+            droneDbCrudSvcRemote.update(this.perimeter);
+            return this.perimeter;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
     }
 
     @Override
-    public PolygonPerimeter open(String perimeterName) {
+    public PolygonPerimeter open(String perimeterName) throws PerimeterUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new perimeter to perimeter editor");
-        this.perimeter = new PolygonPerimeter();
-        this.originalPerimeter = null;
-        this.perimeter.setName(perimeterName);
-        droneDbCrudSvcRemote.update(this.perimeter);
-        return this.perimeter;
+        try {
+            this.perimeter = new PolygonPerimeter();
+            this.originalPerimeter = null;
+            this.perimeter.setName(perimeterName);
+            droneDbCrudSvcRemote.update(this.perimeter);
+            return this.perimeter;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
     }
 
     @Override
@@ -71,16 +83,21 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     }
 
     @Override
-    public Point addPoint(Coordinate coordinate) {
-        Point point = new Point();
-        point.setLat(coordinate.getLat());
-        point.setLon(coordinate.getLon());
+    public Point addPoint(Coordinate coordinate) throws PerimeterUpdateException {
+        try {
+            Point point = new Point();
+            point.setLat(coordinate.getLat());
+            point.setLon(coordinate.getLon());
 
-        // Update Item
-        Point res = (Point) droneDbCrudSvcRemote.update(point);
-        perimeter.getPoints().add(res.getObjId());
-        // Update Mission
-        droneDbCrudSvcRemote.update(perimeter);
-        return res;
+            // Update Item
+            Point res = (Point) droneDbCrudSvcRemote.update(point);
+            perimeter.getPoints().add(res.getObjId());
+            // Update Mission
+            droneDbCrudSvcRemote.update(perimeter);
+            return res;
+        }
+        catch (DatabaseRemoteValidationException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
     }
 }

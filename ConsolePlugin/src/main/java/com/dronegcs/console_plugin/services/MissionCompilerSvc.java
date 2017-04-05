@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.services;
 
 import com.dronedb.persistence.scheme.Mission;
+import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 
 /**
@@ -10,5 +11,5 @@ public interface MissionCompilerSvc
 {
     DroneMission compile(Mission mission);
 
-    Mission decompile(DroneMission mission);
+    Mission decompile(DroneMission mission) throws MissionCompilationException;
 }
