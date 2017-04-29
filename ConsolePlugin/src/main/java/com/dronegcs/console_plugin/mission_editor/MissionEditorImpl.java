@@ -219,7 +219,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
 
     @Override
     public <T extends MissionItem> void removeMissionItem(T missionItem) throws MissionUpdateException {
-        mission.getMissionItemsUids().remove(missionItem.getObjId());
+        mission.getMissionItemsUids().remove(missionItem.getKeyId().getObjId());
         try {
             droneDbCrudSvcRemote.update(mission);
         }
@@ -242,7 +242,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         T res = null;
         try {
             res = (T) droneDbCrudSvcRemote.update(missionItem);
-            mission.getMissionItemsUids().add(res.getObjId());
+            mission.getMissionItemsUids().add(res.getKeyId().getObjId());
             // Update Mission
             droneDbCrudSvcRemote.update(mission);
             return res;

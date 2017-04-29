@@ -70,13 +70,13 @@ public class PerimetersManagerImpl implements PerimetersManager {
         queryRequestRemote.setClz(PolygonPerimeter.class.getName());
         queryRequestRemote.setQuery("GetAllPolygonPerimeters");
         QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultListBase();
+        List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultList();
 
         queryRequestRemote = new QueryRequestRemote();
         queryRequestRemote.setClz(CirclePerimeter.class.getName());
         queryRequestRemote.setQuery("GetAllCirclePerimeters");
         queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        List<BaseObject> circlePerimeterList = queryResponseRemote.getResultListBase();
+        List<BaseObject> circlePerimeterList = queryResponseRemote.getResultList();
 
         List<BaseObject> list = new ArrayList<>();
         list.addAll(polygonPerimeterList);

@@ -84,6 +84,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	private LayerGroup perimetersGroup;
 	private LayerGroup missionsGroup;
 	private LayerGroup generalGroup;
+
+	private TreeItem modifiedItem = null;
 	
 	public OperationalViewTree() {
 		super();
@@ -264,6 +266,12 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		ContextMenu popup = super.getPopupMenu(treeItem);
 		if (!(treeItem.getValue() instanceof Layer))
 			return popup;
+
+//		// Check if we are in editing mode
+		if (treeItem.equals(modifiedItem)) {
+			System.err.println("Same layer , limit popups");
+			return popup;
+		}
 		
 		ContextMenu operationalPopup = new ContextMenu();
 		
@@ -287,6 +295,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 		
 		menuItemEditMission.setOnAction( e -> {
 			if (layer instanceof LayerMission) {
+				((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
+				modifiedItem = treeItem;
 				LayerMission layerMission = (LayerMission) layer;
 				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
 				refresh();
@@ -311,7 +321,8 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 			operationalPopup.getItems().add(menuItemUploadPerimeter);
 		
 		if (layer instanceof LayerMission) {
-			operationalPopup.getItems().add(menuItemEditMission);
+			if (modifiedItem == null)
+				operationalPopup.getItems().add(menuItemEditMission);
 			operationalPopup.getItems().add(menuItemUploadMission);
 		}
 		
@@ -465,6 +476,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
                             missionName = missionName.substring(1, missionName.length());
                         layerMission.setName(missionName);
                     }
+                    modifiedItem = null;
 					refresh();
 					break;
 				case LAYER_PERIMETER_EDITING_FINISHED:
@@ -473,6 +485,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 					if (perimeterName.startsWith(EDIT_PREFIX))
 						perimeterName = perimeterName.substring(1, perimeterName.length());
 					layerPerimeter.setName(perimeterName);
+					modifiedItem = null;
 					refresh();
 					break;
 			}

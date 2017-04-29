@@ -91,7 +91,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
 
             // Update Item
             Point res = (Point) droneDbCrudSvcRemote.update(point);
-            perimeter.getPoints().add(res.getObjId());
+            perimeter.getPoints().add(res.getKeyId().getObjId());
             // Update Mission
             droneDbCrudSvcRemote.update(perimeter);
             return res;

@@ -139,7 +139,7 @@ public class MissionsManagerImpl implements MissionsManager {
 		queryRequestRemote.setClz(Mission.class.getName());
 		queryRequestRemote.setQuery("GetAllMissions");
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-		List<BaseObject> missionList = queryResponseRemote.getResultListBase();
+		List<BaseObject> missionList = queryResponseRemote.getResultList();
 		return missionList;
 	}
 
