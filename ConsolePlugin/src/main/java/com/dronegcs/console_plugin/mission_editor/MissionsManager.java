@@ -21,6 +21,8 @@ public interface MissionsManager {
 
     List<BaseObject> getAllMissions();
 
+    List<BaseObject> getAllModifiedMissions();
+
     void delete(Mission mission);
 
     Mission update(Mission mission) throws MissionUpdateException;

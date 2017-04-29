@@ -143,6 +143,16 @@ public class MissionsManagerImpl implements MissionsManager {
 		return missionList;
 	}
 
+	@Override
+	public List<BaseObject> getAllModifiedMissions() {
+		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+		queryRequestRemote.setClz(Mission.class.getName());
+		queryRequestRemote.setQuery("GetAllModifiedMissions");
+		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+		List<BaseObject> missionList = queryResponseRemote.getResultList();
+		return missionList;
+	}
+
 	private ClosableMissionEditor findMissionEditorByMission(Mission mission) {
 		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
 			if (mission.equals(closableMissionEditor.getModifiedMission())) {
