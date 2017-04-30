@@ -4,10 +4,7 @@ import com.dronedb.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
@@ -40,6 +37,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
 
@@ -86,9 +84,9 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	private LayerGroup generalGroup;
 
 	private TreeItem modifiedItem = null;
-	
+
 	public OperationalViewTree() {
-		super();
+		super(new EditableLayeredCheckBoxTreeCellEditorConvertor());
 	}
 
 	@Autowired
@@ -132,11 +130,19 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 
 		System.err.println("Loading DataBase");
 		try {
+			List<BaseObject> modifiedMissionsList = missionsManager.getAllModifiedMissions();
+			for (BaseObject obj : modifiedMissionsList) {
+				Mission mission = (Mission) obj;
+				System.err.println("Modify mission: " + mission.getKeyId().getObjId());
+			}
 			List<BaseObject> missionsList = missionsManager.getAllMissions();
 			LayerMission layerMission;
 			for (BaseObject mission : missionsList) {
-				System.err.println("Loading existing mission: " + mission);
-				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap());
+				boolean isEditing = modifiedMissionsList.stream().anyMatch(
+						(BaseObject baseObject) -> {return baseObject.getKeyId().getObjId().equals(mission.getKeyId().getObjId());}
+				);
+				System.err.println("Loading existing mission: " + mission + ", edit mode: " + isEditing);
+				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap(), isEditing);
 				layerMission.setApplicationContext(applicationContext);
 				addLayer(layerMission);
 			}
@@ -200,17 +206,18 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 	@Override
 	public void updateTreeItemName(String fromText, TreeItem<Layer> treeItem) {
 		if (treeItem.getValue() instanceof LayerMission) {
+			LayerMission layerMission = (LayerMission) treeItem.getValue();
 			System.out.println("Found mission to update it name");
-			Mission mission = ((LayerMission) treeItem.getValue()).getMission();
-			mission.setName(treeItem.getValue().getName());
-
+			String newName = layerMission.getName(true);
+			Mission mission = layerMission.getMission();
+			mission.setName(newName);
 			try {
-				((LayerMission) treeItem.getValue()).setMission(missionsManager.update(mission));
+				layerMission.setMission(missionsManager.update(mission));
 			} catch (MissionUpdateException e) {
-                treeItem.getValue().setName(fromText);
-                refresh();
+                layerMission.setName(fromText);
 				loggerDisplayerSvc.logError("Database is out of sync, failed to update mission name , error: " + e.getMessage());
 			}
+			refresh();
 		}
 
 		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
@@ -298,7 +305,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 				((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
 				modifiedItem = treeItem;
 				LayerMission layerMission = (LayerMission) layer;
-				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
+//				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
 				refresh();
 				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layerMission));
 			}
@@ -472,8 +479,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
                     }
                     else {
                         String missionName = layerMission.getMission().getName();
-                        if (missionName.startsWith(EDIT_PREFIX))
-                            missionName = missionName.substring(1, missionName.length());
+//						layerMission.stopEditing();
                         layerMission.setName(missionName);
                     }
                     modifiedItem = null;
@@ -482,8 +488,7 @@ public class OperationalViewTree extends CheckBoxViewTree implements OnWaypointM
 				case LAYER_PERIMETER_EDITING_FINISHED:
 					LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
 					String perimeterName = layerPerimeter.getPerimeter().getName();
-					if (perimeterName.startsWith(EDIT_PREFIX))
-						perimeterName = perimeterName.substring(1, perimeterName.length());
+//					layerPerimeter.stopEditing();
 					layerPerimeter.setName(perimeterName);
 					modifiedItem = null;
 					refresh();

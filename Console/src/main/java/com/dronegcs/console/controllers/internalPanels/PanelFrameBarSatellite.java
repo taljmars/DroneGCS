@@ -1,5 +1,8 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.dronedb.persistence.ws.internal.SessionsSvcRemote;
+import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,6 +17,7 @@ import javafx.scene.layout.FlowPane;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -44,9 +48,18 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 	
 	@NotNull @FXML private Button btnCamera;
 	private static String CAMERA_VIEW = "InternalFrameVideoView.fxml";
+
+	@NotNull @FXML private Button btnPublish;
+	@NotNull @FXML private Button btnDiscard;
 		
 	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager")
 	private DialogManagerSvc dialogManagerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get session service")
+	private SessionsSvcRemote sessionsSvcRemote;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+	private MissionsManager missionsManager;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -101,6 +114,18 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     	content.putString((String) button.getUserData());
     	db.setContent(content);
     	event.consume();
+	}
+
+	@FXML
+	public void publish() {
+		missionsManager.closeAllMissionEditors(true);
+		sessionsSvcRemote.publish();
+	}
+
+	@FXML
+	public void discard() {
+		missionsManager.closeAllMissionEditors(false);
+		sessionsSvcRemote.publish();
 	}
 	
 	@SuppressWarnings("incomplete-switch")

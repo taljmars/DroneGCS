@@ -37,18 +37,12 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     private MissionCrudSvcRemote missionCrudSvcRemote;
 
     private Mission mission;
-    private Mission originalMission;
 
     @Override
     public Mission open(Mission mission) throws MissionUpdateException {
         loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
-        try {
-            this.mission = mission;
-            this.originalMission = missionCrudSvcRemote.cloneMission(this.mission);
-            return this.mission;
-        } catch (DatabaseRemoteValidationException e) {
-            throw new MissionUpdateException(e.getMessage());
-        }
+        this.mission = mission;
+        return this.mission;
     }
 
     @Override
@@ -56,7 +50,6 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
         try {
             this.mission = (Mission) droneDbCrudSvcRemote.create(Mission.class.getName());
-            this.originalMission = null;
             this.mission.setName(missionName);
             this.mission = (Mission) droneDbCrudSvcRemote.update(this.mission);
             return this.mission;
@@ -71,16 +64,11 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         Mission res = this.mission;
         if (!shouldSave) {
             droneDbCrudSvcRemote.delete(mission);
-            res = this.originalMission;
         }
-        else {
-            if (originalMission != null) droneDbCrudSvcRemote.delete(originalMission);
-        }
-        System.out.println("Before resting " + res);
-        this.originalMission = null;
+        System.out.println("Before reseting " + res);
         this.mission = null;
         loggerDisplayerSvc.logGeneral("DroneMission editor finished");
-        System.out.println("After resting " + res);
+        System.out.println("After reseting " + res);
         return res;
     }
 

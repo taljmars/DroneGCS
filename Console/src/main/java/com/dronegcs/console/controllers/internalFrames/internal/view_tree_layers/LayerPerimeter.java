@@ -6,7 +6,7 @@ import com.gui.core.mapViewer.LayeredViewMap;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
 import org.springframework.context.ApplicationContext;
 
-public abstract class LayerPerimeter extends LayerSingle implements Compound {
+public abstract class LayerPerimeter extends EditedLayer implements Compound {
 
 	protected ApplicationContext applicationContext;
 	protected Perimeter perimeter;

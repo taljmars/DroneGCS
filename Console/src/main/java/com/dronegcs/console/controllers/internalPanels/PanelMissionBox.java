@@ -140,7 +140,7 @@ public class PanelMissionBox extends Pane implements Initializable {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
                         	Mission mission = layerMission.getMission();
                         	mission.getMissionItemsUids().remove(getIndex());
-                        	mission.getMissionItemsUids().add(getIndex() - 1, entry.getMissionItem().getObjId());
+                        	mission.getMissionItemsUids().add(getIndex() - 1, entry.getMissionItem().getKeyId().getObjId());
                             generateMissionTable(true);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
@@ -164,7 +164,7 @@ public class PanelMissionBox extends Pane implements Initializable {
                         	MissionItemTableEntry entry = getTableView().getItems().get( getIndex() );
                         	Mission mission = layerMission.getMission();
                             mission.getMissionItemsUids().remove(getIndex());
-                            mission.getMissionItemsUids().add(getIndex() + 1, entry.getMissionItem().getObjId());
+                            mission.getMissionItemsUids().add(getIndex() + 1, entry.getMissionItem().getKeyId().getObjId());
                             generateMissionTable(true);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });

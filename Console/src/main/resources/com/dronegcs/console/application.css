@@ -19,6 +19,12 @@
 #btnSetModeImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/UpdateQuad.png");
 }
+#btnPublishImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
+}
+#btnDiscardImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
+}
 
 
 #btnConnectImage {

@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -38,6 +40,20 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	public MissionsManagerImpl() {
 		closableMissionEditorList = new ArrayList<>();
+	}
+
+	@PostConstruct
+	public void init() {
+		List<BaseObject> missionList = getAllModifiedMissions();
+		for (BaseObject item : missionList) {
+			Mission mission = (Mission) item;
+			try {
+				loggerDisplayerSvc.logGeneral("Mission '" + mission.getName() + "' is in edit mode");
+				openMissionEditor(mission);
+			} catch (MissionUpdateException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -105,6 +121,14 @@ public class MissionsManagerImpl implements MissionsManager {
 		}
 		catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
 			throw new MissionUpdateException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void closeAllMissionEditors(boolean shouldSave) {
+		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
+		while (it.hasNext()) {
+			Mission mission = it.next().close(shouldSave);
 		}
 	}
 

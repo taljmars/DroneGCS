@@ -38,6 +38,14 @@
 	  <Button fx:id="btnCamera" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone">
          <graphic><ImageView fx:id="btnCameraImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
 	  </Button>
+
+	  <Button fx:id="btnPublish" onMouseClicked="#publish">
+         <graphic><ImageView fx:id="btnPublishImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+	  </Button>
+
+	  <Button fx:id="btnDiscard" onMouseClicked="#discard">
+         <graphic><ImageView fx:id="btnDiscardImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+	  </Button>
 	  
    </children>
    <padding>

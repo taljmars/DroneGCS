@@ -30,4 +30,6 @@ public interface MissionsManager {
     List<MissionItem> getMissionItems(Mission mission);
 
     Mission cloneMission(Mission mission) throws MissionUpdateException;
+
+    void closeAllMissionEditors(boolean shouldSave);
 }

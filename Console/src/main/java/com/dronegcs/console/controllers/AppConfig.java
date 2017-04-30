@@ -1,27 +1,20 @@
 package com.dronegcs.console.controllers;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
-import com.dronegcs.mavlink.core.drone.MyDroneImpl;
-import com.dronegcs.mavlink.core.flightControllers.KeyBoardConfigurationParser;
-import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronedb.persistence.ws.internal.*;
+import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
+import com.dronegcs.mavlink.spring.MavlinkSpringConfig;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
-import com.dronegcs.mavlink.spring.MavlinkSpringConfig;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Import({GuiAppConfig.class, InternalFrameMap.class , OpGCSTerminationHandler.class,
 		MavlinkSpringConfig.class})
@@ -94,5 +87,10 @@ public class AppConfig {
 	@Bean
 	public PerimeterCrudSvcRemote perimeterCrudSvcRemote() {
 		return LoadServices(PerimeterCrudSvcRemote.class);
+	}
+
+	@Bean
+	public SessionsSvcRemote sessionsSvcRemote() {
+		return LoadServices(SessionsSvcRemote.class);
 	}
 }

@@ -18,13 +18,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class LayerMission extends LayerSingle {
+public class LayerMission extends EditedLayer {
 	
 	private Mission mission;
 	private ApplicationContext applicationContext;
 
 	public LayerMission(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
+		startEditing();
 	}
 
 	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) throws MissionUpdateException {
@@ -32,12 +33,22 @@ public class LayerMission extends LayerSingle {
 		System.out.println("Before copy " + layerMission.getMission());
 		MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
 		mission = missionsManager.cloneMission(layerMission.getMission());
+		startEditing();
 		System.out.println("After copy " + mission);
 	}
 
 	public LayerMission(Mission mission, LayeredViewMap layeredViewMap) {
 		this(mission.getName(), layeredViewMap);
 		this.mission = mission;
+	}
+
+	public LayerMission(Mission mission, LayeredViewMap layeredViewMap, boolean isEditing) {
+		this(mission.getName(), layeredViewMap);
+		this.mission = mission;
+		if (isEditing)
+			startEditing();
+		else
+			stopEditing();
 	}
 
 	public void setMission(Mission msn) {
