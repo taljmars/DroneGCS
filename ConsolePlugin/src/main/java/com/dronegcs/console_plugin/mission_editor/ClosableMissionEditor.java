@@ -12,5 +12,5 @@ public interface ClosableMissionEditor extends MissionEditor {
 
     Mission open(String missionName) throws MissionUpdateException;
 
-    Mission close(boolean shouldSave);
+    MissionClosingPair close(boolean shouldSave);
 }

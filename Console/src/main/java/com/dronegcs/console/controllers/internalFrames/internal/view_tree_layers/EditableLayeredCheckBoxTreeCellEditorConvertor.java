@@ -14,10 +14,10 @@ public class EditableLayeredCheckBoxTreeCellEditorConvertor implements TreeCellE
     public Layer fromString(TreeItem<Layer> treeItem, String s) {
         Layer layer = treeItem.getValue();
         if (layer instanceof EditedLayer) {
-            if (((EditedLayer) layer).isEdited()) {
-                if (s.startsWith(EditedLayer.EDIT_PREFIX)) {
-                    throw new RuntimeException("Layer name cannot start with '*' mark");
-                }
+            if (!(((EditedLayer) layer).isEdited()))
+                ((EditedLayer) layer).startEditing();
+            if (s.startsWith(EditedLayer.EDIT_PREFIX)) {
+                throw new RuntimeException("Layer name cannot start with '*' mark");
             }
         }
 

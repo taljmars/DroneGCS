@@ -2,7 +2,7 @@ package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.*;
-import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
+import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
@@ -71,17 +69,14 @@ public class MissionsManagerImpl implements MissionsManager {
 			loggerDisplayerSvc.logError("Received Empty mission, skip deletion");
 			return;
 		}
-		Mission oldMission = null;
-		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
-		if (closableMissionEditor != null) {
-			oldMission = closableMissionEditor.close(false);
-			if (oldMission == null)
-				oldMission = mission;
-		}
-		else
-			oldMission = mission;
 
-		droneDbCrudSvcRemote.delete(oldMission);
+		try {
+			ClosableMissionEditor closableMissionEditor = (ClosableMissionEditor) openMissionEditor(mission);
+			closableMissionEditor.delete();
+		}
+		catch (MissionUpdateException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -108,7 +103,12 @@ public class MissionsManagerImpl implements MissionsManager {
 		List<MissionItem> missionItemList = new ArrayList<>();
 		List<String> uuidList = leadMission.getMissionItemsUids();
 		for (String uuid : uuidList) {
-			missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName()));
+			try {
+				missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName()));
+			} catch (ObjectNotFoundException e) {
+				e.printStackTrace();
+				// TODO
+			}
 		}
 
 		return missionItemList;
@@ -125,19 +125,29 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public void closeAllMissionEditors(boolean shouldSave) {
+	public Collection<MissionClosingPair> closeAllMissionEditors(boolean shouldSave) {
+		Collection<MissionClosingPair> closedMissions = new ArrayList<>();
 		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
 		while (it.hasNext()) {
-			Mission mission = it.next().close(shouldSave);
+			closedMissions.add(it.next().close(shouldSave));
 		}
+		closableMissionEditorList.clear();
+		return closedMissions;
 	}
 
 	@Override
 	public MissionEditor openMissionEditor(Mission mission) throws MissionUpdateException {
 		loggerDisplayerSvc.logGeneral("Setting new mission to mission editor");
-		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
-		missionEditor.open(mission);
-		closableMissionEditorList.add(missionEditor);
+		ClosableMissionEditor missionEditor = findMissionEditorByMission(mission);
+		if (missionEditor == null) {
+			System.err.println("Editor not exist for mission " + mission.getName() + ", creating new one");
+			missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
+			missionEditor.open(mission);
+			closableMissionEditorList.add(missionEditor);
+		}
+		else {
+			System.err.println("Found existing mission editor");
+		}
 		return missionEditor;
 	}
 
@@ -147,14 +157,14 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public <T extends MissionEditor> Mission closeMissionEditor(T missionEditor, boolean shouldSave) {
+	public <T extends MissionEditor> MissionClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
 		loggerDisplayerSvc.logGeneral("closing mission editor");
 		if (!(missionEditor instanceof ClosableMissionEditor)) {
 			return null;
 		}
-		Mission mission = ((ClosableMissionEditor) missionEditor).close(shouldSave);
+		MissionClosingPair missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
 		closableMissionEditorList.remove(missionEditor);
-		return mission;
+		return missionClosingPair;
 	}
 
 	@Override
@@ -184,5 +194,15 @@ public class MissionsManagerImpl implements MissionsManager {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Missions Manager Status:\n");
+		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
+			builder.append(closableMissionEditor);
+		}
+		return builder.toString();
 	}
 }

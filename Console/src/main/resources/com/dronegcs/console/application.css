@@ -20,10 +20,16 @@
 	-fx-image: url("/com/dronegcs/console/guiImages/UpdateQuad.png");
 }
 #btnPublishImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
+	-fx-image: url("/com/dronegcs/console/guiImages/Save.png");
+}
+#btnPublishOffImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/SaveOff.png");
 }
 #btnDiscardImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
+	-fx-image: url("/com/dronegcs/console/guiImages/Discard.png");
+}
+#btnDiscardOffImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/DiscardOff.png");
 }
 
 

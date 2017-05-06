@@ -42,7 +42,8 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
                 DroneMissionItem droneMissionItem = itr.next();
                 droneMissionItem.accept(this);
             }
-            return missionsManager.closeMissionEditor(missionEditor, true);
+            //TODO: not null it
+            return null;//missionsManager.closeMissionEditor(missionEditor, true);
         }
         catch (MissionUpdateException | MavlinkConvertionException e) {
             throw new MissionCompilationException(e.getMessage());

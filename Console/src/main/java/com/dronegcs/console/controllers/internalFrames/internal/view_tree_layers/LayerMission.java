@@ -43,7 +43,7 @@ public class LayerMission extends EditedLayer {
 	}
 
 	public LayerMission(Mission mission, LayeredViewMap layeredViewMap, boolean isEditing) {
-		this(mission.getName(), layeredViewMap);
+		super(mission.getName(), layeredViewMap);
 		this.mission = mission;
 		if (isEditing)
 			startEditing();

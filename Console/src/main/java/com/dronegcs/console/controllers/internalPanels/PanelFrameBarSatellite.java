@@ -1,33 +1,37 @@
 package com.dronegcs.console.controllers.internalPanels;
 
 import com.dronedb.persistence.ws.internal.SessionsSvcRemote;
-import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console_plugin.mission_editor.MissionClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
+import com.gui.core.mapTreeObjects.Layer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.generic_tools.validations.RuntimeValidator;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import com.generic_tools.validations.ValidatorResponse;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collection;
+import java.util.ResourceBundle;
 
 @Component
-public class PanelFrameBarSatellite extends FlowPane implements Initializable {	
+public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	
 	private static String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
 	
@@ -60,9 +64,20 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
 	private MissionsManager missionsManager;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get tree view")
+	private OperationalViewTree operationalViewTree;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get map view")
+	private OperationalViewMap operationalViewMap;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get event publisher")
+	private EventPublisherSvc eventPublisherSvc;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
+
+	private boolean inPrivateSession = false;
 	
 	private static int called;
 	@PostConstruct
@@ -78,6 +93,11 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		inPrivateSession = operationalViewTree.hasPrivateSession();
+		if (inPrivateSession) {
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+		}
 	}
 	
 	private void updateFrameMapPath() {
@@ -118,20 +138,91 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
 	@FXML
 	public void publish() {
-		missionsManager.closeAllMissionEditors(true);
+		System.err.println("publishing");
 		sessionsSvcRemote.publish();
+		Collection<MissionClosingPair> missions = missionsManager.closeAllMissionEditors(true);
+		missions.forEach((MissionClosingPair missionClosingPair) -> {
+			System.err.println("publishing mission " +
+					" " + missionClosingPair.getMission() +
+					" " + missionClosingPair.getMission().getKeyId().getObjId() +
+					" " + missionClosingPair.getMission().getName() +
+					" " + missionClosingPair.getMission().getMissionItemsUids() +
+					" " + missionClosingPair.getMission().getDefaultAlt());
+			Layer layer = operationalViewTree.getLayerByValue(missionClosingPair.getMission());
+			System.err.println("Found layer " + layer);
+			if (layer instanceof LayerMission) {
+				((LayerMission) layer).setMission(missionClosingPair.getMission());
+				((LayerMission) layer).stopEditing();
+			}
+		});
+		operationalViewTree.regenerateTree();
+		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
 	}
 
 	@FXML
 	public void discard() {
-		missionsManager.closeAllMissionEditors(false);
-		sessionsSvcRemote.publish();
+		System.err.println("Discarding");
+		sessionsSvcRemote.discard();
+		// Handle mission being editing
+		Collection<MissionClosingPair> missions =  missionsManager.closeAllMissionEditors(false);
+		System.err.println("Cleaning mission: " + missions);
+		missions.forEach((MissionClosingPair missionClosingPair) -> {
+			if (missionClosingPair.isDeleted()) {
+				System.err.println("Discard / found deleted mission");
+				operationalViewTree.removeItemByName(missionClosingPair.getMission().getName());
+			}
+			else {
+				System.err.println("Discard / reverting mission");
+				Layer layer = operationalViewTree.getLayerByValue(missionClosingPair.getMission());
+				if (layer == null) {
+					LayerMission layerMission = new LayerMission(missionClosingPair.getMission(), operationalViewMap);
+					layerMission.stopEditing();
+					operationalViewTree.addLayer(layerMission);
+				}
+				else if (layer instanceof LayerMission) {
+					((LayerMission) layer).setMission(missionClosingPair.getMission());
+					layer.setName(missionClosingPair.getMission().getName());
+					((LayerMission) layer).stopEditing();
+				}
+			}
+		});
+		operationalViewTree.regenerateTree();
+		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));
+	}
+
+	private void setImageButton(Button button, URL resource) {
+		Image img = new Image(resource.toString());
+		ImageView iview = new ImageView(img);
+		iview.setFitHeight(40);
+		iview.setFitWidth(40);
+		button.setGraphic(iview);
 	}
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
 	public void onApplicationEvent(QuadGuiEvent command) {
 		switch (command.getCommand()) {
+			case MISSION_EDITING_STARTED:
+			case MISSION_UPDATED_BY_MAP:
+			case MISSION_UPDATED_BY_TABLE:
+			case EDITMODE_EXISTING_LAYER_START:
+			case PRIVATE_SESSION_STARTED:
+				if (inPrivateSession)
+					break;
+				System.err.print("Changing icons for private session");
+				setImageButton(btnPublish, this.getClass().getResource("/com/dronegcs/console/guiImages/Save.png"));
+				setImageButton(btnDiscard, this.getClass().getResource("/com/dronegcs/console/guiImages/Discard.png"));
+				inPrivateSession = true;
+				break;
+			case PUBLISH:
+			case DISCARD:
+				if (!inPrivateSession)
+					break;
+				System.err.print("Changing icons for public session");
+				setImageButton(btnPublish, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
+				setImageButton(btnDiscard, this.getClass().getResource("/com/dronegcs/console/guiImages/DiscardOff.png"));
+				inPrivateSession = false;
+				break;
 			case EXIT:
 				break;			
 		}

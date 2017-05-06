@@ -29,6 +29,11 @@ public class QuadGuiEvent extends ApplicationEvent {
         // Missions
         MISSION_UPDATED_BY_MAP, MISSION_UPDATED_BY_TABLE, MISSION_EDITING_STARTED, MISSION_EDITING_FINISHED, 
         MISSION_VIEW_ONLY_STARTED, MISSION_VIEW_ONLY_FINISHED,
+
+        // Sessions
+        PRIVATE_SESSION_STARTED,
+        PUBLISH,
+        DISCARD,
         
         
         EXIT, 
@@ -45,6 +50,12 @@ public class QuadGuiEvent extends ApplicationEvent {
      */
     public QuadGuiEvent(QUAD_GUI_COMMAND cmd, Object source) {
         super(source);
+
+        this.command = cmd;
+    }
+
+    public QuadGuiEvent(QUAD_GUI_COMMAND cmd) {
+        super(new Object());
 
         this.command = cmd;
     }

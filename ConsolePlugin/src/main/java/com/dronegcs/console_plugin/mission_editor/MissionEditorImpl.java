@@ -3,6 +3,7 @@ package com.dronegcs.console_plugin.mission_editor;
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.*;
 import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
+import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.geo_tools.Coordinate;
@@ -60,16 +61,30 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Mission close(boolean shouldSave) {
+    public MissionClosingPair close(boolean shouldSave) {
+        System.err.println("Close, should save:" + shouldSave);
+        MissionClosingPair missionClosingPair = null;
         Mission res = this.mission;
         if (!shouldSave) {
-            droneDbCrudSvcRemote.delete(mission);
+            System.err.println(String.format("Delete mission %s %s", res.getKeyId().getObjId(), res.getName()));
+            //droneDbCrudSvcRemote.delete(mission);
+            try {
+                res = (Mission) droneDbCrudSvcRemote.readByClass(mission.getKeyId().getObjId(), Mission.class.getName());
+                System.err.println("Found original mission " + res.getKeyId().getObjId() + " " + res.getName());
+                missionClosingPair = new MissionClosingPair(res, false);
+            } catch (ObjectNotFoundException e) {
+                System.err.println("Mission doesn't exist");
+                missionClosingPair = new MissionClosingPair(this.mission, true);
+            }
         }
-        System.out.println("Before reseting " + res);
+        else {
+            missionClosingPair = new MissionClosingPair(res, false);
+        }
+        //System.err.println(String.format("Before resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         this.mission = null;
         loggerDisplayerSvc.logGeneral("DroneMission editor finished");
-        System.out.println("After reseting " + res);
-        return res;
+        //System.err.println(String.format("After resetting %s %s", res.getKeyId().getObjId(), res.getName()));
+        return missionClosingPair;
     }
 
     @Override
@@ -220,8 +235,20 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     public List<MissionItem> getMissionItems() {
         List<MissionItem> missionItemList = new ArrayList<>();
         List<String> uuidList = mission.getMissionItemsUids();
-        uuidList.forEach((String uuid) -> missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName())));
+        uuidList.forEach((String uuid) -> {
+            try {
+                missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid, MissionItem.class.getName()));
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+                // TODO
+            }
+        });
         return missionItemList;
+    }
+
+    @Override
+    public void delete() throws MissionUpdateException {
+        droneDbCrudSvcRemote.delete(mission);
     }
 
     @Override
@@ -247,7 +274,13 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             return false;
 
         String lastUid = mission.getMissionItemsUids().get(mission.getMissionItemsUids().size() - 1);
-        MissionItem last = (MissionItem) droneDbCrudSvcRemote.readByClass(lastUid, MissionItem.class.getName());
+        MissionItem last = null;
+        try {
+            last = (MissionItem) droneDbCrudSvcRemote.readByClass(lastUid, MissionItem.class.getName());
+        } catch (ObjectNotFoundException e) {
+            // TODO
+            e.printStackTrace();
+        }
         return (last instanceof ReturnToHome) || (last instanceof Land);
     }
 
@@ -256,8 +289,22 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             return false;
 
         String uid = mission.getMissionItemsUids().get(0);
-        MissionItem missionItem = (MissionItem) droneDbCrudSvcRemote.readByClass(uid, MissionItem.class.getName());
+        MissionItem missionItem = null;
+        try {
+            missionItem = (MissionItem) droneDbCrudSvcRemote.readByClass(uid, MissionItem.class.getName());
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
+            // TODO
+        }
         return missionItem instanceof Takeoff;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Mission Editor: ");
+        builder.append(mission.getKeyId().getObjId() + " ");
+        builder.append(mission.getName());
+        return builder.toString();
+    }
 }

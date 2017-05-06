@@ -1,0 +1,605 @@
+package com.dronegcs.console.controllers.internalFrames.internal;
+
+import com.dronedb.persistence.scheme.BaseObject;
+import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
+import com.dronegcs.console_plugin.mission_editor.MissionEditor;
+import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
+import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
+import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
+import com.dronegcs.console_plugin.services.MissionCompilerSvc;
+import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
+import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
+import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
+import com.gui.core.mapTree.CheckBoxViewTree;
+import com.gui.core.mapTreeObjects.Layer;
+import com.gui.core.mapTreeObjects.LayerGroup;
+import javafx.application.Platform;
+import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
+import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED;
+
+@Component
+public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypointManagerListener, OperationalViewTree {
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
+	protected ApplicationContext applicationContext;
+	
+    @Autowired @NotNull(message = "Internal Error: Missing event publisher")
+	protected EventPublisherSvc eventPublisherSvc;
+    
+	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
+	private TextNotificationPublisherSvc textNotificationPublisherSvc;
+	
+	@Autowired @NotNull(message = "Internal Error: Failed to get logger displayer")
+	private LoggerDisplayerSvc loggerDisplayerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission compiler")
+	private MissionCompilerSvc missionCompilerSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+	private MissionsManager missionsManager;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get perimeter manager")
+	private PerimetersManager perimetersManager;
+	
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
+	private Drone drone;
+	
+	@Autowired
+	private RuntimeValidator runtimeValidator;
+	
+	private LayerMission uploadedLayerMissionCandidate = null;
+	private LayerMission uploadedLayerMission = null;
+	private LayerPerimeter uploadedLayerPerimeterCandidate = null;
+	private LayerPerimeter uploadedLayerPerimeter = null;
+	
+	private LayerGroup perimetersGroup;
+	private LayerGroup missionsGroup;
+	private LayerGroup generalGroup;
+
+	private TreeItem modifiedItem = null;
+	private boolean activePrivateSession = false;
+
+	public OperationalViewTreeImpl() {
+		super(new EditableLayeredCheckBoxTreeCellEditorConvertor());
+	}
+
+	@Autowired
+	public void setOperationalViewMap(OperationalViewMap operationalViewMap) {
+		super.setLayeredViewMap(operationalViewMap);
+	}
+
+	private static int called;
+	@SuppressWarnings("unchecked")
+	@PostConstruct
+	private void init() {
+		if (called++ > 1)
+			throw new RuntimeException("Not a Singleton");
+		
+		LayerGroup rootLayer = new LayerGroup("Layers");
+		getLayeredViewMap().setRootLayer(rootLayer);
+		CheckBoxTreeItem<Layer> rootItem = new CheckBoxTreeItem<Layer> (rootLayer);
+		rootItem.setExpanded(true);
+		
+		perimetersGroup = new LayerGroup("Perimeters");
+		missionsGroup = new LayerGroup("Missions");
+		generalGroup = new LayerGroup("General");
+		rootLayer.addChildren(perimetersGroup);
+		rootLayer.addChildren(missionsGroup);
+		rootLayer.addChildren(generalGroup);
+        CheckBoxTreeItem<Layer> itemGeneral = new CheckBoxTreeItem<Layer> (generalGroup);
+        CheckBoxTreeItem<Layer> itemMissions = new CheckBoxTreeItem<Layer> (missionsGroup);            
+        CheckBoxTreeItem<Layer> itemPerimeters = new CheckBoxTreeItem<Layer> (perimetersGroup);   
+		
+        rootItem.getChildren().addAll(itemGeneral, itemMissions, itemPerimeters);        
+        setRoot(rootItem);
+        
+        drone.getWaypointManager().addWaypointManagerListener(this);
+       
+        addSelectionHandler(getRoot());
+
+		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+		if (validatorResponse.isFailed())
+			throw new RuntimeException(validatorResponse.toString());
+
+		System.err.println("Loading DataBase");
+		try {
+			List<BaseObject> modifiedMissionsList = missionsManager.getAllModifiedMissions();
+			if (!modifiedMissionsList.isEmpty()) {
+				System.err.println("Activate private session");
+				activePrivateSession = true;
+			}
+			for (BaseObject obj : modifiedMissionsList) {
+				Mission mission = (Mission) obj;
+				System.err.println("Modify mission: " + mission.getKeyId().getObjId());
+			}
+			List<BaseObject> missionsList = missionsManager.getAllMissions();
+			LayerMission layerMission;
+			for (BaseObject mission : missionsList) {
+				boolean isEditing = modifiedMissionsList.stream().anyMatch(
+						(BaseObject baseObject) -> {return baseObject.getKeyId().getObjId().equals(mission.getKeyId().getObjId());}
+				);
+				System.err.println("Loading existing mission: " + mission + ", edit mode: " + isEditing);
+				layerMission = new LayerMission(((Mission) mission), getLayeredViewMap(), isEditing);
+				layerMission.setApplicationContext(applicationContext);
+				addLayer(layerMission);
+			}
+
+			List<BaseObject> polygonPerimeter = perimetersManager.getAllPerimeters();
+			LayerPerimeter layerPerimeter;
+			for (BaseObject perimeter : polygonPerimeter) {
+				System.err.println("Loading existing perimeter: " + perimeter);
+				layerPerimeter = LayerPerimeter.generateNew(perimeter, getLayeredViewMap());
+				if (layerPerimeter == null) {
+					loggerDisplayerSvc.logError("Failed to get perimeter");
+					continue;
+				}
+				layerPerimeter.setApplicationContext(applicationContext);
+				addLayer(layerPerimeter);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void addSelectionHandler(TreeItem<Layer> cbox) {
+		cbox.addEventHandler(CheckBoxTreeItem.<Layer>checkBoxSelectionChangedEvent(),
+			(event) -> {
+				CheckBoxTreeItem<Layer> cbItem = event.getTreeItem();
+				System.out.println("Selected " + cbItem.isSelected());
+				if (!cbItem.isIndeterminate())
+					getLayeredViewMap().setLayerVisibie(cbItem.getValue(), cbItem.isSelected());
+			}
+		);
+	}
+
+	@Override
+	public void addLayer(Layer layer) {
+		CheckBoxTreeItem<Layer> ti = null;
+		if (layer instanceof LayerPerimeter) {
+			ti = addTreeNode(layer, perimetersGroup);
+			getLayeredViewMap().addLayer(layer, perimetersGroup);
+		}
+		
+		else if (layer instanceof LayerMission) {
+			ti = addTreeNode(layer, missionsGroup);
+			getLayeredViewMap().addLayer(layer, missionsGroup);
+		}
+		else
+			getLayeredViewMap().addLayer(layer, generalGroup);
+
+		ti.selectedProperty().addListener((obs, oldVal, newVal) -> {
+			System.out.println(" selection state: " + newVal);
+		});
+		System.out.println("SIGN");
+		addSelectionHandler(ti);
+	}
+
+	public void removeLayer(Layer layer) {
+		removeFromTreeGroup(layer);
+		getLayeredViewMap().removeLayer(layer);
+	}
+
+	@Override
+	public void updateTreeItemName(String fromText, TreeItem<Layer> treeItem) {
+		if (treeItem.getValue() instanceof LayerMission) {
+			LayerMission layerMission = (LayerMission) treeItem.getValue();
+			System.out.println("Found mission to update it name");
+			String newName = layerMission.getName(true);
+			Mission mission = layerMission.getMission();
+			try {
+				MissionEditor missionEditor = missionsManager.openMissionEditor(mission);
+				mission.setName(newName);
+				missionEditor.update(mission);
+				layerMission.setMission(mission);
+				eventPublisherSvc.publish(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
+			}
+			catch (MissionUpdateException e) {
+				layerMission.setName(fromText);
+				loggerDisplayerSvc.logError("Database is out of sync, failed to update mission name , error: " + e.getMessage());
+			}
+			refresh();
+			System.err.println("Mission manager status: \n" + missionsManager.toString());
+		}
+
+		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+			System.out.println("Found polygon perimeter to update it name");
+			PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter();
+			polygonPerimeter.setName(treeItem.getValue().getName());
+
+			try {
+				((LayerPolygonPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(polygonPerimeter));
+			} catch (PerimeterUpdateException e) {
+                treeItem.getValue().setName(fromText);
+                refresh();
+				loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
+			}
+		}
+
+		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
+			System.out.println("Found circle perimeter to update it name");
+			CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter();
+			circlePerimeter.setName(treeItem.getValue().getName());
+
+			try {
+				((LayerCircledPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(circlePerimeter));
+			} catch (PerimeterUpdateException e) {
+                treeItem.getValue().setName(fromText);
+                refresh();
+				loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
+			}
+		}
+	}
+
+	@Override
+	public void handleRemoveTreeItem(TreeItem<Layer> treeItem) {
+		if (treeItem.getValue() instanceof LayerMission) {
+			System.out.println("Found mission to remove");
+			missionsManager.delete(((LayerMission) treeItem.getValue()).getMission());
+		}
+		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+			System.out.println("Found perimeter to remove");
+			perimetersManager.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
+		}
+
+		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
+			System.out.println("Found circle to remove");
+			perimetersManager.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
+		}
+		super.handleRemoveTreeItem(treeItem);
+
+		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+
+	}
+
+	@Override
+	public ContextMenu getPopupMenu(TreeItem<Layer> treeItem) {
+		ContextMenu popup = super.getPopupMenu(treeItem);
+		if (!(treeItem.getValue() instanceof Layer))
+			return popup;
+
+//		// Check if we are in editing mode
+		if (treeItem.equals(modifiedItem)) {
+			System.err.println("Same layer , limit popups");
+			return popup;
+		}
+		
+		ContextMenu operationalPopup = new ContextMenu();
+		
+		Layer layer = treeItem.getValue();
+		
+		MenuItem menuItemUploadMission = new MenuItem("Upload DroneMission");
+		MenuItem menuItemEditMission = new MenuItem("Edit DroneMission");
+		MenuItem menuItemUploadPerimeter = new MenuItem("Upload Perimeter");
+		
+		menuItemUploadMission.setOnAction( e -> {
+			if (layer instanceof LayerMission) {
+				uploadedLayerMissionCandidate = (LayerMission) layer;
+				if (uploadedLayerMissionCandidate.getMission() != null) {
+					loggerDisplayerSvc.logOutgoing("Uploading DroneMission To APM");
+					DroneMission droneMission = missionCompilerSvc.compile(uploadedLayerMissionCandidate.getMission());
+					droneMission.sendMissionToAPM();
+					textNotificationPublisherSvc.publish("Uploading DroneMission");
+				}
+			}
+		});
+		
+		menuItemEditMission.setOnAction( e -> {
+			if (layer instanceof LayerMission) {
+				((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
+				modifiedItem = treeItem;
+				LayerMission layerMission = (LayerMission) layer;
+//				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
+				refresh();
+				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layerMission));
+			}
+		});
+
+		menuItemUploadPerimeter.setOnAction( e -> {
+			if (layer instanceof LayerPerimeter) {
+				uploadedLayerPerimeterCandidate = (LayerPolygonPerimeter) layer;
+				if (((LayerPolygonPerimeter) uploadedLayerPerimeterCandidate).getPolygon() != null) {
+					loggerDisplayerSvc.logOutgoing("Uploading Perimeter To APM");
+					drone.getPerimeter().setCompound(uploadedLayerPerimeterCandidate);
+					uploadedLayerPerimeter = (LayerPerimeter) switchCurrentLayer(perimetersGroup, uploadedLayerPerimeter, uploadedLayerPerimeterCandidate);
+					uploadedLayerPerimeterCandidate = null;
+					textNotificationPublisherSvc.publish("Perimeter Uploaded Successfully");
+				}
+			}
+		});        
+
+		if (layer instanceof LayerPerimeter)
+			operationalPopup.getItems().add(menuItemUploadPerimeter);
+		
+		if (layer instanceof LayerMission) {
+			if (modifiedItem == null)
+				operationalPopup.getItems().add(menuItemEditMission);
+			operationalPopup.getItems().add(menuItemUploadMission);
+		}
+		
+		operationalPopup.getItems().addAll(popup.getItems());
+		return operationalPopup;
+	}
+
+	@Override
+	public void handleTreeItemClick(TreeItem<Layer> node) {
+		Layer layer = node.getValue();
+		if (layer instanceof LayerMission) {
+			if (missionsManager.getMissionEditor(((LayerMission) layer).getMission()) == null)
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+			else
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
+		}
+		else 
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+	}
+
+	public Layer switchCurrentLayer(LayerGroup layerGroup, Layer fromLayer, Layer toLayer) {
+		Layer finalLayer = null;
+
+		if (toLayer.equals(fromLayer)) {
+			loggerDisplayerSvc.logGeneral("Current droneMission layer is updated");
+			return finalLayer;
+		}
+
+		finalLayer = toLayer;
+
+		if (fromLayer != null) {
+			// Means the GUI is updated with old uploaded droneMission
+			CurrentPrefixRemove(fromLayer);
+			loggerDisplayerSvc.logGeneral("Previous droneMission prefix was removed");
+		}
+		else {
+			// Means we are not aware of any uploaded droneMission
+			//addLayer(finalLayer);
+			finalLayer.regenerateMapObjects();
+			loggerDisplayerSvc.logGeneral("A new layer was created for current droneMission");
+		}
+
+		CurrentPrefixAdd(finalLayer);
+		return finalLayer;
+	}
+	
+	private void CurrentPrefixRemove(Layer old_layer) {
+		if (old_layer.getName().contains(UPLOADED_PREFIX))
+			old_layer.setName(old_layer.getName().substring(UPLOADED_PREFIX.length(), old_layer.getName().length()));
+		
+		refresh();
+	}
+
+	private void CurrentPrefixAdd(Layer finalLayer) {
+		if (!finalLayer.getName().contains(UPLOADED_PREFIX))
+			finalLayer.setName(UPLOADED_PREFIX + finalLayer.getName());
+		
+		refresh();
+	}
+	
+	@Override
+	public void onBeginWaypointEvent(WaypointEvent_Type wpEvent) {		
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			loggerDisplayerSvc.logIncoming("Start Downloading Waypoints");
+			return;
+		}
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			loggerDisplayerSvc.logIncoming("Start Updloading Waypoints");
+			return;
+		}
+
+		loggerDisplayerSvc.logError("Failed to Start Syncing (" + wpEvent.name() + ")");
+		textNotificationPublisherSvc.publish("DroneMission Sync failed");
+	}
+
+	@Override
+	public void onWaypointEvent(WaypointEvent_Type wpEvent, int index, int count) {
+		if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+			loggerDisplayerSvc.logIncoming("Downloading MavlinkWaypoint " + index + "/" + count);
+			return;
+		}
+
+		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+			loggerDisplayerSvc.logIncoming("Uploading MavlinkWaypoint " + index + "/" + count);
+			return;
+		}
+
+		loggerDisplayerSvc.logError("Unexpected Syncing Failure (" + wpEvent.name() + ")");
+		textNotificationPublisherSvc.publish("DroneMission Sync failed");
+	}
+
+	@Override
+	public void onEndWaypointEvent(WaypointEvent_Type wpEvent) {
+		Platform.runLater( () -> { 
+			if (wpEvent.equals(WaypointEvent_Type.WP_DOWNLOAD)) {
+				loggerDisplayerSvc.logIncoming("Waypoints downloaded");
+				if (drone.getDroneMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find droneMission");
+					return;
+				}
+	
+				LayerMission lm = applicationContext.getBean(LayerMission.class);
+				lm.setName("UnnamedMission");
+				Mission mission = null;
+				try {mission = missionCompilerSvc.decompile(drone.getDroneMission());}
+				catch (MissionCompilationException e) {
+					loggerDisplayerSvc.logError("Failed to decompile mission");
+					return;
+				}
+				lm.setMission(mission);
+				addLayer(lm);
+				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, lm);
+	
+				loggerDisplayerSvc.logGeneral("DroneMission was updated in droneMission tree");
+				textNotificationPublisherSvc.publish("DroneMission successfully downloaded");
+				return;
+			}
+	
+			if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
+				loggerDisplayerSvc.logIncoming("Waypoints uploaded");
+				if (drone.getDroneMission() == null) {
+					loggerDisplayerSvc.logError("Failed to find droneMission");
+					return;
+				}
+				uploadedLayerMission = (LayerMission) switchCurrentLayer(missionsGroup, uploadedLayerMission, uploadedLayerMissionCandidate);
+				uploadedLayerMissionCandidate = null;
+				loggerDisplayerSvc.logGeneral("DroneMission was updated in droneMission tree");
+				textNotificationPublisherSvc.publish("DroneMission successfully uploaded");
+				return;
+			}
+			
+			loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
+			textNotificationPublisherSvc.publish("DroneMission Sync failed");
+		});
+	}
+
+	public void regenerateTree() {
+		System.err.println("Regenerate Tree");
+		List<BaseObject> missionList = missionsManager.getAllMissions();
+
+		Map<String, BaseObject> map = new HashMap<>();
+		missionList.stream().forEach((BaseObject baseObject) -> map.put(baseObject.getKeyId().getObjId(), baseObject));
+
+		Platform.runLater(() -> {
+			System.err.println("Mission group " + missionsGroup.getChildens());
+			for (Layer layer : missionsGroup.getChildens()) {
+				if (layer instanceof LayerMission) {
+					System.err.println("Name " + layer.getName() + " " + ((LayerMission) layer).isEdited());
+					LayerMission layerMission = (LayerMission) layer;
+					if (!layerMission.isEdited())
+						continue;
+
+					CheckBoxTreeItem checkBoxTreeItem = findCheckBoxTreeItemByLayer(layerMission);
+					CheckBoxTreeItem parent = (CheckBoxTreeItem) checkBoxTreeItem.getParent();
+					parent.getChildren().remove(parent);
+//					layerMission.stopEditing();
+//					layerMission.setMission((Mission) map.get(layerMission.getMission().getKeyId().getObjId()));
+//					checkBoxTreeItem.setValue(layerMission);
+				}
+			}
+
+			refresh();
+		});
+	}
+
+	@Override
+	public CheckBoxViewTree getTree() {
+		return this;
+	}
+
+	@Override
+	public boolean hasPrivateSession() {
+		return activePrivateSession;
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	@EventListener
+	public void onApplicationEvent(QuadGuiEvent command) {
+		Platform.runLater( () -> {
+			switch (command.getCommand()) {
+				case MISSION_EDITING_FINISHED:
+					LayerMission layerMission = (LayerMission) command.getSource();
+					if (layerMission.getMission() == null) {
+						//Means we were left without a mission, we need to clear the item
+						removeLayer(layerMission);
+					}
+					else {
+						String missionName = layerMission.getMission().getName();
+//						layerMission.stopEditing();
+						layerMission.setName(missionName);
+					}
+					modifiedItem = null;
+					refresh();
+					break;
+				case LAYER_PERIMETER_EDITING_FINISHED:
+					LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
+					String perimeterName = layerPerimeter.getPerimeter().getName();
+//					layerPerimeter.stopEditing();
+					layerPerimeter.setName(perimeterName);
+					modifiedItem = null;
+					refresh();
+					break;
+				case PUBLISH:
+			}
+		});
+	}
+
+	public String dumpTree() {
+		return super.dumpTree();
+	}
+
+	public void removeItemByName(String name) {
+		Layer foundLayer = getLayerByName(name);
+		if (foundLayer != null)
+			removeLayer(foundLayer);
+	}
+
+	//TODO: Make it search deep
+	@Override
+	public Layer getLayerByName(String name) {
+		Layer foundLayer = null;
+		for (Layer layer : missionsGroup.getChildens()) {
+			LayerMission layerMission = (LayerMission) layer;
+			if (layer.getName().equals(name))
+				foundLayer = layerMission;
+		}
+
+		for (Layer layer : perimetersGroup.getChildens()) {
+			LayerPerimeter layerPerimeter = (LayerPerimeter) layer;
+			if (layerPerimeter.getName().equals(name))
+				foundLayer = layerPerimeter;
+		}
+
+		if (foundLayer == null)
+			return null;
+
+		return foundLayer;
+	}
+
+	//TODO: Make it search deep
+	@Override
+	public Layer getLayerByValue(BaseObject object) {
+		System.err.println("Searching for '" + object + "'");
+		Layer foundLayer = null;
+		for (Layer layer : missionsGroup.getChildens()) {
+			LayerMission layerMission = (LayerMission) layer;
+			System.err.println("Candidate -" + layerMission.getName() + " " + layerMission.getMission().getName()+ " mission: " +
+					layerMission.getMission() +
+					" " + layerMission.getMission().getKeyId().getObjId() +
+					" " + layerMission.getMission().getName() +
+					" " + layerMission.getMission().getMissionItemsUids() +
+					" " + layerMission.getMission().getDefaultAlt());
+			if (((LayerMission) layer).getMission().getKeyId().getObjId().equals(object.getKeyId().getObjId()))
+				foundLayer = layerMission;
+		}
+
+		if (foundLayer == null)
+			return null;
+
+		return foundLayer;
+	}
+}

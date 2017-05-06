@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
@@ -60,7 +59,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	public void initialize(URL location, ResourceBundle resources) {
 		splitPane.setPrefWidth(root.getPrefWidth());
 		splitPane.setPrefHeight(root.getPrefHeight());
-		left.getChildren().add(operationalViewTree);
+		left.getChildren().add(operationalViewTree.getTree());
 		right.getChildren().add(operationalViewMap);
 		if (splitPane.getDividers().size() == 1)
 			splitPane.getDividers().get(0).positionProperty().addListener(this);
@@ -75,7 +74,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	@Override
 	public void changed(ObservableValue<? extends Number> property, Number fromPrecentage, Number toPrecentage) {
 		operationalViewMap.setMapBounds(0, 0, (int) (splitPane.getPrefWidth() - splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
-		operationalViewTree.setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
+		operationalViewTree.getTree().setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 	}
 
 	private void reloadMissionDatabase() {

@@ -27,6 +27,7 @@ public class EditedLayer extends LayerSingle {
 
     public void stopEditing() {
         isEdited = false;
+        setName(getName(true));
     }
 
     @Override

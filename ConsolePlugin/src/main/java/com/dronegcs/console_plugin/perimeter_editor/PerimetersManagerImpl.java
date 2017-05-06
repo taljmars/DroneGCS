@@ -2,6 +2,7 @@ package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.*;
+import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -120,13 +121,23 @@ public class PerimetersManagerImpl implements PerimetersManager {
         if (perimeter instanceof PolygonPerimeter) {
             List<String> uuidList = ((PolygonPerimeter) perimeter).getPoints();
             for (String uuid : uuidList)
-                res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
+                try {
+                    res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                    //TODO
+                }
             return res;
         }
 
         if (perimeter instanceof CirclePerimeter) {
             String uuid = ((CirclePerimeter) perimeter).getCenter();
-            res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
+            try {
+                res.add((Point) droneDbCrudSvcRemote.readByClass(uuid, Point.class.getName()));
+            } catch (ObjectNotFoundException e) {
+                e.printStackTrace();
+                //TODO
+            }
             return res;
         }
 
@@ -141,4 +152,5 @@ public class PerimetersManagerImpl implements PerimetersManager {
         }
         return null;
     }
+
 }

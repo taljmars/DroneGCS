@@ -37,4 +37,6 @@ public interface MissionEditor {
     Mission getModifiedMission();
 
     List<MissionItem> getMissionItems();
+
+    void delete() throws MissionUpdateException;
 }

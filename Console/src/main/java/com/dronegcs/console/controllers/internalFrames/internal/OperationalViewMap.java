@@ -26,12 +26,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
-import com.dronedb.persistence.scheme.CirclePerimeter;
-import com.dronedb.persistence.scheme.Mission;
-import com.dronedb.persistence.scheme.Perimeter;
-import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import com.dronegcs.console_plugin.mission_editor.MissionClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -116,9 +114,10 @@ OnDroneListener, EventHandler<ActionEvent> {
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	public ApplicationContext applicationContext;
 
-	@Resource(type = OperationalViewTree.class)
+	//@Resource(type = OperationalViewTreeImpl.class)
+	@Autowired
 	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
-		super.setCheckBoxViewTree(operationalViewTree);
+		super.setCheckBoxViewTree(operationalViewTree.getTree());
 	}
 
 	public OperationalViewTree getOperationalViewTree() {
@@ -338,7 +337,8 @@ OnDroneListener, EventHandler<ActionEvent> {
 				if (modifyiedLayerMissionOriginal == null) {
 					//modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
 					// TALMA i am trying not to use bean here
-					modifyiedLayerMissionOriginal = new LayerMission(OperationalViewTree.EDIT_PREFIX + "New DroneMission", this);
+					//modifyiedLayerMissionOriginal = new LayerMission(OperationalViewTreeImpl.EDIT_PREFIX + "New DroneMission", this);
+					modifyiedLayerMissionOriginal = new LayerMission("New DroneMission", this);
 					modifyiedLayerMissionOriginal.setApplicationContext(applicationContext);
 					getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
 					//TODO: Fix after handling db
@@ -695,49 +695,6 @@ OnDroneListener, EventHandler<ActionEvent> {
 		SetMyPositionTrail(coord);
 	}
 	
-	@SuppressWarnings("incomplete-switch")
-	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
-		try {
-			switch (command.getCommand()) {
-			case EDITMODE_EXISTING_LAYER_START:
-				EditModeOn();
-				Layer layer = (Layer) command.getSource();
-				if (layer instanceof LayerMission) {
-					System.out.println("Working on DroneMission Layer");
-					modifyiedLayerMissionOriginal = (LayerMission) layer;
-					super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
-					isMissionBuildMode = true;
-					missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getMission());
-					Mission mission = missionEditor.getModifiedMission();
-					modifyiedLayerMissionOriginal.setName(mission.getName());
-					eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
-				} else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
-					System.out.println("Working on Perimeter Layer");
-					modifyiedLayerPerimeterOriginal = (LayerPerimeter) layer;
-					super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
-					isPerimeterBuildMode = true;
-					perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), modifyiedLayerPerimeterOriginal.getPerimeter().getClass());
-					Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
-					modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
-				} else {
-					System.out.println("Unrecognized Layer");
-					EditModeOff();
-					return;
-				}
-
-				break;
-			case MISSION_UPDATED_BY_TABLE:
-				LayerMission layerMission = (LayerMission) command.getSource();
-				layerMission.regenerateMapObjects();
-				break;
-			}
-		}
-		catch (MissionUpdateException | PerimeterUpdateException e) {
-			loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-		}
-	}
-
 	@Override
 	public void LayerEditorCancel() {
 		super.finishModifiedLayerMode();
@@ -754,14 +711,14 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 		// Missions
 		if (isMissionBuildMode) {
-			Mission mission = missionsManager.closeMissionEditor(missionEditor, false);
+			MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, false);
 			missionEditor = null;
-			modifyiedLayerMissionOriginal.setMission(mission);
+			modifyiedLayerMissionOriginal.setMission(missionClosingPair.getMission());
 			modifyiedLayerMissionOriginal.regenerateMapObjects();
 			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
 			modifyiedLayerMissionOriginal = null;
 		}
-		
+
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
 	}
@@ -787,23 +744,23 @@ OnDroneListener, EventHandler<ActionEvent> {
 			modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
 			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
 		}
-		
+
 
 		if (isMissionBuildMode) {
-			Mission mission = missionsManager.closeMissionEditor(missionEditor, true);
+			//MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, true);
+			modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+			modifyiedLayerMissionOriginal.setName(missionEditor.getModifiedMission().getName());
 			missionEditor = null;
-			modifyiedLayerMissionOriginal.setMission(mission);
-			modifyiedLayerMissionOriginal.setName(mission.getName());
 			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
 		}
 
 		modifyiedLayerMissionOriginal = null;
 		modifyiedLayerPerimeterOriginal = null;
-		
+
 		isMissionBuildMode = false;
 		isPerimeterBuildMode = false;
 
-		getOperationalViewTree().refresh();
+		getOperationalViewTree().getTree().refresh();
 	}
 
 	@Override
@@ -818,7 +775,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 			}
 			return;
 		}
-		
+
 		if (event.getSource().equals(cbFollowTrail)) {
 			if (cbFollowTrail.isSelected()) {
 				loggerDisplayerSvc.logGeneral("Paint My Trail");
@@ -831,6 +788,49 @@ OnDroneListener, EventHandler<ActionEvent> {
 				myTrailPath = null;
 			}
 			return;
+		}
+	}
+
+	@SuppressWarnings("incomplete-switch")
+	@EventListener
+	public void onApplicationEvent(QuadGuiEvent command) {
+		try {
+			switch (command.getCommand()) {
+				case EDITMODE_EXISTING_LAYER_START:
+					EditModeOn();
+					Layer layer = (Layer) command.getSource();
+					if (layer instanceof LayerMission) {
+						System.out.println("Working on DroneMission Layer");
+						modifyiedLayerMissionOriginal = (LayerMission) layer;
+						super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
+						isMissionBuildMode = true;
+						missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getMission());
+						Mission mission = missionEditor.getModifiedMission();
+						modifyiedLayerMissionOriginal.setName(mission.getName());
+						eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
+					} else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
+						System.out.println("Working on Perimeter Layer");
+						modifyiedLayerPerimeterOriginal = (LayerPerimeter) layer;
+						super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
+						isPerimeterBuildMode = true;
+						perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), modifyiedLayerPerimeterOriginal.getPerimeter().getClass());
+						Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
+						modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
+					} else {
+						System.out.println("Unrecognized Layer");
+						EditModeOff();
+						return;
+					}
+
+					break;
+				case MISSION_UPDATED_BY_TABLE:
+					LayerMission layerMission = (LayerMission) command.getSource();
+					layerMission.regenerateMapObjects();
+					break;
+			}
+		}
+		catch (MissionUpdateException | PerimeterUpdateException e) {
+			loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
 		}
 	}
 }
