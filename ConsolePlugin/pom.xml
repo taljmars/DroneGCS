@@ -34,4 +34,19 @@
 
     </dependencies>
 
+    <build>
+        <outputDirectory>../${build.output}/classes/</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions><execution><phase>install</phase></execution></executions>
+                <configuration>
+                    <outputDirectory>../${build.output}/jars</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

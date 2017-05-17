@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.dronegcs</groupId>
         <artifactId>DroneGCS</artifactId>
-        <version>${myversion}</version>
+        <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ConsolePlugin</artifactId>
-            <version>${myversion}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -34,11 +34,11 @@
             <version>1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.dronedb</groupId>
-            <artifactId>GeneratedServerClasses</artifactId>
-            <version>1.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dronedb</groupId>-->
+            <!--<artifactId>GeneratedServerClasses</artifactId>-->
+            <!--<version>1.0</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.image_processing</groupId>
@@ -72,14 +72,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <outputDirectory>../${build.output}/jars</outputDirectory>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<version>2.4</version>-->
+                <!--<configuration>-->
+                    <!--<outputDirectory>../${build.output}/jars</outputDirectory>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -7,7 +7,7 @@
     <groupId>com.dronegcs</groupId>
     <artifactId>DroneGCS</artifactId>
     <packaging>pom</packaging>
-    <version>${myversion}</version>
+    <version>1.0</version>
 
     <modules>
         <module>Console</module>
@@ -193,6 +193,72 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--Packaging-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../${build.output}/pkg/</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                        <!--<inherited>false</inherited>-->
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-resource-one</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>${build.output}/pkg</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.output}/jars/</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${build.output}/scripts/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                        <inherited>false</inherited>
+                    </execution>
+                    <execution>
+                        <id>copy-resource-two</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>${build.output}/pkg/conf</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${build.output}/conf</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                        <inherited>false</inherited>
                     </execution>
                 </executions>
             </plugin>
