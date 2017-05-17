@@ -134,26 +134,32 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@FXML
 	public void ButtonConnectOnAction(ActionEvent actionEvent) {
-		if (connected) {
-    		loggerDisplayerSvc.logGeneral("Close Connection");
-    		drone.getMavClient().disconnect();
-    	}
-    	
-    	Object[] ports = serialConnection.listPorts();
-    	if (ports.length == 0) {
-    		dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
-    		return;
-    	}
-    	Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0] ,"Select baud rate: ",serialConnection.baudList(), serialConnection.getDefaultBaud());
-    	if (res != null) {
-    		String port_name = (String) res.getKey();
-    		Integer baud = (Integer) res.getValue();
-    		serialConnection.setPortName(port_name);
-    		serialConnection.setBaud(baud);
-    		
-		    loggerDisplayerSvc.logGeneral("Open Connection");
-		    drone.getMavClient().connect();
-    	}
+    	try {
+			if (connected) {
+				loggerDisplayerSvc.logGeneral("Close Connection");
+				drone.getMavClient().disconnect();
+			}
+
+			Object[] ports = serialConnection.listPorts();
+			if (ports.length == 0) {
+				dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
+				return;
+			}
+			Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0] ,"Select baud rate: ",serialConnection.baudList(), serialConnection.getDefaultBaud());
+			if (res != null) {
+				String port_name = (String) res.getKey();
+				Integer baud = (Integer) res.getValue();
+				serialConnection.setPortName(port_name);
+				serialConnection.setBaud(baud);
+
+				loggerDisplayerSvc.logGeneral("Open Connection");
+				drone.getMavClient().connect();
+			}
+		}
+		catch (Throwable t) {
+			logger.LogErrorMessege("An error occur during interface collection " + t.getMessage());
+			dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
+		}
 	}
 	
 	@FXML
