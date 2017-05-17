@@ -58,7 +58,8 @@ public class AppConfig {
 	private static <T> T LoadServices(Class<T> clz) {
 		try {
 			System.err.println("Got " + clz.getSimpleName());
-			URL url = new URL("http://localhost:9999/ws/" + clz.getSimpleName() + "?wsdl");
+			//URL url = new URL("http://localhost:9999/ws/" + clz.getSimpleName() + "?wsdl");
+			URL url = new URL("http://178.62.1.156:1234/ws/" + clz.getSimpleName() + "?wsdl");
 			QName qName = new QName("http://internal.ws.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
 			Service service = Service.create(url, qName);
 			return service.getPort(clz);

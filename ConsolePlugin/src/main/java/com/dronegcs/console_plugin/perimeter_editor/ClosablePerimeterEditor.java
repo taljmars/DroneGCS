@@ -11,5 +11,5 @@ public interface ClosablePerimeterEditor<T extends Perimeter> extends PerimeterE
 
     T open(String perimeter) throws PerimeterUpdateException;
 
-    T close(boolean shouldSave);
+    T close(boolean shouldSave) throws PerimeterUpdateException;
 }

@@ -1,7 +1,9 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.*;
+import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
+import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public <T extends PerimeterEditor> Perimeter closePerimeterEditor(T perimeterEditor, boolean shouldSave) {
+    public <T extends PerimeterEditor> Perimeter closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException {
         loggerDisplayerSvc.logGeneral("closing mission editor");
         if (!(perimeterEditor instanceof ClosablePerimeterEditor)) {
             return null;
@@ -86,15 +88,19 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public void delete(Perimeter perimeter) {
-        Perimeter oldPerimeter = null;
-        ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
-        if (closablePerimeterEditor == null)
-            return;
+    public void delete(Perimeter perimeter) throws PerimeterUpdateException {
+        try {
+            Perimeter oldPerimeter = null;
+            ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
+            if (closablePerimeterEditor == null)
+                return;
 
-        oldPerimeter = closablePerimeterEditor.close(false);
-        if (oldPerimeter != null) {
-            droneDbCrudSvcRemote.delete(oldPerimeter);
+            oldPerimeter = closablePerimeterEditor.close(false);
+            if (oldPerimeter != null) {
+                droneDbCrudSvcRemote.delete(oldPerimeter);
+            }
+        } catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
         }
     }
 
@@ -108,7 +114,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
             return closablePerimeterEditor.update(perimeter);
 
         }
-        catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }

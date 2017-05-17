@@ -2,7 +2,7 @@ package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.*;
-import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
+import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
@@ -55,7 +55,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             this.mission = (Mission) droneDbCrudSvcRemote.update(this.mission);
             return this.mission;
         }
-        catch (DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new MissionUpdateException(e.getMessage());
         }
     }
@@ -226,7 +226,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         try {
             droneDbCrudSvcRemote.update(mission);
         }
-        catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new MissionUpdateException(e.getMessage());
         }
     }
@@ -248,7 +248,11 @@ public class MissionEditorImpl implements ClosableMissionEditor {
 
     @Override
     public void delete() throws MissionUpdateException {
-        droneDbCrudSvcRemote.delete(mission);
+        try {
+            droneDbCrudSvcRemote.delete(mission);
+        } catch (DatabaseValidationRemoteException e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
     }
 
     @Override
@@ -262,7 +266,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             droneDbCrudSvcRemote.update(mission);
             return res;
         }
-        catch (DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new MissionUpdateException(e.getMessage());
         }
     }

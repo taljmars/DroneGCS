@@ -260,23 +260,27 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
 	@Override
 	public void handleRemoveTreeItem(TreeItem<Layer> treeItem) {
-		if (treeItem.getValue() instanceof LayerMission) {
-			System.out.println("Found mission to remove");
-			missionsManager.delete(((LayerMission) treeItem.getValue()).getMission());
-		}
-		if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
-			System.out.println("Found perimeter to remove");
-			perimetersManager.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
-		}
+		try {
+			if (treeItem.getValue() instanceof LayerMission) {
+				System.out.println("Found mission to remove");
+				missionsManager.delete(((LayerMission) treeItem.getValue()).getMission());
+			}
+			if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+				System.out.println("Found perimeter to remove");
+				perimetersManager.delete(((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter());
+			}
 
-		if (treeItem.getValue() instanceof LayerCircledPerimeter) {
-			System.out.println("Found circle to remove");
-			perimetersManager.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
+			if (treeItem.getValue() instanceof LayerCircledPerimeter) {
+				System.out.println("Found circle to remove");
+				perimetersManager.delete(((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter());
+			}
+			super.handleRemoveTreeItem(treeItem);
+
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
 		}
-		super.handleRemoveTreeItem(treeItem);
-
-		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
-
+		catch (PerimeterUpdateException e) {
+			loggerDisplayerSvc.logError(e.getMessage());
+		}
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import com.dronegcs.console.controllers.GuiAppConfig;
+import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import org.springframework.context.ApplicationContext;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
@@ -59,6 +61,12 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	private ApplicationContext applicationContext;
 
+	@Autowired @NotNull(message = "Internal Error: Failed to get event publisher")
+	private EventPublisherSvc eventPublisherSvc;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get global status")
+	private GlobalStatusSvc globalStatusSvc;
+
 	@Autowired
 	private GuiAppConfig guiAppConfig;
 	
@@ -84,10 +92,18 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 			throw new RuntimeException("Not a Singleton");
 		
 		drone.addDroneListener(this);
-		
-		detector = new Detector(1);
-		detector.setTracker(null);
-		detector.addListener(this);
+		try {
+			detector = new Detector(1);
+			detector.setTracker(null);
+			detector.addListener(this);
+		}
+		catch (Throwable e) {
+			System.err.println("Failed to initialize detector: " + e.getMessage());
+			System.err.println("Flight detector and camera will not be accessible");
+			loggerDisplayerSvc.logError("Failed to initialize detector: " + e.getMessage());
+			globalStatusSvc.setDetectorConnected(false);
+			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
+		}
 
 		myself = this;
 	}

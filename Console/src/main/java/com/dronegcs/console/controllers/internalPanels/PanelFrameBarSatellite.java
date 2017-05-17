@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalPanels;
 
 import com.dronedb.persistence.ws.internal.SessionsSvcRemote;
+import com.dronegcs.console.controllers.internalFrames.InternalFrameVideo;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
@@ -8,10 +9,12 @@ import com.dronegcs.console_plugin.mission_editor.MissionClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapTreeObjects.Layer;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -71,9 +74,12 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	@Autowired @NotNull(message = "Internal Error: Failed to get map view")
 	private OperationalViewMap operationalViewMap;
 
+	@Autowired @NotNull(message = "Internal Error: Failed to get video frame")
+	private GlobalStatusSvc globalStatusSvc;
+
 	@Autowired @NotNull(message = "Internal Error: Failed to get event publisher")
 	private EventPublisherSvc eventPublisherSvc;
-	
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 
@@ -89,6 +95,11 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		updateFrameMapPath();
+
+		if (!globalStatusSvc.isDetectorConnected()) {
+			System.err.println("Detector in not loaded, setting button off");
+			btnCamera.setOnDragDetected(mouseEvent -> dialogManagerSvc.showAlertMessageDialog("Camera detector was not loaded, feature is off"));
+		}
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
@@ -137,7 +148,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	}
 
 	@FXML
-	public void publish() {
+	private void publish() {
 		System.err.println("publishing");
 		sessionsSvcRemote.publish();
 		Collection<MissionClosingPair> missions = missionsManager.closeAllMissionEditors(true);
@@ -160,7 +171,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	}
 
 	@FXML
-	public void discard() {
+	private void discard() {
 		System.err.println("Discarding");
 		sessionsSvcRemote.discard();
 		// Handle mission being editing
@@ -222,6 +233,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 				setImageButton(btnPublish, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
 				setImageButton(btnDiscard, this.getClass().getResource("/com/dronegcs/console/guiImages/DiscardOff.png"));
 				inPrivateSession = false;
+				break;
+			case DETECTOR_LOAD_FAILURE:
+				System.err.print("Detector load failure, canceling button");
+				setImageButton(btnCamera, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
 				break;
 			case EXIT:
 				break;			

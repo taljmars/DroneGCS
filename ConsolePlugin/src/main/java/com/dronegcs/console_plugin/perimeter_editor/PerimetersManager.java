@@ -15,11 +15,11 @@ public interface PerimetersManager {
 
     <T extends PerimeterEditor> T getPerimeterEditor(Perimeter perimeter);
 
-    <T extends PerimeterEditor> Perimeter closePerimeterEditor(T perimeterEditor, boolean shouldSave);
+    <T extends PerimeterEditor> Perimeter closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException;
 
     List<BaseObject> getAllPerimeters();
 
-    void delete(Perimeter perimeter);
+    void delete(Perimeter perimeter) throws PerimeterUpdateException;
 
     Perimeter update(Perimeter perimeter) throws PerimeterUpdateException;
 

@@ -2,7 +2,9 @@ package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.*;
+import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
+import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +90,7 @@ public class MissionsManagerImpl implements MissionsManager {
 
 			return closableMissionEditor.update(mission);
 		}
-		catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+		catch (DatabaseValidationRemoteException e) {
 			throw new MissionUpdateException(e.getMessage());
 		}
 	}
@@ -119,7 +121,9 @@ public class MissionsManagerImpl implements MissionsManager {
 		try {
 			return missionCrudSvcRemote.cloneMission(mission);
 		}
-		catch (com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException e) {
+		catch (DatabaseValidationRemoteException e) {
+			throw new MissionUpdateException(e.getMessage());
+		} catch (ObjectNotFoundRemoteException e) {
 			throw new MissionUpdateException(e.getMessage());
 		}
 	}

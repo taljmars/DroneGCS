@@ -697,37 +697,43 @@ OnDroneListener, EventHandler<ActionEvent> {
 	
 	@Override
 	public void LayerEditorCancel() {
-		super.finishModifiedLayerMode();
+		try {
+			super.finishModifiedLayerMode();
 
-		// Perimeters
-		if (isPerimeterBuildMode) {
-			Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, false);
-			perimeterEditor = null;
-			modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
-			modifyiedLayerPerimeterOriginal.regenerateMapObjects();
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
-			modifyiedLayerPerimeterOriginal = null;
+			// Perimeters
+			if (isPerimeterBuildMode) {
+				Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, false);
+				perimeterEditor = null;
+				modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
+				modifyiedLayerPerimeterOriginal.regenerateMapObjects();
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
+				modifyiedLayerPerimeterOriginal = null;
+			}
+
+			// Missions
+			if (isMissionBuildMode) {
+				MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, false);
+				missionEditor = null;
+				modifyiedLayerMissionOriginal.setMission(missionClosingPair.getMission());
+				modifyiedLayerMissionOriginal.regenerateMapObjects();
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
+				modifyiedLayerMissionOriginal = null;
+			}
+
+			isMissionBuildMode = false;
+			isPerimeterBuildMode = false;
 		}
-
-		// Missions
-		if (isMissionBuildMode) {
-			MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, false);
-			missionEditor = null;
-			modifyiedLayerMissionOriginal.setMission(missionClosingPair.getMission());
-			modifyiedLayerMissionOriginal.regenerateMapObjects();
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
-			modifyiedLayerMissionOriginal = null;
+		catch (PerimeterUpdateException e) {
+			loggerDisplayerSvc.logError(e.getMessage());
 		}
-
-		isMissionBuildMode = false;
-		isPerimeterBuildMode = false;
 	}
 
 	@Override
 	public void LayerEditorSave() {
-		ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
-		if (validatorResponse.isFailed())
-			throw new RuntimeException(validatorResponse.toString());
+		try {
+			ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
+			if (validatorResponse.isFailed())
+				throw new RuntimeException(validatorResponse.toString());
 
 //		String missionName = null;
 //		if (modifyiedLayerMissionOriginal != null) {
@@ -735,32 +741,36 @@ OnDroneListener, EventHandler<ActionEvent> {
 //			missionName = modifyiedLayerMissionOriginal.getName();
 //		}
 
-		super.finishModifiedLayerMode();
+			super.finishModifiedLayerMode();
 
-		if (isPerimeterBuildMode) {
-			Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, true);
-			perimeterEditor = null;
-			modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
-			modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
+			if (isPerimeterBuildMode) {
+				Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, true);
+				perimeterEditor = null;
+				modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
+				modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
+			}
+
+
+			if (isMissionBuildMode) {
+				//MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, true);
+				modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+				modifyiedLayerMissionOriginal.setName(missionEditor.getModifiedMission().getName());
+				missionEditor = null;
+				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
+			}
+
+			modifyiedLayerMissionOriginal = null;
+			modifyiedLayerPerimeterOriginal = null;
+
+			isMissionBuildMode = false;
+			isPerimeterBuildMode = false;
+
+			getOperationalViewTree().getTree().refresh();
 		}
-
-
-		if (isMissionBuildMode) {
-			//MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, true);
-			modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
-			modifyiedLayerMissionOriginal.setName(missionEditor.getModifiedMission().getName());
-			missionEditor = null;
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
+	 	catch (PerimeterUpdateException e) {
+			loggerDisplayerSvc.logError(e.getMessage());
 		}
-
-		modifyiedLayerMissionOriginal = null;
-		modifyiedLayerPerimeterOriginal = null;
-
-		isMissionBuildMode = false;
-		isPerimeterBuildMode = false;
-
-		getOperationalViewTree().getTree().refresh();
 	}
 
 	@Override

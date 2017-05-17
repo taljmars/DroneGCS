@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.ws.internal.DatabaseRemoteValidationException;
+import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
+import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronedb.persistence.scheme.Point;
@@ -44,7 +45,9 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             droneDbCrudSvcRemote.update(this.perimeter);
             return this.perimeter;
         }
-        catch (DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        } catch (ObjectNotFoundRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
@@ -59,27 +62,31 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             droneDbCrudSvcRemote.update(this.perimeter);
             return this.perimeter;
         }
-        catch (DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
 
     @Override
-    public PolygonPerimeter close(boolean shouldSave) {
-        PolygonPerimeter res = this.perimeter;
-        if (!shouldSave) {
-            droneDbCrudSvcRemote.delete(this.perimeter);
-            res = this.originalPerimeter;
+    public PolygonPerimeter close(boolean shouldSave) throws PerimeterUpdateException {
+        try {
+            PolygonPerimeter res = this.perimeter;
+            if (!shouldSave) {
+                droneDbCrudSvcRemote.delete(this.perimeter);
+                res = this.originalPerimeter;
+            } else {
+                if (originalPerimeter != null) droneDbCrudSvcRemote.delete(originalPerimeter);
+            }
+            System.out.println("Before resting " + res);
+            this.originalPerimeter = null;
+            this.perimeter = null;
+            loggerDisplayerSvc.logGeneral("DronePolygon editor finished");
+            System.out.println("After resting " + res);
+            return res;
         }
-        else {
-            if (originalPerimeter != null) droneDbCrudSvcRemote.delete(originalPerimeter);
+        catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
         }
-        System.out.println("Before resting " + res);
-        this.originalPerimeter = null;
-        this.perimeter = null;
-        loggerDisplayerSvc.logGeneral("DronePolygon editor finished");
-        System.out.println("After resting " + res);
-        return res;
     }
 
     @Override
@@ -96,7 +103,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             droneDbCrudSvcRemote.update(perimeter);
             return res;
         }
-        catch (DatabaseRemoteValidationException e) {
+        catch (DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
