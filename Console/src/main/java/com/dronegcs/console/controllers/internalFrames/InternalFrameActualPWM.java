@@ -1,31 +1,32 @@
 package com.dronegcs.console.controllers.internalFrames;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
-import com.generic_tools.environment.Environment;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
+import com.generic_tools.csv.CSV;
+import com.generic_tools.csv.internal.CSVImpl;
+import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
+import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
-import com.dronegcs.mavlink.is.drone.Drone;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
-import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
-import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 
 @Component
 public class InternalFrameActualPWM extends Pane implements OnDroneListener, Initializable {
@@ -68,7 +69,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 			throw new RuntimeException("Not a Singletone");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.generic_tools.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.generic_tools.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.com.generic_tools.csv");
 		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
 		
 		drone.addDroneListener(this);

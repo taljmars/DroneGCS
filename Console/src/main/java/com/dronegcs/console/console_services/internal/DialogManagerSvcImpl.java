@@ -1,5 +1,6 @@
 package com.dronegcs.console.console_services.internal;
 
+import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.generic_tools.devices.KeyBoardController;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -7,7 +8,6 @@ import javafx.scene.layout.Priority;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
 
 import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
@@ -20,9 +20,9 @@ import java.util.Vector;
  * Created by taljmars on 3/8/17.
  */
 @Component
-public class DialogManagerSvcImpl implements DialogManagerSvc
-{
-    @Autowired @NotNull(message = "Internal Error: Failed to get keyboard controller")
+public class DialogManagerSvcImpl implements DialogManagerSvc {
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get keyboard controller")
     private KeyBoardController keyboardController;
 
 
@@ -45,7 +45,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc
         alert.setHeaderText(null);
         alert.setContentText(msg);
         Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK ? true : false;
+        return result.get() == ButtonType.OK;
     }
 
     public boolean showErrorMessageDialog(String msg, Exception exception) {
@@ -80,7 +80,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc
         alert.getDialogPane().setExpandableContent(expContent);
 
         Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK ? true : false;
+        return result.get() == ButtonType.OK;
     }
 
     public int showOptionsDialog(String text, String title, Object object2, String[] options,

@@ -1,35 +1,40 @@
 package com.dronegcs.console.controllers;
 
 import com.generic_tools.devices.KeyBoardController;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.dronegcs.console.controllers.AppConfig.context;
-
 /**
  * Created by taljmars on 3/13/17.
  */
-@Lazy
-//@SpringBootApplication
-@Configuration
-public class GuiAppConfig
-{
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 650;
-    public static final String STYLE_FILE = "/com/dronegcs/console/application.css";
+@Component
+public class GuiAppConfig {
+    private final static Logger LOGGER = LoggerFactory.getLogger(GuiAppConfig.class);
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 650;
+    private static final String STYLE_FILE = "/com/dronegcs/console/application.css";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    @Autowired
+    private KeyBoardController keyBoardController;
+    
     private Stage stage;
-    private Scene scene;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.stage = primaryStage;
@@ -39,13 +44,22 @@ public class GuiAppConfig
         Parent root = (Parent) load("/com/dronegcs/console/views/DashboardView.fxml");
         root.setStyle("-fx-background-color: whitesmoke;");
         root.getStylesheets().add(STYLE_FILE);
-        scene = new Scene(root, WIDTH, HEIGHT);
-        KeyBoardController keyboardController = context.getBean(KeyBoardController.class);
-        scene.setOnKeyPressed(keyboardController);
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
+        scene.setOnKeyPressed(keyBoardController);
         stage.setResizable(false);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                applicationContext.close();
+            }
+        });
+    }
+
+    public Stage getRootStage() {
+        return stage;
     }
 
     private FXMLLoader getFXMLLoaderForUrl(String url) {
@@ -56,12 +70,15 @@ public class GuiAppConfig
         fxmlloader.setControllerFactory(new Callback<Class<?>, Object>() {
             @Override
             public Object call(Class<?> clazz) {
-                System.out.print("Fetch bean name '" + clazz + "' ");
-                Object obj = context.getBean(clazz);
-                if (obj != null)
-                    System.out.println("[SUCCESS :'" + obj + "']");
-                else
-                    System.err.println("[FAIL]");
+                Object obj = applicationContext.getBean(clazz);
+                String resultData;
+                if (obj != null) {
+                    resultData = "[SUCCESS :'" + obj + "']";
+                } else {
+                    resultData = "[FAIL]";
+                }
+                LOGGER.info("Fetch bean name '{}' {}", clazz, resultData);
+
                 return obj;
             }
         });
@@ -74,8 +91,7 @@ public class GuiAppConfig
             InputStream fxmlStream = AppConfig.class.getResourceAsStream(url);
             FXMLLoader fxmlLoader = getFXMLLoaderForUrl(url);
             return fxmlLoader.load(fxmlStream);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -88,8 +104,7 @@ public class GuiAppConfig
             fxmlLoader.getNamespace().put("prefWidth", width);
             fxmlLoader.getNamespace().put("prefHeight", height);
             return fxmlLoader.load(fxmlStream);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }

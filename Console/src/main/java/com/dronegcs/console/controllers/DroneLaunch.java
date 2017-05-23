@@ -1,52 +1,44 @@
 package com.dronegcs.console.controllers;
 
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
-import com.generic_tools.environment.Environment;
-import javafx.application.Application;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-public class DroneLaunch extends Application {
-	
-	@Override
+@SpringBootApplication
+public class DroneLaunch extends AbstractJavaFxApplicationSupport {
+    private final static Logger LOGGER = LoggerFactory.getLogger(DroneLaunch.class);
+
+    @Autowired
+    private GlobalStatusSvc globalStatus;
+
+    @Autowired
+    private GuiAppConfig guiAppConfig;
+
+    @Override
     public void start(Stage primaryStage) {
-		try {
-			GlobalStatusSvc globalStatus= AppConfig.context.getBean(GlobalStatusSvc.class);
+        //Validating serial device exists
+        globalStatus.setAntennaConnection(true);
+        if (Paths.get("/dev/ttyACM0").toFile().exists() && !Paths.get("/dev/ttyS85").toFile().exists()) {
+            LOGGER.warn("************************************************************************");
+            LOGGER.warn("************************************************************************");
+            LOGGER.warn("Soft link to Arduino doesn't exist, please run the following command in order to set it right: 'sudo ln -s /dev/ttyACM0 /dev/ttyS85' and run it again");
+            LOGGER.warn("************************************************************************");
+            LOGGER.warn("************************************************************************");
+            globalStatus.setAntennaConnection(false);
+            //System.exit(-1);
+        }
 
-			//Validating serial device exists
-			globalStatus.setAntennaConnection(true);
-			if (Paths.get("/dev/ttyACM0").toFile().exists() &&
-					!Paths.get("/dev/ttyS85").toFile().exists() ) {
-				System.err.println("************************************************************************");
-				System.err.println("************************************************************************\n\n");
-				System.err.println("Soft link to Arduino doesn't exist, please run the following command "
-						+ "in order to set it right:\n'sudo ln -s /dev/ttyACM0 /dev/ttyS85' and run it again");
-				System.err.println("************************************************************************");
-				System.err.println("************************************************************************\n\n");
-				globalStatus.setAntennaConnection(false);
-				//System.exit(-1);
-			}
-
-			Environment environment = AppConfig.context.getBean(Environment.class);
-			environment.setBaseRunningDirectoryByClass(this.getClass());
-			System.err.println("Setting Running base directory as '" + environment.getRunningEnvBaseDirectory() + "'");
-
-			GuiAppConfig guiAppConfig = AppConfig.context.getBean(GuiAppConfig.class);
-
-			guiAppConfig.setPrimaryStage(primaryStage);
-			guiAppConfig.showMainScreen();
-
-		}
-		catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        guiAppConfig.setPrimaryStage(primaryStage);
+        guiAppConfig.showMainScreen();
     }
-	
-	public static void main(String[] args) {
-        launch(args);
+
+    public static void main(String[] args) {
+        launchApp(DroneLaunch.class, args);
     }
 
 }

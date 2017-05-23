@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.Pane?>
+<Pane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.viewer_console.MapView">
+	<SplitPane fx:id="splitPane" dividerPositions="0.2" prefHeight="650.0" prefWidth="650.0">
+		<items>
+			<Pane fx:id="left" prefHeight="650.0" prefWidth="150.0" />
+			<Pane fx:id="right" prefHeight="650.0" prefWidth="500.0" />
+		</items>
+	</SplitPane>
+</Pane>
