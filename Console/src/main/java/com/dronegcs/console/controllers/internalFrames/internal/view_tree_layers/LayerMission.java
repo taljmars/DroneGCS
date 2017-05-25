@@ -5,7 +5,6 @@ import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
-import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapLineImpl;
 import com.gui.core.mapViewerObjects.MapMarkerCircle;

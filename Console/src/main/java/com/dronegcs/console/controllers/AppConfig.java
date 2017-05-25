@@ -64,8 +64,8 @@ public class AppConfig {
 			Service service = Service.create(url, qName);
 			return service.getPort(clz);
 		}
-		catch (MalformedURLException e) {
-			e.printStackTrace();
+		catch (Throwable e) {
+			System.out.print("Failed to connect to the database server, " + e.getMessage());
 		}
 		return null;
 	}

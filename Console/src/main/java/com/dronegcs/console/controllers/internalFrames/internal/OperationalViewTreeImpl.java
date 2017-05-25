@@ -486,7 +486,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		List<BaseObject> missionList = missionsManager.getAllMissions();
 
 		Map<String, BaseObject> map = new HashMap<>();
-		missionList.stream().forEach((BaseObject baseObject) -> map.put(baseObject.getKeyId().getObjId(), baseObject));
+		missionList.stream().forEach((BaseObject baseObject) -> map.put(baseObject.getKeyId().getObjId().toString(), baseObject));
 
 		Platform.runLater(() -> {
 			System.err.println("Mission group " + missionsGroup.getChildens());

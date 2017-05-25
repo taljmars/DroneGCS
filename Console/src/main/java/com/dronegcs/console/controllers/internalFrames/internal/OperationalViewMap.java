@@ -23,7 +23,6 @@ package com.dronegcs.console.controllers.internalFrames.internal;
 
 import java.awt.Point;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
 import com.dronedb.persistence.scheme.*;
@@ -415,7 +414,14 @@ OnDroneListener, EventHandler<ActionEvent> {
 
 		menuItemMissionSetTakeOff.setOnAction( arg -> {
 			try {
-				missionEditor.addTakeOff();
+				String val = dialogManagerSvc.showInputDialog("Choose altitude", "",null, null, "5");
+        		if (val == null) {
+            		loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkTakeoff canceled");
+            		dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff must be defined with height");
+            		return;
+        		}
+        		double altitude = Double.parseDouble((String) val);
+				missionEditor.addTakeOff(altitude);
 				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
 				modifyiedLayerMissionOriginal.regenerateMapObjects();
 			}

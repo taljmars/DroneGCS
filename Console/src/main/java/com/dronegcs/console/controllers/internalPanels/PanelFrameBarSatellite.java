@@ -1,7 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels;
 
 import com.dronedb.persistence.ws.internal.SessionsSvcRemote;
-import com.dronegcs.console.controllers.internalFrames.InternalFrameVideo;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
@@ -14,7 +13,6 @@ import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapTreeObjects.Layer;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
