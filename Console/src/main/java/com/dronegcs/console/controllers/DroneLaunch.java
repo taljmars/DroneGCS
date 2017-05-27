@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers;
 
+import com.dronegcs.console_plugin.exceptions.ClientPluginException;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.environment.Environment;
 import javafx.application.Application;
@@ -16,7 +17,6 @@ public class DroneLaunch extends Application {
 			GlobalStatusSvc globalStatus= AppConfig.context.getBean(GlobalStatusSvc.class);
 
 			//Validating serial device exists
-			globalStatus.setAntennaConnection(true);
 			if (Paths.get("/dev/ttyACM0").toFile().exists() &&
 					!Paths.get("/dev/ttyS85").toFile().exists() ) {
 				System.err.println("************************************************************************");
@@ -25,8 +25,10 @@ public class DroneLaunch extends Application {
 						+ "in order to set it right:\n'sudo ln -s /dev/ttyACM0 /dev/ttyS85' and run it again");
 				System.err.println("************************************************************************");
 				System.err.println("************************************************************************\n\n");
-				globalStatus.setAntennaConnection(false);
 				//System.exit(-1);
+			}
+			else {
+				globalStatus.setComponentStatus(GlobalStatusSvc.Component.ANTENNA, true);
 			}
 
 			Environment environment = AppConfig.context.getBean(Environment.class);
@@ -39,9 +41,9 @@ public class DroneLaunch extends Application {
 			guiAppConfig.showMainScreen();
 
 		}
-		catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (Exception e) {
+			System.err.println("Terminating launch, " + e.getMessage());
+			System.exit(-1);
 		}
     }
 	

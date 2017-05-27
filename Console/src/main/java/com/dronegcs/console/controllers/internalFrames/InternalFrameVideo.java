@@ -96,12 +96,12 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 			detector = new Detector(1);
 			detector.setTracker(null);
 			detector.addListener(this);
+			globalStatusSvc.setComponentStatus(GlobalStatusSvc.Component.DETECTOR, true);
 		}
 		catch (Throwable e) {
 			System.err.println("Failed to initialize detector: " + e.getMessage());
 			System.err.println("Flight detector and camera will not be accessible");
 			loggerDisplayerSvc.logError("Failed to initialize detector: " + e.getMessage());
-			globalStatusSvc.setDetectorConnected(false);
 			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
 		}
 

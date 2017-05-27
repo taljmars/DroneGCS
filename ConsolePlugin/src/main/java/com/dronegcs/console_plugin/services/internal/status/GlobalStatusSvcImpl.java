@@ -3,32 +3,32 @@ package com.dronegcs.console_plugin.services.internal.status;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Created by oem on 5/17/17.
+ * Created by taljmars on 5/17/17.
  */
 @Component
 public class GlobalStatusSvcImpl implements GlobalStatusSvc {
 
-    private boolean antennaConnected;
-    private boolean detectorConnected;
+    private Map<Component, Boolean> componentBooleanMap;
 
-    @Override
-    public boolean isAntennaConnected() {
-        return antennaConnected;
+    @PostConstruct
+    private void init() {
+        componentBooleanMap = new HashMap<>(Component.values().length);
+        for (Component component : Component.values())
+            setComponentStatus(component, false);
     }
 
     @Override
-    public void setAntennaConnection(boolean isConnected) {
-        this.antennaConnected = isConnected;
+    public boolean isComponentOn(Component component) {
+        return componentBooleanMap.get(component).equals(true);
     }
 
     @Override
-    public boolean isDetectorConnected() {
-        return detectorConnected;
-    }
-
-    @Override
-    public void setDetectorConnected(boolean isConnected) {
-        this.detectorConnected = isConnected;
+    public void setComponentStatus(Component component, boolean isConnected) {
+        componentBooleanMap.put(component, isConnected);
     }
 }

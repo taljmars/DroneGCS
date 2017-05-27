@@ -1,15 +1,17 @@
 package com.dronegcs.console_plugin.services;
 
 /**
- * Created by oem on 5/17/17.
+ * Created by taljmars on 5/17/17.
  */
 public interface GlobalStatusSvc {
 
-    boolean isAntennaConnected();
+    enum Component {
+        ANTENNA,
+        DETECTOR
+    }
 
-    void setAntennaConnection(boolean isConnected);
+    boolean isComponentOn(GlobalStatusSvc.Component component);
 
-    boolean isDetectorConnected();
+    void setComponentStatus(GlobalStatusSvc.Component component, boolean isConnected);
 
-    void setDetectorConnected(boolean isConnected);
 }

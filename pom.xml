@@ -131,11 +131,11 @@
             <systemPath>${java.home}/../../../../local/jdk1.8.0_121/jre/lib/ext/jfxrt.jar</systemPath>
         </dependency>
 
-        <dependency>
-            <groupId>opencv-310</groupId>
-            <artifactId>opencv-310</artifactId>
-            <version>RELEASE</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>opencv-310</groupId>-->
+            <!--<artifactId>opencv-310</artifactId>-->
+            <!--<version>RELEASE</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 

@@ -94,7 +94,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable{
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		updateFrameMapPath();
 
-		if (!globalStatusSvc.isDetectorConnected()) {
+		if (!globalStatusSvc.isComponentOn(GlobalStatusSvc.Component.DETECTOR)) {
 			System.err.println("Detector in not loaded, setting button off");
 			btnCamera.setOnDragDetected(mouseEvent -> dialogManagerSvc.showAlertMessageDialog("Camera detector was not loaded, feature is off"));
 		}
