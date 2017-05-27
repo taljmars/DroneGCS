@@ -34,15 +34,47 @@
             <version>1.0</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.dronedb</groupId>-->
-            <!--<artifactId>GeneratedServerClasses</artifactId>-->
-            <!--<version>1.0</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>com.image_processing</groupId>
             <artifactId>Detector</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mapviewer</groupId>
+            <artifactId>GeoTools</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>javafx</artifactId>
+            <version>RELEASE</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../../../../local/jdk1.8.0_121/jre/lib/ext/jfxrt.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml</groupId>
+            <artifactId>classmate</artifactId>
+            <version>1.3.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.el</groupId>
+            <artifactId>el-ri</artifactId>
             <version>1.0</version>
         </dependency>
 

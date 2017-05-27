@@ -41,7 +41,8 @@ public class DroneLaunch extends Application {
 			guiAppConfig.showMainScreen();
 
 		}
-		catch (Exception e) {
+		catch (Throwable e) {
+			e.printStackTrace();
 			System.err.println("Terminating launch, " + e.getMessage());
 			System.exit(-1);
 		}
