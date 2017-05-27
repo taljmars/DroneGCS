@@ -106,6 +106,14 @@
                 <version>${slf4jVersion}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.rxtx</groupId>
+                <artifactId>rxtx</artifactId>
+                <version>RELEASE</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/ExtLib/RXTX/Linux32/RXTXcomm.jar</systemPath>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
