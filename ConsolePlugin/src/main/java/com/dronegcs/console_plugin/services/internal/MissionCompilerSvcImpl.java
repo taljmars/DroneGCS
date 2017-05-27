@@ -8,6 +8,8 @@ import com.dronegcs.console_plugin.services.internal.convertors.MavlinkItemToDat
 import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -19,20 +21,24 @@ import javax.validation.constraints.NotNull;
  * Created by taljmars on 3/18/17.
  */
 @Component
-public class MissionCompilerSvcImpl implements MissionCompilerSvc
-{
-    @Autowired @NotNull(message = "Internal Error: Failed to get application context")
+public class MissionCompilerSvcImpl implements MissionCompilerSvc {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MissionCompilerSvcImpl.class);
+
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get application context")
     private ApplicationContext aplApplicationContext;
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get drone")
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get mission manager")
     private MissionsManager missionsManager;
 
     @PostConstruct
     private void init() {
-        System.err.println("Mission Compiler started");
+        LOGGER.info("Mission Compiler started");
     }
 
     @Override

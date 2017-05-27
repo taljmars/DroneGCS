@@ -5,10 +5,6 @@ import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
-import com.generic_tools.devices.SerialConnection;
-import com.generic_tools.logger.Logger;
-import com.generic_tools.validations.RuntimeValidator;
-import com.generic_tools.validations.ValidatorResponse;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
 import com.dronegcs.mavlink.core.flightControllers.FlightController;
@@ -20,6 +16,10 @@ import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
+import com.generic_tools.devices.SerialConnection;
+import com.generic_tools.logger.Logger;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -33,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.util.Pair;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +46,7 @@ import java.util.Vector;
 
 @Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PanelButtonBoxSatellite.class);
 	
 	@NotNull @FXML private Button btnConnect;
 	@NotNull @FXML private Button btnSyncDrone;
@@ -164,7 +166,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@FXML
 	public void ButtonSyncOnAction(ActionEvent actionEvent) {
-		System.out.println("Sync");
+		LOGGER.info("Sync");
     	loggerDisplayerSvc.logGeneral("Syncing Drone parameters");
 		drone.getParameters().refreshParameters();
 	}
@@ -237,13 +239,13 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		logger.LogGeneralMessege("MavlinkTakeoff thread Stated!");
 	    if (!drone.getState().isArmed()) {
 	    	if (dialogManagerSvc.showAlertMessageDialog("Quad will automatically be armed")) {
-	    		System.out.println("User notified quad was armed");
+	    		LOGGER.info("User notified quad was armed");
 	    	}
 	    }
 					
 		String val = dialogManagerSvc.showInputDialog("Choose altitude", "", null, null, "5");
 		if (val == null) {
-			System.out.println(getClass().getName() + " MavlinkTakeoff canceled");
+			LOGGER.info(getClass().getName() + " MavlinkTakeoff canceled");
 			takeOffThreadRunning = false;
 				logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
 			return;
@@ -291,7 +293,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		if (btnFollowBeaconStart.isSelected()) {
     		if (!drone.getState().isArmed()) {
     			if (dialogManagerSvc.showAlertMessageDialog("Quad will automatically be armed")) {
-    				System.out.println("User was notified about arming quad");
+    				LOGGER.info("User was notified about arming quad");
     			}
     		}
         		
@@ -498,7 +500,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 
 	@Override
 	public void onBeginReceivingParameters() {
-		System.out.println(getClass() + " Start receiving parameters");
+		LOGGER.info(getClass() + " Start receiving parameters");
 	}
 
 	@Override
@@ -510,7 +512,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 
 	@Override
 	public void onEndReceivingParameters(List<Parameter> parameter) {
-		System.out.println(getClass() + " Finish receiving parameters");
+		LOGGER.info(getClass() + " Finish receiving parameters");
 		setButtonControl(true);
 	}
 	

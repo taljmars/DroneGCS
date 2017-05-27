@@ -81,7 +81,9 @@ mkdir -p $EXT_MODULE_DIR
 mkdir -p CMpub/lib
 
 file="./ModulesDep"
+echo "Here"
 while read -r line; do
+echo "Here1 + ${line}"
 	[[ "$line" =~ ^#.*$ ]] && continue
 	[[ "X$line" == "X" ]] && continue
 	echo "Loading module '${line}'"
