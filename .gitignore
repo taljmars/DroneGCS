@@ -1,29 +1,25 @@
 # Windows image file caches
+ext
 Thumbs.db
 ehthumbs.db
 
 # Folder config file
 Desktop.ini
-DroneGCS.iml
+*.iml
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
 # Igone bin directory - talma
-ExRunnable/Cache/
-ExRunnable/Logs/
-bin/
-Logs/
-Cache/
-.idea/
-CMpub/
-target/
-
+.idea
+target
+logs
+conf
 
 # Irrelevant logs - talma
+log.html
 *.log
 *.elg
-
 
 # Windows Installer files
 *.cab
