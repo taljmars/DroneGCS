@@ -58,15 +58,16 @@
             <!--<scope>system</scope>-->
             <!--<systemPath>${java.home}/../../../../local/jdk1.8.0_121/jre/lib/ext/jfxrt.jar</systemPath>-->
         <!--</dependency>-->
-
+<!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>javafx</artifactId>
             <version>RELEASE</version>
             <scope>system</scope>
-            <systemPath>${sun.boot.class.path}/${java.home}/lib/jfxrt.jar</systemPath>
+            <systemPath>${java.home}/lib/ext/jfxrt.jar:${sun.boot.class.path}</systemPath>
+            <systemPath>${java.home}/lib/ext/jfxrt.jar:${sun.boot.class.path}</systemPath>
         </dependency>
-
+-->
         <dependency>
             <groupId>com.fasterxml</groupId>
             <artifactId>classmate</artifactId>
