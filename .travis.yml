@@ -30,7 +30,7 @@ after_success:
 
 cache:
   directories:
-    - '$HOME/.m2/repository'
+    - '$HOME/.m2/repository1'
 
 notifications:
   email: true
