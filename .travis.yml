@@ -12,8 +12,8 @@ addons:
       - oracle-java8-installer
 
 script:
+  - rm -rf $HOME/.m2/repository
   - mvn clean package -B -V
-  - rm $HOME/.m2/repository
 
 after_success:
   - sh set_tags.sh
