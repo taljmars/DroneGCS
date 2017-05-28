@@ -38,6 +38,23 @@
             <version>${slf4jVersion}</version>
         </dependency>
 
+        <dependency>
+            <groupId>RXTXcomm</groupId>
+            <artifactId>RXTXcomm</artifactId>
+        </dependency>
+
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>RXTXcomm</groupId>
+                <artifactId>RXTXcomm</artifactId>
+                <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../ExtLib/RXTX/Linux32/RXTXcomm.jar</systemPath>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
