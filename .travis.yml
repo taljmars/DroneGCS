@@ -13,6 +13,7 @@ addons:
 
 script:
   - mvn clean package -B -V
+  - rm $HOME/.m2/repository
 
 after_success:
   - sh set_tags.sh
@@ -30,7 +31,7 @@ after_success:
 
 cache:
   directories:
-    - '$HOME/.m2/repository1'
+    - '$HOME/.m2/repository'
 
 notifications:
   email: true
