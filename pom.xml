@@ -52,6 +52,19 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--Local dependency module-->
+            <dependency>
+                <groupId>com.dronegcs</groupId>
+                <artifactId>Console</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dronegcs</groupId>
+                <artifactId>ConsolePlugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
@@ -107,9 +120,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.rxtx</groupId>
-                <artifactId>rxtx</artifactId>
-                <version>RELEASE</version>
+                <groupId>RXTXComm</groupId>
+                <artifactId>RXTXComm</artifactId>
+                <version>1.0</version>
                 <scope>system</scope>
                 <systemPath>${project.basedir}/ExtLib/RXTX/Linux32/RXTXcomm.jar</systemPath>
             </dependency>
