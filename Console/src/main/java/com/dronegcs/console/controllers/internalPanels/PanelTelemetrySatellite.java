@@ -67,7 +67,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");	
+			throw new RuntimeException("Not a Singleton");
 		
 		drone.addDroneListener(this);
 	}
@@ -84,6 +84,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	}
 	
 	protected void SetFlightModeLabel(String name) {
+		System.out.print("Update telemetry: " + name);
 		lblFlightMode.setText(name);
 	}
 	
@@ -185,6 +186,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		Platform.runLater( () -> {
+			System.err.println("Event (Teemeytry) " + event.toString());
 			switch (event) {
 				case ORIENTATION:
 					SetLblHeight(drone.getAltitude().getAltitude());
@@ -223,7 +225,8 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 					return;
 				case BATTERY:
 					SetBattery(drone.getBattery().getBattRemain());
-					Platform.runLater( () -> batteryBar.setProgress(drone.getBattery().getBattRemain() / 100.0));
+					//Platform.runLater( () -> batteryBar.setProgress(drone.getBattery().getBattRemain() / 100.0));
+					batteryBar.setProgress(drone.getBattery().getBattRemain() / 100.0);
 					return;
 				case MODE:
 					SetFlightModeLabel(drone.getState().getMode().getName());

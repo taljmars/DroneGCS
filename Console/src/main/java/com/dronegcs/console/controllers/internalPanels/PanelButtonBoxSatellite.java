@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE.MAV_TYPE_QUADROTOR;
+
 @Component
 public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener, OnParameterManagerListener, Initializable {
 	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PanelButtonBoxSatellite.class);
@@ -115,7 +117,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
 		drone.addDroneListener(this);
 		drone.getParameters().addParameterListener(this);
@@ -126,7 +128,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		setButtonControl(false);
 		
 		Vector<ApmModes> flightModes = new Vector<ApmModes>();
-		flightModes.addAll(FXCollections.observableArrayList( ApmModes.values()));
+		flightModes.addAll(FXCollections.observableArrayList( ApmModes.getModeList(MAV_TYPE_QUADROTOR)));
 		flightModesCombo.getItems().addAll(flightModes);
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
@@ -415,6 +417,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 			dialogManagerSvc.showAlertMessageDialog("Flight mode must be set");
 		else
 			drone.getState().changeFlightMode((ApmModes) flightModesCombo.getValue());
+			drone.notifyDroneEvent(DroneEventsType.MODE);
 		return;
 	}
 

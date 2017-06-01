@@ -141,7 +141,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>assembly-linux.xml</descriptor>
+                                <descriptor>assembly-linux-32.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

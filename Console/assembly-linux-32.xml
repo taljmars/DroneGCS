@@ -66,12 +66,12 @@
             <destName>opencv-310.jar</destName>
         </file>
         <file>
-            <source>../ExtLib/RXTX/Linux64/native/librxtxSerial.so</source>
+            <source>../ExtLib/RXTX/Linux32/native/librxtxSerial.so</source>
             <outputDirectory>native</outputDirectory>
             <destName>librxtxSerial.so</destName>
         </file>
         <file>
-            <source>../ExtLib/RXTX/Linux64/RXTXcomm.jar</source>
+            <source>../ExtLib/RXTX/Linux32/RXTXcomm.jar</source>
             <outputDirectory>lib</outputDirectory>
             <destName>RXTXcomm.jar</destName>
         </file>
