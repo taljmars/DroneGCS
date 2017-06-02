@@ -14,13 +14,13 @@
         </encoder>
     </appender>
 
-    <logger name="com.dronegcs" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>
-    <logger name="com.generic_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>
-    <logger name="com.geo_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>
+    <!--<logger name="com.dronegcs" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
+    <!--<logger name="com.generic_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
+    <!--<logger name="com.geo_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
 
     <root level="DEBUG">
         <appender-ref ref="FILE-AUDIT"/>
-        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>

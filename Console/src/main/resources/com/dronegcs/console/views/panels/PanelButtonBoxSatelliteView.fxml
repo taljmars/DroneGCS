@@ -61,28 +61,32 @@
 					<Button fx:id="btnHoldPosition" maxWidth="$buttonWidth" onAction="#ButtonHoldPositionOnAction" text="Hold Position" GridPane.columnIndex="1" GridPane.rowIndex="3" >
 						<graphic><ImageView fx:id="btnHoldPositionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
 					</Button>
-					
+
 					<ToggleButton fx:id="btnStartMission" maxWidth="$buttonWidth" onAction="#ButtonStartMissionOnAction" text="Start Mission" GridPane.rowIndex="4" >
-						<graphic><ImageView fx:id="btnStartMissionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
+						<graphic><ImageView fx:id="btnStartMissionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>
 					</ToggleButton>
-					
-					<ToggleButton fx:id="btnStartPerimeter" maxWidth="$buttonWidth" onAction="#ButtonStartPerimeterOnAction" text="Force Perimeter" GridPane.columnIndex="1" GridPane.rowIndex="4" >
-						<graphic><ImageView fx:id="btnStartPerimeterImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
+
+					<ToggleButton fx:id="btnFetchMission" maxWidth="$buttonWidth" onAction="#ButtonFetchDroneMission" text="Fetch Mission" GridPane.columnIndex="1" GridPane.rowIndex="4" >
+						<!--<graphic><ImageView fx:id="btnStartMissionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>-->
 					</ToggleButton>
-					
-					<ToggleButton fx:id="btnFollowBeaconStart" maxWidth="$buttonWidth" onAction="#ButtonFollowBeaconOnAction" text="Follow Beacon" GridPane.rowIndex="5" >
-						<graphic><ImageView fx:id="btnFollowBeaconStartImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
+
+					<ToggleButton fx:id="btnStartPerimeter" maxWidth="$buttonWidth" onAction="#ButtonStartPerimeterOnAction" text="Force Perimeter" GridPane.rowIndex="5" >
+						<graphic><ImageView fx:id="btnStartPerimeterImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>
 					</ToggleButton>
-					
-					<Button fx:id="btnFollowBeaconShow" maxWidth="$buttonWidth" onAction="#ButtonShowBeaconOnAction" text="Show Beacon" GridPane.columnIndex="1" GridPane.rowIndex="5" >
+
+					<ToggleButton fx:id="btnFollowBeaconStart" maxWidth="$buttonWidth" onAction="#ButtonFollowBeaconOnAction" text="Follow Beacon" GridPane.rowIndex="6" >
+						<graphic><ImageView fx:id="btnFollowBeaconStartImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>
+					</ToggleButton>
+
+					<Button fx:id="btnFollowBeaconShow" maxWidth="$buttonWidth" onAction="#ButtonShowBeaconOnAction" text="Show Beacon" GridPane.columnIndex="1" GridPane.rowIndex="6" >
 						<graphic><ImageView fx:id="btnFollowBeaconShowImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
 					</Button>
 					
-					<Button fx:id="btnExit" maxWidth="$buttonWidth" onAction="#ButtonExitOnAction" text="Exit" GridPane.rowIndex="6" >
+					<Button fx:id="btnExit" maxWidth="$buttonWidth" onAction="#ButtonExitOnAction" text="Exit" GridPane.rowIndex="7" >
 						<graphic><ImageView fx:id="btnExitImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 
 					</Button>
 					
-					<GridPane GridPane.columnIndex="1" GridPane.rowIndex="6" >
+					<GridPane GridPane.columnIndex="1" GridPane.rowIndex="7" >
 						<ComboBox fx:id="flightModesCombo" prefHeight="$buttonHeight" prefWidth="150.0" />
 						<Button fx:id="btnSetMode" onAction="#ButtonSetModeOnAction" GridPane.columnIndex="1" >
 							<graphic><ImageView fx:id="btnSetModeImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic> 

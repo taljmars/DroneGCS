@@ -413,12 +413,18 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@FXML
 	public void ButtonSetModeOnAction(ActionEvent actionEvent) {
-		if (flightModesCombo.getValue() == null)
+		if (flightModesCombo.getValue() == null) {
 			dialogManagerSvc.showAlertMessageDialog("Flight mode must be set");
-		else
+		}
+		else {
 			drone.getState().changeFlightMode((ApmModes) flightModesCombo.getValue());
 			drone.notifyDroneEvent(DroneEventsType.MODE);
-		return;
+		}
+	}
+
+	@FXML
+	public void ButtonFetchDroneMission(ActionEvent actionEvent) {
+		drone.getWaypointManager().getWaypoints();
 	}
 
 	private boolean TryLand() {

@@ -10,6 +10,8 @@ import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkLand;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkRegionOfInterest;
 import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkWaypoint;
 import com.geo_tools.Coordinate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.util.Iterator;
 @Component
 public class DatabaseToMavlinkItemConverter {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseToMavlinkItemConverter.class);
+
     @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
     private MissionsManager missionsManager;
 
@@ -33,6 +37,7 @@ public class DatabaseToMavlinkItemConverter {
 
     public DroneMission convert(Mission mission, DroneMission droneMission) {
         this.droneMission = droneMission;
+        this.droneMission.setDefaultAlt(mission.getDefaultAlt());
         Iterator<MissionItem> itr = missionsManager.getMissionItems(mission).iterator();
         while (itr.hasNext())
             eval(itr.next());
@@ -43,6 +48,7 @@ public class DatabaseToMavlinkItemConverter {
     public void eval(MissionItem missionItem) {
         // Using reflection to call the relevant function
         // It is a factory pattern based on reflection
+        LOGGER.debug("Converting {}", missionItem);
         Method[] allMethods = this.getClass().getDeclaredMethods();
         for (int i = 0 ; i < allMethods.length ; i++) {
             Method method = allMethods[i];
@@ -55,13 +61,16 @@ public class DatabaseToMavlinkItemConverter {
 
             method.setAccessible(true);
             try {
-                method.invoke(missionItem);
+                method.invoke(this, missionItem);
+                return;
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to convert missionItem from DB to Mavlink", e);
             }
             break;
         }
+
+        LOGGER.error("Found unknown type: {}, Object: {}", missionItem.getClass(), missionItem);
     }
 
     private void visit(Land land) {
@@ -105,5 +114,29 @@ public class DatabaseToMavlinkItemConverter {
         MavlinkRegionOfInterest mavlinkRegionOfInterest = new MavlinkRegionOfInterest(droneMission, coordinate);
         mavlinkRegionOfInterest.setAltitude(regionOfInterest.getAltitude());
         droneMission.addMissionItem(mavlinkRegionOfInterest);
+    }
+
+
+    /**
+     * Dedicated function to find a mission layer with a mission related to the one on the drone
+     * the mission will not be exacly the same:
+     * 1) mission on drone doesn't have a name at this point.
+     * 2) we don't have identifier except coordinates, item amount and types
+     */
+    public boolean isEqual(Mission missionFromDrone, Mission mission) {
+
+        if (missionFromDrone.getDefaultAlt() != mission.getDefaultAlt())
+            return false;
+
+        if (missionFromDrone.getMissionItemsUids().size() != mission.getMissionItemsUids().size())
+            return false;
+
+
+
+        return true;
+    }
+
+    private boolean isEqual(MissionItem missionItemFromDrone, MissionItem mission) {
+        return false;
     }
 }
