@@ -34,9 +34,8 @@ public class AppConfig {
 	public Environment environment() {
 		try {
 			Environment env = new Environment();
-			env.setBaseRunningDirectoryByClass("Drone_GCS");
+			env.setBaseRunningDirectoryByClass(".");
 			LOGGER.debug("Base running environment was set to {}", env.getRunningEnvBaseDirectory());
-            System.err.println("Base running environment was set to " +  env.getRunningEnvBaseDirectory());
 			return env;
 		}
 		catch (URISyntaxException e) {
