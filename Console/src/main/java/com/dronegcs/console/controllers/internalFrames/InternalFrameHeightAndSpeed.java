@@ -34,7 +34,7 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 
-	@Autowired @NotNull(message="Internal Error: Failed to get com.generic_tools.environment")
+	@Autowired @NotNull(message="Internal Error: Failed to get environment")
 	private Environment environment;
 	
 	@Autowired
@@ -65,10 +65,10 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	@PostConstruct
 	private void init() throws URISyntaxException {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
-		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.com.generic_tools.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.com.generic_tools.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv");
 		csv.open(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
 		
 		drone.addDroneListener(this);

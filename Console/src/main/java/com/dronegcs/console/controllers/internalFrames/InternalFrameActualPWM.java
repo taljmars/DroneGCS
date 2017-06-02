@@ -34,7 +34,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 
-	@Autowired @NotNull(message="Internal Error: Failed to get com.generic_tools.environment")
+	@Autowired @NotNull(message="Internal Error: Failed to get environment")
 	private Environment environment;
 	
 	@NotNull @FXML private Pane root;
@@ -66,10 +66,10 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	@PostConstruct
 	private void init() throws URISyntaxException {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
-		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.com.generic_tools.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.com.generic_tools.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.csv");
 		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
 		
 		drone.addDroneListener(this);

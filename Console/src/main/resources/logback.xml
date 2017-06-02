@@ -20,7 +20,7 @@
 
     <root level="DEBUG">
         <appender-ref ref="FILE-AUDIT"/>
-        <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="STDOUT"/>-->
     </root>
 
 </configuration>

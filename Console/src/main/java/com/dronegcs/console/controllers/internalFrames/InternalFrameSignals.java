@@ -34,7 +34,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 
-	@Autowired @NotNull(message="Internal Error: Failed to get com.generic_tools.environment")
+	@Autowired @NotNull(message="Internal Error: Failed to get environment")
 	private Environment environment;
 	
 	@Autowired
@@ -66,10 +66,10 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 	@PostConstruct
 	private void init() throws URISyntaxException {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
-		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "signals.com.generic_tools.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "signals.com.generic_tools.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "signals.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "signals.csv");
 		csv.open(Arrays.asList("Time", "distance", "signal", "noise", "rssi"));
 		
 		drone.addDroneListener(this);

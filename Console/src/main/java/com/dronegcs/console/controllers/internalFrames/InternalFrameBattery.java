@@ -67,10 +67,10 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	@PostConstruct
 	private void init() throws URISyntaxException {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 		
-		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.com.generic_tools.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "battery.com.generic_tools.csv");
+		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
+		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv");
 		csv.open(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
