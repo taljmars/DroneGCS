@@ -53,7 +53,8 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
     }
 
     public static void main(String[] args) {
-    	launchApp(DroneLaunch.class, args);
+		System.setProperty("LOGS.DIR", args[2]);
+		launchApp(DroneLaunch.class, args);
     }
 
 }

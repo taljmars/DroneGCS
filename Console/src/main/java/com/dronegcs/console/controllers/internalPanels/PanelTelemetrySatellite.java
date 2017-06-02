@@ -186,7 +186,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
 		Platform.runLater( () -> {
-			System.err.println("Event (Teemeytry) " + event.toString());
 			switch (event) {
 				case ORIENTATION:
 					SetLblHeight(drone.getAltitude().getAltitude());
