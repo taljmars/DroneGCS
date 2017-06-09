@@ -24,6 +24,15 @@
 				</AnchorPane>
 			</content>
 		</Tab>
+		<Tab text="Statistics">
+			<content>
+				<AnchorPane>
+					<children>
+						<fx:include source="internal/PanelStatisticsView.fxml" />
+					</children>
+				</AnchorPane>
+			</content>
+		</Tab>
 		<Tab text="Mission Builder">
 			<content>
 				<AnchorPane>

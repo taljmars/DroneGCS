@@ -40,7 +40,7 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 	
 	@Override 
