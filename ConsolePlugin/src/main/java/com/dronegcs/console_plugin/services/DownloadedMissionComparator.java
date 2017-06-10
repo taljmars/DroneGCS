@@ -26,11 +26,16 @@ public class DownloadedMissionComparator {
     private MissionsManager missionsManager;
 
     public boolean isEqual(Mission mission, Mission downloadedMission) {
-        if (mission.getDefaultAlt() != downloadedMission.getDefaultAlt())
+        LOGGER.trace("Comparing '{}' and '{}'", mission.getName(), downloadedMission.getName());
+        if (mission.getDefaultAlt() != downloadedMission.getDefaultAlt()) {
+            LOGGER.trace("Mission doesn't have the same default alt");
             return false;
+        }
 
-        if (mission.getMissionItemsUids().size() != downloadedMission.getMissionItemsUids().size())
+        if (mission.getMissionItemsUids().size() != downloadedMission.getMissionItemsUids().size()) {
+            LOGGER.trace("Mission doesn't have the same amount of mission items");
             return false;
+        }
 
 
         Iterator<MissionItem> itrMission = missionsManager.getMissionItems(mission).iterator();
@@ -39,11 +44,15 @@ public class DownloadedMissionComparator {
             MissionItem missionItem = itrMission.next();
             MissionItem dMissionItem = itrDownloadedMission.next();
 
-            if (!missionItem.getClass().equals(dMissionItem.getClass()))
+            if (!missionItem.getClass().equals(dMissionItem.getClass())) {
+                LOGGER.trace("Mission doesn't have the same class order type");
                 return false;
+            }
 
-            if (!eval(missionItem, dMissionItem))
+            if (!eval(missionItem, dMissionItem)) {
+                LOGGER.trace("Mission doesn't have equal item");
                 return false;
+            }
         }
 
         return true;
@@ -52,7 +61,7 @@ public class DownloadedMissionComparator {
     public boolean eval(MissionItem missionItem, MissionItem downloadedMissionItem) {
         // Using reflection to call the relevant function
         // It is a factory pattern based on reflection
-        LOGGER.debug("comparing {} to {}", missionItem, downloadedMissionItem);
+        LOGGER.debug("comparing '{}' to '{}'", missionItem, downloadedMissionItem);
         Method[] allMethods = this.getClass().getDeclaredMethods();
         for (int i = 0 ; i < allMethods.length ; i++) {
             Method method = allMethods[i];
@@ -96,19 +105,21 @@ public class DownloadedMissionComparator {
             waypoint.getYawAngle() == dWaypoint.getYawAngle() &&
             waypoint.getOrbitalRadius() == dWaypoint.getOrbitalRadius() &&
             waypoint.getAcceptanceRadius() == dWaypoint.getAcceptanceRadius() &&
-            waypoint.getDelay() == dWaypoint.getDelay() &&
-            waypoint.getAltitude() == dWaypoint.getAltitude() &&
+            waypoint.getDelay().equals(dWaypoint.getDelay()) &&
+            waypoint.getAltitude().equals(dWaypoint.getAltitude()) &&
             waypoint.isOrbitCCW() == dWaypoint.isOrbitCCW())
+        {
             return true;
+        }
 
         return false;
     }
 
     private boolean visit(Circle circle, Circle dCircle) {
         if (CheckCoordinate(circle, dCircle) &&
-            circle.getAltitude() == dCircle.getAltitude() &&
+            circle.getAltitude().equals(dCircle.getAltitude()) &&
             circle.getTurns() == dCircle.getTurns() &&
-            circle.getRadius() == dCircle.getRadius())
+            circle.getRadius().equals(dCircle.getRadius()))
             return true;
 
         return false;
