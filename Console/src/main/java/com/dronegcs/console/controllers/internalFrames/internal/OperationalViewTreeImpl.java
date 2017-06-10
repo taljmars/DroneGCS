@@ -416,7 +416,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			return;
 		}
 		if (wpEvent.equals(WaypointEvent_Type.WP_UPLOAD)) {
-			loggerDisplayerSvc.logIncoming("Start Updloading Waypoints");
+			loggerDisplayerSvc.logIncoming("Start Uploading Waypoints");
 			return;
 		}
 
