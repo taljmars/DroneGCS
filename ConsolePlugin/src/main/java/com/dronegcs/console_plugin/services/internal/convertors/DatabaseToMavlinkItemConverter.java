@@ -116,27 +116,4 @@ public class DatabaseToMavlinkItemConverter {
         droneMission.addMissionItem(mavlinkRegionOfInterest);
     }
 
-
-    /**
-     * Dedicated function to find a mission layer with a mission related to the one on the drone
-     * the mission will not be exacly the same:
-     * 1) mission on drone doesn't have a name at this point.
-     * 2) we don't have identifier except coordinates, item amount and types
-     */
-    public boolean isEqual(Mission missionFromDrone, Mission mission) {
-
-        if (missionFromDrone.getDefaultAlt() != mission.getDefaultAlt())
-            return false;
-
-        if (missionFromDrone.getMissionItemsUids().size() != mission.getMissionItemsUids().size())
-            return false;
-
-
-
-        return true;
-    }
-
-    private boolean isEqual(MissionItem missionItemFromDrone, MissionItem mission) {
-        return false;
-    }
 }

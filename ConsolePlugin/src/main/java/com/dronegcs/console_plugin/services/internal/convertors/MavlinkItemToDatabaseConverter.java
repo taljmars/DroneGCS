@@ -4,6 +4,7 @@ import com.dronedb.persistence.scheme.Circle;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Takeoff;
 import com.dronedb.persistence.scheme.Waypoint;
+import com.dronedb.persistence.scheme.ReturnToHome;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -72,7 +73,12 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkReturnToHome mavlinkReturnToHome) throws MavlinkConvertionException {
         try{
-            throw new MissionUpdateException("Not implemented yet");
+            LOGGER.debug("Converting Mavlink ReturnToLunch to DB ReturnToLunch");
+            ReturnToHome returnToHome = missionEditor.createReturnToLunch();
+
+            returnToHome.setAltitude(mavlinkReturnToHome.getHeight());
+
+            missionEditor.updateMissionItem(returnToHome);
         }
         catch (MissionUpdateException e) {
             throw new MavlinkConvertionException(e.getMessage());
@@ -82,6 +88,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkTakeoff mavlinkTakeoff) throws MavlinkConvertionException {
         try {
+            LOGGER.debug("Converting Mavlink Takeoff to DB Takeoff");
             Takeoff takeoff = missionEditor.createTakeOff();
 
             takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
