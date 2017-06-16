@@ -75,11 +75,13 @@ public class DatabaseToMavlinkItemConverter {
 
     private void visit(Land land) {
         MavlinkLand mavlinkLand = new MavlinkLand(droneMission, new Coordinate(land.getLat(), land.getLon()));
+        LOGGER.debug("Database Land:\n{}\nWas converted to:\n{}", land, mavlinkLand);
         droneMission.addMissionItem(mavlinkLand);
     }
 
     private void visit(Takeoff takeoff) {
         MavlinkTakeoff mavlinkTakeoff = new MavlinkTakeoff(droneMission, takeoff.getFinishedAlt());
+        LOGGER.debug("Database Takeoff:\n{}\nWas converted to:\n{}", takeoff, mavlinkTakeoff);
         droneMission.addMissionItem(mavlinkTakeoff);
     }
 
@@ -91,6 +93,7 @@ public class DatabaseToMavlinkItemConverter {
         mavlinkWaypoint.setAcceptanceRadius(waypoint.getAcceptanceRadius());
         mavlinkWaypoint.setDelay(waypoint.getDelay());
         mavlinkWaypoint.setAltitude(waypoint.getAltitude());
+        LOGGER.debug("Database Waypoint:\n{}\nWas converted to:\n{}", waypoint, mavlinkWaypoint);
         droneMission.addMissionItem(mavlinkWaypoint);
     }
 
@@ -99,12 +102,14 @@ public class DatabaseToMavlinkItemConverter {
         mavlinkCircle.setAltitude(circle.getAltitude());
         mavlinkCircle.setRadius(circle.getRadius());
         mavlinkCircle.setTurns(circle.getTurns());
+        LOGGER.debug("Database Circle:\n{}\nWas converted to:\n{}", circle, mavlinkCircle);
         droneMission.addMissionItem(mavlinkCircle);
     }
 
     private void visit(ReturnToHome returnToHome) {
         MavlinkReturnToHome mavlinkReturnToHome = new MavlinkReturnToHome(droneMission);
         mavlinkReturnToHome.setHeight(returnToHome.getAltitude());
+        LOGGER.debug("Database ReturnToHome:\n{}\nWas converted to:\n{}", returnToHome, mavlinkReturnToHome);
         droneMission.addMissionItem(mavlinkReturnToHome);
     }
 
@@ -113,6 +118,7 @@ public class DatabaseToMavlinkItemConverter {
         Coordinate coordinate = new Coordinate(regionOfInterest.getLat() ,regionOfInterest.getLon());
         MavlinkRegionOfInterest mavlinkRegionOfInterest = new MavlinkRegionOfInterest(droneMission, coordinate);
         mavlinkRegionOfInterest.setAltitude(regionOfInterest.getAltitude());
+        LOGGER.debug("Database RegionOfInterest:\n{}\nWas converted to:\n{}", regionOfInterest, mavlinkRegionOfInterest);
         droneMission.addMissionItem(mavlinkRegionOfInterest);
     }
 

@@ -77,7 +77,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             ReturnToHome returnToHome = missionEditor.createReturnToLunch();
 
             returnToHome.setAltitude(mavlinkReturnToHome.getHeight());
-
+            LOGGER.debug("Mavlink MavlinkReturnToHome:\n{}\nWas converted to:\n{}", mavlinkReturnToHome, returnToHome);
             missionEditor.updateMissionItem(returnToHome);
         }
         catch (MissionUpdateException e) {
@@ -92,7 +92,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             Takeoff takeoff = missionEditor.createTakeOff();
 
             takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
-
+            LOGGER.debug("Mavlink MavlinkTakeoff:\n{}\nWas converted to:\n{}", mavlinkTakeoff, takeoff);
             missionEditor.updateMissionItem(takeoff);
         }
         catch (MissionUpdateException e) {
@@ -184,7 +184,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             waypoint.setLat(mavlinkWaypoint.getCoordinate().getLat());
             waypoint.setLon(mavlinkWaypoint.getCoordinate().getLon());
             waypoint.setAltitude(mavlinkWaypoint.getAltitude());
-
+            LOGGER.debug("Mavlink MavlinkWaypoint:\n{}\nWas converted to:\n{}", mavlinkWaypoint, waypoint);
             missionEditor.updateMissionItem(waypoint);
         }
         catch (MissionUpdateException e) {
@@ -203,7 +203,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             circle.setLat(mavlinkCircle.getCoordinate().getLat());
             circle.setLon(mavlinkCircle.getCoordinate().getLon());
             circle.setRadius(mavlinkCircle.getRadius());
-
+            LOGGER.debug("Mavlink MavlinkCircle:\n{}\nWas converted to:\n{}", mavlinkCircle, circle);
             missionEditor.updateMissionItem(circle);
         }
         catch (MissionUpdateException e) {
