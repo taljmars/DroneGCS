@@ -1,8 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames;
 
-import com.dronegcs.console.controllers.internalFrames.internal.EditingCell;
-import com.dronegcs.console.controllers.internalFrames.internal.ParamsTableEntry;
-import com.dronegcs.console.controllers.internalPanels.internal.MissionItemTableEntry;
+import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.EditingCell;
+import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -10,9 +9,6 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
-import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
-import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
@@ -21,8 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -39,11 +33,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 

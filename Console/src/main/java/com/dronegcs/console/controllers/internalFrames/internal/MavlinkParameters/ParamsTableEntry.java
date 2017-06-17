@@ -1,4 +1,4 @@
-package com.dronegcs.console.controllers.internalFrames.internal;
+package com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

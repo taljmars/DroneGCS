@@ -1,4 +1,4 @@
-package com.dronegcs.console.controllers.internalFrames.internal;
+package com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters;
 
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import javafx.beans.value.ObservableValue;

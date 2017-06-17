@@ -250,7 +250,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		if (val == null) {
 			LOGGER.info(getClass().getName() + " MavlinkTakeoff canceled");
 			takeOffThreadRunning = false;
-				logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
+			logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
 			return;
 		}
     

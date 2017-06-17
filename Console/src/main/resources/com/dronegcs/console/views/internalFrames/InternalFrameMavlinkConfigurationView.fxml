@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkConfiguration" >
+	<ScrollPane fx:id="sc1" fitToHeight="false" maxHeight="${prefHeight}">
+		<content>
+			<VBox minHeight="${prefHeight}" prefWidth="${prefWidth}">
+				<children>
+					<fx:include source="MavlinkConfigurationSections/FlightModes.fxml" />
+					<Separator maxHeight="10"/>
+				</children>
+			</VBox>
+		</content>
+	</ScrollPane>
+</AnchorPane>
