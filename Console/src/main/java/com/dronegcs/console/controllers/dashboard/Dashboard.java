@@ -45,6 +45,7 @@ import java.util.ResourceBundle;
 
 @Component
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
+
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
     public static final String APP_TITLE = "Quad Ground Station";
 
@@ -277,14 +278,14 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Override
     public void onBeginReceivingParameters() {
-        LOGGER.info("Start Receiving parameters");
+        LOGGER.debug("Start Receiving parameters");
         initProgressBar();
         drone.getStreamRates().prepareStreamRates();
     }
 
     @Override
     public void onParameterReceived(Parameter parameter, int index, int count) {
-        LOGGER.info("Received parameter {}  out of {}", index, count);
+        LOGGER.debug("Received parameter {}/{}: {}", index, count, parameter);
         int prc = drone.getParameters().getPrecentageComplete();
         if (prc > 95) {
             setProgressBar(1);
@@ -298,7 +299,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Override
     public void onEndReceivingParameters(List<Parameter> parameter) {
-        LOGGER.info("Finish receiving parameters");
+        LOGGER.debug("Finish receiving parameters");
         finishProgressBar();
 
         drone.getStreamRates().prepareStreamRates();

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkParams" >
+	<children>
+		<TableView fx:id="table" prefHeight="175.0" prefWidth="1260.0">
+			<columns>
+				<TableColumn fx:id="id" prefWidth="50.0" text="#" />
+				<TableColumn fx:id="name" prefWidth="140.0" text="Name" />
+				<TableColumn fx:id="value" prefWidth="140.0" text="Value" />
+				<TableColumn fx:id="type" prefWidth="150.0" text="Type" />
+				<TableColumn fx:id="update" prefWidth="75.0" text="Update" />
+			</columns>
+		</TableView>
+	</children>
+</AnchorPane>
