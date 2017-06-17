@@ -40,10 +40,14 @@ public class FlightModes implements Initializable, DroneInterfaces.OnParameterMa
     @NotNull @FXML private ComboBox cbFltMode4;
     @NotNull @FXML private ComboBox cbFltMode5;
     @NotNull @FXML private ComboBox cbFltMode6;
+    @NotNull @FXML private ComboBox cbFltMode7;
+    @NotNull @FXML private ComboBox cbFltMode8;
 
-    private static String FLTMODE_PREFIX = "FLTMODE"; // Example: FLTMODE1
+    private static String FLTMODE_FORMAT = "FLTMODE{}"; // Example: FLTMODE1
+    private static String CHA_FORMAT = "CHA{}_OPT"; // Example: CHA7_OPT
 
-    private List<ComboBox> comboBoxList = null;
+    private List<ComboBox> comboBoxFltModeList = null;
+    private List<ComboBox> comboBoxChaOptList = null;
 
     private static Integer TYPE = 2;
 
@@ -54,13 +58,19 @@ public class FlightModes implements Initializable, DroneInterfaces.OnParameterMa
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        comboBoxList = new ArrayList<>();
-        comboBoxList.addAll(Arrays.asList(cbFltMode1, cbFltMode2, cbFltMode3, cbFltMode4, cbFltMode5, cbFltMode6));
+        comboBoxFltModeList = new ArrayList<>();
+        comboBoxFltModeList.addAll(Arrays.asList(cbFltMode1, cbFltMode2, cbFltMode3, cbFltMode4, cbFltMode5, cbFltMode6));
+
+        comboBoxChaOptList = new ArrayList<>();
+        comboBoxChaOptList.addAll(Arrays.asList(cbFltMode7, cbFltMode8));
 
         Vector<ApmModes> flightModes = new Vector<ApmModes>();
         flightModes.addAll(FXCollections.observableArrayList(ApmModes.getModeList(MAV_TYPE_QUADROTOR)));
 
-        for (ComboBox comboBox : comboBoxList)
+        for (ComboBox comboBox : comboBoxChaOptList)
+            comboBox.getItems().addAll(flightModes);
+
+        for (ComboBox comboBox : comboBoxChaOptList)
             comboBox.getItems().addAll(flightModes);
 
         setValues();
@@ -83,8 +93,13 @@ public class FlightModes implements Initializable, DroneInterfaces.OnParameterMa
             return;
         }
 
-        for (int i = 0 ; i < comboBoxList.size() ; i++) {
-            Parameter param = new Parameter(FLTMODE_PREFIX + (i+1), ((ApmModes) comboBoxList.get(i).getValue()).getNumber(), TYPE, "");
+        for (int i = 0 ; i < comboBoxFltModeList.size() ; i++) {
+            Parameter param = new Parameter(String.format(FLTMODE_FORMAT, (i+1)), ((ApmModes) comboBoxFltModeList.get(i).getValue()).getNumber(), TYPE, "");
+            drone.getParameters().sendParameter(param);
+        }
+
+        for (int i = 0 ; i < comboBoxChaOptList.size() ; i++) {
+            Parameter param = new Parameter(String.format(CHA_FORMAT, (i+7)), ((ApmModes) comboBoxChaOptList.get(i).getValue()).getNumber(), TYPE, "");
             drone.getParameters().sendParameter(param);
         }
     }
@@ -101,7 +116,10 @@ public class FlightModes implements Initializable, DroneInterfaces.OnParameterMa
     }
 
     private void setValues() {
-        for (int i = 0 ; i < comboBoxList.size() ; i++)
-            comboBoxList.get(i).setValue(getMode(FLTMODE_PREFIX + (i+1)));
+        for (int i = 0 ; i < comboBoxFltModeList.size() ; i++)
+            comboBoxFltModeList.get(i).setValue(getMode(String.format(FLTMODE_FORMAT, (i+1))));
+
+        for (int i = 0 ; i < comboBoxChaOptList.size() ; i++)
+            comboBoxChaOptList.get(i).setValue(getMode(String.format(CHA_FORMAT, (i+7))));
     }
 }
