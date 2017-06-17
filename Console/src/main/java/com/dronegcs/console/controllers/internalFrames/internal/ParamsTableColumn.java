@@ -4,7 +4,7 @@ public enum ParamsTableColumn {
 	Id ("Id"),
 	Name ("Name"),
 	Value ("Value"),
-	Type ("Type"),
+	Type ("Type");
 	Description ("Description");
 	
     private final String name;
