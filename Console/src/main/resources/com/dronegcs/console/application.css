@@ -16,6 +16,9 @@
 #btnCameraImage {          
 	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
 }
+#btnMavlinkParamsImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/MavlinkParams.png");
+}
 #btnSetModeImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/UpdateQuad.png");
 }

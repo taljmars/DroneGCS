@@ -36,6 +36,10 @@
          <graphic><ImageView fx:id="btnCameraImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
 	  </Button>
 
+	   <Button fx:id="btnMavlinkParams" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone">
+		   <graphic><ImageView fx:id="btnMavlinkParamsImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+	   </Button>
+
 	  <Button fx:id="btnPublish" onMouseClicked="#publish">
          <graphic><ImageView fx:id="btnPublishOffImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
 	  </Button>
