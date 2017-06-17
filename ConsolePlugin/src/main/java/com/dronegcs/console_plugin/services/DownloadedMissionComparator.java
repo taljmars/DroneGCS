@@ -2,6 +2,8 @@ package com.dronegcs.console_plugin.services;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.geo_tools.Coordinate;
+import com.geo_tools.GeoTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,15 @@ public class DownloadedMissionComparator {
     private MissionsManager missionsManager;
 
     public boolean isEqual(Mission mission, Mission downloadedMission) {
-        LOGGER.trace("Comparing '{}' and '{}'", mission.getName(), downloadedMission.getName());
-        if (mission.getDefaultAlt() != downloadedMission.getDefaultAlt()) {
-            LOGGER.trace("Mission doesn't have the same default alt");
-            return false;
-        }
+        LOGGER.debug("Comparing '{}' and '{}'", mission.getName(), downloadedMission.getName());
+        // TODO: enable this code section
+//        if (mission.getDefaultAlt() != downloadedMission.getDefaultAlt()) {
+//            LOGGER.debug("Mission doesn't have the same default alt");
+//            return false;
+//        }
 
         if (mission.getMissionItemsUids().size() != downloadedMission.getMissionItemsUids().size()) {
-            LOGGER.trace("Mission doesn't have the same amount of mission items");
+            LOGGER.debug("Mission doesn't have the same amount of mission items");
             return false;
         }
 
@@ -45,12 +48,12 @@ public class DownloadedMissionComparator {
             MissionItem dMissionItem = itrDownloadedMission.next();
 
             if (!missionItem.getClass().equals(dMissionItem.getClass())) {
-                LOGGER.trace("Mission doesn't have the same class order type");
+                LOGGER.debug("Mission doesn't have the same class order type");
                 return false;
             }
 
             if (!eval(missionItem, dMissionItem)) {
-                LOGGER.trace("Mission doesn't have equal item");
+                LOGGER.debug("Mission doesn't have an equal item");
                 return false;
             }
         }
@@ -138,6 +141,14 @@ public class DownloadedMissionComparator {
     }
 
     private boolean CheckCoordinate(MissionItem m1, MissionItem m2) {
+        Coordinate m1Coordinate = new Coordinate(m1.getLat(), m1.getLon());
+        Coordinate m2Coordinate = new Coordinate(m2.getLat(), m2.getLon());
+        Double distance = GeoTools.getDistance(m1Coordinate, m2Coordinate);
+        LOGGER.debug("Distance is {}", distance);
+        // TODO: Fix the issue where the uploaded coordinate is abit different than in the DB
+        if (distance < 1) {
+            return true;
+        }
         if (m1.getLat().equals(m2.getLat()) && m1.getLon().equals(m2.getLon()))
             return true;
 

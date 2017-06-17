@@ -121,7 +121,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         updateFrameMapPath();
 
         if (!globalStatusSvc.isComponentOn(GlobalStatusSvc.Component.DETECTOR)) {
-            LOGGER.error("Detector in not loaded, setting button off");
+            LOGGER.warn("Detector in not loaded, setting button off");
             btnCamera.setOnDragDetected(mouseEvent -> dialogManagerSvc.showAlertMessageDialog("Camera detector was not loaded, feature is off"));
         }
 
@@ -129,8 +129,8 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-        inPrivateSession = operationalViewTree.hasPrivateSession();
-        if (inPrivateSession) {
+        if (operationalViewTree.hasPrivateSession()) {
+            LOGGER.debug("Private session was found");
             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
         }
     }
@@ -174,17 +174,22 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     @FXML
     private void publish() {
         LOGGER.error("publishing");
+        if (operationalViewMap.isEditingLayer()) {
+            LOGGER.debug("Editor is currently open, must be closed first");
+            dialogManagerSvc.showAlertMessageDialog("Editor is currently open, must be closed first");
+            return;
+        }
         sessionsSvcRemote.publish();
         Collection<MissionClosingPair> missions = missionsManager.closeAllMissionEditors(true);
         missions.forEach((MissionClosingPair missionClosingPair) -> {
-            LOGGER.error("publishing mission " +
+            LOGGER.debug("publishing mission " +
                     " " + missionClosingPair.getMission() +
                     " " + missionClosingPair.getMission().getKeyId().getObjId() +
                     " " + missionClosingPair.getMission().getName() +
                     " " + missionClosingPair.getMission().getMissionItemsUids() +
                     " " + missionClosingPair.getMission().getDefaultAlt());
             Layer layer = operationalViewTree.getLayerByValue(missionClosingPair.getMission());
-            LOGGER.error("Found layer " + layer);
+            LOGGER.debug("Found layer " + layer);
             if (layer instanceof LayerMission) {
                 ((LayerMission) layer).setMission(missionClosingPair.getMission());
                 ((LayerMission) layer).stopEditing();
@@ -196,17 +201,22 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     @FXML
     private void discard() {
-        LOGGER.error("Discarding");
+        LOGGER.debug("Discarding");
+        if (operationalViewMap.isEditingLayer()) {
+            LOGGER.debug("Editor is currently open, must be closed first");
+            dialogManagerSvc.showAlertMessageDialog("Editor is currently open, must be closed first");
+            return;
+        }
         sessionsSvcRemote.discard();
         // Handle mission being editing
         Collection<MissionClosingPair> missions = missionsManager.closeAllMissionEditors(false);
-        LOGGER.error("Cleaning mission: " + missions);
+        LOGGER.debug("Cleaning mission: " + missions);
         missions.forEach((MissionClosingPair missionClosingPair) -> {
             if (missionClosingPair.isDeleted()) {
-                LOGGER.error("Discard / found deleted mission");
+                LOGGER.debug("Discard / found deleted mission");
                 operationalViewTree.removeItemByName(missionClosingPair.getMission().getName());
             } else {
-                LOGGER.error("Discard / reverting mission");
+                LOGGER.debug("Discard / reverting mission");
                 Layer layer = operationalViewTree.getLayerByValue(missionClosingPair.getMission());
                 if (layer == null) {
                     LayerMission layerMission = new LayerMission(missionClosingPair.getMission(), operationalViewMap);
@@ -240,9 +250,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             case MISSION_UPDATED_BY_TABLE:
             case EDITMODE_EXISTING_LAYER_START:
             case PRIVATE_SESSION_STARTED:
+                LOGGER.debug("Private session related event");
                 if (inPrivateSession)
                     break;
-                System.err.print("Changing icons for private session");
+                LOGGER.debug("Changing icons for private session");
                 setImageButton(btnPublish, this.getClass().getResource("/com/dronegcs/console/guiImages/Save.png"));
                 setImageButton(btnDiscard, this.getClass().getResource("/com/dronegcs/console/guiImages/Discard.png"));
                 inPrivateSession = true;
@@ -251,13 +262,13 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             case DISCARD:
                 if (!inPrivateSession)
                     break;
-                System.err.print("Changing icons for public session");
+                LOGGER.debug("Changing icons for public session");
                 setImageButton(btnPublish, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
                 setImageButton(btnDiscard, this.getClass().getResource("/com/dronegcs/console/guiImages/DiscardOff.png"));
                 inPrivateSession = false;
                 break;
             case DETECTOR_LOAD_FAILURE:
-                System.err.print("Detector load failure, canceling button");
+                LOGGER.warn("Detector load failure, canceling button");
                 setImageButton(btnCamera, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
                 break;
             case EXIT:

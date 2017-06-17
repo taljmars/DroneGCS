@@ -138,23 +138,22 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         LOGGER.info("Load Database data");
         try {
             List<BaseObject> modifiedMissionsList = missionsManager.getAllModifiedMissions();
+            LOGGER.debug("Found {} modified missions", modifiedMissionsList.size());
             if (!modifiedMissionsList.isEmpty()) {
-                LOGGER.info("Activate private session");
+                LOGGER.debug("Activate private session");
                 activePrivateSession = true;
             }
             for (BaseObject obj : modifiedMissionsList) {
                 Mission mission = (Mission) obj;
-                LOGGER.info("Modify mission: {}", mission.getKeyId().getObjId());
+                LOGGER.debug("Modify mission: {}", mission.getKeyId().getObjId());
             }
             List<BaseObject> missionsList = missionsManager.getAllMissions();
             LayerMission layerMission;
             for (BaseObject mission : missionsList) {
                 boolean isEditing = modifiedMissionsList.stream().anyMatch(
-                        (BaseObject baseObject) -> {
-                            return baseObject.getKeyId().getObjId().equals(mission.getKeyId().getObjId());
-                        }
+                        (BaseObject baseObject) -> baseObject.getKeyId().getObjId().equals(mission.getKeyId().getObjId())
                 );
-                LOGGER.info("Loading existing mission: {} , edit mode: {}", mission, isEditing);
+                LOGGER.debug("Loading existing mission: {} , edit mode: {}", mission, isEditing);
                 layerMission = new LayerMission(((Mission) mission), getLayeredViewMap(), isEditing);
                 layerMission.setApplicationContext(applicationContext);
                 addLayer(layerMission);
@@ -173,7 +172,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                 addLayer(layerPerimeter);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Unexpected error occur when loading DB", e);
         }
     }
 
@@ -203,7 +202,6 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         ti.selectedProperty().addListener((obs, oldVal, newVal) -> {
             LOGGER.info("Selection state: {} ", newVal);
         });
-        LOGGER.info("SIGN");
         addSelectionHandler(ti);
     }
 
@@ -565,6 +563,18 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                     modifiedItem = null;
                     refresh();
                     break;
+                case EDITMODE_EXISTING_LAYER_START: {
+                    EditedLayer editedLayer = (EditedLayer) command.getSource();
+                    editedLayer.startEditing();
+                    refresh();
+                    break;
+                }
+                case EDITMODE_EXISTING_LAYER_CANCELED: {
+                    EditedLayer editedLayer = (EditedLayer) command.getSource();
+                    editedLayer.stopEditing();
+                    refresh();
+                    break;
+                }
                 case PUBLISH:
             }
         });
@@ -638,6 +648,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         for (Layer layer : missionsGroup.getChildens()) {
             LayerMission layerMission = (LayerMission) layer;
             Mission mission = layerMission.getMission();
+            LOGGER.debug("Checking equals to '{}", mission.getName());
             if (downloadedMissionComparator.isEqual(mission, missionFromDrone)) {
                 LOGGER.debug("Found identical mission named '{}'", mission.getName());
                 return layerMission;

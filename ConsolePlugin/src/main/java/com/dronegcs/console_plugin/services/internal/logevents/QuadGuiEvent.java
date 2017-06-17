@@ -24,6 +24,8 @@ public class QuadGuiEvent extends ApplicationEvent {
 //        CONTORL_KEYBOARD,
 //        FLIGHT, 
         EDITMODE_EXISTING_LAYER_START,
+        EDITMODE_EXISTING_LAYER_CANCELED,
+        EDITMODE_EXISTING_LAYER_FINISH,
 //        POPUP_MAP, 
         
         // Missions
