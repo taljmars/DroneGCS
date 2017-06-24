@@ -159,6 +159,10 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	}
 
 	public void loadTable() {
+		if (table == null) {
+			LOGGER.debug("Table wasn't initialize yet");
+			return;
+		}
 		List<Parameter> parametersList = drone.getParameters().getParametersList();
 		if (parametersList.size() > 0) {
 			data = FXCollections.observableArrayList();

@@ -48,14 +48,14 @@
                 <ComboBox fx:id="cbFltMode6" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
                 <Label text="1755-2200 PWM"  GridPane.rowIndex="6" GridPane.columnIndex="2"/>
 
-                <Label text="Updates Flights Mode"  GridPane.rowIndex="7" />
-                <Button onAction="#updateFlightMode" text="Update Flight Modes" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                <Label text="Channel 7"  GridPane.rowIndex="7" />
+                <ComboBox fx:id="cbChannel7" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
-                <Label text="Channel 7"  GridPane.rowIndex="8" />
-                <ComboBox fx:id="cbFltMode7" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                <Label text="Channel 8"  GridPane.rowIndex="8" />
+                <ComboBox fx:id="cbChannel8" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
 
-                <Label text="Channel 8"  GridPane.rowIndex="9" />
-                <ComboBox fx:id="cbFltMode8" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+                <Label text="Updates Flights Mode"  GridPane.rowIndex="9" />
+                <Button onAction="#updateFlightMode" text="Update Flight Modes" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
             </children>
             <padding>
                 <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
