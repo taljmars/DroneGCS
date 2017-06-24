@@ -10,7 +10,7 @@
 		<content>
 			<VBox minHeight="${prefHeight}" prefWidth="${prefWidth}">
 				<children>
-					<fx:include source="MavlinkConfigurationSections/FlightModes.fxml" />
+					<fx:include source="MavlinkConfigurationSections/Modes.fxml" />
 					<Separator maxHeight="10"/>
 				</children>
 			</VBox>
