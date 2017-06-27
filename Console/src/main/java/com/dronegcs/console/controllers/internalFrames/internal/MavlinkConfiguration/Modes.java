@@ -103,9 +103,12 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
                     if (newValue != null) {
                         ApmModes mode = (ApmModes) newValue;
                         checkBoxSimpleModeList.get(finalI).setVisible(mode.isSuperSimpleOrSimpleModeAvailable());
-                        checkBoxSimpleModeList.get(finalI).setSelected(mode.isSuperSimpleOrSimpleModeAvailable());
                         checkBoxSuperSimpleModeList.get(finalI).setVisible(mode.isSuperSimpleOrSimpleModeAvailable());
-                        checkBoxSuperSimpleModeList.get(finalI).setSelected(mode.isSuperSimpleOrSimpleModeAvailable());
+
+                        if (!mode.isSuperSimpleOrSimpleModeAvailable()) {
+                            checkBoxSimpleModeList.get(finalI).setSelected(false);
+                            checkBoxSuperSimpleModeList.get(finalI).setSelected(false);
+                        }
                     }
             });
         }
