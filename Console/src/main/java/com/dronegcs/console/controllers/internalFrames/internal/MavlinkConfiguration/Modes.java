@@ -8,10 +8,13 @@ import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmCommands;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmTuning;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -26,6 +29,7 @@ import java.net.URL;
 import java.util.*;
 
 import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT16;
+import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT32;
 import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT8;
 import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE.MAV_TYPE_QUADROTOR;
 
@@ -47,6 +51,20 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     @NotNull @FXML private ComboBox cbFltMode5;
     @NotNull @FXML private ComboBox cbFltMode6;
 
+    @NotNull @FXML private CheckBox cbFltMode1Simple;
+    @NotNull @FXML private CheckBox cbFltMode2Simple;
+    @NotNull @FXML private CheckBox cbFltMode3Simple;
+    @NotNull @FXML private CheckBox cbFltMode4Simple;
+    @NotNull @FXML private CheckBox cbFltMode5Simple;
+    @NotNull @FXML private CheckBox cbFltMode6Simple;
+
+    @NotNull @FXML private CheckBox cbFltMode1SuperSimple;
+    @NotNull @FXML private CheckBox cbFltMode2SuperSimple;
+    @NotNull @FXML private CheckBox cbFltMode3SuperSimple;
+    @NotNull @FXML private CheckBox cbFltMode4SuperSimple;
+    @NotNull @FXML private CheckBox cbFltMode5SuperSimple;
+    @NotNull @FXML private CheckBox cbFltMode6SuperSimple;
+
     @NotNull @FXML private ComboBox cbChannel6; // TUNE
     @NotNull @FXML private Spinner<Double> spChannel6Min;
     @NotNull @FXML private Spinner<Double> spChannel6Max;
@@ -59,10 +77,14 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     private static final String TUNE = "TUNE";
     private static final String TUNE_HIGH = "TUNE_HIGH";
     private static final String TUNE_LOW = "TUNE_LOW";
+    private static final String SIMPLE_MODE = "SIMPLE";
+    private static final String SUPER_SIMPLE_MODE = "SUPER_SIMPLE";
 
     private Map<String, ComboBox> comboBoxFltModeMap = null;
     private Map<String, ComboBox> comboBoxCommandsMap = null;
     private Map<String, ComboBox> comboBoxTunningMap = null;
+    private List<CheckBox> checkBoxSimpleModeList = null;
+    private List<CheckBox> checkBoxSuperSimpleModeList = null;
 
     @PostConstruct
     private void init() {
@@ -74,8 +96,25 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     public void initialize(URL arg0, ResourceBundle arg1) {
         comboBoxFltModeMap = new HashMap<>();
         List<ComboBox> cmList = Arrays.asList(cbFltMode1, cbFltMode2, cbFltMode3, cbFltMode4, cbFltMode5, cbFltMode6);
-        for (int i = 0; i < cmList.size(); i++)
+        for (int i = 0; i < cmList.size(); i++) {
             comboBoxFltModeMap.put(String.format(FLTMODE_FORMAT, (i + 1)), cmList.get(i));
+            int finalI = i;
+            cmList.get(i).valueProperty().addListener((observable, oldValue,  newValue) -> {
+                    if (newValue != null) {
+                        ApmModes mode = (ApmModes) newValue;
+                        checkBoxSimpleModeList.get(finalI).setVisible(mode.isSuperSimpleOrSimpleModeAvailable());
+                        checkBoxSimpleModeList.get(finalI).setSelected(mode.isSuperSimpleOrSimpleModeAvailable());
+                        checkBoxSuperSimpleModeList.get(finalI).setVisible(mode.isSuperSimpleOrSimpleModeAvailable());
+                        checkBoxSuperSimpleModeList.get(finalI).setSelected(mode.isSuperSimpleOrSimpleModeAvailable());
+                    }
+            });
+        }
+
+        checkBoxSimpleModeList = new ArrayList<>();
+        checkBoxSimpleModeList.addAll(Arrays.asList(cbFltMode1Simple, cbFltMode2Simple, cbFltMode3Simple, cbFltMode4Simple, cbFltMode5Simple, cbFltMode6Simple));
+
+        checkBoxSuperSimpleModeList = new ArrayList<>();
+        checkBoxSuperSimpleModeList.addAll(Arrays.asList(cbFltMode1SuperSimple, cbFltMode2SuperSimple, cbFltMode3SuperSimple, cbFltMode4SuperSimple, cbFltMode5SuperSimple, cbFltMode6SuperSimple));
 
         comboBoxCommandsMap = new HashMap<>();
         comboBoxCommandsMap.put(String.format(CH_FORMAT, 7), cbChannel7);
@@ -99,6 +138,8 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         tunes.addAll(FXCollections.observableArrayList(ApmTuning.getTuningList()));
         loadComboBox(tunes, comboBoxTunningMap);
 
+        loadSimplesModes();
+
         Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(TUNE_HIGH)).findFirst();
         if (optional.isPresent())
             spChannel6Max.getValueFactory().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
@@ -115,6 +156,33 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             if (optional.isPresent())
                 entry.getValue().setValue(optional.get());
         }
+    }
+
+    private void loadSimplesModes() {
+        Byte simple = 0;
+        Byte superSimple = 0;
+        Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(SIMPLE_MODE)).findFirst();
+        if (optional.isPresent())
+            simple = (Byte) optional.get();
+
+        optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(SUPER_SIMPLE_MODE)).findFirst();
+        if (optional.isPresent())
+            superSimple = (Byte) optional.get();
+
+        loadSimplesModes(simple, checkBoxSimpleModeList);
+        loadSimplesModes(superSimple, checkBoxSuperSimpleModeList);
+    }
+
+    private void loadSimplesModes(Byte modeBitMap, List<CheckBox> checkBoxes) {
+        for ( int i = 1 ; i <= 6 ; i++ ) {
+            boolean tr = getSimplesOrSuperSimpleMode(i, modeBitMap);
+            checkBoxes.get(i-1).setSelected(tr);
+        }
+    }
+
+    private boolean getSimplesOrSuperSimpleMode(int modeBitIndex, Byte mode) {
+        int placer = 0x1 << (modeBitIndex - 1);
+        return (mode & placer) != 0;
     }
 
     private ApmTuning getTuning(Parameter parameter) {
@@ -148,6 +216,9 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
         drone.getParameters().ReadParameter(TUNE_HIGH);
         drone.getParameters().ReadParameter(TUNE_LOW);
+
+        drone.getParameters().ReadParameter(SIMPLE_MODE);
+        drone.getParameters().ReadParameter(SUPER_SIMPLE_MODE);
     }
 
     @FXML
@@ -183,6 +254,24 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
         parameter = new Parameter(TUNE_LOW, spChannel6Min.getValue(), MAV_PARAM_TYPE_INT16, "");
         drone.getParameters().sendParameter(parameter);
+
+        Integer simple = 0;
+        Integer superSimple = 0;
+        for (int i = 1 ; i <= checkBoxSimpleModeList.size() && checkBoxSimpleModeList.size() == checkBoxSuperSimpleModeList.size() ; i++ ) {
+            int ptr = 0x1 << (i-1);
+            if (checkBoxSimpleModeList.get(i-1).isSelected()) {
+                LOGGER.debug("Simple on {} is selected", i-1);
+                simple |= ptr;
+            }
+
+            if (checkBoxSuperSimpleModeList.get(i-1).isSelected())
+                superSimple |= ptr;
+        }
+        parameter = new Parameter(SIMPLE_MODE, simple, MAV_PARAM_TYPE_INT8, "");
+        drone.getParameters().sendParameter(parameter);
+
+        parameter = new Parameter(SUPER_SIMPLE_MODE, superSimple, MAV_PARAM_TYPE_INT8, "");
+        drone.getParameters().sendParameter(parameter);
     }
 
     @Override
@@ -213,12 +302,30 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             }
 
             if (parameter.name.equals(TUNE_LOW)) {
-                spChannel6Min.getValueFactory().setValue(Double.parseDouble(parameter.getValue()));
+                Double tuneLow = Double.parseDouble(parameter.getValue());
+                LOGGER.debug("Received tune low = {}", tuneLow);
+                spChannel6Min.getValueFactory().setValue(tuneLow);
                 return;
             }
 
             if (parameter.name.equals(TUNE_HIGH)) {
+                Double tuneHigh = Double.parseDouble(parameter.getValue());
+                LOGGER.debug("Received tune high = {}", tuneHigh);
                 spChannel6Max.getValueFactory().setValue(Double.parseDouble(parameter.getValue()));
+                return;
+            }
+
+            if (parameter.name.equals(SIMPLE_MODE)) {
+                Byte simple = Byte.parseByte(parameter.getValue());
+                LOGGER.debug("Received simple = {}", simple);
+                loadSimplesModes(simple, checkBoxSimpleModeList);
+                return;
+            }
+
+            if (parameter.name.equals(SUPER_SIMPLE_MODE)) {
+                Byte superSimple = Byte.parseByte(parameter.getValue());
+                LOGGER.debug("Received superSimple = {}", superSimple);
+                loadSimplesModes(superSimple, checkBoxSuperSimpleModeList);
                 return;
             }
         });
@@ -236,6 +343,12 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
         for (ComboBox comboBox : comboBoxTunningMap.values())
             comboBox.setValue(null);
+
+        for (CheckBox checkBox : checkBoxSimpleModeList)
+            checkBox.setSelected(false);
+
+        for (CheckBox checkBox : checkBoxSuperSimpleModeList)
+            checkBox.setSelected(false);
 
         spChannel6Min.getValueFactory().setValue(0.0);
         spChannel6Max.getValueFactory().setValue(0.0);
