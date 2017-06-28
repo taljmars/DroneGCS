@@ -146,10 +146,14 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(TUNE_HIGH)).findFirst();
         if (optional.isPresent())
             spChannel6Max.getValueFactory().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
+        else
+            spChannel6Max.getValueFactory().setValue(1.0);
 
         optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(TUNE_LOW)).findFirst();
         if (optional.isPresent())
             spChannel6Min.getValueFactory().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
+        else
+            spChannel6Min.getValueFactory().setValue(0.0);
     }
 
     private void loadComboBox(Vector<?> options, Map<String, ComboBox> comboBoxMap) {
@@ -354,7 +358,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             checkBox.setSelected(false);
 
         spChannel6Min.getValueFactory().setValue(0.0);
-        spChannel6Max.getValueFactory().setValue(0.0);
+        spChannel6Max.getValueFactory().setValue(1.0);
     }
 
     @Override

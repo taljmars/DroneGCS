@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane prefHeight="300.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.RadioCalib">
+    <children>
+        <HBox prefHeight="300" prefWidth="500" BorderPane.alignment="CENTER" spacing="20.0">
+            <children>
+                <BorderPane prefWidth="235.0">
+                    <top><VBox alignment="CENTER">
+                        <ScrollBar fx:id="rollBar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+                        <Label fx:id="lblRoll" text="Roll" alignment="CENTER"/>
+                    </VBox></top>
+                    <left><VBox alignment="CENTER">
+                        <ScrollBar fx:id="pitchBar" prefHeight="235" prefWidth="20" orientation="VERTICAL" maxHeight="500" max="1400" min="0"/>
+                        <Label fx:id="lblPitch" text="Pitch" alignment="CENTER"/>
+                    </VBox></left>
+                    <right><VBox alignment="CENTER">
+                        <ScrollBar fx:id="throttleBar" prefHeight="235" prefWidth="20" orientation="VERTICAL" maxHeight="500" max="1400" min="0"/>
+                        <Label fx:id="lblThrottle" text="Throttle" alignment="CENTER"/>
+                    </VBox></right>
+                    <bottom><VBox alignment="CENTER">
+                        <ScrollBar fx:id="yawBar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+                        <Label fx:id="lblYaw" text="Yaw" alignment="CENTER"/>
+                    </VBox></bottom>
+                </BorderPane>
+                <VBox prefWidth="235.0" alignment="CENTER">
+                    <Label fx:id="lblCh5" text="&#10;Channel 5" alignment="CENTER"/>
+                    <ScrollBar fx:id="ch5Bar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+
+                    <Label fx:id="lblCh6" text="&#10;Channel 6" alignment="CENTER"/>
+                    <ScrollBar fx:id="ch6Bar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+
+                    <Label fx:id="lblCh7" text="&#10;Channel 7" alignment="CENTER"/>
+                    <ScrollBar fx:id="ch7Bar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+
+                    <Label fx:id="lblCh8" text="&#10;Channel 8" alignment="CENTER"/>
+                    <ScrollBar fx:id="ch8Bar" prefHeight="20" prefWidth="235" orientation="HORIZONTAL" maxHeight="500" max="1400" min="0"/>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</Pane>

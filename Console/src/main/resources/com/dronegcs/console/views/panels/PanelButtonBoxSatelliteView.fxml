@@ -66,9 +66,9 @@
 						<graphic><ImageView fx:id="btnStartMissionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>
 					</ToggleButton>
 
-					<ToggleButton fx:id="btnFetchMission" maxWidth="$buttonWidth" onAction="#ButtonFetchDroneMission" text="Fetch Mission" GridPane.columnIndex="1" GridPane.rowIndex="4" >
+					<Button fx:id="btnFetchMission" maxWidth="$buttonWidth" onAction="#ButtonFetchDroneMission" text="Fetch Mission" GridPane.columnIndex="1" GridPane.rowIndex="4" >
 						<!--<graphic><ImageView fx:id="btnStartMissionImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>-->
-					</ToggleButton>
+					</Button>
 
 					<ToggleButton fx:id="btnStartPerimeter" maxWidth="$buttonWidth" onAction="#ButtonStartPerimeterOnAction" text="Force Perimeter" GridPane.rowIndex="5" >
 						<graphic><ImageView fx:id="btnStartPerimeterImage" fitHeight="$buttonHeight" fitWidth="$buttonHeight" /></graphic>

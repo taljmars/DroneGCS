@@ -51,9 +51,9 @@
 						</children>
 					</StackPane>
 					<Label text="Height:" GridPane.rowIndex="2" />
-					<Label fx:id="lblHeight" text="0m" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+					<Label fx:id="lblHeight" text="0m" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 					<Label text="F.Time:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-					<Label fx:id="lblFlightTime" text="0 sec (0 min)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+					<Label fx:id="lblFlightTime" text="0 sec (0 min)" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 					<Label text="F.Dist" GridPane.rowIndex="3" />
 					<Label fx:id="lblFlightDistance" text="0m" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 					<Label text="Roll" GridPane.rowIndex="6" />
