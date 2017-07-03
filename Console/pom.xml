@@ -131,6 +131,7 @@
                             <descriptors>
                                 <descriptor>assembly-win.xml</descriptor>
                             </descriptors>
+                            <outputDirectory>../InstallationClient/Windows/</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -143,6 +144,7 @@
                             <descriptors>
                                 <descriptor>assembly-linux-32.xml</descriptor>
                             </descriptors>
+                            <outputDirectory>../InstallationClient/Linux-32/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
