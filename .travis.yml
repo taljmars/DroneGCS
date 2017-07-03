@@ -18,20 +18,16 @@ script:
 after_success:
   - sh set_tags.sh
 
-env:
-  global:
-    secure: be813b27eb0a1420f6e88915c2625295715fa376
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: be813b27eb0a1420f6e88915c2625295715fa376
-#  file: "target/Console-*.zip"
-#  file_glob: "true"
-#  skip_cleanup: true
-#  on:
-#    branch: master
-#    repo: taljmars/DroneGCS
+deploy:
+  provider: releases
+  api_key:
+    secure: Rr7mEg0vOFSe6t7Cx5iDD3ti8Eq/h1oQzfmCJjJree2/F7jN1Yr2CxLB+qxaxtfxLrSdgpvcMaHmAE5eMXjALc3vfk1xIXcMFg4srFnEcIiF2UDfguofg0fNGtESeyGSxvhp9i71QYWHofCEGIXYXIQMYfNLeDr+84ZEyWrzMeo9PaWiE7hru987Z5wIzthvR7TNoQqGg5mMsyR9C8p1twReW7p6UoHERI5VUKCh2zYFCkZNDMTQq+IdJXvMZF4/zRzUIe4R+fsOcBxhkfw2U2IogbSROeMY0cd1EibWjifcQuqAzUwK0Yb0tOv6nOw2rg2q4TM1MYQViWLz18k+qLx0c+wlkf2Dbvh27V6DXCN6uDehL0aXscoT0kcMzjld7MiiPkNsEdVDSXkG6tIinl9iMGtKXLIk1Vrifd562Dku/iBdH+2WM6PZZYQwEQSki3U8/3VhmUmVgViyjbqfm29VAGb8P1q9H4VG7mY6aqyo4/jQix3gBZAqG0i5b0H8bY55z4W8gW/vCf+CTgVMcwADscNLy1VxBESyovFcwQrKdv/5JBqkf4vUV3FfgKt8hKHITNLzT6HA4vVCGxXNsxjePBRHWIa79Vawy0HIL3CeXCyO45Gch9KmQPcpf2r2rJR6N2wXjQaFdq5DwmwQaQk7EuGzXXHt9CLp2+PsP98=
+  file: "../ClientInstallation/*/Console-*.zip"
+  file_glob: "true"
+  skip_cleanup: true
+  on:
+    branch: master
+    repo: taljmars/DroneGCS
 
 cache:
   directories:
