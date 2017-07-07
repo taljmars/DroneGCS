@@ -4,8 +4,10 @@ The following directory hold the DroneGCS project files for the GUI and Controll
 In order to have a better understanding of the code simply dig into it.
 The controller components exist in the GUI Plugin is responsible of two things, the first, communicate with the drone
 itself, running mission, flight control and many other nice utility. It second hat is to communicate with the server
-out the in the cloud, the server responsible of saving you configuration, saving your mission and perimeters.
+out there in the cloud, the server responsible of saving you configuration, saving your mission and perimeters.
 The server gives you a private DB to work on until you save it to the public DB.
+
+If you are a user who wishes to fly you drone and enjoy this fully featured Ground Control Station, simple download the relevant files from ClientInstallation directory: https://github.com/taljmars/DroneGCS/tree/master/ClientInstallation, Run Deploy.bat and enjoy your newly GCS. In case you wish to use local server (For having better performance and offline flight, download DroneServer as well: https://github.com/taljmars/DroneServer/tree/master/ServerInstallation and follow it installation guidelines)
 
 ### Important Folder
 #### ExTool
