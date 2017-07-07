@@ -57,4 +57,45 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+        <outputDirectory>../${build.output}/classes</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>../${build.output}/jars</outputDirectory>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-resources-plugin</artifactId>-->
+                <!--<version>2.7</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-resource-one</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy-resources</goal>-->
+                        <!--</goals>-->
+
+                        <!--<configuration>-->
+                            <!--<outputDirectory>../${build.output}/pkg_server</outputDirectory>-->
+                            <!--<resources>-->
+                                <!--<resource>-->
+                                    <!--<directory>target</directory>-->
+                                <!--</resource>-->
+                            <!--</resources>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+
 </project>

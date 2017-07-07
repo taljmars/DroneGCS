@@ -17,6 +17,13 @@
     </dependencySets>
     <fileSets>
         <fileSet>
+            <directory>../CMpub/pkg_server</directory>
+            <outputDirectory>jars</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/../addon/conf</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
@@ -42,6 +49,20 @@
             <outputDirectory>lib</outputDirectory>
             <excludes>
                 <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>.</directory>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>../ExtTools</directory>
+            <outputDirectory>externalTools</outputDirectory>
+            <excludes>
+                <exclude>EasyCap_Driver/*</exclude>
             </excludes>
         </fileSet>
     </fileSets>

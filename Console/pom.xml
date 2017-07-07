@@ -95,6 +95,7 @@
     </dependencies>
 
     <build>
+        <outputDirectory>../${build.output}/classes</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -109,6 +110,7 @@
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
+                            <outputDirectory>../${build.output}/jars/</outputDirectory>
                             <excludeArtifactIds>opencv-310,rxtx</excludeArtifactIds>
                         </configuration>
                     </execution>
@@ -116,6 +118,48 @@
 <!--                <configuration>
                     <executable>true</executable>
                 </configuration>-->
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-resource-one</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>../${build.output}/pkg_server</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../${build.output}/jars/</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../${build.output}/pkg_server/</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -131,7 +175,7 @@
                             <descriptors>
                                 <descriptor>assembly-win.xml</descriptor>
                             </descriptors>
-                            <outputDirectory>../InstallationClient/Windows/</outputDirectory>
+                            <outputDirectory>../ClientInstallation/Windows/</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -144,7 +188,7 @@
                             <descriptors>
                                 <descriptor>assembly-linux-32.xml</descriptor>
                             </descriptors>
-                            <outputDirectory>../InstallationClient/Linux-32/</outputDirectory>
+                            <outputDirectory>../ClientInstallation/Linux-32/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

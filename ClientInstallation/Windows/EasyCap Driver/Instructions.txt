@@ -1,3 +1,0 @@
-1) Connect EasyCap device
-2) Run the executable from USB-AVCPT-Windows-Drivers.
-3) Try to install driver manually, choes the device information from the relevat files in UTV007_Drivers (5).
