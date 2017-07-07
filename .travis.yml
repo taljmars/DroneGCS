@@ -15,23 +15,23 @@ script:
   - rm -rf $HOME/.m2/repository
   - mvn clean package -B -V
 
+env:
+  secure: DLem/k3nAOF7jgjwsu9YTiSwDJSxL2sfV2XjEjpZP//E0qoCjPt/ICHVrfwhuckRuMQnfKkRHXVrV/3O/x8GcGgN06RcR2IGjnLXrJP8EK7pO92752T0JJdRjds2Dbyl3pEYKAZ4g9CNM1GjUB8aoSX4MM0VspmpMYL/4LY6h29TP0CYvYZ2+tqNfLCgyuDdCPeJyP8lauWCmbjNhcHY4TXfNu05eOPmJpImCV5N5ditx9XCu1MQGl1zt1ei9SipLGwBLL3/yd7H/PSpBApdLtKG+OtIfevM55NeCfyJURYy67zuoZImE9LLJO4Oonmy8vrxuKA4QwMt1j0U7FHrwpl3e9A8aQbim9Y9kjix1Sjv6sLmobEwSu+GLPxJgJ3nlTRVLV4UkgtcdpWrI31OTDSWPsJ0VropEvSUEHliqv72m3FXC7RKq+yB/BT1pqcMM63vO+oIjhheMyjQAzIpfg3ocr/hgWVKr1oN2lLFn5Drftsb76ihOtAke6Wp1p8tS7fS7kBVgc3y7w4pfIv/g0MIQu0Ye8nmdkrajPUIStasOj3evOmO5e5MEIztVdBluyMctRsBRuQoirRe0P1hPHpZuAUhZisIDwbiK+Q//y8+y8M77BvGL+KTqHZkaX9+faZDBjuFWOYWPIisG+VF6W5PxjMfJdc+9A7CC1lmUIU=
+
 after_success:
+  secure: DLem/k3nAOF7jgjwsu9YTiSwDJSxL2sfV2XjEjpZP//E0qoCjPt/ICHVrfwhuckRuMQnfKkRHXVrV/3O/x8GcGgN06RcR2IGjnLXrJP8EK7pO92752T0JJdRjds2Dbyl3pEYKAZ4g9CNM1GjUB8aoSX4MM0VspmpMYL/4LY6h29TP0CYvYZ2+tqNfLCgyuDdCPeJyP8lauWCmbjNhcHY4TXfNu05eOPmJpImCV5N5ditx9XCu1MQGl1zt1ei9SipLGwBLL3/yd7H/PSpBApdLtKG+OtIfevM55NeCfyJURYy67zuoZImE9LLJO4Oonmy8vrxuKA4QwMt1j0U7FHrwpl3e9A8aQbim9Y9kjix1Sjv6sLmobEwSu+GLPxJgJ3nlTRVLV4UkgtcdpWrI31OTDSWPsJ0VropEvSUEHliqv72m3FXC7RKq+yB/BT1pqcMM63vO+oIjhheMyjQAzIpfg3ocr/hgWVKr1oN2lLFn5Drftsb76ihOtAke6Wp1p8tS7fS7kBVgc3y7w4pfIv/g0MIQu0Ye8nmdkrajPUIStasOj3evOmO5e5MEIztVdBluyMctRsBRuQoirRe0P1hPHpZuAUhZisIDwbiK+Q//y8+y8M77BvGL+KTqHZkaX9+faZDBjuFWOYWPIisG+VF6W5PxjMfJdc+9A7CC1lmUIU=
   - sh set_tags.sh
 
-env:
-  global:
-    secure: be813b27eb0a1420f6e88915c2625295715fa376
-
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: be813b27eb0a1420f6e88915c2625295715fa376
-#  file: "target/Console-*.zip"
-#  file_glob: "true"
-#  skip_cleanup: true
-#  on:
-#    branch: master
-#    repo: taljmars/DroneGCS
+deploy:
+  provider: releases
+  api_key:
+    secure: DLem/k3nAOF7jgjwsu9YTiSwDJSxL2sfV2XjEjpZP//E0qoCjPt/ICHVrfwhuckRuMQnfKkRHXVrV/3O/x8GcGgN06RcR2IGjnLXrJP8EK7pO92752T0JJdRjds2Dbyl3pEYKAZ4g9CNM1GjUB8aoSX4MM0VspmpMYL/4LY6h29TP0CYvYZ2+tqNfLCgyuDdCPeJyP8lauWCmbjNhcHY4TXfNu05eOPmJpImCV5N5ditx9XCu1MQGl1zt1ei9SipLGwBLL3/yd7H/PSpBApdLtKG+OtIfevM55NeCfyJURYy67zuoZImE9LLJO4Oonmy8vrxuKA4QwMt1j0U7FHrwpl3e9A8aQbim9Y9kjix1Sjv6sLmobEwSu+GLPxJgJ3nlTRVLV4UkgtcdpWrI31OTDSWPsJ0VropEvSUEHliqv72m3FXC7RKq+yB/BT1pqcMM63vO+oIjhheMyjQAzIpfg3ocr/hgWVKr1oN2lLFn5Drftsb76ihOtAke6Wp1p8tS7fS7kBVgc3y7w4pfIv/g0MIQu0Ye8nmdkrajPUIStasOj3evOmO5e5MEIztVdBluyMctRsBRuQoirRe0P1hPHpZuAUhZisIDwbiK+Q//y8+y8M77BvGL+KTqHZkaX9+faZDBjuFWOYWPIisG+VF6W5PxjMfJdc+9A7CC1lmUIU=
+  file: "../ClientInstallation/*/Console-*.zip"
+  file_glob: "true"
+  skip_cleanup: true
+  on:
+    branch: master
+    repo: taljmars/DroneGCS
 
 cache:
   directories:
