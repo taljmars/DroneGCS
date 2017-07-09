@@ -42,6 +42,7 @@ public class KeyboardControllerTuning implements Initializable {
     private KeyBoardController keyBoardController;
 
     @NotNull @FXML private ScrollBar _STABILIZER_CYCLE;
+    @NotNull @FXML private ScrollBar _STABILIZER_FACTOR;
     @NotNull @FXML private ScrollBar _TRIM_ANGLE;
     @NotNull @FXML private ScrollBar _MIN_PWM_RANGE;
     @NotNull @FXML private ScrollBar _MAX_PWM_RANGE;
@@ -73,6 +74,7 @@ public class KeyboardControllerTuning implements Initializable {
 
         // Settings
         setters.put(_STABILIZER_CYCLE, (val) -> keyBoardController.setStabilizeCycle(val));
+        setters.put(_STABILIZER_FACTOR, (val) -> keyBoardController.setStabilizeFactor(val));
         setters.put(_TRIM_ANGLE, (val) -> keyBoardController.setTrimAngle(val));
         setters.put(_MIN_PWM_RANGE, (val) -> keyBoardController.setMinPwmRange(val));
         setters.put(_MAX_PWM_RANGE, (val) -> keyBoardController.setMaxPwmRange(val));
@@ -86,6 +88,7 @@ public class KeyboardControllerTuning implements Initializable {
 
         // Getters
         getters.put(_STABILIZER_CYCLE, () -> keyBoardController.getStabilizeCycle());
+        getters.put(_STABILIZER_FACTOR, () -> keyBoardController.getStabilizeFactor());
         getters.put(_TRIM_ANGLE, () -> keyBoardController.getTrimAngle());
         getters.put(_MIN_PWM_RANGE, () -> keyBoardController.getMinPwmRange());
         getters.put(_MAX_PWM_RANGE, () -> keyBoardController.getMaxPwmRange());

@@ -239,8 +239,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		switch( event.getCode() ) { 
 			// For pitch: down is positive, up is negative
 		    case UP:
-		    	if (RC_Pitch.get() > 3 * keyBoardRcValues.get_PITCH_STEP())
-		    		RC_Pitch.set(RC_Pitch.get() - (3 * keyBoardRcValues.get_PITCH_STEP()));
+		    	if (RC_Pitch.get() > keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_PITCH_STEP())
+		    		RC_Pitch.set(RC_Pitch.get() - (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_PITCH_STEP()));
 		    	else
 		    		RC_Pitch.set(RC_Pitch.get() - keyBoardRcValues.get_PITCH_STEP());
 		    	RC_Pitch.set(constrain(RC_Pitch.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -249,8 +249,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		    	event.consume();
 		        break;
 		    case DOWN:
-		    	if (RC_Pitch.get() < -3 * keyBoardRcValues.get_PITCH_STEP())
-		    		RC_Pitch.set(RC_Pitch.get() + (3 * keyBoardRcValues.get_PITCH_STEP()));
+		    	if (RC_Pitch.get() < -keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_PITCH_STEP())
+		    		RC_Pitch.set(RC_Pitch.get() + (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_PITCH_STEP()));
 		    	else
 		    		RC_Pitch.set(RC_Pitch.get() + keyBoardRcValues.get_PITCH_STEP());
 		    	RC_Pitch.set(constrain(RC_Pitch.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -261,8 +261,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		        
 			// For roll: right is positive, left is negative
 		    case LEFT:
-		    	if (RC_Roll.get() > 3 * keyBoardRcValues.get_ROLL_STEP())
-		    		RC_Roll.set(RC_Roll.get() - (3 * keyBoardRcValues.get_ROLL_STEP()));
+		    	if (RC_Roll.get() > keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_ROLL_STEP())
+		    		RC_Roll.set(RC_Roll.get() - (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_ROLL_STEP()));
 		    	else
 		    		RC_Roll.set(RC_Roll.get() - keyBoardRcValues.get_ROLL_STEP());
 		    	RC_Roll.set(constrain(RC_Roll.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -271,8 +271,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		    	event.consume();
 		        break;
 		    case RIGHT:
-		    	if (RC_Roll.get() < -3 * keyBoardRcValues.get_ROLL_STEP())
-		    		RC_Roll.set(RC_Roll.get() + (3 * keyBoardRcValues.get_ROLL_STEP()));
+		    	if (RC_Roll.get() < -keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_ROLL_STEP())
+		    		RC_Roll.set(RC_Roll.get() + (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_ROLL_STEP()));
 		    	else
 		    		RC_Roll.set(RC_Roll.get() + keyBoardRcValues.get_ROLL_STEP());
 		    	RC_Roll.set(constrain(RC_Roll.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -295,8 +295,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		        
 			// For Yaw: right is positive, left is negative (no decay, and with some hexa values)
 		    case D:
-		    	if (RC_Yaw.get() < -3 * keyBoardRcValues.get_YAW_STEP())
-		    		RC_Yaw.set(RC_Yaw.get() + (3 * keyBoardRcValues.get_YAW_STEP()));
+		    	if (RC_Yaw.get() < -keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_YAW_STEP())
+		    		RC_Yaw.set(RC_Yaw.get() + (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_YAW_STEP()));
 		    	else
 		    		RC_Yaw.set(RC_Yaw.get() + keyBoardRcValues.get_YAW_STEP());
 		    	RC_Yaw.set(constrain(RC_Yaw.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -305,8 +305,8 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 		    	event.consume();
 		    	break;
 		    case A:
-		    	if (RC_Yaw.get() > 3 * keyBoardRcValues.get_YAW_STEP())
-		    		RC_Yaw.set(RC_Yaw.get() - (3 * keyBoardRcValues.get_YAW_STEP()));
+		    	if (RC_Yaw.get() > keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_YAW_STEP())
+		    		RC_Yaw.set(RC_Yaw.get() - (keyBoardRcValues.get_STABILIZER_FACTOR() * keyBoardRcValues.get_YAW_STEP()));
 		    	else
 		    		RC_Yaw.set(RC_Yaw.get() - keyBoardRcValues.get_YAW_STEP());
 		    	RC_Yaw.set(constrain(RC_Yaw.get(), keyBoardRcValues.get_MIN_PWM_ANGLE(), keyBoardRcValues.get_MAX_PWM_ANGLE()));
@@ -490,6 +490,16 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 	@Override
 	public void setInitialThrust(Integer integer) {
 		keyBoardRcValues.set_INIT_THR(integer);
+	}
+
+	@Override
+	public Integer getStabilizeFactor() {
+		return keyBoardRcValues.get_STABILIZER_FACTOR();
+	}
+
+	@Override
+	public void setStabilizeFactor(Integer val) {
+		keyBoardRcValues.set_STABILIZER_FACTOR(val);
 	}
 
 

@@ -18,8 +18,8 @@
 
                 <Label text="Stabilize Cycle (ms)" GridPane.rowIndex="2"/>
                 <ScrollBar fx:id="_STABILIZER_CYCLE" min="1" max="5000" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="2" GridPane.columnIndex="1" />
-                <Label text="Trim Angle" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                <ScrollBar fx:id="_TRIM_ANGLE" min="-500" max="500" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+                <Label text="Stabilize Factor" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_STABILIZER_FACTOR" min="0.2" max="6.0" unitIncrement="0.2" orientation="HORIZONTAL" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
 
                 <Label text="Min Range (PWM)" GridPane.rowIndex="3"/>
                 <ScrollBar fx:id="_MIN_PWM_RANGE" min="1000" max="2200" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="3" GridPane.columnIndex="1" />
@@ -43,6 +43,8 @@
 
                 <Label text="Initial Thrust (PWM)" GridPane.rowIndex="7"/>
                 <ScrollBar fx:id="_INIT_THR" min="1100" max="2000" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+                <Label text="Trim Angle" GridPane.rowIndex="7" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_TRIM_ANGLE" min="-500" max="500" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="7" GridPane.columnIndex="3"/>
 
                 <Label text="Actions" GridPane.rowIndex="8"/>
                 <Button onAction="#refresh" text="Refresh" GridPane.rowIndex="8" GridPane.columnIndex="1"/>

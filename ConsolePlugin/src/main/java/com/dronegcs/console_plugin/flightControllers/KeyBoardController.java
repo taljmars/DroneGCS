@@ -84,4 +84,7 @@ public interface KeyBoardController extends EventHandler<KeyEvent> {
 
 	Integer getInitialThrust();
 	void setInitialThrust(Integer integer);
+
+	Integer getStabilizeFactor();
+	void setStabilizeFactor(Integer val);
 }

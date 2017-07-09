@@ -62,6 +62,9 @@ public class KeyBoardRcValues {
     @SerializableKeyboardControllerValue(deValue = 1100)
     private AtomicInteger _INIT_THR = null;
 
+    @SerializableKeyboardControllerValue(deValue = 3)
+    private AtomicInteger _STABILIZER_FACTOR = null;
+
     public Integer get_STABILIZER_CYCLE() {
         return _STABILIZER_CYCLE.get();
     }
@@ -204,6 +207,16 @@ public class KeyBoardRcValues {
         if (this._INIT_THR == null)
             this._INIT_THR = new AtomicInteger(0);
         this._INIT_THR.set(_INIT_THR);
+    }
+
+    public Integer get_STABILIZER_FACTOR() {
+        return _STABILIZER_FACTOR.get();
+    }
+
+    public void set_STABILIZER_FACTOR(Integer _STABILIZER_FACTOR) {
+        if (this._STABILIZER_FACTOR == null)
+            this._STABILIZER_FACTOR = new AtomicInteger(3);
+        this._STABILIZER_FACTOR.set(_STABILIZER_FACTOR);
     }
 
     public boolean isInitialized() {
