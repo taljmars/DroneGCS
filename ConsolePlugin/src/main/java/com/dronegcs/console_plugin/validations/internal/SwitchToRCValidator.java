@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.validations.internal;
 
-import com.dronegcs.mavlink.core.flightControllers.FlightController;
+import com.dronegcs.console_plugin.flightControllers.FlightController;
 import com.dronegcs.console_plugin.operations.OpChangeFlightControllerQuad;
 import com.dronegcs.console_plugin.validations.SwitchToRC;
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane prefHeight="420.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.KeyboardControllerTuning">
+    <children>
+        <GridPane hgap="5.0" prefHeight="420.0" prefWidth="500.0" vgap="10.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+            </columnConstraints>
+            <children>
+                <Label text="Keyboard Controller" style="-fx-font-weight: bold" GridPane.rowIndex="1" />
+
+                <Label text="Stabilize Cycle (ms)" GridPane.rowIndex="2"/>
+                <ScrollBar fx:id="_STABILIZER_CYCLE" min="1" max="5000" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                <Label text="Trim Angle" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_TRIM_ANGLE" min="-500" max="500" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+                <Label text="Min Range (PWM)" GridPane.rowIndex="3"/>
+                <ScrollBar fx:id="_MIN_PWM_RANGE" min="1000" max="2200" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                <Label text="Max Range (PWM)" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_MAX_PWM_RANGE" min="1000" max="2200" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+                <Label text="Min Angle (PWM)" GridPane.rowIndex="4"/>
+                <ScrollBar fx:id="_MIN_PWM_ANGLE" min="1100" max="1900" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+                <Label text="Max Angle (PWM)" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_MAX_PWM_ANGLE" min="1100" max="1900" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+
+                <Label text="Roll Step (PWM)" GridPane.rowIndex="5"/>
+                <ScrollBar fx:id="_ROLL_STEP" min="1" max="400" unitIncrement="1" orientation="HORIZONTAL" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                <Label text="Pitch Step (PWM)" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_PITCH_STEP" min="1" max="400" unitIncrement="1" orientation="HORIZONTAL" GridPane.rowIndex="5" GridPane.columnIndex="3"/>
+
+                <Label text="Thrust Step (PWM)" GridPane.rowIndex="6"/>
+                <ScrollBar fx:id="_THR_STEP" min="1" max="400" unitIncrement="1" orientation="HORIZONTAL" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+                <Label text="Yaw Step (PWM)" GridPane.rowIndex="6" GridPane.columnIndex="2"/>
+                <ScrollBar fx:id="_YAW_STEP" min="1" max="400" unitIncrement="1" orientation="HORIZONTAL" GridPane.rowIndex="6" GridPane.columnIndex="3"/>
+
+                <Label text="Initial Thrust (PWM)" GridPane.rowIndex="7"/>
+                <ScrollBar fx:id="_INIT_THR" min="1100" max="2000" unitIncrement="10" orientation="HORIZONTAL" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+
+                <Label text="Actions" GridPane.rowIndex="8"/>
+                <Button onAction="#refresh" text="Refresh" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                <Button onAction="#update" text="Update" GridPane.rowIndex="8" GridPane.columnIndex="2"/>
+                <Button onAction="#save" text="Save" GridPane.rowIndex="8" GridPane.columnIndex="3"/>
+
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </GridPane>
+    </children>
+</Pane>

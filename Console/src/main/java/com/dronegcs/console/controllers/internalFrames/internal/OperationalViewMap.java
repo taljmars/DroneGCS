@@ -44,7 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.generic_tools.devices.KeyBoardController;
+import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import com.gui.core.mapTreeObjects.Layer;

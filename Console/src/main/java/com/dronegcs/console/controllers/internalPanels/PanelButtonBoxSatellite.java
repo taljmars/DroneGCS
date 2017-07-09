@@ -7,7 +7,7 @@ import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
-import com.dronegcs.mavlink.core.flightControllers.FlightController;
+import com.dronegcs.console_plugin.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;

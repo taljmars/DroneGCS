@@ -14,6 +14,8 @@
 					<Separator maxHeight="10"/>
                     <fx:include source="MavlinkConfigurationSections/RadioCalib.fxml" />
                     <Separator maxHeight="10"/>
+					<fx:include source="MavlinkConfigurationSections/KeyBoardControllerTuning.fxml" />
+					<Separator maxHeight="10"/>
 				</children>
 			</VBox>
 		</content>

@@ -15,6 +15,7 @@ $RECYCLE.BIN/
 target
 logs
 conf
+CMpub
 
 # Irrelevant logs - talma
 log.html

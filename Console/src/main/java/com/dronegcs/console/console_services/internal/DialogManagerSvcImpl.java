@@ -1,7 +1,7 @@
 package com.dronegcs.console.console_services.internal;
 
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
-import com.generic_tools.devices.KeyBoardController;
+import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;

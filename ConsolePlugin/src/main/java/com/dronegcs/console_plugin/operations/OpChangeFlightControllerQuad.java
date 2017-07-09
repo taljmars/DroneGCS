@@ -11,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import com.generic_tools.devices.KeyBoardController;
-import com.dronegcs.mavlink.core.flightControllers.FlightController;
+import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
+import com.dronegcs.console_plugin.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkRC;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
-@ComponentScan("mavlink.mavlink.flightControllers")
+@ComponentScan("gui.com.dronegcs.console_plugin.flightControllers")
 @ComponentScan("gui.com.dronegcs.console_plugin.services")
 @Component("opChangeFlightControllerQuad")
 public class OpChangeFlightControllerQuad extends OperationHandler {

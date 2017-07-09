@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers;
 
-import com.generic_tools.devices.KeyBoardController;
+import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.net.URL;
 /**
  * Created by taljmars on 3/13/17.
  */
+@ComponentScan("com.dronegcs.console_plugin")
 @Component
 public class GuiAppConfig {
     private final static Logger LOGGER = LoggerFactory.getLogger(GuiAppConfig.class);
