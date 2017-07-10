@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers;
 
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
+import com.dronegcs.console_plugin.ConsolePluginConfig;
 import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
 import com.dronegcs.mavlink.spring.MavlinkSpringConfig;
 import com.generic_tools.environment.Environment;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Import;
 import java.net.URISyntaxException;
 
 @Import({GuiAppConfig.class, InternalFrameMap.class , OpGCSTerminationHandler.class,
-		MavlinkSpringConfig.class})
+		ConsolePluginConfig.class})
 //@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
 @Configuration
 @ComponentScan(value = {

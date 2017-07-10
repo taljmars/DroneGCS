@@ -12,6 +12,7 @@
     <modules>
         <module>Console</module>
         <module>ConsolePlugin</module>
+        <module>DroneServerClientPlugin</module>
     </modules>
 
     <parent>

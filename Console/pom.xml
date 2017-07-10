@@ -28,6 +28,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>MavlinkProtocol</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.image_processing</groupId>
             <artifactId>Detector</artifactId>
             <version>1.0</version>
