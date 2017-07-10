@@ -37,7 +37,7 @@
 			<content>
 				<AnchorPane>
 					<children>
-						<fx:include source="internal/PanelMissionView.fxml" />
+						<fx:include source="internal/PanelTableView.fxml" />
 					</children>
 				</AnchorPane>
 			</content>

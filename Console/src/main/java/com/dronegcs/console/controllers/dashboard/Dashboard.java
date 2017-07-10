@@ -331,7 +331,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             return;
 
         ObservableList<Node> children = frameContainer.getChildren();
-        //Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
+        //Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getAltitude() - 25);
         Node selectedPane = (Node) guiAppConfig.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
         selectedPane.setUserData(springInstansiation);
         if (selectedPane != null) {

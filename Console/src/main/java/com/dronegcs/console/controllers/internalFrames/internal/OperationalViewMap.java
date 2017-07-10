@@ -316,6 +316,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
                         isPerimeterBuildMode = true;
                         perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), PolygonPerimeter.class);
+                        LOGGER.error("TALMA : should see this when having exception");
                         modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
 
                         System.err.println(getOperationalViewTree().dumpTree());
@@ -327,8 +328,14 @@ OnDroneListener, EventHandler<ActionEvent> {
                     return;
                 }
             }
-            catch (PerimeterUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            catch (Throwable t) {
+                loggerDisplayerSvc.logError("Critical Error: failed to create item in database, error: " + t.getMessage());
+                LOGGER.error("Failed to build new perimeter", t);
+                isPerimeterBuildMode = false;
+                if (modifyiedLayerPerimeterOriginal != null) {
+                    getOperationalViewTree().removeLayer(modifyiedLayerPerimeterOriginal);
+                    modifyiedLayerPerimeterOriginal = null;
+                }
             }
         });
 
@@ -353,8 +360,14 @@ OnDroneListener, EventHandler<ActionEvent> {
                     eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
                 }
             }
-            catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            catch (Throwable t) {
+                loggerDisplayerSvc.logError("Critical Error: failed to create item in database, error: " + t.getMessage());
+                LOGGER.error("Failed to build new mission", t);
+                isMissionBuildMode = false;
+                if (modifyiedLayerMissionOriginal != null) {
+                    getOperationalViewTree().removeLayer(modifyiedLayerMissionOriginal);
+                    modifyiedLayerMissionOriginal = null;
+                }
             }
         });
 

@@ -9,4 +9,6 @@ import com.geo_tools.Coordinate;
 public interface PolygonPerimeterEditor {
 
     Point addPoint(Coordinate coordinate) throws PerimeterUpdateException;
+
+    void removePoint(Point point) throws PerimeterUpdateException;
 }

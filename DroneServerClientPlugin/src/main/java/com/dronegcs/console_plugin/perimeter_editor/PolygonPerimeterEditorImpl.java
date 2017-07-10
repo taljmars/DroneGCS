@@ -1,7 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.Point;
-import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
@@ -51,10 +50,11 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     public PolygonPerimeter open(String perimeterName) throws PerimeterUpdateException {
         logger.debug("Setting new perimeter to perimeter editor");
         try {
-            this.perimeter = new PolygonPerimeter();
+            System.err.println("TALMA: " + PolygonPerimeter.class.getName());
+            this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.create(PolygonPerimeter.class.getName());
             this.originalPerimeter = null;
             this.perimeter.setName(perimeterName);
-            droneDbCrudSvcRemote.update(this.perimeter);
+            this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(this.perimeter);
             return this.perimeter;
         }
         catch (DatabaseValidationRemoteException e) {
@@ -97,6 +97,17 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             // Update Mission
             droneDbCrudSvcRemote.update(perimeter);
             return res;
+        }
+        catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void removePoint(Point point) throws PerimeterUpdateException {
+        perimeter.getPoints().remove(point.getKeyId().getObjId());
+        try {
+            droneDbCrudSvcRemote.update(perimeter);
         }
         catch (DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());

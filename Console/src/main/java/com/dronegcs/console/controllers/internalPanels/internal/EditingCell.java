@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 
 import javax.validation.constraints.NotNull;
 
-public class EditingCell<T> extends TableCell<MissionItemTableEntry, T> {
+public class EditingCell<T> extends TableCell<TableItemEntry, T> {
     @Autowired
     @NotNull(message = "Internal Error: Failed to get application context")
     private ApplicationContext applicationContext;
