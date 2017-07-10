@@ -33,7 +33,7 @@
 				</AnchorPane>
 			</content>
 		</Tab>
-		<Tab text="Mission Builder">
+		<Tab text="Mission/Perimeter Builder">
 			<content>
 				<AnchorPane>
 					<children>
