@@ -162,7 +162,6 @@ public class PolygonPerimeterTableProfile extends TableProfile {
 
     @Override
     @SuppressWarnings("unchecked")
-    //public void generateMissionTable(boolean editmode) {
     public void generateTable(boolean editMode, Object contentPayload) {
 
         setLayerPolygonPerimeter((LayerPolygonPerimeter) contentPayload);
@@ -189,18 +188,17 @@ public class PolygonPerimeterTableProfile extends TableProfile {
         if (!editMode)
             panelTableBox.getTable().getColumns().addAll(
                     panelTableBox.getOrder(), panelTableBox.getType(),
-                    panelTableBox.getLat(), panelTableBox.getLon(), panelTableBox.getAltitude(),
-                    panelTableBox.getDelay(), panelTableBox.getRadius());
-        else
+                    panelTableBox.getLat(), panelTableBox.getLon()/*,
+                    panelTableBox.getAltitude(), panelTableBox.getDelay(), panelTableBox.getRadius()*/);       else
             panelTableBox.getTable().getColumns().addAll(
                     panelTableBox.getOrder(), panelTableBox.getType(),
-                    panelTableBox.getLat(), panelTableBox.getLon(), panelTableBox.getAltitude(),
-                    panelTableBox.getDelay(), panelTableBox.getRadius(),
+                    panelTableBox.getLat(), panelTableBox.getLon(),
+                    /*panelTableBox.getAltitude(), panelTableBox.getDelay(), panelTableBox.getRadius(),*/
                     panelTableBox.getUp(), panelTableBox.getDown(), panelTableBox.getRemove());
 
-        panelTableBox.getAltitude().setEditable(editMode);
+        /*panelTableBox.getAltitude().setEditable(editMode);
         panelTableBox.getDelay().setEditable(editMode);
-        panelTableBox.getRadius().setEditable(editMode);
+        panelTableBox.getRadius().setEditable(editMode);*/
 
         // Start loading items
         ObservableList<TableItemEntry> data = FXCollections.observableArrayList();
