@@ -2,7 +2,6 @@ package com.dronegcs.console.controllers.internalFrames.internal;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
-import com.dronegcs.console_plugin.mission_editor.ClosableMissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -363,8 +362,14 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			else
 				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
 		}
-		else 
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+        if (layer instanceof LayerPerimeter) {
+            if (perimetersManager.getPerimeterEditor(((LayerPerimeter) layer).getPerimeter()) == null)
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED, layer));
+            else
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, layer));
+        }
+//		else
+//			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
 	}
 
 	public Layer switchCurrentLayer(LayerGroup layerGroup, Layer fromLayer, Layer toLayer) {
@@ -555,7 +560,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                     modifiedItem = null;
                     refresh();
                     break;
-                case LAYER_PERIMETER_EDITING_FINISHED:
+                case PERIMETER_EDITING_FINISHED:
                     LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
                     String perimeterName = layerPerimeter.getPerimeter().getName();
 //					layerPerimeter.stopEditing();

@@ -14,6 +14,8 @@ import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.logger.Logger;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,8 +42,6 @@ public class PolygonPerimeterTableProfile extends TableProfile {
 
     private LayerPolygonPerimeter layerPolygonPerimeter;
 
-    private PanelTableBox panelTableBox;
-
     @Autowired
     private EventPublisherSvc eventPublisherSvc;
 
@@ -51,6 +51,13 @@ public class PolygonPerimeterTableProfile extends TableProfile {
     @Autowired @NotNull(message = "Internal Error: Failed to get logger")
     private Logger logger;
 
+    @Autowired @NotNull(message = "Internal Error: Failed to get validator")
+    private RuntimeValidator runtimeValidator;
+
+    //Validation should be executed during load function
+    @NotNull(message = "Internal Error: Table wasn't initialized")
+    private PanelTableBox panelTableBox;
+
     public PolygonPerimeterTableProfile() {}
 
     @Override
@@ -59,9 +66,15 @@ public class PolygonPerimeterTableProfile extends TableProfile {
     }
 
     private void load() {
+
+        // Validate all the relevant fields were initialised
+        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+        if (validatorResponse.isFailed())
+            throw new RuntimeException(validatorResponse.toString());
+
         Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactory = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
             public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
-                return new EditingCell<Double>(new DoubleStringConverter());
+                return new EditingCell<>(new DoubleStringConverter());
             }
         };
 
@@ -198,7 +211,9 @@ public class PolygonPerimeterTableProfile extends TableProfile {
 
         int i = 0;
         while (it.hasNext()) {
-            Point mItem = (Point) it.next();
+            Point point = (Point) it.next();
+            entry = new TableItemEntry(i, Point.class.getSimpleName(), point.getLat(), point.getLon(), 0.0, 0.0, 0.0, point);
+
             i++;
             data.add(entry);
         }
@@ -220,8 +235,8 @@ public class PolygonPerimeterTableProfile extends TableProfile {
     public void onApplicationEvent(QuadGuiEvent command) {
         Platform.runLater( () -> {
             switch (command.getCommand()) {
-                case MISSION_EDITING_STARTED:
-                case MISSION_UPDATED_BY_MAP:
+                case PERIMETER_EDITING_STARTED:
+                case PERIMETER_UPDATED_BY_MAP:
                     //layerMission = (LayerMission) command.getSource();
                     //setLayerMission(layerMission);
                     load();
@@ -231,18 +246,19 @@ public class PolygonPerimeterTableProfile extends TableProfile {
                 case DISCARD:
                     if (layerPolygonPerimeter == null)
                         break;
-                case MISSION_EDITING_FINISHED:
+                case PERIMETER_EDITING_FINISHED:
                     //unsetLayerMission();
                     load();
                     generateTable(false, null);
                     break;
-                case MISSION_VIEW_ONLY_STARTED:
+                case PERIMETER_VIEW_ONLY_STARTED:
                     //tableProfile = new MissionTableProfile(this, command.getSource());
 //					setLayerMission(layerMission);
                     load();
                     generateTable(false, command.getSource());
                     break;
-                case MISSION_VIEW_ONLY_FINISHED:
+                //case MISSION_VIEW_ONLY_FINISHED:
+                case PERIMETER_VIEW_ONLY_FINISHED:
 //					setLayerMission(null);
                     load();
                     generateTable(false, null);

@@ -321,6 +321,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
                         System.err.println(getOperationalViewTree().dumpTree());
                         super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
+                        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifyiedLayerPerimeterOriginal));
                     }
 
                     break;
@@ -447,6 +448,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemPerimeterAddPoint.setOnAction( arg -> {
             try {
                 ((PolygonPerimeterEditor) perimeterEditor).addPoint(getPosition(point));
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifyiedLayerPerimeterOriginal));
                 modifyiedLayerPerimeterOriginal.regenerateMapObjects();
             }
             catch (PerimeterUpdateException e) {
@@ -730,7 +732,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                 perimeterEditor = null;
                 modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
                 modifyiedLayerPerimeterOriginal.regenerateMapObjects();
-                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_CANCELED, modifyiedLayerMissionOriginal));
                 modifyiedLayerPerimeterOriginal = null;
             }
@@ -774,7 +776,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                 perimeterEditor = null;
                 modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
                 modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
-                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.LAYER_PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
             }
 
 

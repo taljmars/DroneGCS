@@ -9,6 +9,8 @@ import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.logger.Logger;
+import com.generic_tools.validations.RuntimeValidator;
+import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,8 +37,6 @@ public class MissionTableProfile extends TableProfile {
 
     private LayerMission layerMission;
 
-    private PanelTableBox panelTableBox;
-
     @Autowired
     private EventPublisherSvc eventPublisherSvc;
 
@@ -46,6 +46,14 @@ public class MissionTableProfile extends TableProfile {
     @Autowired @NotNull(message = "Internal Error: Failed to get logger")
     private Logger logger;
 
+    @Autowired @NotNull(message = "Internal Error: Failed to get validator")
+    private RuntimeValidator runtimeValidator;
+
+    //Validation should be executed during load function
+    @NotNull(message = "Internal Error: Table wasn't initialized")
+    private PanelTableBox panelTableBox;
+
+
     public MissionTableProfile() {}
 
     @Override
@@ -54,6 +62,12 @@ public class MissionTableProfile extends TableProfile {
     }
 
     private void load() {
+
+        // Validate all the relevant fields were initialised
+        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+        if (validatorResponse.isFailed())
+            throw new RuntimeException(validatorResponse.toString());
+
         Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactory = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
             public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
                 return new EditingCell<Double>(new DoubleStringConverter());
@@ -272,7 +286,7 @@ public class MissionTableProfile extends TableProfile {
 //					break;
 
             else {
-                System.out.println("Unepectd");
+                System.out.println("Unexpected");
             }
 
             i++;
