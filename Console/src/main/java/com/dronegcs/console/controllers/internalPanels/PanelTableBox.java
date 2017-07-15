@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronegcs.console.controllers.internalPanels.internal.PolygonPerimeterTableProfile;
+import com.dronegcs.console.controllers.internalPanels.internal.PerimeterTableProfile;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionTableProfile;
 import com.generic_tools.validations.RuntimeValidator;
@@ -43,7 +43,7 @@ public class PanelTableBox extends Pane implements Initializable {
 	private MissionTableProfile missionTableProfile;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get perimeter box profile")
-	private PolygonPerimeterTableProfile polygonPerimeterTableProfile;
+	private PerimeterTableProfile perimeterTableProfile;
 	
 	private static int called;
 	@PostConstruct
@@ -59,7 +59,7 @@ public class PanelTableBox extends Pane implements Initializable {
 			throw new RuntimeException(validatorResponse.toString());
 
 		missionTableProfile.setBigTableView(this);
-		polygonPerimeterTableProfile.setBigTableView(this);
+		perimeterTableProfile.setBigTableView(this);
 	}
 
 

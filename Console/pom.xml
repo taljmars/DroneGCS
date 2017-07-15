@@ -179,7 +179,7 @@
                         </goals>
                         <configuration>
                             <descriptors>
-                                <descriptor>assembly-win.xml</descriptor>
+                                <descriptor>assembly-win-64.xml</descriptor>
                             </descriptors>
                             <outputDirectory>../ClientInstallation/Windows/</outputDirectory>
                         </configuration>
