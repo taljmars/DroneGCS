@@ -6,6 +6,7 @@ import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
+import com.dronegcs.console_plugin.ClosingPair;
 import com.geo_tools.Coordinate;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by taljmars on 3/25/17.
@@ -59,9 +59,9 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public MissionClosingPair close(boolean shouldSave) {
+    public ClosingPair<Mission> close(boolean shouldSave) {
         System.err.println("Close, should save:" + shouldSave);
-        MissionClosingPair missionClosingPair = null;
+        ClosingPair<Mission> missionClosingPair = null;
         Mission res = this.mission;
         if (!shouldSave) {
             System.err.println(String.format("Delete mission %s %s", res.getKeyId().getObjId(), res.getName()));
@@ -69,14 +69,14 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             try {
                 res = (Mission) droneDbCrudSvcRemote.readByClass(mission.getKeyId().getObjId().toString(), Mission.class.getName());
                 System.err.println("Found original mission " + res.getKeyId().getObjId() + " " + res.getName());
-                missionClosingPair = new MissionClosingPair(res, false);
+                missionClosingPair = new ClosingPair(res, false);
             } catch (ObjectNotFoundException e) {
                 System.err.println("Mission doesn't exist");
-                missionClosingPair = new MissionClosingPair(this.mission, true);
+                missionClosingPair = new ClosingPair(this.mission, true);
             }
         }
         else {
-            missionClosingPair = new MissionClosingPair(res, false);
+            missionClosingPair = new ClosingPair(res, false);
         }
         //System.err.println(String.format("Before resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         this.mission = null;

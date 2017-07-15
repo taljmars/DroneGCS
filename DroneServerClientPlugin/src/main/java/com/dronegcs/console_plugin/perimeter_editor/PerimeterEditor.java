@@ -10,4 +10,6 @@ public interface PerimeterEditor<T extends Perimeter> {
     T getModifiedPerimeter();
 
     T update(T perimeter) throws PerimeterUpdateException;
+
+    void delete() throws PerimeterUpdateException;
 }

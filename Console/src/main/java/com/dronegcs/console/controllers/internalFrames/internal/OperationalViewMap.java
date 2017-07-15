@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
-import com.dronegcs.console_plugin.mission_editor.MissionClosingPair;
+import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -290,7 +290,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                     loggerDisplayerSvc.logGeneral("Start GeoFence of perimeter type");
                     
                     if (modifyiedLayerPerimeterOriginal == null) {
-                        modifyiedLayerPerimeterOriginal = new LayerCircledPerimeter(OperationalViewTree.EDIT_PREFIX + "New Circled Perimeter", this);
+                        modifyiedLayerPerimeterOriginal = new LayerCircledPerimeter("New Circled Perimeter", this);
                         modifyiedLayerPerimeterOriginal.setApplicationContext(applicationContext);
                         getOperationalViewTree().addLayer(modifyiedLayerPerimeterOriginal);
 
@@ -310,7 +310,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                     loggerDisplayerSvc.logGeneral("Start GeoFence of perimeter type");
 
                     if (modifyiedLayerPerimeterOriginal == null) {
-                        modifyiedLayerPerimeterOriginal = new LayerPolygonPerimeter(OperationalViewTree.EDIT_PREFIX + "New Polygon Perimeter", this);
+                        modifyiedLayerPerimeterOriginal = new LayerPolygonPerimeter("New Polygon Perimeter", this);
                         modifyiedLayerPerimeterOriginal.setApplicationContext(applicationContext);
                         getOperationalViewTree().addLayer(modifyiedLayerPerimeterOriginal);
 
@@ -728,9 +728,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 
             // Perimeters
             if (isPerimeterBuildMode) {
-                Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, false);
+                ClosingPair<Perimeter> perimeterClosingPair = perimetersManager.closePerimeterEditor(perimeterEditor, false);
                 perimeterEditor = null;
-                modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
+                modifyiedLayerPerimeterOriginal.setPerimeter(perimeterClosingPair.getObject());
                 modifyiedLayerPerimeterOriginal.regenerateMapObjects();
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_CANCELED, modifyiedLayerMissionOriginal));
@@ -739,9 +739,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 
             // Missions
             if (isMissionBuildMode) {
-                MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, false);
+                ClosingPair<Mission> missionClosingPair = missionsManager.closeMissionEditor(missionEditor, false);
                 missionEditor = null;
-                modifyiedLayerMissionOriginal.setMission(missionClosingPair.getMission());
+                modifyiedLayerMissionOriginal.setMission(missionClosingPair.getObject());
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_CANCELED, modifyiedLayerMissionOriginal));
@@ -758,10 +758,9 @@ OnDroneListener, EventHandler<ActionEvent> {
 
     @Override
     public void LayerEditorSave() {
-        try {
-            ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
-            if (validatorResponse.isFailed())
-                throw new RuntimeException(validatorResponse.toString());
+        ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
+        if (validatorResponse.isFailed())
+            throw new RuntimeException(validatorResponse.toString());
 
 //        String missionName = null;
 //        if (modifyiedLayerMissionOriginal != null) {
@@ -769,38 +768,34 @@ OnDroneListener, EventHandler<ActionEvent> {
 //            missionName = modifyiedLayerMissionOriginal.getName();
 //        }
 
-            super.LayerEditorSave();
+        super.LayerEditorSave();
 
-            if (isPerimeterBuildMode) {
-                Perimeter perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, true);
-                perimeterEditor = null;
-                modifyiedLayerPerimeterOriginal.setPerimeter(perimeter);
-                modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
-                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
-            }
-
-
-            if (isMissionBuildMode) {
-                //MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, true);
-                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
-                modifyiedLayerMissionOriginal.setName(missionEditor.getModifiedMission().getName());
-                missionEditor = null;
-                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
-            }
-
-            modifyiedLayerMissionOriginal = null;
-            modifyiedLayerPerimeterOriginal = null;
-
-            isMissionBuildMode = false;
-            isPerimeterBuildMode = false;
-
-            getOperationalViewTree().getTree().refresh();
-
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
+        if (isPerimeterBuildMode) {
+            //ClosingPair<> perimeter = perimetersManager.closePerimeterEditor(perimeterEditor, true);
+            modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
+            modifyiedLayerPerimeterOriginal.setName(perimeterEditor.getModifiedPerimeter().getName());
+            perimeterEditor = null;
+            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifyiedLayerPerimeterOriginal));
         }
-         catch (PerimeterUpdateException e) {
-            loggerDisplayerSvc.logError(e.getMessage());
+
+
+        if (isMissionBuildMode) {
+            //MissionClosingPair missionClosingPair = missionsManager.closeMissionEditor(missionEditor, true);
+            modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+            modifyiedLayerMissionOriginal.setName(missionEditor.getModifiedMission().getName());
+            missionEditor = null;
+            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifyiedLayerMissionOriginal));
         }
+
+        modifyiedLayerMissionOriginal = null;
+        modifyiedLayerPerimeterOriginal = null;
+
+        isMissionBuildMode = false;
+        isPerimeterBuildMode = false;
+
+        getOperationalViewTree().getTree().refresh();
+
+        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
     }
 
     @Override

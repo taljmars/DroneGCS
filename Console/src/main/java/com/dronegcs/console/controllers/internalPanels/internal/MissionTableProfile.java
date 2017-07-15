@@ -313,8 +313,6 @@ public class MissionTableProfile extends TableProfile {
             switch (command.getCommand()) {
                 case MISSION_EDITING_STARTED:
                 case MISSION_UPDATED_BY_MAP:
-                    //layerMission = (LayerMission) command.getSource();
-                    //setLayerMission(layerMission);
                     load();
                     generateTable(true, command.getSource());
                     break;
@@ -323,23 +321,18 @@ public class MissionTableProfile extends TableProfile {
                     if (layerMission == null)
                         break;
                 case MISSION_EDITING_FINISHED:
-                    //unsetLayerMission();
                     load();
                     generateTable(false, null);
                     break;
                 case MISSION_VIEW_ONLY_STARTED:
-                    //tableProfile = new MissionTableProfile(this, command.getSource());
-//					setLayerMission(layerMission);
                     load();
                     generateTable(false, command.getSource());
                     break;
                 case MISSION_VIEW_ONLY_FINISHED:
-//					setLayerMission(null);
                     load();
                     generateTable(false, null);
                     break;
             }
         });
     }
-
 }

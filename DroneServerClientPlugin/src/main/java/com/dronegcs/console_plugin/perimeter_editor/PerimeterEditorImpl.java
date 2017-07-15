@@ -28,6 +28,15 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
     }
 
     @Override
+    public void delete() throws PerimeterUpdateException {
+        try {
+            droneDbCrudSvcRemote.delete(perimeter);
+        } catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        }
+    }
+
+    @Override
     public T getModifiedPerimeter() {
         return this.perimeter;
     }

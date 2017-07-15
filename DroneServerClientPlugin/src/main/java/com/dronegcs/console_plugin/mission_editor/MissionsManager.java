@@ -3,6 +3,7 @@ package com.dronegcs.console_plugin.mission_editor;
 import com.dronedb.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.MissionItem;
+import com.dronegcs.console_plugin.ClosingPair;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface MissionsManager {
 
     <T extends MissionEditor> T getMissionEditor(Mission mission);
 
-    <T extends MissionEditor> MissionClosingPair closeMissionEditor(T missionEditor, boolean shouldSave);
+    <T extends MissionEditor> ClosingPair<Mission> closeMissionEditor(T missionEditor, boolean shouldSave);
 
     List<BaseObject> getAllMissions();
 
@@ -32,5 +33,5 @@ public interface MissionsManager {
 
     Mission cloneMission(Mission mission) throws MissionUpdateException;
 
-    Collection<MissionClosingPair> closeAllMissionEditors(boolean shouldSave);
+    Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave);
 }

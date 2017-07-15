@@ -3,7 +3,9 @@ package com.dronegcs.console_plugin.perimeter_editor;
 import com.dronedb.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.Point;
+import com.dronegcs.console_plugin.ClosingPair;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,15 +15,21 @@ public interface PerimetersManager {
 
     <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz) throws PerimeterUpdateException;
 
-    <T extends PerimeterEditor> T getPerimeterEditor(Perimeter perimeter);
+    <T extends PerimeterEditor> T openPerimeterEditor(Perimeter perimeter) throws PerimeterUpdateException;
 
-    <T extends PerimeterEditor> Perimeter closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException;
+    <T extends PerimeterEditor, P extends Perimeter> T getPerimeterEditor(P perimeter);
+
+    <T extends PerimeterEditor, P extends Perimeter> ClosingPair<P> closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException;
 
     List<BaseObject> getAllPerimeters();
 
-    void delete(Perimeter perimeter) throws PerimeterUpdateException;
+    <P extends Perimeter> void delete(P perimeter) throws PerimeterUpdateException;
 
-    Perimeter update(Perimeter perimeter) throws PerimeterUpdateException;
+    <P extends Perimeter> P update(P perimeter) throws PerimeterUpdateException;
 
-    List<Point> getPoints(Perimeter perimeter);
+    <P extends Perimeter> List<Point> getPoints(P perimeter);
+
+    <P extends Perimeter> P clonePerimeter(P perimeter) throws PerimeterUpdateException;
+
+    <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave);
 }

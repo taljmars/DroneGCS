@@ -7,6 +7,7 @@ import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
+import com.dronegcs.console_plugin.ClosingPair;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -126,8 +127,8 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public Collection<MissionClosingPair> closeAllMissionEditors(boolean shouldSave) {
-		Collection<MissionClosingPair> closedMissions = new ArrayList<>();
+	public Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave) {
+		Collection<ClosingPair<Mission>> closedMissions = new ArrayList<>();
 		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
 		while (it.hasNext()) {
 			closedMissions.add(it.next().close(shouldSave));
@@ -158,12 +159,12 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
-	public <T extends MissionEditor> MissionClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
+	public <T extends MissionEditor> ClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
 		logger.debug("closing mission editor");
 		if (!(missionEditor instanceof ClosableMissionEditor)) {
 			return null;
 		}
-		MissionClosingPair missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
+		ClosingPair<Mission> missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
 		closableMissionEditorList.remove(missionEditor);
 		return missionClosingPair;
 	}

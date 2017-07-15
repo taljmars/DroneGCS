@@ -4,6 +4,7 @@ import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronegcs.console_plugin.ClosingPair;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -40,7 +41,7 @@ public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimet
     }
 
     @Override
-    public CirclePerimeter close(boolean shouldSave) {
+    public ClosingPair<CirclePerimeter> close(boolean shouldSave) {
         return null;
     }
 

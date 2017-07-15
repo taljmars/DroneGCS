@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapPolygonImpl;
@@ -24,7 +25,7 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 		this.perimeter = polygonPerimeter;
 	}
 	
-	public LayerPolygonPerimeter(LayerPolygonPerimeter layerPerimeter, LayeredViewMap viewMap) {
+	public LayerPolygonPerimeter(LayerPolygonPerimeter layerPerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
 		super(layerPerimeter, viewMap);
 		this.currentPolygon = (MapPolygon) layerPerimeter.currentPolygon.clone();
 	}

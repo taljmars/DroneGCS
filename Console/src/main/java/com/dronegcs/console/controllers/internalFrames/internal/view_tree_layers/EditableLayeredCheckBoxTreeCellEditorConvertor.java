@@ -1,12 +1,11 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.gui.core.mapTree.internal.TreeCellEditorConvertor;
 import com.gui.core.mapTreeObjects.Layer;
 import javafx.scene.control.TreeItem;
 
 /**
- * Created by oem on 4/30/17.
+ * Created by taljmars on 4/30/17.
  */
 public class EditableLayeredCheckBoxTreeCellEditorConvertor implements TreeCellEditorConvertor<Layer> {
 

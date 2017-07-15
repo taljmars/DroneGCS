@@ -11,7 +11,6 @@ import com.gui.core.mapTreeObjects.Layer;
 public interface OperationalViewTree {
 
     public static final String UPLOADED_PREFIX = "(CURR) ";
-    public static final String EDIT_PREFIX = "*";
 
     CheckBoxViewTree getTree();
 
