@@ -5,6 +5,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditor;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.services.*;
@@ -136,6 +137,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
         LOGGER.info("Load Database data");
         try {
+            // Missions
             List<BaseObject> modifiedMissionsList = missionsManager.getAllModifiedMissions();
             LOGGER.debug("Found {} modified missions", modifiedMissionsList.size());
             if (!modifiedMissionsList.isEmpty()) {
@@ -158,15 +160,28 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                 addLayer(layerMission);
             }
 
-            List<BaseObject> polygonPerimeter = perimetersManager.getAllPerimeters();
+            // Polyline Perimeter
+            List<BaseObject> modifiedPerimeterList = perimetersManager.getAllModifiedPerimeters();
+            LOGGER.debug("Found {} modified perimeters", modifiedPerimeterList.size());
+            if (!modifiedPerimeterList.isEmpty()) {
+                LOGGER.debug("Activate private session");
+                activePrivateSession = true;
+            }
+            for (BaseObject obj : modifiedPerimeterList) {
+                Perimeter perimeter = (Perimeter) obj;
+                LOGGER.debug("Modify perimeter: {}", perimeter.getKeyId().getObjId());
+            }
+            List<BaseObject> perimeterList = perimetersManager.getAllPerimeters();
             LayerPerimeter layerPerimeter;
-            for (BaseObject perimeter : polygonPerimeter) {
-                LOGGER.info("Loading existing perimeter: {}", perimeter);
-                layerPerimeter = LayerPerimeter.generateNew(perimeter, getLayeredViewMap());
-                if (layerPerimeter == null) {
-                    loggerDisplayerSvc.logError("Failed to get perimeter");
-                    continue;
-                }
+            for (BaseObject perimeter : perimeterList) {
+                boolean isEditing = modifiedPerimeterList.stream().anyMatch(
+                        (BaseObject baseObject) -> baseObject.getKeyId().getObjId().equals(perimeter.getKeyId().getObjId())
+                );
+                LOGGER.debug("Loading existing perimeter: {} , edit mode: {}", perimeter, isEditing);
+                if (perimeter instanceof PolygonPerimeter)
+                    layerPerimeter = new LayerPolygonPerimeter((PolygonPerimeter) perimeter, getLayeredViewMap(), isEditing);
+                else
+                    layerPerimeter = new LayerCircledPerimeter((CirclePerimeter) perimeter, getLayeredViewMap(), isEditing);
                 layerPerimeter.setApplicationContext(applicationContext);
                 addLayer(layerPerimeter);
             }
@@ -231,31 +246,26 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         }
 
         if (treeItem.getValue() instanceof LayerPolygonPerimeter) {
+            LayerPolygonPerimeter layerPolygonPerimeter = ((LayerPolygonPerimeter) treeItem.getValue());
             LOGGER.info("Found polygon perimeter to update it name");
-            PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) treeItem.getValue()).getPolygonPerimeter();
-            polygonPerimeter.setName(treeItem.getValue().getName());
-
+            String newName = layerPolygonPerimeter.getName(true);
+            Perimeter perimeter = layerPolygonPerimeter.getPerimeter();
             try {
-                ((LayerPolygonPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(polygonPerimeter));
+                PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor(perimeter);
+                perimeter.setName(newName);
+                perimeterEditor.update(perimeter);
+                layerPolygonPerimeter.setPerimeter(perimeter);
+                eventPublisherSvc.publish(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
             } catch (PerimeterUpdateException e) {
-                treeItem.getValue().setName(fromText);
-                refresh();
+                layerPolygonPerimeter.setName(fromText);
                 loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
             }
+            refresh();
+            LOGGER.debug("Perimeter manager status: \n" + perimetersManager.toString());
         }
 
         if (treeItem.getValue() instanceof LayerCircledPerimeter) {
-            LOGGER.info("Found circle perimeter to update it name");
-            CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) treeItem.getValue()).getCirclePerimeter();
-            circlePerimeter.setName(treeItem.getValue().getName());
-
-            try {
-                ((LayerCircledPerimeter) treeItem.getValue()).setPerimeter(perimetersManager.update(circlePerimeter));
-            } catch (PerimeterUpdateException e) {
-                treeItem.getValue().setName(fromText);
-                refresh();
-                loggerDisplayerSvc.logError("Database is out of sync, failed to update perimeter name , error: " + e.getMessage());
-            }
+            throw new RuntimeException("Yet to implemets");
         }
     }
 
@@ -321,7 +331,6 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                 ((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
                 modifiedItem = treeItem;
                 LayerMission layerMission = (LayerMission) layer;
-//				layer.setName(EDIT_PREFIX + ((LayerMission) layer).getMission().getName());
 				refresh();
 				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layerMission));
 			}
@@ -505,10 +514,6 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
 	public void regenerateTree() {
 		System.err.println("Regenerate Tree");
-		List<BaseObject> missionList = missionsManager.getAllMissions();
-
-		Map<String, BaseObject> map = new HashMap<>();
-		missionList.stream().forEach((BaseObject baseObject) -> map.put(baseObject.getKeyId().getObjId().toString(), baseObject));
 
 		Platform.runLater(() -> {
 			System.err.println("Mission group " + missionsGroup.getChildens());
@@ -522,9 +527,20 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 					CheckBoxTreeItem checkBoxTreeItem = findCheckBoxTreeItemByLayer(layerMission);
 					CheckBoxTreeItem parent = (CheckBoxTreeItem) checkBoxTreeItem.getParent();
 					parent.getChildren().remove(parent);
-//					layerMission.stopEditing();
-//					layerMission.setMission((Mission) map.get(layerMission.getMission().getKeyId().getObjId()));
-//					checkBoxTreeItem.setValue(layerMission);
+                }
+            }
+
+            System.err.println("Perimeters group " + perimetersGroup.getChildens());
+            for (Layer layer : perimetersGroup.getChildens()) {
+                if (layer instanceof LayerPerimeter) {
+                    System.err.println("Name " + layer.getName() + " " + ((LayerPerimeter) layer).isEdited());
+                    LayerPerimeter layerPerimeter = (LayerPerimeter) layer;
+                    if (!layerPerimeter.isEdited())
+                        continue;
+
+                    CheckBoxTreeItem checkBoxTreeItem = findCheckBoxTreeItemByLayer(layerPerimeter);
+                    CheckBoxTreeItem parent = (CheckBoxTreeItem) checkBoxTreeItem.getParent();
+                    parent.getChildren().remove(parent);
                 }
             }
 
@@ -554,7 +570,6 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                         removeLayer(layerMission);
                     } else {
                         String missionName = layerMission.getMission().getName();
-//						layerMission.stopEditing();
                         layerMission.setName(missionName);
                     }
                     modifiedItem = null;
@@ -562,9 +577,12 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                     break;
                 case PERIMETER_EDITING_FINISHED:
                     LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
-                    String perimeterName = layerPerimeter.getPerimeter().getName();
-//					layerPerimeter.stopEditing();
-                    layerPerimeter.setName(perimeterName);
+                    if (layerPerimeter.getPerimeter() == null) {
+                        removeLayer(layerPerimeter);
+                    } else {
+                        String perimeterName = layerPerimeter.getPerimeter().getName();
+                        layerPerimeter.setName(perimeterName);
+                    }
                     modifiedItem = null;
                     refresh();
                     break;
@@ -602,19 +620,16 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         for (Layer layer : missionsGroup.getChildens()) {
             LayerMission layerMission = (LayerMission) layer;
             if (layer.getName().equals(name))
-                foundLayer = layerMission;
+                return layerMission;
         }
 
         for (Layer layer : perimetersGroup.getChildens()) {
             LayerPerimeter layerPerimeter = (LayerPerimeter) layer;
             if (layerPerimeter.getName().equals(name))
-                foundLayer = layerPerimeter;
+                return layerPerimeter;
         }
 
-        if (foundLayer == null)
-            return null;
-
-        return foundLayer;
+        return null;
     }
 
     //TODO: Make it search deep
@@ -630,19 +645,27 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                     " " + layerMission.getMission().getName() +
                     " " + layerMission.getMission().getMissionItemsUids() +
                     " " + layerMission.getMission().getDefaultAlt());
-            if (((LayerMission) layer).getMission().getKeyId().getObjId().equals(object.getKeyId().getObjId()))
-                foundLayer = layerMission;
+            if (((LayerMission) layer).getMission().getKeyId().getObjId().equals(object.getKeyId().getObjId())) {
+                return layerMission;
+            }
         }
 
-        if (foundLayer == null)
-            return null;
+        for (Layer layer : perimetersGroup.getChildens()) {
+            LayerPerimeter layerPerimeter = (LayerPerimeter) layer;
+            LOGGER.debug("Candidate -" + layerPerimeter.getName() + " " + layerPerimeter.getPerimeter().getName() + " perimeter: " +
+                    layerPerimeter.getPerimeter() +
+                    " " + layerPerimeter.getPerimeter().getKeyId().getObjId() +
+                    " " + layerPerimeter.getPerimeter().getName());
+            if (((LayerPerimeter) layer).getPerimeter().getKeyId().getObjId().equals(object.getKeyId().getObjId()))
+                return layerPerimeter;
+        }
 
-        return foundLayer;
+        return null;
     }
 
     /**
      * Dedicated function to find a mission layer with a mission related to the one on the drone
-     * the mission will not be exacly the same:
+     * the mission will not be exactly the same:
      * 1) mission on drone doesn't have a name at this point.
      * 2) we don't have identifier except coordinates, item amount and types
      */

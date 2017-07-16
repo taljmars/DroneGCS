@@ -30,6 +30,10 @@ public class LayerPolygonPerimeter extends LayerPerimeter {
 		this.currentPolygon = (MapPolygon) layerPerimeter.currentPolygon.clone();
 	}
 
+	public LayerPolygonPerimeter(PolygonPerimeter perimeter, LayeredViewMap layeredViewMap, boolean isEditing) {
+		super(perimeter, layeredViewMap, isEditing);
+	}
+
 	public void addPolygon(MapPolygon poly) {
 		currentPolygon = poly;
 		regenerateMapObjects();

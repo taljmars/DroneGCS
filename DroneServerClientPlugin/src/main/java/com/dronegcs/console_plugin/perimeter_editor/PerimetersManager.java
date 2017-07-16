@@ -27,6 +27,8 @@ public interface PerimetersManager {
 
     <P extends Perimeter> P update(P perimeter) throws PerimeterUpdateException;
 
+    List<BaseObject> getAllModifiedPerimeters();
+
     <P extends Perimeter> List<Point> getPoints(P perimeter);
 
     <P extends Perimeter> P clonePerimeter(P perimeter) throws PerimeterUpdateException;

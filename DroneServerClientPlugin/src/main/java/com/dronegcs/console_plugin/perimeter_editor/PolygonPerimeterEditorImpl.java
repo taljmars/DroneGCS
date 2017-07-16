@@ -30,28 +30,15 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     @Override
     public PolygonPerimeter open(PolygonPerimeter perimeter) throws PerimeterUpdateException {
         logger.debug("Setting new perimeter to perimeter editor");
-        try {
-            this.perimeter = (PolygonPerimeter) perimeter;
-            this.originalPerimeter = (PolygonPerimeter) perimeterCrudSvcRemote.clonePerimeter(this.perimeter);
-            this.perimeter.setName(perimeter.getName());
-
-            droneDbCrudSvcRemote.update(this.perimeter);
-            return this.perimeter;
-        }
-        catch (DatabaseValidationRemoteException e) {
-            throw new PerimeterUpdateException(e.getMessage());
-        } catch (ObjectNotFoundRemoteException e) {
-            throw new PerimeterUpdateException(e.getMessage());
-        }
+        this.perimeter = perimeter;
+        return this.perimeter;
     }
 
     @Override
     public PolygonPerimeter open(String perimeterName) throws PerimeterUpdateException {
         logger.debug("Setting new perimeter to perimeter editor");
         try {
-            System.err.println("TALMA: " + PolygonPerimeter.class.getName());
             this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.create(PolygonPerimeter.class.getName());
-            this.originalPerimeter = null;
             this.perimeter.setName(perimeterName);
             this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(this.perimeter);
             return this.perimeter;

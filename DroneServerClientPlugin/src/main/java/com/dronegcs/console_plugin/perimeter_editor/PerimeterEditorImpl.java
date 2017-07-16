@@ -14,7 +14,6 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
     protected DroneDbCrudSvcRemote droneDbCrudSvcRemote;
 
     protected T perimeter;
-    protected T originalPerimeter;
 
     @Override
     public T update(T perimeter) throws PerimeterUpdateException {
