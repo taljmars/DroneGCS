@@ -64,6 +64,22 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
+	public MissionEditor openMissionEditor(Mission mission) throws MissionUpdateException {
+		logger.debug("Setting new mission to mission editor");
+		ClosableMissionEditor missionEditor = findMissionEditorByMission(mission);
+		if (missionEditor == null) {
+			System.err.println("Editor not exist for mission " + mission.getName() + ", creating new one");
+			missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
+			missionEditor.open(mission);
+			closableMissionEditorList.add(missionEditor);
+		}
+		else {
+			System.err.println("Found existing mission editor");
+		}
+		return missionEditor;
+	}
+
+	@Override
 	public void delete(Mission mission) {
 		if (mission == null) {
 			logger.error("Received Empty mission, skip deletion");
@@ -94,6 +110,45 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
+	public Mission cloneMission(Mission mission) throws MissionUpdateException {
+		try {
+			return missionCrudSvcRemote.cloneMission(mission);
+		}
+		catch (DatabaseValidationRemoteException e) {
+			throw new MissionUpdateException(e.getMessage());
+		} catch (ObjectNotFoundRemoteException e) {
+			throw new MissionUpdateException(e.getMessage());
+		}
+	}
+
+	@Override
+	public <T extends MissionEditor> ClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
+		logger.debug("closing mission editor");
+		if (!(missionEditor instanceof ClosableMissionEditor)) {
+			return null;
+		}
+		ClosingPair<Mission> missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
+		closableMissionEditorList.remove(missionEditor);
+		return missionClosingPair;
+	}
+
+	@Override
+	public Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave) {
+		Collection<ClosingPair<Mission>> closedMissions = new ArrayList<>();
+		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
+		while (it.hasNext()) {
+			closedMissions.add(it.next().close(shouldSave));
+		}
+		closableMissionEditorList.clear();
+		return closedMissions;
+	}
+
+	@Override
+	public <T extends MissionEditor> T getMissionEditor(Mission mission) {
+		return (T) findMissionEditorByMission(mission);
+	}
+
+	@Override
 	public List<MissionItem> getMissionItems(Mission mission) {
 		Mission leadMission = mission;
 		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
@@ -112,61 +167,6 @@ public class MissionsManagerImpl implements MissionsManager {
 		}
 
 		return missionItemList;
-	}
-
-	@Override
-	public Mission cloneMission(Mission mission) throws MissionUpdateException {
-		try {
-			return missionCrudSvcRemote.cloneMission(mission);
-		}
-		catch (DatabaseValidationRemoteException e) {
-			throw new MissionUpdateException(e.getMessage());
-		} catch (ObjectNotFoundRemoteException e) {
-			throw new MissionUpdateException(e.getMessage());
-		}
-	}
-
-	@Override
-	public Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave) {
-		Collection<ClosingPair<Mission>> closedMissions = new ArrayList<>();
-		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
-		while (it.hasNext()) {
-			closedMissions.add(it.next().close(shouldSave));
-		}
-		closableMissionEditorList.clear();
-		return closedMissions;
-	}
-
-	@Override
-	public MissionEditor openMissionEditor(Mission mission) throws MissionUpdateException {
-		logger.debug("Setting new mission to mission editor");
-		ClosableMissionEditor missionEditor = findMissionEditorByMission(mission);
-		if (missionEditor == null) {
-			System.err.println("Editor not exist for mission " + mission.getName() + ", creating new one");
-			missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
-			missionEditor.open(mission);
-			closableMissionEditorList.add(missionEditor);
-		}
-		else {
-			System.err.println("Found existing mission editor");
-		}
-		return missionEditor;
-	}
-
-	@Override
-	public <T extends MissionEditor> T getMissionEditor(Mission mission) {
-		return (T) findMissionEditorByMission(mission);
-	}
-
-	@Override
-	public <T extends MissionEditor> ClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
-		logger.debug("closing mission editor");
-		if (!(missionEditor instanceof ClosableMissionEditor)) {
-			return null;
-		}
-		ClosingPair<Mission> missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
-		closableMissionEditorList.remove(missionEditor);
-		return missionClosingPair;
 	}
 
 	@Override

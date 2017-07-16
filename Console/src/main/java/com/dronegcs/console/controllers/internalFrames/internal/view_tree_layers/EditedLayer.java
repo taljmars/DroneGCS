@@ -4,7 +4,7 @@ import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.ViewMap;
 
 /**
- * Created by oem on 4/30/17.
+ * Created by taljmars on 4/30/17.
  */
 public class EditedLayer extends LayerSingle {
 

@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
+import com.dronedb.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -25,6 +26,10 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 	public LayerCircledPerimeter(LayerCircledPerimeter layerCirclePerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
 		super(layerCirclePerimeter, viewMap);
 		this.currentMarker = layerCirclePerimeter.currentMarker.clone();
+	}
+
+	public LayerCircledPerimeter(CirclePerimeter perimeter, LayeredViewMap layeredViewMap, boolean isEditing) {
+		super(perimeter, layeredViewMap, isEditing);
 	}
 
 	@Override

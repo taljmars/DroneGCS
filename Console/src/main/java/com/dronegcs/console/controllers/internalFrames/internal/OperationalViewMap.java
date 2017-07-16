@@ -313,12 +313,9 @@ OnDroneListener, EventHandler<ActionEvent> {
                         modifyiedLayerPerimeterOriginal = new LayerPolygonPerimeter("New Polygon Perimeter", this);
                         modifyiedLayerPerimeterOriginal.setApplicationContext(applicationContext);
                         getOperationalViewTree().addLayer(modifyiedLayerPerimeterOriginal);
-
                         isPerimeterBuildMode = true;
                         perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), PolygonPerimeter.class);
-                        LOGGER.error("TALMA : should see this when having exception");
                         modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
-
                         System.err.println(getOperationalViewTree().dumpTree());
                         super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
                         eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifyiedLayerPerimeterOriginal));
@@ -343,16 +340,9 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionBuild.setOnAction( arg -> {
             try {
                 if (modifyiedLayerMissionOriginal == null) {
-                    //modifyiedLayerMission = (LayerMission) AppConfig.context.getBean("layerMission");
-                    // TALMA i am trying not to use bean here
-                    //modifyiedLayerMissionOriginal = new LayerMission(OperationalViewTreeImpl.EDIT_PREFIX + "New DroneMission", this);
                     modifyiedLayerMissionOriginal = new LayerMission("New DroneMission", this);
                     modifyiedLayerMissionOriginal.setApplicationContext(applicationContext);
                     getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
-                    //TODO: Fix after handling db
-//                    DroneMission msn = applicationContext.getBean(DroneMission.class);
-//                    msn.setDrone(drone);
-//                    modifyiedLayerMission.setMission(msn);
                     isMissionBuildMode = true;
                     missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getName());
                     modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
@@ -761,12 +751,6 @@ OnDroneListener, EventHandler<ActionEvent> {
         ValidatorResponse validatorResponse = runtimeValidator.validate(getOperationalViewTree());
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
-
-//        String missionName = null;
-//        if (modifyiedLayerMissionOriginal != null) {
-//            modifyiedLayerMissionOriginal.setName(modifyiedLayerMissionOriginal.getName().substring(0, modifyiedLayerMissionOriginal.getName().length() - 1));
-//            missionName = modifyiedLayerMissionOriginal.getName();
-//        }
 
         super.LayerEditorSave();
 

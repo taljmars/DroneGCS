@@ -6,7 +6,7 @@ import com.gui.core.mapTree.CheckBoxViewTree;
 import com.gui.core.mapTreeObjects.Layer;
 
 /**
- * Created by oem on 5/5/17.
+ * Created by taljmars on 5/5/17.
  */
 public interface OperationalViewTree {
 
