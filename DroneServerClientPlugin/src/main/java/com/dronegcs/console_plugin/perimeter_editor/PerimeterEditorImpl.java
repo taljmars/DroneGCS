@@ -5,7 +5,8 @@ import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.ClosingPair;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class PerimeterEditorImpl<T extends Perimeter> implements PerimeterEditor<T> {
 
-    private final static Logger logger = Logger.getLogger(PerimeterEditorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(PerimeterEditorImpl.class);
 
     @Autowired
     protected DroneDbCrudSvcRemote droneDbCrudSvcRemote;
@@ -46,13 +47,13 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
     }
 
     protected T open(T perimeter) throws PerimeterUpdateException {
-        logger.debug("Setting new perimeter to perimeter editor");
+        LOGGER.debug("Setting new perimeter to perimeter editor");
         this.perimeter = perimeter;
         return this.perimeter;
     }
 
     protected T open(String perimeterName, Class<T> perimeterClass) throws PerimeterUpdateException {
-        logger.debug("Setting new perimeter to perimeter editor");
+        LOGGER.debug("Setting new perimeter to perimeter editor");
         try {
             this.perimeter = perimeterClass.cast(droneDbCrudSvcRemote.create(perimeterClass.getName()));
             this.perimeter.setName(perimeterName);
@@ -86,7 +87,7 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
         }
 
         this.perimeter = null;
-        logger.debug("Perimeter editor finished");
+        LOGGER.debug("Perimeter editor finished");
         return perimeterClosingPair;
     }
 }

@@ -1,19 +1,23 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.*;
 import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
+import com.dronedb.persistence.ws.internal.*;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
 import com.dronegcs.console_plugin.ClosingPair;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by taljmars on 3/26/17.
@@ -21,7 +25,7 @@ import java.util.*;
 @Component
 public class PerimetersManagerImpl implements PerimetersManager {
 
-    private final static Logger logger = Logger.getLogger(PerimetersManagerImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(PerimetersManagerImpl.class);
 
     @Autowired
     private QuerySvcRemote querySvcRemote;
@@ -50,10 +54,10 @@ public class PerimetersManagerImpl implements PerimetersManager {
         for (BaseObject item : perimetersList) {
             Perimeter perimeter = (Perimeter) item;
             try {
-                logger.debug("perimeter '" + perimeter.getName() + "' is in edit mode");
+                LOGGER.debug("perimeter '" + perimeter.getName() + "' is in edit mode");
                 openPerimeterEditor(perimeter);
             } catch (PerimeterUpdateException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to initialize perimeter manager", e);
             }
         }
     }
@@ -71,7 +75,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
 
     @Override
     public <T extends PerimeterEditor> T openPerimeterEditor(Perimeter perimeter) throws PerimeterUpdateException {
-        logger.debug("Setting new perimeter to perimeter editor");
+        LOGGER.debug("Setting new perimeter to perimeter editor");
         ClosablePerimeterEditor perimeterEditor = findPerimeterEditorByPerimeter(perimeter);
         if (perimeterEditor == null) {
             System.err.println("Editor not exist for perimeter " + perimeter.getName() + ", creating new one");
@@ -89,14 +93,14 @@ public class PerimetersManagerImpl implements PerimetersManager {
     @Override
     public <P extends Perimeter> void delete(P perimeter) throws PerimeterUpdateException {
         if (perimeter == null) {
-            logger.error("Received Empty perimeter, skip deletion");
+            LOGGER.error("Received Empty perimeter, skip deletion");
             return;
         }
         try {
             ClosablePerimeterEditor closablePerimeterEditor = openPerimeterEditor(perimeter);
             closablePerimeterEditor.delete();
         } catch (PerimeterUpdateException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to delete perimeter", e);
         }
     }
 
@@ -130,7 +134,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
 
     @Override
     public <T extends PerimeterEditor, P extends Perimeter> ClosingPair<P> closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException {
-        logger.debug("closing mission editor");
+        LOGGER.debug("closing mission editor");
         if (!(perimeterEditor instanceof ClosablePerimeterEditor)) {
             return null;
         }
@@ -206,8 +210,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
                 try {
                     res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
                 } catch (ObjectNotFoundException e) {
-                    e.printStackTrace();
-                    //TODO
+                    LOGGER.error("Failed to perimeter points", e);
                 }
             return res;
         }
@@ -218,8 +221,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
                 try {
                     res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
                 } catch (ObjectNotFoundException e) {
-                    e.printStackTrace();
-                    //TODO
+                    LOGGER.error("Failed to get point", e);
                 }
             }
             return res;

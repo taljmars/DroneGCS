@@ -167,8 +167,7 @@ OnDroneListener, EventHandler<ActionEvent> {
     }
     
     private ContextMenu buildPopup(Point point) {
-        // TODO: remove it
-        System.out.println("Building popup");
+        LOGGER.debug("Building popup");
         ContextMenu popup = new ContextMenu();        
         
         MenuItem menuItemFlyTo = new MenuItem("Fly to Position");
@@ -268,7 +267,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         );
 
         menuItemSyncMission.setOnAction( arg -> {
-                System.out.println(getClass().getName() + " Start Sync DroneMission");
+                LOGGER.debug(getClass().getName() + " Start Sync DroneMission");
                 drone.getWaypointManager().getWaypoints();
                 loggerDisplayerSvc.logOutgoing("Send Sync Request");
             }
@@ -276,7 +275,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         
         menuItemPerimeterBuild.setOnAction( arg -> {
             try {
-                System.out.println(getClass().getName() + " Start GeoFence");
+                LOGGER.debug(getClass().getName() + " Start GeoFence");
                 String[] options = { "Cycle", "Polygon", "Cancel" };
                 int n = dialogManagerSvc
                         .showOptionsDialog("Choose a way to create perimeter.",
@@ -480,14 +479,14 @@ OnDroneListener, EventHandler<ActionEvent> {
     @Override
     protected void HandleMouseClick(MouseEvent me) {
         // TODO: remove peint
-        System.out.println("Mouse click " + me);
+        LOGGER.debug("Mouse click " + me);
         if (popup != null)
             popup.hide();
         
         if (!me.getButton().equals(MouseButton.SECONDARY))
             return;
 
-        System.out.println("Get point");
+        LOGGER.debug("Get point");
         Point point = new Point((int) me.getX(), (int) me.getY());
         popup = buildPopup(point);
         //this.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {if (e.getButton() == MouseButton.SECONDARY)   popup.show(this, e.getScreenX(), e.getScreenY()); else popup.hide();});

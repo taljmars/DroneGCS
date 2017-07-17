@@ -1,14 +1,13 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
+import com.dronedb.persistence.ws.internal.*;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronegcs.console_plugin.ClosingPair;
 import com.geo_tools.Coordinate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ import java.util.List;
 @Component
 public class MissionEditorImpl implements ClosableMissionEditor {
 
-    private final static Logger logger = Logger.getLogger(MissionEditorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MissionEditorImpl.class);
 
     @Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
     private DroneDbCrudSvcRemote droneDbCrudSvcRemote;
@@ -39,14 +38,14 @@ public class MissionEditorImpl implements ClosableMissionEditor {
 
     @Override
     public Mission open(Mission mission) throws MissionUpdateException {
-        logger.debug("Setting new mission to mission editor");
+        LOGGER.debug("Setting new mission to mission editor");
         this.mission = mission;
         return this.mission;
     }
 
     @Override
     public Mission open(String missionName) throws MissionUpdateException {
-        logger.debug("Setting new mission to mission editor");
+        LOGGER.debug("Setting new mission to mission editor");
         try {
             this.mission = (Mission) droneDbCrudSvcRemote.create(Mission.class.getName());
             this.mission.setName(missionName);
@@ -80,7 +79,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         }
         //System.err.println(String.format("Before resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         this.mission = null;
-        logger.debug("DroneMission editor finished");
+        LOGGER.debug("DroneMission editor finished");
         //System.err.println(String.format("After resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         return missionClosingPair;
     }
@@ -179,7 +178,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             return this.mission;
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             throw new MissionUpdateException(e.getMessage());
         }
     }
@@ -203,8 +202,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             try {
                 missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid.toString(), MissionItem.class.getName()));
             } catch (ObjectNotFoundException e) {
-                e.printStackTrace();
-                // TODO
+                LOGGER.error("Failed to get mission items", e);
             }
         });
         return missionItemList;

@@ -6,9 +6,13 @@ import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.gui.core.mapTreeObjects.LayerSingle;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 public abstract class LayerPerimeter<T extends Perimeter> extends EditedLayer implements Compound {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(LayerPerimeter.class);
 
 	protected ApplicationContext applicationContext;
 	protected T perimeter;
@@ -20,11 +24,11 @@ public abstract class LayerPerimeter<T extends Perimeter> extends EditedLayer im
 	
 	public LayerPerimeter(LayerPerimeter<T> layerPerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
 		super(layerPerimeter, viewMap);
-		System.out.println("Before copy " + layerPerimeter.getPerimeter());
+		LOGGER.debug("Before copy " + layerPerimeter.getPerimeter());
 		PerimetersManager perimetersManager = applicationContext.getBean(PerimetersManager.class);
 		perimeter = perimetersManager.clonePerimeter(layerPerimeter.getPerimeter());
 		startEditing();
-		System.out.println("After copy " + perimeter);
+		LOGGER.debug("After copy " + perimeter);
 	}
 
 	public LayerPerimeter(T perimeter1, LayeredViewMap layeredViewMap) {

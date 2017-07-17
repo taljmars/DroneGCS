@@ -1,5 +1,6 @@
 package com.dronegcs.console_plugin.services;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TextNotificationPublisherSvc {
-	
+
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TextNotificationPublisherSvc.class);
+
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
@@ -23,7 +26,7 @@ public class TextNotificationPublisherSvc {
 	 * @param message
 	 */
 	public void publish(String message) {
-		System.out.println("Publishing event '" + message + "'");
+		LOGGER.debug("Publishing event '" + message + "'");
 		applicationEventPublisher.publishEvent(message);
 	}
 }

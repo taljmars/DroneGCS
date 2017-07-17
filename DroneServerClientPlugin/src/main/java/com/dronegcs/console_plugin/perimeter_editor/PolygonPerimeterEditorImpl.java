@@ -2,10 +2,12 @@ package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.dronedb.persistence.scheme.Point;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronedb.persistence.ws.internal.*;
-import com.dronegcs.console_plugin.ClosingPair;
+import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
+import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.geo_tools.Coordinate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerimeter> implements ClosablePerimeterEditor<PolygonPerimeter>, PolygonPerimeterEditor {
 
-    private final static Logger logger = Logger.getLogger(PolygonPerimeterEditorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(PolygonPerimeterEditorImpl.class);
 
     @Autowired @NotNull(message = "Internal Error: Failed to get query")
     private QuerySvcRemote querySvcRemote;

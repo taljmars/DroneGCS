@@ -6,7 +6,8 @@ import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
 import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
 import com.dronedb.persistence.ws.internal.QuerySvcRemote;
 import com.geo_tools.Coordinate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimeter> implements ClosablePerimeterEditor<CirclePerimeter>, CirclePerimeterEditor {
 
-    private final static Logger logger = Logger.getLogger(CirclePerimeterEditorImpl.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CirclePerimeterEditorImpl.class);
 
     @Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
     private DroneDbCrudSvcRemote droneDbCrudSvcRemote;
@@ -57,8 +58,9 @@ public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimet
             center = (Point) droneDbCrudSvcRemote.update(center);
             perimeter.setCenter(center.getKeyId().getObjId());
             perimeter = (CirclePerimeter) droneDbCrudSvcRemote.update(perimeter);
-        } catch (DatabaseValidationRemoteException e) {
-            e.printStackTrace();
+        }
+        catch (DatabaseValidationRemoteException e) {
+            LOGGER.error("Failed to update circled perimeter central coordinates", e);
         }
     }
 }

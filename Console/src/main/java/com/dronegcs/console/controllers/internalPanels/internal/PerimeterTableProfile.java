@@ -23,6 +23,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,8 @@ import java.util.List;
  */
 @Component
 public class PerimeterTableProfile extends TableProfile {
+
+    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PerimeterTableProfile.class);
 
     private LayerPerimeter layerPerimeter;
 
@@ -228,7 +231,7 @@ public class PerimeterTableProfile extends TableProfile {
             CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) layerPerimeter).getCirclePerimeter();
             List<Point> points = perimetersManager.getPoints(circlePerimeter);
             if (points == null || points.isEmpty()) {
-                //TODO: add logger messege
+                LOGGER.debug("No points exist for this perimeter");
                 return;
             }
             entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), circlePerimeter);

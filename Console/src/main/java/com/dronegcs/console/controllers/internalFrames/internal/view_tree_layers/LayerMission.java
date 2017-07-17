@@ -11,6 +11,8 @@ import com.gui.core.mapViewerObjects.MapMarkerCircle;
 import com.gui.core.mapViewerObjects.MapMarkerDot;
 import com.gui.is.interfaces.mapObjects.MapLine;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class LayerMission extends EditedLayer {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(LayerMission.class);
 	
 	private Mission mission;
 	private ApplicationContext applicationContext;
@@ -29,11 +33,11 @@ public class LayerMission extends EditedLayer {
 
 	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) throws MissionUpdateException {
 		super(layerMission, viewMap);
-		System.out.println("Before copy " + layerMission.getMission());
+		LOGGER.debug("Before copy " + layerMission.getMission());
 		MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
 		mission = missionsManager.cloneMission(layerMission.getMission());
 		startEditing();
-		System.out.println("After copy " + mission);
+		LOGGER.debug("After copy " + mission);
 	}
 
 	public LayerMission(Mission mission, LayeredViewMap layeredViewMap) {

@@ -21,6 +21,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,8 @@ import java.util.List;
  */
 @Component
 public class MissionTableProfile extends TableProfile {
+
+    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MissionTableProfile.class);
 
     private LayerMission layerMission;
 
@@ -286,7 +289,7 @@ public class MissionTableProfile extends TableProfile {
 //					break;
 
             else {
-                System.out.println("Unexpected");
+                LOGGER.error("Unexpected value");
             }
 
             i++;

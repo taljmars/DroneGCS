@@ -2,25 +2,27 @@ package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
-import com.dronedb.persistence.ws.internal.MissionCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
-import com.dronedb.persistence.ws.internal.DroneDbCrudSvcRemote;
+import com.dronedb.persistence.ws.internal.*;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
 import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
 import com.dronegcs.console_plugin.ClosingPair;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
 
-	private final static Logger logger = Logger.getLogger(MissionsManagerImpl.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(MissionsManagerImpl.class);
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	private ApplicationContext applicationContext;
@@ -46,17 +48,17 @@ public class MissionsManagerImpl implements MissionsManager {
 		for (BaseObject item : missionList) {
 			Mission mission = (Mission) item;
 			try {
-				logger.debug("Mission '" + mission.getName() + "' is in edit mode");
+				LOGGER.debug("Mission '" + mission.getName() + "' is in edit mode");
 				openMissionEditor(mission);
 			} catch (MissionUpdateException e) {
-				e.printStackTrace();
+				LOGGER.error("Failed to initialize mission manager", e);
 			}
 		}
 	}
 
 	@Override
 	public MissionEditor openMissionEditor(String initialName) throws MissionUpdateException {
-		logger.debug("Setting new mission to mission editor");
+		LOGGER.debug("Setting new mission to mission editor");
 		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 		missionEditor.open(initialName);
 		closableMissionEditorList.add(missionEditor);
@@ -65,7 +67,7 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	@Override
 	public MissionEditor openMissionEditor(Mission mission) throws MissionUpdateException {
-		logger.debug("Setting new mission to mission editor");
+		LOGGER.debug("Setting new mission to mission editor");
 		ClosableMissionEditor missionEditor = findMissionEditorByMission(mission);
 		if (missionEditor == null) {
 			System.err.println("Editor not exist for mission " + mission.getName() + ", creating new one");
@@ -82,7 +84,7 @@ public class MissionsManagerImpl implements MissionsManager {
 	@Override
 	public void delete(Mission mission) {
 		if (mission == null) {
-			logger.error("Received Empty mission, skip deletion");
+			LOGGER.error("Received Empty mission, skip deletion");
 			return;
 		}
 
@@ -91,7 +93,7 @@ public class MissionsManagerImpl implements MissionsManager {
 			closableMissionEditor.delete();
 		}
 		catch (MissionUpdateException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to delete mission", e);
 		}
 	}
 
@@ -123,7 +125,7 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	@Override
 	public <T extends MissionEditor> ClosingPair closeMissionEditor(T missionEditor, boolean shouldSave) {
-		logger.debug("closing mission editor");
+		LOGGER.debug("closing mission editor");
 		if (!(missionEditor instanceof ClosableMissionEditor)) {
 			return null;
 		}
@@ -161,8 +163,7 @@ public class MissionsManagerImpl implements MissionsManager {
 			try {
 				missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid.toString(), MissionItem.class.getName()));
 			} catch (ObjectNotFoundException e) {
-				e.printStackTrace();
-				// TODO
+				LOGGER.error("Failed to get mission item", e);
 			}
 		}
 

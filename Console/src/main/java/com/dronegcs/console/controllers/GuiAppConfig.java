@@ -94,7 +94,7 @@ public class GuiAppConfig {
             FXMLLoader fxmlLoader = getFXMLLoaderForUrl(url);
             return fxmlLoader.load(fxmlStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to load configuration", e);
             return null;
         }
     }
@@ -107,7 +107,7 @@ public class GuiAppConfig {
             fxmlLoader.getNamespace().put("prefHeight", height);
             return fxmlLoader.load(fxmlStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to load internal frames", e);
             return null;
         }
     }

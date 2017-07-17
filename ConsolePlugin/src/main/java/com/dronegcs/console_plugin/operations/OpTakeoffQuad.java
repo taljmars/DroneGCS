@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import com.generic_tools.validations.ValidatorResponse;
 @ComponentScan("gui.com.dronegcs.console_plugin.services")
 @Component("opTakeoffQuad")
 public class OpTakeoffQuad extends OperationHandler {
+
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpTakeoffQuad.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
@@ -61,7 +65,7 @@ public class OpTakeoffQuad extends OperationHandler {
 			double alt = drone.getAltitude().getAltitude();
 			if (alt >= expectedValue * 0.95 && alt <= expectedValue * 1.05 )
 				break;
-			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
+			LOGGER.debug("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
 			loggerDisplayerSvc.logGeneral("Waiting for takeoff to finish (" + retry + ")");
 			loggerDisplayerSvc.logGeneral("Current height: " + drone.getAltitude().getAltitude() + ", Target height: " + expectedValue);
 			Thread.sleep(sleep_time);
@@ -71,7 +75,7 @@ public class OpTakeoffQuad extends OperationHandler {
 		if (retry <= 0) {
 			loggerDisplayerSvc.logError("Failed to lift quad");
 			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to lift quadcopter, taking off was canceled"));
-			System.out.println(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
+			LOGGER.error(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
 			return false;
 		}
 		
@@ -81,7 +85,7 @@ public class OpTakeoffQuad extends OperationHandler {
 	}
 
 	public void setTargetHeight(double real_value) {
-		System.out.println(getClass().getName() + " Required height is " + real_value);
+		LOGGER.debug(getClass().getName() + " Required height is " + real_value);
 		expectedValue = real_value;
 	}
 }

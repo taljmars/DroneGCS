@@ -19,6 +19,8 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,8 @@ import com.generic_tools.validations.ValidatorResponse;
 
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(PanelTelemetrySatellite.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
@@ -84,7 +88,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	}
 	
 	protected void SetFlightModeLabel(String name) {
-		System.out.print("Update telemetry: " + name);
+		LOGGER.debug("Update telemetry: " + name);
 		lblFlightMode.setText(name);
 	}
 	

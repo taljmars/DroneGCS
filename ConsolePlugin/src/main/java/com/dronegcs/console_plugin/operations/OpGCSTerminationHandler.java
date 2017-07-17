@@ -1,19 +1,23 @@
 package com.dronegcs.console_plugin.operations;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
-import com.generic_tools.logger.Logger;
-import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.mavlink.is.drone.Drone;
+import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 
 @Component
 public class OpGCSTerminationHandler extends OperationHandler {
+
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmQuad.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
 	protected EventPublisherSvc eventPublisherSvc;
@@ -44,7 +48,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	@Override
 	public boolean go() throws InterruptedException {
 		if (DialogManagerSvc.YES_OPTION == dialogManagerSvc.showConfirmDialog("Are you sure you wand to exit?", "")) {
-    		System.out.println("Bye Bye");
+			LOGGER.debug("Bye Bye");
     		logger.LogGeneralMessege("");
     		logger.LogGeneralMessege("Summary:");
     		logger.LogGeneralMessege("--------");

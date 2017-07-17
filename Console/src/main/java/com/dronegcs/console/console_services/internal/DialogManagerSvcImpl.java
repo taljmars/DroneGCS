@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ import java.util.Vector;
  */
 @Component
 public class DialogManagerSvcImpl implements DialogManagerSvc {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(DialogManagerSvcImpl.class);
     @Autowired
     @NotNull(message = "Internal Error: Failed to get keyboard controller")
     private KeyBoardController keyboardController;
@@ -165,7 +169,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
         alert.getDialogPane().setContent(expContent);
 
         Optional<ButtonType> result = alert.showAndWait();
-        System.out.println(result.toString() + " " + cmbList2.getValue() + " " + cmbList1.getValue());
+        LOGGER.debug(result.toString() + " " + cmbList2.getValue() + " " + cmbList1.getValue());
 
         return result.get() == ButtonType.OK ? new Pair<Object, Object>(cmbList1.getValue(), cmbList2.getValue()) : null;
     }

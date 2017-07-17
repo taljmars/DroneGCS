@@ -5,6 +5,8 @@ import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -12,6 +14,8 @@ import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 
 @Component
 public class OpArmQuad extends OperationHandler {
+
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmQuad.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -55,7 +59,7 @@ public class OpArmQuad extends OperationHandler {
 		if (retry <= 0) {
 			loggerDisplayerSvc.logError("Failed to arm quad");
 			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to arm quadcopter, taking off was canceled"));
-			System.out.println(getClass().getName() + "Failed to arm quadcopter, taking off was canceled");
+			LOGGER.error(getClass().getName() + "Failed to arm quadcopter, taking off was canceled");
 			
 			return false;
 		}

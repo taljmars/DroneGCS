@@ -2,6 +2,8 @@ package com.dronegcs.console_plugin;
 
 import com.dronedb.persistence.ws.internal.*;
 import com.dronegcs.console_plugin.exceptions.ClientPluginException;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditorFactoryImpl;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +18,8 @@ import java.net.URL;
 @Configuration
 public class DroneServerClientPluginConfig {
 
+    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PerimeterEditorFactoryImpl.class);
+
     // DB Access
 
     private static <T> T LoadServices(Class<T> clz) throws ClientPluginException {
@@ -23,13 +27,13 @@ public class DroneServerClientPluginConfig {
             return getSrvicePort(clz, "127.0.0.1", 1234);
         }
         catch (Throwable e) {
-            System.out.print("Failed to connect to the local database server, " + e.getMessage());
+            LOGGER.error("Failed to connect to the local database server, " + e.getMessage());
 
             try {
                 return getSrvicePort(clz, "178.62.1.156", 1234);
             }
             catch (Throwable e1) {
-                System.out.print("Failed to connect to the external database server, " + e.getMessage());
+                LOGGER.debug("Failed to connect to the external database server, " + e.getMessage());
             }
         }
 
