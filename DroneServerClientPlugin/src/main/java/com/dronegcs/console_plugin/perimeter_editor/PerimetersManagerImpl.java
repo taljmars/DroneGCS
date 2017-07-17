@@ -140,7 +140,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave) {
+    public <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave) throws PerimeterUpdateException {
         Collection<ClosingPair<P>> closedPerimeters = new ArrayList<>();
         Iterator<ClosablePerimeterEditor> it = closablePerimeterEditorList.iterator();
         while (it.hasNext()) {
@@ -214,11 +214,13 @@ public class PerimetersManagerImpl implements PerimetersManager {
 
         if (perimeter instanceof CirclePerimeter) {
             String uuid = ((CirclePerimeter) perimeter).getCenter();
-            try {
-                res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
-            } catch (ObjectNotFoundException e) {
-                e.printStackTrace();
-                //TODO
+            if (uuid != null && !uuid.isEmpty()) {
+                try {
+                    res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
+                } catch (ObjectNotFoundException e) {
+                    e.printStackTrace();
+                    //TODO
+                }
             }
             return res;
         }

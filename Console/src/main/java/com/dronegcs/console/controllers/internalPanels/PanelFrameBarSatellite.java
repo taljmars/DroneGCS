@@ -13,6 +13,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.services.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
@@ -218,18 +219,22 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             }
         });
 
-        Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.closeAllPerimeterEditors(true);
-        perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
-            Perimeter perimeter = perimeterClosingPair.getObject();
-            LOGGER.debug("publishing perimeter {} {} {} ", perimeter, perimeter.getKeyId().getObjId(), perimeter.getName());
-            Layer layer = operationalViewTree.getLayerByValue(perimeter);
-            LOGGER.debug("Found layer " + layer);
-            if (layer != null) {
-                // Layer will not be exist in case of deletion
-                ((LayerPerimeter) layer).setPerimeter(perimeter);
-                ((LayerPerimeter) layer).stopEditing();
-            }
-        });
+        try {
+            Collection<ClosingPair<Perimeter>> perimeters  = perimetersManager.closeAllPerimeterEditors(true);
+            perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
+                Perimeter perimeter = perimeterClosingPair.getObject();
+                LOGGER.debug("publishing perimeter {} {} {} ", perimeter, perimeter.getKeyId().getObjId(), perimeter.getName());
+                Layer layer = operationalViewTree.getLayerByValue(perimeter);
+                LOGGER.debug("Found layer " + layer);
+                if (layer != null) {
+                    // Layer will not be exist in case of deletion
+                    ((LayerPerimeter) layer).setPerimeter(perimeter);
+                    ((LayerPerimeter) layer).stopEditing();
+                }
+            });
+        } catch (PerimeterUpdateException e) {
+            LOGGER.error("Critical Error: Failed to publish action", e);
+        }
 
         operationalViewTree.regenerateTree();
         eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
@@ -261,7 +266,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
                     layerMission.stopEditing();
                     operationalViewTree.addLayer(layerMission);
                 }
-                else if (layer instanceof LayerMission) {
+                else {
                     // Means we are reverting and existing layer to it previous values
                     ((LayerMission) layer).setMission(missionClosingPair.getObject());
                     layer.setName(missionClosingPair.getObject().getName());
@@ -271,34 +276,38 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         });
 
         // Handle perimeters being editing
-        Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.closeAllPerimeterEditors(false);
-        LOGGER.debug("Cleaning perimeter: " + perimeters);
-        perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
-            if (perimeterClosingPair.isDeleted()) {
-                // means we discarded a newly created layer
-                LOGGER.debug("Discard / found deleted perimeter");
-                operationalViewTree.removeItemByName(perimeterClosingPair.getObject().getName());
-            } else {
-                LOGGER.debug("Discard / reverting perimeter");
-                Layer layer = operationalViewTree.getLayerByValue(perimeterClosingPair.getObject());
-                if (layer == null) {
-                    // Means an existing layer was deleted
-                    LayerPerimeter layerPerimeter = null;
-                    if (perimeterClosingPair.getObject() instanceof PolygonPerimeter)
-                        layerPerimeter = new LayerPolygonPerimeter((PolygonPerimeter) perimeterClosingPair.getObject(), operationalViewMap);
-                    else
-                        layerPerimeter = new LayerCircledPerimeter((CirclePerimeter) perimeterClosingPair.getObject(), operationalViewMap);
-                    layerPerimeter.stopEditing();
-                    operationalViewTree.addLayer(layerPerimeter);
+        try {
+            Collection<ClosingPair<Perimeter>> perimeters  = perimetersManager.closeAllPerimeterEditors(false);
+            LOGGER.debug("Cleaning perimeter: " + perimeters);
+            perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
+                if (perimeterClosingPair.isDeleted()) {
+                    // means we discarded a newly created layer
+                    LOGGER.debug("Discard / found deleted perimeter");
+                    operationalViewTree.removeItemByName(perimeterClosingPair.getObject().getName());
+                } else {
+                    LOGGER.debug("Discard / reverting perimeter");
+                    Layer layer = operationalViewTree.getLayerByValue(perimeterClosingPair.getObject());
+                    if (layer == null) {
+                        // Means an existing layer was deleted
+                        LayerPerimeter layerPerimeter = null;
+                        if (perimeterClosingPair.getObject() instanceof PolygonPerimeter)
+                            layerPerimeter = new LayerPolygonPerimeter((PolygonPerimeter) perimeterClosingPair.getObject(), operationalViewMap);
+                        else
+                            layerPerimeter = new LayerCircledPerimeter((CirclePerimeter) perimeterClosingPair.getObject(), operationalViewMap);
+                        layerPerimeter.stopEditing();
+                        operationalViewTree.addLayer(layerPerimeter);
+                    }
+                    else {
+                        // Means we are reverting and existing layer to it previous values
+                        ((LayerPerimeter) layer).setPerimeter(perimeterClosingPair.getObject());
+                        layer.setName(perimeterClosingPair.getObject().getName());
+                        ((LayerPerimeter) layer).stopEditing();
+                    }
                 }
-                else if (layer instanceof LayerPerimeter) {
-                    // Means we are reverting and existing layer to it previous values
-                    ((LayerPerimeter) layer).setPerimeter(perimeterClosingPair.getObject());
-                    layer.setName(perimeterClosingPair.getObject().getName());
-                    ((LayerPerimeter) layer).stopEditing();
-                }
-            }
-        });
+            });
+        } catch (PerimeterUpdateException e) {
+            LOGGER.error("Critical error: failed to discard", e);
+        }
 
         operationalViewTree.regenerateTree();
         eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));

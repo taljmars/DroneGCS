@@ -10,7 +10,7 @@ import com.geo_tools.Coordinate;
 
 import java.util.List;
 
-public class LayerPolygonPerimeter extends LayerPerimeter {
+public class LayerPolygonPerimeter extends LayerPerimeter<PolygonPerimeter> {
 
 	private MapPolygon currentPolygon;
 

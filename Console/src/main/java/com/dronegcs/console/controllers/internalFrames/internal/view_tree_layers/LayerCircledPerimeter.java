@@ -1,18 +1,19 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronedb.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.scheme.Point;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
-import com.gui.core.mapViewer.LayeredViewMap;
-import com.gui.core.mapViewerObjects.MapMarkerCircle;
+import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
+import com.gui.core.mapViewer.LayeredViewMap;
+import com.gui.core.mapViewerObjects.MapMarkerCircle;
 
-public class LayerCircledPerimeter extends LayerPerimeter {
+import java.util.List;
+
+public class LayerCircledPerimeter extends LayerPerimeter<CirclePerimeter> {
 	
 	private MapMarkerCircle currentMarker;
-
-	private CirclePerimeter circlePerimeter;
 
 	public LayerCircledPerimeter(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
@@ -20,7 +21,7 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 	
 	public LayerCircledPerimeter(CirclePerimeter circlePerimeter, LayeredViewMap viewMap) {
 		super(circlePerimeter.getName(), viewMap);
-		this.circlePerimeter = circlePerimeter;
+		this.perimeter = circlePerimeter;
 	}
 	
 	public LayerCircledPerimeter(LayerCircledPerimeter layerCirclePerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
@@ -44,10 +45,35 @@ public class LayerCircledPerimeter extends LayerPerimeter {
 	}
 
     public CirclePerimeter getCirclePerimeter() {
-        return this.circlePerimeter;
+        return this.perimeter;
     }
 
 	public void setCirclePerimeter(CirclePerimeter circlePerimeter) {
-		this.circlePerimeter = circlePerimeter;
+		this.perimeter = circlePerimeter;
+	}
+
+	public MapMarkerCircle getCircle() {
+		return currentMarker;
+	}
+
+	/////
+
+	public void regenerateMapObjects() {
+		removeAllMapObjects();
+
+		if (perimeter == null)
+			return;
+
+		PerimetersManager perimetersManager = applicationContext.getBean(PerimetersManager.class);
+		List<Point> pointList = perimetersManager.getPoints(perimeter);
+		if (pointList == null || pointList.isEmpty()) {
+			//TODO: Logger messege
+			return;
+		}
+		Point point = pointList.get(0);
+
+		MapMarkerCircle mapPolygon = new MapMarkerCircle(point.getLat(), point.getLon(), perimeter.getRadius());
+		currentMarker = mapPolygon;
+		addMapMarker(currentMarker);
 	}
 }

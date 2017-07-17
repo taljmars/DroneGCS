@@ -31,10 +31,7 @@ import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
-import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
-import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditor;
-import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
-import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
+import com.dronegcs.console_plugin.perimeter_editor.*;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import javafx.scene.input.MouseButton;
 import org.slf4j.Logger;
@@ -186,6 +183,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         MenuItem menuItemDist = new MenuItem("Distance -m");
         MenuItem menuItemPerimeterBuild = new MenuItem("Build Perimeter");
         MenuItem menuItemPerimeterAddPoint = new MenuItem("Add Point");
+        MenuItem menuItemCirclePerimeterSetCenter = new MenuItem("Set Center");
         MenuItem menuItemSyncMission = new MenuItem("Sync Mission");
         MenuItem menuItemFindClosest = new MenuItem("Find closest Here");
 
@@ -202,6 +200,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemPerimeterBuild.setDisable(isMissionBuildMode || isPerimeterBuildMode);
         menuItemSyncMission.setDisable(isMissionBuildMode || isPerimeterBuildMode);
         menuItemPerimeterAddPoint.setVisible(isPerimeterBuildMode && (modifyiedLayerPerimeterOriginal instanceof LayerPolygonPerimeter));
+        menuItemCirclePerimeterSetCenter.setVisible(isPerimeterBuildMode && (modifyiedLayerPerimeterOriginal instanceof LayerCircledPerimeter));
 
         if (drone.getGps().isPositionValid()) {
             Coordinate iCoord = getPosition(point);
@@ -226,6 +225,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         popup.getItems().add(menuItemMissionSetHome);
         popup.getItems().add(menuItemMissionSetTakeOff);
         popup.getItems().add(menuItemPerimeterAddPoint);
+        popup.getItems().add(menuItemCirclePerimeterSetCenter);
         //popup.getItems().addSeparator();
         popup.getItems().add(menuItemSyncMission);
         popup.getItems().add(menuItemFindClosest);
@@ -293,13 +293,12 @@ OnDroneListener, EventHandler<ActionEvent> {
                         modifyiedLayerPerimeterOriginal = new LayerCircledPerimeter("New Circled Perimeter", this);
                         modifyiedLayerPerimeterOriginal.setApplicationContext(applicationContext);
                         getOperationalViewTree().addLayer(modifyiedLayerPerimeterOriginal);
-
                         isPerimeterBuildMode = true;
                         perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), CirclePerimeter.class);
                         modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
-
                         System.err.println(getOperationalViewTree().dumpTree());
                         super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
+                        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifyiedLayerPerimeterOriginal));
                     }
                     
                     loggerDisplayerSvc.logGeneral("Start GeoFence of manual circle type");
@@ -365,6 +364,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionAddWayPoint.setOnAction( arg -> {
             try {
                 missionEditor.addWaypoint(getPosition(point));
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -376,6 +376,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionAddCircle.setOnAction( arg -> {
             try {
                 missionEditor.addCirclePoint(getPosition(point));
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -387,6 +388,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionSetLandPoint.setOnAction( arg -> {
             try {
                 missionEditor.addLandPoint(getPosition(point));
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -398,6 +400,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionAddROI.setOnAction( arg -> {
             try{
                 missionEditor.addRegionOfInterest(getPosition(point));
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -409,6 +412,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionSetRTL.setOnAction( arg -> {
             try {
                 missionEditor.addReturnToLunch();
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -427,6 +431,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                 }
                 double altitude = Double.parseDouble((String) val);
                 missionEditor.addTakeOff(altitude);
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
@@ -438,11 +443,34 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemPerimeterAddPoint.setOnAction( arg -> {
             try {
                 ((PolygonPerimeterEditor) perimeterEditor).addPoint(getPosition(point));
+                modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifyiedLayerPerimeterOriginal));
                 modifyiedLayerPerimeterOriginal.regenerateMapObjects();
             }
             catch (PerimeterUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            }
+        });
+
+        menuItemCirclePerimeterSetCenter.setOnAction( arg -> {
+            try {
+                String value = dialogManagerSvc.showInputDialog("Choose perimeter radius","",null, null, "50");
+                if (value == null || value.isEmpty()) {
+                    LOGGER.debug("Irrelevant dialog result, result = \"{}\"", value);
+                    return;
+                }
+                if (!value.matches("[0-9]*")) {
+                    LOGGER.error("Value '{}' is illegal, must be numeric", value);
+                    return;
+                }
+                ((CirclePerimeterEditor) perimeterEditor).setCenter(getPosition(point));
+                ((CirclePerimeterEditor) perimeterEditor).setRadius(Integer.parseInt(value));
+                modifyiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getModifiedPerimeter());
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifyiedLayerPerimeterOriginal));
+                modifyiedLayerPerimeterOriginal.regenerateMapObjects();
+            }
+            catch (PerimeterUpdateException e) {
+                LOGGER.error("Failed to update circle perimeter", e);
             }
         });
 
@@ -833,9 +861,10 @@ OnDroneListener, EventHandler<ActionEvent> {
                         modifyiedLayerPerimeterOriginal = (LayerPerimeter) layer;
                         super.startModifiedLayerMode(modifyiedLayerPerimeterOriginal);
                         isPerimeterBuildMode = true;
-                        perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getName(), modifyiedLayerPerimeterOriginal.getPerimeter().getClass());
+                        perimeterEditor = perimetersManager.openPerimeterEditor(modifyiedLayerPerimeterOriginal.getPerimeter());
                         Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
                         modifyiedLayerPerimeterOriginal.setName(perimeter.getName());
+                        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifyiedLayerPerimeterOriginal));
                     }
                     else {
                         LOGGER.debug("Unrecognized Layer");
@@ -853,6 +882,10 @@ OnDroneListener, EventHandler<ActionEvent> {
                 case MISSION_UPDATED_BY_TABLE:
                     LayerMission layerMission = (LayerMission) command.getSource();
                     layerMission.regenerateMapObjects();
+                    break;
+                case PERIMETER_UPDATED_BY_TABLE:
+                    LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
+                    layerPerimeter.regenerateMapObjects();
                     break;
             }
         }

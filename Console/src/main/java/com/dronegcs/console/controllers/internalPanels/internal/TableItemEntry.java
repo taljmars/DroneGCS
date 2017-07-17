@@ -1,6 +1,5 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
-import com.dronedb.persistence.scheme.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;

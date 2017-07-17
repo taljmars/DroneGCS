@@ -29,50 +29,12 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
 
     @Override
     public PolygonPerimeter open(PolygonPerimeter perimeter) throws PerimeterUpdateException {
-        logger.debug("Setting new perimeter to perimeter editor");
-        this.perimeter = perimeter;
-        return this.perimeter;
+        return super.open(perimeter);
     }
 
     @Override
     public PolygonPerimeter open(String perimeterName) throws PerimeterUpdateException {
-        logger.debug("Setting new perimeter to perimeter editor");
-        try {
-            this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.create(PolygonPerimeter.class.getName());
-            this.perimeter.setName(perimeterName);
-            this.perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(this.perimeter);
-            return this.perimeter;
-        }
-        catch (DatabaseValidationRemoteException e) {
-            throw new PerimeterUpdateException(e.getMessage());
-        }
-    }
-
-    @Override
-    public ClosingPair<PolygonPerimeter> close(boolean shouldSave) {
-        System.err.println("Close, should save:" + shouldSave);
-        ClosingPair<PolygonPerimeter> perimeterClosingPair = null;
-        PolygonPerimeter res = this.perimeter;
-        if (!shouldSave) {
-            System.err.println(String.format("Delete perimeter %s %s", res.getKeyId().getObjId(), res.getName()));
-            //droneDbCrudSvcRemote.delete(this.perimeter);
-            //res = this.originalPerimeter;
-            try {
-                res = (PolygonPerimeter) droneDbCrudSvcRemote.readByClass(perimeter.getKeyId().getObjId().toString(), PolygonPerimeter.class.getName());
-                System.err.println("Found original perimeter " + res.getKeyId().getObjId() + " " + res.getName());
-                perimeterClosingPair = new ClosingPair(res, false);
-            } catch (ObjectNotFoundException e) {
-                System.err.println("perimeter doesn't exist");
-                perimeterClosingPair = new ClosingPair(this.perimeter, true);
-            }
-        }
-        else {
-            perimeterClosingPair = new ClosingPair(res, false);
-        }
-
-        this.perimeter = null;
-        logger.debug("Perimeter editor finished");
-        return perimeterClosingPair;
+        return super.open(perimeterName, PolygonPerimeter.class);
     }
 
     @Override
@@ -86,7 +48,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             Point res = (Point) droneDbCrudSvcRemote.update(point);
             perimeter.getPoints().add(res.getKeyId().getObjId());
             // Update Mission
-            droneDbCrudSvcRemote.update(perimeter);
+            perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(perimeter);
             return res;
         }
         catch (DatabaseValidationRemoteException e) {
@@ -98,7 +60,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     public void removePoint(Point point) throws PerimeterUpdateException {
         perimeter.getPoints().remove(point.getKeyId().getObjId());
         try {
-            droneDbCrudSvcRemote.update(perimeter);
+            perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(perimeter);
         }
         catch (DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());

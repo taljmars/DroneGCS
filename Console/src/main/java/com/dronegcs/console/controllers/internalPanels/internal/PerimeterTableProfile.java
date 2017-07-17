@@ -80,6 +80,14 @@ public class PerimeterTableProfile extends TableProfile {
         panelTableBox.getLat().setCellValueFactory(new PropertyValueFactory<>("lat"));
         panelTableBox.getLon().setCellValueFactory(new PropertyValueFactory<>("lon"));
         panelTableBox.getRadius().setCellValueFactory(new PropertyValueFactory<>("radius"));
+        panelTableBox.getRadius().setCellFactory(cellFactory);
+        panelTableBox.getRadius().setOnEditCommit(t -> {
+            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            CirclePerimeter perimeter = (CirclePerimeter) entry.getReferedItem();
+            perimeter.setRadius(t.getNewValue());
+            generateTable(true, this.layerPerimeter);
+            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
+        });
 
         panelTableBox.getUp().setCellFactory(param -> {
             final TableCell<TableItemEntry, String> cell = new TableCell<TableItemEntry, String>() {
@@ -162,7 +170,9 @@ public class PerimeterTableProfile extends TableProfile {
     @SuppressWarnings("unchecked")
     public void generateTable(boolean editMode, Object contentPayload) {
 
-        setLayerPerimeter((LayerPolygonPerimeter) contentPayload);
+        setLayerPerimeter((LayerPerimeter) contentPayload);
+
+        logger.LogErrorMessege("Receiverd " + contentPayload);
 
         TableItemEntry entry = null;
 
@@ -217,6 +227,10 @@ public class PerimeterTableProfile extends TableProfile {
 
             CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) layerPerimeter).getCirclePerimeter();
             List<Point> points = perimetersManager.getPoints(circlePerimeter);
+            if (points == null || points.isEmpty()) {
+                //TODO: add logger messege
+                return;
+            }
             entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), circlePerimeter);
             data.add(entry);
         }
@@ -225,7 +239,7 @@ public class PerimeterTableProfile extends TableProfile {
         panelTableBox.getTable().setEditable(editMode);
     }
 
-    private void setLayerPerimeter(LayerPolygonPerimeter layerPerimeter) {
+    private void setLayerPerimeter(LayerPerimeter layerPerimeter) {
         this.layerPerimeter = layerPerimeter;
     }
 
