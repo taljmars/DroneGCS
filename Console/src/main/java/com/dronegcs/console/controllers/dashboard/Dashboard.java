@@ -188,7 +188,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 loggerDisplayerSvc.logGeneral("Guided: In Position");
             } else {
                 textNotificationPublisherSvc.publish("Flying to destination");
-                loggerDisplayerSvc.logGeneral("Guided: Fly to distination");
+                loggerDisplayerSvc.logGeneral("Guided: Fly to destination");
             }
         }
     }
@@ -332,7 +332,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
         ObservableList<Node> children = frameContainer.getChildren();
         //Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getAltitude() - 25);
-        Node selectedPane = (Node) guiAppConfig.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getHeight() - 25);
+        Node selectedPane = (Node) guiAppConfig.loadInternalFrame(springInstansiation, (frameContainer.getWidth() - 10) / maxFramesAmount.get(), frameContainer.getHeight() - 30);
         selectedPane.setUserData(springInstansiation);
         if (selectedPane != null) {
             selectedPane.setUserData(springInstansiation);

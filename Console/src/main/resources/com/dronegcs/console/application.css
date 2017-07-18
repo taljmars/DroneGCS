@@ -78,3 +78,199 @@
 #btnExitImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/Exit.png");
 }
+
+* {
+   /*backgroundColor: #262626;*/
+   backgroundColor: #1d1d1d;
+   buttonColor: #2d579f;
+   /*textColor: #b0ac66;*/
+   textColor: lightgray;
+
+   -fx-text-fill: textColor;
+}
+
+.root{
+    -fx-background-color: backgroundColor;
+}
+
+.text-input { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+    -fx-border-color: textColor;
+}
+
+.split-pane { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.split-pane:horizontal>*.split-pane-divider { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.background {
+    -fx-background-color: backgroundColor;
+}
+
+.button{
+    -fx-background-color: buttonColor;
+    -fx-text-fill: textColor;
+}
+
+.button:hover {
+    -fx-background-color : textColor;
+    -fx-text-fill: buttonColor;
+}
+
+.toggle-button{
+    -fx-background-color: buttonColor;
+    -fx-text-fill: textColor;
+}
+
+.toggle-button:hover{
+    -fx-background-color : textColor;
+    -fx-text-fill: buttonColor;
+}
+
+.check-box {
+    -fx-background-color: backgroundColor;
+    -fx-text-fill: textColor;
+}
+
+.check-box .box {
+    -fx-background-color: backgroundColor;
+    -fx-border-color: textColor;
+}
+
+.text-field{
+    -fx-text-fill: textColor;
+}
+
+.label{
+    -fx-text-fill: textColor;
+}
+
+.tab-pane {
+    -fx-background-color: backgroundColor;
+    -fx-text-fill: textColor;
+}
+
+.titled-pane>*.content>AnchorPane { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.tab-pane>*.tab-header-area>*.tab-header-background { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.tab-pane>*.tab-header-area>*.headers-region>*.tab { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.tab-pane>*.tab-header-area>*.headers-region>*.tab:selected { /* FX theme stylesheet */
+    -fx-background-color: buttonColor;
+}
+
+.table-view {
+    -fx-background-color: backgroundColor;
+    -fx-text-fill: textColor;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-base: backgroundColor;
+    -fx-control-inner-background: backgroundColor;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: buttonColor;
+}
+
+.table-view *.column-header {
+    -fx-background-color: backgroundColor;
+}
+
+.table-view *.filler { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.table-view .table-cell{
+    -fx-background-color: backgroundColor;
+}
+
+.combo-box-base {
+    -fx-background-color: backgroundColor;
+    -fx-border-color: textColor;
+    -fx-text-fill: textColor;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: backgroundColor;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: buttonColor;
+}
+
+.progress-bar>*.track { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.progress-bar>*.bar { /* FX theme stylesheet */
+    -fx-background-color: buttonColor;
+}
+
+.scroll-pane { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: backgroundColor;
+}
+
+.tree-view { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.tree-cell { /* FX theme stylesheet */
+    -fx-background-color: backgroundColor;
+}
+
+.accordion>*.titled-pane>*.title { /* FX theme stylesheet */
+    -fx-background-color: buttonColor;
+    -fx-border-color: buttonColor;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color:backgroundColor;
+    -fx-border-color:textColor;
+    -fx-background-radius: 0em;
+    -fx-border-radius:2em;
+}
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-padding:0 0 10 0;
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button
+{
+    -fx-background-color:transparent;
+    -fx-background-radius: 0em;
+    -fx-padding:0 10 0 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow
+{
+    -fx-padding:0;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb
+{
+    -fx-background-color: textColor;
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+}
+

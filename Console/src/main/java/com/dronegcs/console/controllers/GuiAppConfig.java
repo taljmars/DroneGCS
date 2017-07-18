@@ -16,6 +16,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,12 +31,15 @@ public class GuiAppConfig {
     private final static Logger LOGGER = LoggerFactory.getLogger(GuiAppConfig.class);
     private static final int WIDTH = 800;
     private static final int HEIGHT = 650;
-    private static final String STYLE_FILE = "/com/dronegcs/console/application.css";
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
     @Autowired
     private KeyBoardController keyBoardController;
+
+    @Resource(name = "GuiCSS")
+    @NotNull(message = "Internal Error: Failed to get CSS style doc")
+    private String CSS_STYLE;
     
     private Stage stage;
 
@@ -44,9 +49,10 @@ public class GuiAppConfig {
 
     public void showMainScreen() {
         Parent root = (Parent) load("/com/dronegcs/console/views/DashboardView.fxml");
-        root.setStyle("-fx-background-color: whitesmoke;");
-        root.getStylesheets().add(STYLE_FILE);
+//        root.setStyle("-fx-background-color: whitesmoke;");
+        root.getStylesheets().add(CSS_STYLE);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
+        //scene.getStylesheets().add("talma.css");
         scene.setOnKeyPressed(keyBoardController);
         stage.setResizable(false);
         stage.setScene(scene);

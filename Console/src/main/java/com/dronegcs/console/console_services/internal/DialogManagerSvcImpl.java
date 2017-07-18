@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,9 +30,13 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
     @NotNull(message = "Internal Error: Failed to get keyboard controller")
     private KeyBoardController keyboardController;
 
+    @Resource(name = "GuiCSS")
+    @NotNull(message = "Internal Error: Failed to get CSS style doc")
+    private String CSS_STYLE;
+
 
     public int showConfirmDialog(String text, String title) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = genAlert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(text);
@@ -44,7 +49,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
     }
 
     public boolean showAlertMessageDialog(String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = genAlert(Alert.AlertType.WARNING);
         alert.setTitle("Alert");
         alert.setHeaderText(null);
         alert.setContentText(msg);
@@ -53,7 +58,8 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
     }
 
     public boolean showErrorMessageDialog(String msg, Exception exception) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = genAlert(Alert.AlertType.ERROR);
+
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(msg);
@@ -90,7 +96,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
     public int showOptionsDialog(String text, String title, Object object2, String[] options,
                                  String initialValue) {
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = genAlert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(text);
@@ -138,7 +144,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
     }
 
     public Pair<Object, Object> showMuliComboBoxMessageDialog(String labelList1, Object[] list1, Object list1default, String labelList2, Object[] list2, Object list2default) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = genAlert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText(null);
 
@@ -172,5 +178,11 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
         LOGGER.debug(result.toString() + " " + cmbList2.getValue() + " " + cmbList1.getValue());
 
         return result.get() == ButtonType.OK ? new Pair<Object, Object>(cmbList1.getValue(), cmbList2.getValue()) : null;
+    }
+
+    private Alert genAlert(Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.getDialogPane().getStylesheets().add(CSS_STYLE);
+        return alert;
     }
 }

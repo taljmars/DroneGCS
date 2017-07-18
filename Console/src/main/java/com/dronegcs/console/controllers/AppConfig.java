@@ -31,6 +31,8 @@ public class AppConfig {
 	public static final double FRAME_CONTAINER_REDUCE_PRECENTAGE = 0.17;
 	public static final String ENV_SYMBOL = "GCSMode";
 
+	private static final String STYLE_FILE = "/com/dronegcs/console/application.css";
+
 	@Bean
 	public Environment environment() {
 		try {
@@ -52,6 +54,11 @@ public class AppConfig {
 	@Bean
 	public RuntimeValidator runtimeValidator() {
 		return new RuntimeValidator();
+	}
+
+	@Bean(name = "GuiCSS")
+	public String getGuiCSS() {
+		return STYLE_FILE;
 	}
 
 }
