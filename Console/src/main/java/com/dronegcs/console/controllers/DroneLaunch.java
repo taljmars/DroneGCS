@@ -1,8 +1,13 @@
 package com.dronegcs.console.controllers;
 
+import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.environment.Environment;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +21,10 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 
     private final Logger LOGGER = LoggerFactory.getLogger(DroneLaunch.class);
 
+	protected static final String STYLE_FILE = "/com/dronegcs/console/application.css";
+	private static final int WIDTH = 800;
+	private static final int HEIGHT = 650;
+
     @Autowired
     private GlobalStatusSvc globalStatus;
 
@@ -24,6 +33,11 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 
     @Autowired
 	private Environment environment;
+
+	@Autowired
+	private KeyBoardController keyBoardController;
+
+	private Stage stage;
 
     @Override
     public void start(Stage primaryStage) {
@@ -45,15 +59,37 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 				globalStatus.setComponentStatus(GlobalStatusSvc.Component.ANTENNA, true);
 			}
 
-			guiAppConfig.setPrimaryStage(primaryStage);
-			guiAppConfig.showMainScreen();
-
+//			guiAppConfig.setPrimaryStage(primaryStage);
+			stage = primaryStage;
+			guiAppConfig.setPrimaryStage(stage);
+//			guiAppConfig.showMainScreen();
+			showMainScreen();
 		}
 		catch (Throwable e) {
 			LOGGER.error("Terminating launch", e);
 			System.exit(-1);
 		}
     }
+
+	private void showMainScreen() {
+		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView.fxml");
+//        root.setStyle("-fx-background-color: whitesmoke;");
+		root.getStylesheets().add(STYLE_FILE);
+		Scene scene = new Scene(root, WIDTH, HEIGHT);
+		//scene.getStylesheets().add("talma.css");
+		scene.setOnKeyPressed(keyBoardController);
+		stage.setResizable(false);
+		stage.setScene(scene);
+		stage.setMaximized(true);
+		stage.show();
+//		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//			@Override
+//			public void handle(WindowEvent event) {
+//				applicationContext.close();
+//			}
+//		});
+		stage.setOnCloseRequest(guiAppConfig);
+	}
 
     public static void main(String[] args) {
 		System.setProperty("LOGS.DIR", args[0]);
