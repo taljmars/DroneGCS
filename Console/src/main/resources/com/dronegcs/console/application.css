@@ -80,11 +80,22 @@
 }
 
 * {
-   /*backgroundColor: #262626;*/
-   backgroundColor: #1d1d1d;
-   buttonColor: #2d579f;
-   /*textColor: #b0ac66;*/
-   textColor: lightgray;
+   backgroundColor: ghostwhite;
+   buttonColor: lightskyblue;
+   buttonHoverColor: lightgray;
+   buttonHoverTextColor: #1d1d1d;
+   textColor: #1d1d1d;
+
+
+   /*
+    Dark background on blue button and white text
+
+    backgroundColor: #1d1d1d;
+    buttonHoverColor: lightgray;
+    buttonHoverTextColor: #1d1d1d;
+    buttonColor: #2d579f;
+    textColor: lightgray;
+   */
 
    -fx-text-fill: textColor;
 }
@@ -116,8 +127,8 @@
 }
 
 .button:hover {
-    -fx-background-color : textColor;
-    -fx-text-fill: buttonColor;
+    -fx-background-color : buttonHoverColor;
+    -fx-text-fill: buttonHoverTextColor;
 }
 
 .toggle-button{
@@ -126,8 +137,8 @@
 }
 
 .toggle-button:hover{
-    -fx-background-color : textColor;
-    -fx-text-fill: buttonColor;
+    -fx-background-color : buttonHoverColor;
+    -fx-text-fill: buttonHoverTextColor;
 }
 
 .check-box {
