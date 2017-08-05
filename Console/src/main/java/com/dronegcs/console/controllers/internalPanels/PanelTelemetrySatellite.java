@@ -88,7 +88,12 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	}
 	
 	protected void SetFlightModeLabel(String name) {
-		LOGGER.debug("Update telemetry: " + name);
+		if (lblFlightMode.getText().equals(name)) {
+			LOGGER.debug("Flight mode '{}' wasn't actually changed", name);
+			return;
+		}
+		LOGGER.debug("Update Flight Mode: {}", name);
+		loggerDisplayerSvc.logGeneral("New Mode was detected " + drone.getState().getMode().getName());
 		lblFlightMode.setText(name);
 	}
 	
@@ -171,6 +176,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	}
 
 	public void SetNotification(String notification) {
+		LOGGER.debug("Updating notification '{}'", notification);
 		lblCriticalMsg.setVisible(true);
 		if (lblCriticalMsg.getStyle().equals("-fx-control-inner-background: orange;"))
 			lblCriticalMsg.setStyle("-fx-control-inner-background: blue;");

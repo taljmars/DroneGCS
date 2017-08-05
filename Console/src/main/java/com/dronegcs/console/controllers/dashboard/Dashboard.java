@@ -233,7 +233,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP());
                 return;
             case MODE:
-                viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")");
+                Platform.runLater(() -> viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")"));
                 return;
             case TEXT_MESSEGE:
                 loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());

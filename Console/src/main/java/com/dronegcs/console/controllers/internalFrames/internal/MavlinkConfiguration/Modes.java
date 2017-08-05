@@ -14,10 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,13 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
+    @NotNull @FXML private Label cbFltMode1Label;
+    @NotNull @FXML private Label cbFltMode2Label;
+    @NotNull @FXML private Label cbFltMode3Label;
+    @NotNull @FXML private Label cbFltMode4Label;
+    @NotNull @FXML private Label cbFltMode5Label;
+    @NotNull @FXML private Label cbFltMode6Label;
+
     @NotNull @FXML private ComboBox cbFltMode1;
     @NotNull @FXML private ComboBox cbFltMode2;
     @NotNull @FXML private ComboBox cbFltMode3;
@@ -65,6 +69,19 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     @NotNull @FXML private CheckBox cbFltMode5SuperSimple;
     @NotNull @FXML private CheckBox cbFltMode6SuperSimple;
 
+    private int cbFltMode1Min = 0;
+    private int cbFltMode1Max = 1230;
+    private int cbFltMode2Min = 1231;
+    private int cbFltMode2Max = 1360;
+    private int cbFltMode3Min = 1361;
+    private int cbFltMode3Max = 1490;
+    private int cbFltMode4Min = 1491;
+    private int cbFltMode4Max = 1620;
+    private int cbFltMode5Min = 1621;
+    private int cbFltMode5Max = 1749;
+    private int cbFltMode6Min = 1755;
+    private int cbFltMode6Max = 2200;
+
     @NotNull @FXML private ComboBox cbChannel6; // TUNE
     @NotNull @FXML private Spinner<Double> spChannel6Min;
     @NotNull @FXML private Spinner<Double> spChannel6Max;
@@ -85,6 +102,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     private Map<String, ComboBox> comboBoxTunningMap = null;
     private List<CheckBox> checkBoxSimpleModeList = null;
     private List<CheckBox> checkBoxSuperSimpleModeList = null;
+    private List<Label> fltLabels = null;
 
     @PostConstruct
     private void init() {
@@ -154,6 +172,9 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             spChannel6Min.getValueFactory().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
         else
             spChannel6Min.getValueFactory().setValue(0.0);
+
+        fltLabels = new ArrayList<>();
+        fltLabels .addAll(Arrays.asList(cbFltMode1Label, cbFltMode2Label, cbFltMode3Label, cbFltMode4Label, cbFltMode5Label, cbFltMode6Label));
     }
 
     private void loadComboBox(Vector<?> options, Map<String, ComboBox> comboBoxMap) {
@@ -370,7 +391,47 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
                     resetAll();
                     break;
                 }
+                case RC_IN: {
+                    String mark = "> ";
+                    for (Label label : fltLabels) {
+                        if (label.getText().startsWith(mark))
+                            label.setText(label.getText().substring(mark.length()));
+                    }
+                    Label lbl = getCurrentActiveLabel();
+                    if (lbl != null)
+                        lbl.setText(mark + lbl.getText());
+                    break;
+                }
             }
         });
+    }
+
+    private Label getCurrentActiveLabel() {
+        int[] rcin = drone.getRC().in;
+        int ch5 = rcin[4];
+        if (checkBound(ch5, cbFltMode1Min, cbFltMode1Max))
+            return cbFltMode1Label;
+        if (checkBound(ch5, cbFltMode2Min, cbFltMode2Max))
+            return cbFltMode2Label;
+        if (checkBound(ch5, cbFltMode3Min, cbFltMode3Max))
+            return cbFltMode3Label;
+        if (checkBound(ch5, cbFltMode4Min, cbFltMode4Max))
+            return cbFltMode4Label;
+        if (checkBound(ch5, cbFltMode5Min, cbFltMode5Max))
+            return cbFltMode5Label;
+        if (checkBound(ch5, cbFltMode6Min, cbFltMode6Max))
+            return cbFltMode6Label;
+
+        return null;
+    }
+
+    private boolean checkBound(int val, int min, int max) {
+        if (min == val || max == val)
+            return true;
+
+        if (min < val && val < max)
+            return true;
+
+        return false;
     }
 }

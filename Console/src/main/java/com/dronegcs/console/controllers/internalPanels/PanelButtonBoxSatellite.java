@@ -145,21 +145,23 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 				return;
 			}
 
-			Object[] ports = serialConnection.listPorts();
-			if (ports.length == 0) {
-				dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
-				return;
-			}
-			Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0] ,"Select baud rate: ",serialConnection.baudList(), serialConnection.getDefaultBaud());
-			if (res != null) {
-				String port_name = (String) res.getKey();
-				Integer baud = (Integer) res.getValue();
-				serialConnection.setPortName(port_name);
-				serialConnection.setBaud(baud);
+			Platform.runLater(() -> {
+				Object[] ports = serialConnection.listPorts();
+				if (ports.length == 0) {
+					dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
+					return;
+				}
+				Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0], "Select baud rate: ", serialConnection.baudList(), serialConnection.getDefaultBaud());
+				if (res != null) {
+					String port_name = (String) res.getKey();
+					Integer baud = (Integer) res.getValue();
+					serialConnection.setPortName(port_name);
+					serialConnection.setBaud(baud);
 
-				loggerDisplayerSvc.logGeneral("Open Connection");
-				drone.getMavClient().connect();
-			}
+					loggerDisplayerSvc.logGeneral("Open Connection");
+					drone.getMavClient().connect();
+				}
+			});
 		}
 		catch (Throwable t) {
 			logger.LogErrorMessege("An error occur during interface collection " + t.getMessage());
@@ -487,7 +489,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					return;
 				case MODE:
 					btnStartMission.setSelected(drone.getState().getMode().equals(ApmModes.ROTOR_AUTO));
-					Platform.runLater( () -> flightModesCombo.setValue(drone.getState().getMode()));
+					flightModesCombo.setValue(drone.getState().getMode());
 					return;
 				case CONNECTED:
 					loggerDisplayerSvc.logGeneral("Connected");
@@ -497,7 +499,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					btnSyncDrone.setDisable(!connected);
 					return;
 				case DISCONNECTED:
-					loggerDisplayerSvc.logGeneral("Disonnected");
+					loggerDisplayerSvc.logGeneral("Disconnected");
 					connected = false;
 					btnConnect.setText("Connect");
 					SetImageButton(btnConnect, this.getClass().getResource("/com/dronegcs/console/guiImages/Disconnected.png"), "Connect");

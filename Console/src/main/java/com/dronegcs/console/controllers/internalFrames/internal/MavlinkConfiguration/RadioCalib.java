@@ -57,15 +57,21 @@ public class RadioCalib implements DroneInterfaces.OnDroneListener {
         Platform.runLater(() -> {
             switch (droneEventsType) {
                 case RC_IN:
-                    update( drone.getRC().in[0], drone.getRC().in[1], drone.getRC().in[2], drone.getRC().in[3],
+                    updateGuiObjects( drone.getRC().in[0], drone.getRC().in[1], drone.getRC().in[2], drone.getRC().in[3],
                             drone.getRC().in[4], drone.getRC().in[5], drone.getRC().in[6], drone.getRC().in[7]);
                     break;
             }
         });
     }
 
-    private void update(int roll, int pitch, int thrust, int yaw,
-                        int ch5, int ch6, int ch7, int ch8) {
+    private void updateGuiObjects(int roll, int pitch, int thrust, int yaw,
+                                  int ch5, int ch6, int ch7, int ch8) {
+
+        if (lblRoll == null) {
+            LOGGER.debug("Gui objects were not initialized");
+            return;
+        }
+
         lblRoll.setText("Roll: " + roll);
         lblPitch.setText("Pitch: " + pitch);
         lblThrottle.setText("Throttle: " + thrust);
