@@ -65,16 +65,8 @@
 
                 <ComboBox fx:id="cbChannel6" GridPane.rowIndex="9" />
                 <Label alignment="CENTER" text="Min/Max" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                <Spinner fx:id="spChannel6Min" GridPane.columnIndex="2" GridPane.rowIndex="9">
-                    <!--<valueFactory>-->
-                        <!--<SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.01" max="32.767" min="0.0" value="0.0" />-->
-                    <!--</valueFactory>-->
-                </Spinner>
-                <Spinner fx:id="spChannel6Max" GridPane.columnIndex="3" GridPane.rowIndex="9">
-                    <!--<valueFactory>-->
-                        <!--<SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.01" max="32.767" min="0.0" value="1.0" />-->
-                    <!--</valueFactory>-->
-                </Spinner>
+                <Spinner fx:id="spChannel6Min" GridPane.columnIndex="2" GridPane.rowIndex="9"/>
+                <Spinner fx:id="spChannel6Max" GridPane.columnIndex="3" GridPane.rowIndex="9"/>
 
                 <Label style="-fx-font-weight: bold" text="Commands Tunning" GridPane.rowIndex="10" />
 
