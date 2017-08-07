@@ -217,7 +217,7 @@ public class PerimeterTableProfile extends TableProfile {
             int i = 0;
             while (it.hasNext()) {
                 Point point = (Point) it.next();
-                entry = new TableItemEntry(i, Point.class.getSimpleName(), point.getLat(), point.getLon(), 0.0, 0.0, 0.0, point);
+                entry = new TableItemEntry(i, Point.class.getSimpleName(), point.getLat(), point.getLon(), 0.0, 0.0, 0.0, 0, point);
 
                 i++;
                 data.add(entry);
@@ -234,7 +234,7 @@ public class PerimeterTableProfile extends TableProfile {
                 LOGGER.debug("No points exist for this perimeter");
                 return;
             }
-            entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), circlePerimeter);
+            entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), 0, circlePerimeter);
             data.add(entry);
         }
 

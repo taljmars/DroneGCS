@@ -117,7 +117,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		switch (event) {
 		case BATTERY:
 			Battery bat = drone.getBattery();
-			addBatteyInfo(bat.getBattCurrent(), bat.getBattDischarge().doubleValue(), bat.getBattRemain(), bat.getBattVolt());
+			addBatteyInfo(bat.getBattCurrent(), bat.getBattDischarge() == null ? 0 : bat.getBattDischarge().doubleValue(), bat.getBattRemain(), bat.getBattVolt());
 			return;
 		}
 	}

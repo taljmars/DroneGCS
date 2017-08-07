@@ -92,7 +92,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public Waypoint addWaypoint(Coordinate position) throws MissionUpdateException {
         Waypoint waypoint = createWaypoint();
-        Coordinate c3 = new Coordinate(position, 20);
+        Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         waypoint.setLat(c3.getLat());
         waypoint.setLon(c3.getLon());
         waypoint.setAltitude(c3.getAltitude());
@@ -119,12 +119,13 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public LoiterTurns addLoiterTurns(Coordinate position) throws MissionUpdateException {
+    public LoiterTurns addLoiterTurns(Coordinate position, int turns) throws MissionUpdateException {
         LoiterTurns loiterTurns = createLoiterTurns();
-        Coordinate c3 = new Coordinate(position, 20);
+        Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         loiterTurns.setLon(c3.getLon());
         loiterTurns.setLat(c3.getLat());
         loiterTurns.setAltitude(c3.getAltitude());
+        loiterTurns.setTurns(turns);
         return updateMissionItem(loiterTurns);
     }
 
@@ -134,12 +135,13 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public LoiterTime addLoiterTime(Coordinate position) throws MissionUpdateException {
+    public LoiterTime addLoiterTime(Coordinate position, int seconds) throws MissionUpdateException {
         LoiterTime loiterTime = createLoiterTime();
-        Coordinate c3 = new Coordinate(position, 20);
+        Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         loiterTime.setLon(c3.getLon());
         loiterTime.setLat(c3.getLat());
         loiterTime.setAltitude(c3.getAltitude());
+        loiterTime.setSeconds(seconds);
         return updateMissionItem(loiterTime);
     }
 
@@ -151,7 +153,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public LoiterUnlimited addLoiterUnlimited(Coordinate position) throws MissionUpdateException {
         LoiterUnlimited loiterUnlimited = createLoiterUnlimited();
-        Coordinate c3 = new Coordinate(position, 20);
+        Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         loiterUnlimited.setLon(c3.getLon());
         loiterUnlimited.setLat(c3.getLat());
         loiterUnlimited.setAltitude(c3.getAltitude());
@@ -166,20 +168,20 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public Land addLandPoint(Coordinate position) throws MissionUpdateException {
         Land land = createLandPoint();
-        land.setAltitude(20.0);
+        land.setAltitude(1.0);
         land.setLat(position.getLat());
         land.setLon(position.getLon());
         return updateMissionItem(land);
     }
 
     @Override
-    public ReturnToHome createReturnToLunch() {
+    public ReturnToHome createReturnToLaunch() {
         return (ReturnToHome) missionCrudSvcRemote.createMissionItem(ReturnToHome.class.getName());
     }
 
     @Override
-    public ReturnToHome addReturnToLunch() throws MissionUpdateException {
-        ReturnToHome returnToHome = createReturnToLunch();
+    public ReturnToHome addReturnToLaunch() throws MissionUpdateException {
+        ReturnToHome returnToHome = createReturnToLaunch();
         returnToHome.setAltitude(0.0);
         return updateMissionItem(returnToHome);
     }
@@ -204,7 +206,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public RegionOfInterest addRegionOfInterest(Coordinate position) throws MissionUpdateException {
         RegionOfInterest regionOfInterest = createRegionOfInterest();
-        regionOfInterest.setAltitude(20.0);
+        regionOfInterest.setAltitude(mission.getDefaultAlt() * 1.0);
         regionOfInterest.setLat(position.getLat());
         regionOfInterest.setLon(position.getLon());
         return updateMissionItem(regionOfInterest);

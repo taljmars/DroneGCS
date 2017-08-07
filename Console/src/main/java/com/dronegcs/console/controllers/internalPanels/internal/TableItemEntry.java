@@ -9,12 +9,14 @@ public class TableItemEntry {
 	
     private final SimpleIntegerProperty order;
     private final SimpleStringProperty type;
-    private final SimpleDoubleProperty lat, lon, altitude, delay, radius;
+    private final SimpleDoubleProperty lat, lon, altitude, delayOrTime, radius;
+    private final SimpleIntegerProperty turns;
     private final SimpleObjectProperty<Object> referedItem;
  
     public TableItemEntry(Integer pOrder,
                           String itemType,
-                          Double pLat, Double pLon, Double pAltitude, Double pDelay, Double pRadius,
+                          Double pLat, Double pLon, Double pAltitude,
+                          Double pDelayOrTime, Double pRadius, Integer pTurns,
                           Object pReferedItem) {
     	
         this.order = new SimpleIntegerProperty(pOrder);
@@ -22,8 +24,9 @@ public class TableItemEntry {
         this.lat = new SimpleDoubleProperty(pLat);
         this.lon = new SimpleDoubleProperty(pLon);
         this.altitude = new SimpleDoubleProperty(pAltitude);
-        this.delay = new SimpleDoubleProperty(pDelay);
+        this.delayOrTime = new SimpleDoubleProperty(pDelayOrTime);
         this.radius = new SimpleDoubleProperty(pRadius);
+        this.turns = new SimpleIntegerProperty(pTurns);
         this.referedItem = new SimpleObjectProperty<Object>(pReferedItem);
     }
 
@@ -43,11 +46,14 @@ public class TableItemEntry {
     public Double getAltitude() {return this.altitude.get();}
     public void setAltitude(Double pHeight) {this.altitude.set(pHeight);}
     
-    public Double getDelay() {return this.delay.get();}
-    public void setDelay(Double pDelay) {this.delay.set(pDelay);}
+    public Double getDelayOrTime() {return this.delayOrTime.get();}
+    public void setDelayOrTime(Double pDelayOrTime) {this.delayOrTime.set(pDelayOrTime);}
     
     public Double getRadius() {return this.radius.get();}
-    public void setRadius(Double pRadius) {this.radius.set(pRadius);}  
+    public void setRadius(Double pRadius) {this.radius.set(pRadius);}
+
+    public Integer getTurns() {return this.turns.get();}
+    public void setTurns(Integer pTurns) {this.turns.set(pTurns);}
     
     public Object getReferedItem() {return this.referedItem.get();}
     public void setReferedItem(Object object) {this.referedItem.set(object);}

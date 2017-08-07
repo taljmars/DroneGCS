@@ -46,7 +46,6 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             Iterator<DroneMissionItem> itr = droneMission.getItems().iterator();
             while (itr.hasNext()) {
                 DroneMissionItem droneMissionItem = itr.next();
-                LOGGER.debug("Converting type: {}", droneMission.getClass().getSimpleName());
                 droneMissionItem.accept(this);
             }
 
@@ -81,7 +80,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     public void visit(MavlinkReturnToHome mavlinkReturnToHome) throws MavlinkConvertionException {
         try{
             LOGGER.debug("Converting Mavlink ReturnToLunch to DB ReturnToLunch");
-            ReturnToHome returnToHome = missionEditor.createReturnToLunch();
+            ReturnToHome returnToHome = missionEditor.createReturnToLaunch();
 
             returnToHome.setAltitude(mavlinkReturnToHome.getHeight());
             LOGGER.debug("Mavlink MavlinkReturnToHome:\n{}\nWas converted to:\n{}", mavlinkReturnToHome, returnToHome);
@@ -225,10 +224,9 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             LoiterTurns loiterTurns = missionEditor.createLoiterTurns();
 
             loiterTurns.setAltitude(mavlinkLoiterTurns.getAltitude());
-            loiterTurns.setTurns(mavlinkLoiterTurns.getNumberOfTurns());
+            loiterTurns.setTurns(mavlinkLoiterTurns.getTurns());
             loiterTurns.setLat(mavlinkLoiterTurns.getCoordinate().getLat());
             loiterTurns.setLon(mavlinkLoiterTurns.getCoordinate().getLon());
-            loiterTurns.setRadius(mavlinkLoiterTurns.getRadius());
             LOGGER.debug("Mavlink MavlinkLoiterTurns:\n{}\nWas converted to:\n{}", mavlinkLoiterTurns, loiterTurns);
             missionEditor.updateMissionItem(loiterTurns);
         }

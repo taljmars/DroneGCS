@@ -173,7 +173,9 @@ OnDroneListener, EventHandler<ActionEvent> {
         MenuItem menuItemFlyTo = new MenuItem("Fly to Position");
         MenuItem menuItemMissionBuild = new MenuItem("Build Mission");
         MenuItem menuItemMissionAddWayPoint = new MenuItem("Add Way Point");
-        MenuItem menuItemMissionAddCircle = new MenuItem("Add Circle");
+        MenuItem menuItemMissionAddLoiterTurns = new MenuItem("Add Loitering Turns");
+        MenuItem menuItemMissionAddLoiterTime = new MenuItem("Add Loitering Timeframe");
+        MenuItem menuItemMissionAddLoiterUnlimited = new MenuItem("Add Loitering Unlimited");
         MenuItem menuItemMissionAddROI = new MenuItem("Add ROI");
         MenuItem menuItemMissionSetHome = new MenuItem("Set Home");
         MenuItem menuItemMissionSetLandPoint = new MenuItem("Set Land Point");
@@ -189,7 +191,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemFlyTo.setDisable(!drone.getGps().isPositionValid());
         menuItemDist.setDisable(!drone.getGps().isPositionValid());
         menuItemMissionAddWayPoint.setVisible(isMissionBuildMode);
-        menuItemMissionAddCircle.setVisible(isMissionBuildMode);
+        menuItemMissionAddLoiterTurns.setVisible(isMissionBuildMode);
         menuItemMissionAddROI.setVisible(isMissionBuildMode);
         menuItemMissionSetHome.setVisible(drone.getGps().isPositionValid() && !isMissionBuildMode && !isPerimeterBuildMode);
         menuItemMissionSetLandPoint.setVisible(isMissionBuildMode);
@@ -217,7 +219,9 @@ OnDroneListener, EventHandler<ActionEvent> {
         popup.getItems().add(menuItemPerimeterBuild);
         //popup.getItems().addSeparator();
         popup.getItems().add(menuItemMissionAddWayPoint);
-        popup.getItems().add(menuItemMissionAddCircle);
+        popup.getItems().add(menuItemMissionAddLoiterTurns);
+        popup.getItems().add(menuItemMissionAddLoiterTime);
+        popup.getItems().add(menuItemMissionAddLoiterTurns);
         popup.getItems().add(menuItemMissionAddROI);
         popup.getItems().add(menuItemMissionSetLandPoint);
         popup.getItems().add(menuItemMissionSetRTL);
@@ -372,9 +376,47 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
         });
 
-        menuItemMissionAddCircle.setOnAction( arg -> {
+        menuItemMissionAddLoiterTurns.setOnAction( arg -> {
             try {
-                missionEditor.addLoiterTurns(getPosition(point));
+                String val = dialogManagerSvc.showInputDialog("Choose turns", "",null, null, "3");
+                if (val == null) {
+                    loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTurns canceled");
+                    dialogManagerSvc.showAlertMessageDialog("Turns amount must be defined");
+                    return;
+                }
+                int turns = Integer.parseInt((String) val);
+                missionEditor.addLoiterTurns(getPosition(point), turns);
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+                modifyiedLayerMissionOriginal.regenerateMapObjects();
+            }
+            catch (MissionUpdateException e) {
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            }
+        });
+
+        menuItemMissionAddLoiterTime.setOnAction( arg -> {
+            try {
+                String val = dialogManagerSvc.showInputDialog("Set loiter time frame (seconds)", "",null, null, "5");
+                if (val == null) {
+                    loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTime canceled");
+                    dialogManagerSvc.showAlertMessageDialog("Loitering time frame is a must");
+                    return;
+                }
+                int time = Integer.parseInt((String) val);
+                missionEditor.addLoiterTime(getPosition(point), time);
+                modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
+                modifyiedLayerMissionOriginal.regenerateMapObjects();
+            }
+            catch (MissionUpdateException e) {
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            }
+        });
+
+        menuItemMissionAddLoiterUnlimited.setOnAction( arg -> {
+            try {
+                missionEditor.addLoiterUnlimited(getPosition(point));
                 modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
@@ -410,7 +452,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
         menuItemMissionSetRTL.setOnAction( arg -> {
             try {
-                missionEditor.addReturnToLunch();
+                missionEditor.addReturnToLaunch();
                 modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
