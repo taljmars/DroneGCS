@@ -374,7 +374,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
         menuItemMissionAddCircle.setOnAction( arg -> {
             try {
-                missionEditor.addCirclePoint(getPosition(point));
+                missionEditor.addLoiterTurns(getPosition(point));
                 modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();

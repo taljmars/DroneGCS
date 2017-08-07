@@ -94,13 +94,29 @@ public class DatabaseToMavlinkItemConverter {
         droneMission.addMissionItem(mavlinkWaypoint);
     }
 
-    private void visit(Circle circle) {
-        MavlinkCircle mavlinkCircle = new MavlinkCircle(droneMission, new Coordinate(circle.getLat(), circle.getLon()));
-        mavlinkCircle.setAltitude(circle.getAltitude());
-        mavlinkCircle.setRadius(circle.getRadius());
-        mavlinkCircle.setTurns(circle.getTurns());
-        LOGGER.debug("Database Circle:\n{}\nWas converted to:\n{}", circle, mavlinkCircle);
-        droneMission.addMissionItem(mavlinkCircle);
+    private void visit(LoiterTurns loiterTurns) {
+        MavlinkLoiterTurns mavlinkLoiterTurns = new MavlinkLoiterTurns(droneMission, new Coordinate(loiterTurns.getLat(), loiterTurns.getLon()));
+        mavlinkLoiterTurns.setAltitude(loiterTurns.getAltitude());
+        mavlinkLoiterTurns.setRadius(loiterTurns.getRadius());
+        mavlinkLoiterTurns.setTurns(loiterTurns.getTurns());
+        LOGGER.debug("Database LoiterTurns:\n{}\nWas converted to:\n{}", loiterTurns, mavlinkLoiterTurns);
+        droneMission.addMissionItem(mavlinkLoiterTurns);
+    }
+
+    private void visit(LoiterTime loiterTime) {
+        MavlinkLoiterTime mavlinkLoiterTime = new MavlinkLoiterTime(droneMission, new Coordinate(loiterTime.getLat(), loiterTime.getLon()));
+        mavlinkLoiterTime.setAltitude(loiterTime.getAltitude());
+        mavlinkLoiterTime.setSeconds(loiterTime.getSeconds());
+
+        LOGGER.debug("Database LoiterTime:\n{}\nWas converted to:\n{}", loiterTime, mavlinkLoiterTime);
+        droneMission.addMissionItem(mavlinkLoiterTime);
+    }
+
+    private void visit(LoiterUnlimited loiterUnlimited) {
+        MavlinkLoiterUnlimited mavlinkLoiterUnlimited = new MavlinkLoiterUnlimited(droneMission, new Coordinate(loiterUnlimited.getLat(), loiterUnlimited.getLon()));
+        mavlinkLoiterUnlimited.setAltitude(loiterUnlimited.getAltitude());
+        LOGGER.debug("Database LoiterUnlimited:\n{}\nWas converted to:\n{}", loiterUnlimited, mavlinkLoiterUnlimited);
+        droneMission.addMissionItem(mavlinkLoiterUnlimited);
     }
 
     private void visit(ReturnToHome returnToHome) {

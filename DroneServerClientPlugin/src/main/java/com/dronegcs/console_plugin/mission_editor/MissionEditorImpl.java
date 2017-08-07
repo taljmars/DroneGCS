@@ -114,18 +114,48 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Circle createCirclePoint() {
-        return (Circle) missionCrudSvcRemote.createMissionItem(Circle.class.getName());
+    public LoiterTurns createLoiterTurns() {
+        return (LoiterTurns) missionCrudSvcRemote.createMissionItem(LoiterTurns.class.getName());
     }
 
     @Override
-    public Circle addCirclePoint(Coordinate position) throws MissionUpdateException {
-        Circle circle = createCirclePoint();
+    public LoiterTurns addLoiterTurns(Coordinate position) throws MissionUpdateException {
+        LoiterTurns loiterTurns = createLoiterTurns();
         Coordinate c3 = new Coordinate(position, 20);
-        circle.setLon(c3.getLon());
-        circle.setLat(c3.getLat());
-        circle.setAltitude(c3.getAltitude());
-        return updateMissionItem(circle);
+        loiterTurns.setLon(c3.getLon());
+        loiterTurns.setLat(c3.getLat());
+        loiterTurns.setAltitude(c3.getAltitude());
+        return updateMissionItem(loiterTurns);
+    }
+
+    @Override
+    public LoiterTime createLoiterTime() {
+        return (LoiterTime) missionCrudSvcRemote.createMissionItem(LoiterTime.class.getName());
+    }
+
+    @Override
+    public LoiterTime addLoiterTime(Coordinate position) throws MissionUpdateException {
+        LoiterTime loiterTime = createLoiterTime();
+        Coordinate c3 = new Coordinate(position, 20);
+        loiterTime.setLon(c3.getLon());
+        loiterTime.setLat(c3.getLat());
+        loiterTime.setAltitude(c3.getAltitude());
+        return updateMissionItem(loiterTime);
+    }
+
+    @Override
+    public LoiterUnlimited createLoiterUnlimited() {
+        return (LoiterUnlimited) missionCrudSvcRemote.createMissionItem(LoiterUnlimited.class.getName());
+    }
+
+    @Override
+    public LoiterUnlimited addLoiterUnlimited(Coordinate position) throws MissionUpdateException {
+        LoiterUnlimited loiterUnlimited = createLoiterUnlimited();
+        Coordinate c3 = new Coordinate(position, 20);
+        loiterUnlimited.setLon(c3.getLon());
+        loiterUnlimited.setLat(c3.getLat());
+        loiterUnlimited.setAltitude(c3.getAltitude());
+        return updateMissionItem(loiterUnlimited);
     }
 
     @Override

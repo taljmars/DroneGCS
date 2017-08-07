@@ -16,8 +16,14 @@ public interface MissionEditor {
     SplineWaypoint createSplineWaypoint();
     SplineWaypoint addSplineWaypoint (Coordinate position) throws MissionUpdateException;
 
-    Circle createCirclePoint();
-    Circle addCirclePoint(Coordinate position) throws MissionUpdateException;
+    LoiterTurns createLoiterTurns();
+    LoiterTurns addLoiterTurns(Coordinate position) throws MissionUpdateException;
+
+    LoiterTime createLoiterTime();
+    LoiterTime addLoiterTime(Coordinate position) throws MissionUpdateException;
+
+    LoiterUnlimited createLoiterUnlimited();
+    LoiterUnlimited addLoiterUnlimited(Coordinate position) throws MissionUpdateException;
 
     ReturnToHome createReturnToLunch();
     ReturnToHome addReturnToLunch() throws MissionUpdateException;

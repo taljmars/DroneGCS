@@ -96,26 +96,27 @@ public class LayerMission extends EditedLayer {
 //				case EPM_GRIPPER:
 //					//return new MavlinkEpmGripper(referenceItem);
 			}
-			else if (item instanceof Circle) {
-				Circle wp = (Circle) item;
+			else if (item instanceof LoiterTurns) {
+                LoiterTurns wp = (LoiterTurns) item;
 				Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
 				MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
 				addMapMarker(m);
 				points.add(coordinate);
-//				case ROI:
-//					RegionOfInterest roi = (MavlinkRegionOfInterest) item;
-//					MapMarkerDot m = new MapMarkerDot(Color.AQUA, roi.getCoordinate());
-//					//m.setBackColor(Color.MAGENTA);
-//					addMapMarker(m);
-//					points.add(roi.getCoordinate());
-//					break;
-//				case SURVEY:
-//					//return new MavlinkSurvey(referenceItem.getMission(), Collections.<Coord2D> emptyList());
-//				case CYLINDRICAL_SURVEY:
-//					//return new MavlinkStructureScanner(referenceItem);
-//				default:
-//					break;
 			}
+            else if (item instanceof LoiterTime) {
+                LoiterTime wp = (LoiterTime) item;
+                Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
+                MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
+                addMapMarker(m);
+                points.add(coordinate);
+            }
+            else if (item instanceof LoiterUnlimited) {
+                LoiterUnlimited wp = (LoiterUnlimited) item;
+                Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
+                MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
+                addMapMarker(m);
+                points.add(coordinate);
+            }
 			else if (item instanceof Land) {
 				Land lnd = (Land) item;
 				Coordinate coordinate = new Coordinate(lnd.getLat(), lnd.getLon());
