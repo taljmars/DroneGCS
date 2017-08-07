@@ -13,6 +13,9 @@ public interface MissionEditor {
     Waypoint createWaypoint();
     Waypoint addWaypoint(Coordinate position) throws MissionUpdateException;
 
+    SplineWaypoint createSplineWaypoint();
+    SplineWaypoint addSplineWaypoint (Coordinate position) throws MissionUpdateException;
+
     Circle createCirclePoint();
     Circle addCirclePoint(Coordinate position) throws MissionUpdateException;
 

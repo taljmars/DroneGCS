@@ -143,8 +143,14 @@ public class LayerMission extends EditedLayer {
 				//addMapMarker(m);
 				//points.add(curr);
 			}
+			else if (item instanceof SplineWaypoint) {
+				SplineWaypoint splineWaypoint = (SplineWaypoint) item;
+				Coordinate coordinate = new Coordinate(splineWaypoint.getLat(), splineWaypoint.getLon());
+				MapMarkerDot m = new MapMarkerDot(Color.MAROON, coordinate);
+				addMapMarker(m);
+			}
 			else {
-				System.err.println("UNEXPECTED TYPE");
+				throw new RuntimeException("Unexpected Type: " + item);
 			}
 			i++;
 			System.err.println("Generate " + i + " points");

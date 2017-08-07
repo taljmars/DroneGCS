@@ -100,6 +100,20 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
+    public SplineWaypoint createSplineWaypoint() {
+        return (SplineWaypoint) missionCrudSvcRemote.createMissionItem(SplineWaypoint.class.getName());
+    }
+
+    @Override
+    public SplineWaypoint addSplineWaypoint(Coordinate position) throws MissionUpdateException {
+        SplineWaypoint splineWaypoint = createSplineWaypoint();
+        Coordinate c3 = new Coordinate(position);
+        splineWaypoint.setLat(c3.getLat());
+        splineWaypoint.setLon(c3.getLon());
+        return updateMissionItem(splineWaypoint);
+    }
+
+    @Override
     public Circle createCirclePoint() {
         return (Circle) missionCrudSvcRemote.createMissionItem(Circle.class.getName());
     }

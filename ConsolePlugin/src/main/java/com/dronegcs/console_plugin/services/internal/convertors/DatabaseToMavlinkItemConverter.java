@@ -5,10 +5,7 @@ import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkReturnToHome;
 import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkTakeoff;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkCircle;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkLand;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkRegionOfInterest;
-import com.dronegcs.mavlink.is.drone.mission.waypoints.MavlinkWaypoint;
+import com.dronegcs.mavlink.is.drone.mission.waypoints.*;
 import com.geo_tools.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,12 +111,19 @@ public class DatabaseToMavlinkItemConverter {
     }
 
     private void visit(RegionOfInterest regionOfInterest) {
-        // TODO: handle position value
         Coordinate coordinate = new Coordinate(regionOfInterest.getLat() ,regionOfInterest.getLon());
         MavlinkRegionOfInterest mavlinkRegionOfInterest = new MavlinkRegionOfInterest(droneMission, coordinate);
         mavlinkRegionOfInterest.setAltitude(regionOfInterest.getAltitude());
         LOGGER.debug("Database RegionOfInterest:\n{}\nWas converted to:\n{}", regionOfInterest, mavlinkRegionOfInterest);
         droneMission.addMissionItem(mavlinkRegionOfInterest);
+    }
+
+    private void visit(SplineWaypoint splineWaypoint) {
+        Coordinate coordinate = new Coordinate(splineWaypoint.getLat() ,splineWaypoint.getLon());
+        MavlinkSplineWaypoint mavlinkSplineWaypoint = new MavlinkSplineWaypoint(droneMission, coordinate);
+        mavlinkSplineWaypoint.setDelay(splineWaypoint.getDelay());
+        LOGGER.debug("Database SplineWaypoint:\n{}\nWas converted to:\n{}", splineWaypoint, mavlinkSplineWaypoint);
+        droneMission.addMissionItem(mavlinkSplineWaypoint);
     }
 
 }

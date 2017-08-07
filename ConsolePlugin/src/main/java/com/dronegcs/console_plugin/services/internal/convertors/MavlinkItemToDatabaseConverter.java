@@ -1,10 +1,6 @@
 package com.dronegcs.console_plugin.services.internal.convertors;
 
-import com.dronedb.persistence.scheme.Circle;
-import com.dronedb.persistence.scheme.Mission;
-import com.dronedb.persistence.scheme.Takeoff;
-import com.dronedb.persistence.scheme.Waypoint;
-import com.dronedb.persistence.scheme.ReturnToHome;
+import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -50,6 +46,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             Iterator<DroneMissionItem> itr = droneMission.getItems().iterator();
             while (itr.hasNext()) {
                 DroneMissionItem droneMissionItem = itr.next();
+                LOGGER.debug("Converting type: {}", droneMission.getClass().getSimpleName());
                 droneMissionItem.accept(this);
             }
 
@@ -57,6 +54,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             return mission;
         }
         catch (MavlinkConvertionException e) {
+            LOGGER.error("Failed to convert mission", e);
             throw new MissionCompilationException(e.getMessage());
         }
     }
@@ -64,7 +62,15 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkLand mavlinkLand) throws MavlinkConvertionException {
         try{
-            throw new MissionUpdateException("Not implemented yet");
+            LOGGER.debug("Converting Mavlink Land to DB Land");
+            Land land = missionEditor.createLandPoint();
+
+            land.setAltitude(mavlinkLand.getAltitude());
+            land.setLat(mavlinkLand.getCoordinate().getLat());
+            land.setLon(mavlinkLand.getCoordinate().getLon());
+            LOGGER.debug("Mavlink Land:\n{}\nWas converted to:\n{}", mavlinkLand, land);
+            missionEditor.updateMissionItem(land);
+
         }
         catch (MissionUpdateException e) {
             throw new MavlinkConvertionException(e.getMessage());
@@ -104,6 +110,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkStructureScanner mavlinkStructureScanner) throws MavlinkConvertionException {
         try{
+            LOGGER.debug("Should be implemented\n{}", mavlinkStructureScanner);
             throw new MissionUpdateException("Not implemented yet");
         }
         catch (MissionUpdateException e) {
@@ -124,7 +131,15 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkRegionOfInterest mavlinkRegionOfInterest) throws MavlinkConvertionException {
         try{
-            throw new MissionUpdateException("Not implemented yet");
+            LOGGER.debug("Converting Mavlink RegionOfInterest to DB ROI");
+            RegionOfInterest regionOfInterest = missionEditor.createRegionOfInterest();
+
+            regionOfInterest.setAltitude(mavlinkRegionOfInterest.getAltitude());
+            regionOfInterest.setLat(mavlinkRegionOfInterest.getCoordinate().getLat());
+            regionOfInterest.setLon(mavlinkRegionOfInterest.getCoordinate().getLon());
+
+            LOGGER.debug("Mavlink MavlinkROI:\n{}\nWas converted to:\n{}", mavlinkRegionOfInterest, regionOfInterest);
+            missionEditor.updateMissionItem(regionOfInterest);
         }
         catch (MissionUpdateException e) {
             throw new MavlinkConvertionException(e.getMessage());
@@ -134,6 +149,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkSurvey mavlinkSurvey) throws MavlinkConvertionException {
         try{
+            LOGGER.debug("Should be implemented\n{}", mavlinkSurvey);
             throw new MissionUpdateException("Not implemented yet");
         }
         catch (MissionUpdateException e) {
@@ -144,6 +160,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkEpmGripper mavlinkEpmGripper) throws MavlinkConvertionException {
         try{
+            LOGGER.debug("Should be implemented\n{}", mavlinkEpmGripper);
             throw new MissionUpdateException("Not implemented yet");
         }
         catch (MissionUpdateException e) {
@@ -154,6 +171,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkCameraTrigger mavlinkCameraTrigger) throws MavlinkConvertionException {
         try{
+            LOGGER.debug("Should be implemented\n{}", mavlinkCameraTrigger);
             throw new MissionUpdateException("Not implemented yet");
         }
         catch (MissionUpdateException e) {
@@ -164,7 +182,14 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     @Override
     public void visit(MavlinkSplineWaypoint mavlinkSplineWaypoint) throws MavlinkConvertionException {
         try{
-            throw new MissionUpdateException("Not implemented yet");
+            LOGGER.debug("Converting Mavlink SplineWaypoint to DB SplineWaypoint");
+            SplineWaypoint splineWaypoint = missionEditor.createSplineWaypoint();
+
+            splineWaypoint.setDelay(mavlinkSplineWaypoint.getDelay());
+            splineWaypoint.setLat(mavlinkSplineWaypoint.getCoordinate().getLat());
+            splineWaypoint.setLon(mavlinkSplineWaypoint.getCoordinate().getLon());
+            LOGGER.debug("Mavlink MavlinkSplineWaypoint:\n{}\nWas converted to:\n{}", mavlinkSplineWaypoint, splineWaypoint);
+            missionEditor.updateMissionItem(splineWaypoint);
         }
         catch (MissionUpdateException e) {
             throw new MavlinkConvertionException(e.getMessage());
