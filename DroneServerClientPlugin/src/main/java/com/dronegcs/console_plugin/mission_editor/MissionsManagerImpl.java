@@ -192,7 +192,11 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	private ClosableMissionEditor findMissionEditorByMission(Mission mission) {
 		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
-			if (mission.equals(closableMissionEditor.getModifiedMission())) {
+			Mission cloMission = closableMissionEditor.getModifiedMission();
+			if (mission.getKeyId().getObjId().equals(cloMission.getKeyId().getObjId()))
+				return closableMissionEditor;
+
+			if (mission.equals(cloMission)) {
 				return closableMissionEditor;
 			}
 		}

@@ -40,7 +40,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
 
     public Mission convert(DroneMission droneMission, Mission mission) throws MissionCompilationException {
         try {
-            LOGGER.debug("Converting mavlink mission with {} items", droneMission.getItems().size());
+            LOGGER.debug("Converting Mavlink mission with {} items", droneMission.getItems().size());
             missionEditor = missionsManager.getMissionEditor(mission);
 
             Mission modifiedMission = missionEditor.getModifiedMission();
@@ -53,6 +53,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
                 droneMissionItem.accept(this);
             }
 
+            LOGGER.debug("Conversion done");
             return mission;
         }
         catch (MavlinkConvertionException e) {

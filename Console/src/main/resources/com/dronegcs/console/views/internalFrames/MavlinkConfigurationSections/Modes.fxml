@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<Pane prefHeight="460.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.Modes">
+<Pane prefHeight="460.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.Modes">
     <children>
         <GridPane hgap="5.0" prefHeight="460.0" prefWidth="500.0" vgap="10.0">
             <columnConstraints>
@@ -15,74 +23,90 @@
                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
             </columnConstraints>
             <children>
-                <Label text="Flight Modes" style="-fx-font-weight: bold" GridPane.rowIndex="1" />
+                <Label style="-fx-font-weight: bold" text="Flight Modes" GridPane.rowIndex="1" />
 
-                <Label fx:id="cbFltMode1Label" text="Flight Mode 1"  GridPane.rowIndex="2" />
-                <ComboBox fx:id="cbFltMode1" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode1Simple" text="Simple" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode1SuperSimple" text="Super Simple" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
-                <Label text="0-1230 PWM"     GridPane.rowIndex="2" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode1Label" text="Flight Mode 1" GridPane.rowIndex="2" />
+                <ComboBox fx:id="cbFltMode1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <CheckBox fx:id="cbFltMode1Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <CheckBox fx:id="cbFltMode1SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                <Label text="0-1230 PWM" GridPane.columnIndex="4" GridPane.rowIndex="2" />
 
-                <Label fx:id="cbFltMode2Label" text="Flight Mode 2"  GridPane.rowIndex="3" />
-                <ComboBox fx:id="cbFltMode2" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode2Simple" text="Simple" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode2SuperSimple" text="Super Simple" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
-                <Label text="1231-1360 PWM"  GridPane.rowIndex="3" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode2Label" text="Flight Mode 2" GridPane.rowIndex="3" />
+                <ComboBox fx:id="cbFltMode2" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <CheckBox fx:id="cbFltMode2Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <CheckBox fx:id="cbFltMode2SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                <Label text="1231-1360 PWM" GridPane.columnIndex="4" GridPane.rowIndex="3" />
 
-                <Label fx:id="cbFltMode3Label" text="Flight Mode 3"  GridPane.rowIndex="4" />
-                <ComboBox fx:id="cbFltMode3" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode3Simple" text="Simple" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode3SuperSimple" text="Super Simple" GridPane.rowIndex="4" GridPane.columnIndex="3"/>
-                <Label text="1361-1490 PWM"  GridPane.rowIndex="4" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode3Label" text="Flight Mode 3" GridPane.rowIndex="4" />
+                <ComboBox fx:id="cbFltMode3" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <CheckBox fx:id="cbFltMode3Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                <CheckBox fx:id="cbFltMode3SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                <Label text="1361-1490 PWM" GridPane.columnIndex="4" GridPane.rowIndex="4" />
 
-                <Label fx:id="cbFltMode4Label" text="Flight Mode 4"  GridPane.rowIndex="5" />
-                <ComboBox fx:id="cbFltMode4" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode4Simple" text="Simple" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode4SuperSimple" text="Super Simple" GridPane.rowIndex="5" GridPane.columnIndex="3"/>
-                <Label text="1491-1620 PWM"  GridPane.rowIndex="5" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode4Label" text="Flight Mode 4" GridPane.rowIndex="5" />
+                <ComboBox fx:id="cbFltMode4" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <CheckBox fx:id="cbFltMode4Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                <CheckBox fx:id="cbFltMode4SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                <Label text="1491-1620 PWM" GridPane.columnIndex="4" GridPane.rowIndex="5" />
 
-                <Label fx:id="cbFltMode5Label" text="Flight Mode 5"  GridPane.rowIndex="6" />
-                <ComboBox fx:id="cbFltMode5" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode5Simple" text="Simple" GridPane.rowIndex="6" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode5SuperSimple" text="Super Simple" GridPane.rowIndex="6" GridPane.columnIndex="3"/>
-                <Label text="1621-1749 PWM"  GridPane.rowIndex="6" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode5Label" text="Flight Mode 5" GridPane.rowIndex="6" />
+                <ComboBox fx:id="cbFltMode5" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <CheckBox fx:id="cbFltMode5Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                <CheckBox fx:id="cbFltMode5SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                <Label text="1621-1749 PWM" GridPane.columnIndex="4" GridPane.rowIndex="6" />
 
-                <Label fx:id="cbFltMode6Label" text="Flight Mode 6"  GridPane.rowIndex="7" />
-                <ComboBox fx:id="cbFltMode6" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
-                <CheckBox fx:id="cbFltMode6Simple" text="Simple" GridPane.rowIndex="7" GridPane.columnIndex="2"/>
-                <CheckBox fx:id="cbFltMode6SuperSimple" text="Super Simple" GridPane.rowIndex="7" GridPane.columnIndex="3"/>
-                <Label text="1755-2200 PWM"  GridPane.rowIndex="7" GridPane.columnIndex="4"/>
+                <Label fx:id="cbFltMode6Label" text="Flight Mode 6" GridPane.rowIndex="7" />
+                <ComboBox fx:id="cbFltMode6" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <CheckBox fx:id="cbFltMode6Simple" text="Simple" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                <CheckBox fx:id="cbFltMode6SuperSimple" text="Super Simple" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+                <Label text="1755-2200 PWM" GridPane.columnIndex="4" GridPane.rowIndex="7" />
 
-                <Label text="Channel 6 Tuning" style="-fx-font-weight: bold" GridPane.rowIndex="8" />
+                <Label style="-fx-font-weight: bold" text="Channel 6 Tuning" GridPane.rowIndex="8" />
 
-                <ComboBox fx:id="cbChannel6" GridPane.rowIndex="9"/>
-                <Label text="Min/Max" alignment="CENTER" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
-                <Spinner fx:id="spChannel6Min" GridPane.rowIndex="9" GridPane.columnIndex="2">
-                    <valueFactory>
-                        <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.0" amountToStepBy="0.01" value="0.0" max="32.767"/>
-                    </valueFactory>
+                <ComboBox fx:id="cbChannel6" GridPane.rowIndex="9" />
+                <Label alignment="CENTER" text="Min/Max" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Spinner fx:id="spChannel6Min" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                    <!--<valueFactory>-->
+                        <!--<SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.01" max="32.767" min="0.0" value="0.0" />-->
+                    <!--</valueFactory>-->
                 </Spinner>
-                <Spinner fx:id="spChannel6Max" GridPane.rowIndex="9" GridPane.columnIndex="3">
-                    <valueFactory>
-                        <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.0" amountToStepBy="0.01" value="1.0" max="32.767"/>
-                    </valueFactory>
+                <Spinner fx:id="spChannel6Max" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                    <!--<valueFactory>-->
+                        <!--<SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.01" max="32.767" min="0.0" value="1.0" />-->
+                    <!--</valueFactory>-->
                 </Spinner>
 
-                <Label text="Commands Tunning" style="-fx-font-weight: bold" GridPane.rowIndex="10" />
+                <Label style="-fx-font-weight: bold" text="Commands Tunning" GridPane.rowIndex="10" />
 
-                <Label text="Channel 7"  GridPane.rowIndex="11" />
-                <ComboBox fx:id="cbChannel7" GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+                <Label text="Channel 7" GridPane.rowIndex="11" />
+                <ComboBox fx:id="cbChannel7" GridPane.columnIndex="1" GridPane.rowIndex="11" />
 
-                <Label text="Channel 8"  GridPane.rowIndex="12" />
-                <ComboBox fx:id="cbChannel8" GridPane.rowIndex="12" GridPane.columnIndex="1"/>
+                <Label text="Channel 8" GridPane.rowIndex="12" />
+                <ComboBox fx:id="cbChannel8" GridPane.columnIndex="1" GridPane.rowIndex="12" />
 
-                <Label text="Actions" style="-fx-font-weight: bold" GridPane.rowIndex="13" />
-                <Button onAction="#updateModes" text="Update" GridPane.rowIndex="13" GridPane.columnIndex="1"/>
-                <Button onAction="#refresh" text="Refresh" GridPane.rowIndex="13" GridPane.columnIndex="2"/>
+                <Label style="-fx-font-weight: bold" text="Actions" GridPane.rowIndex="13" />
+                <Button onAction="#updateModes" text="Update" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                <Button onAction="#refresh" text="Refresh" GridPane.columnIndex="2" GridPane.rowIndex="13" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
             </padding>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
     </children>
 </Pane>

@@ -35,7 +35,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
 
-	@Autowired @NotNull(message="Internal Error: Failed to get com.generic_tools.environment")
+	@Autowired @NotNull(message="Internal Error: Failed to get environment")
 	private Environment environment;
 	
 	@Autowired
