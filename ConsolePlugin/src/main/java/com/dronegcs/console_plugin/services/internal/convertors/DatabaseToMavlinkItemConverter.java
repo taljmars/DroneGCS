@@ -97,7 +97,6 @@ public class DatabaseToMavlinkItemConverter {
     private void visit(LoiterTurns loiterTurns) {
         MavlinkLoiterTurns mavlinkLoiterTurns = new MavlinkLoiterTurns(droneMission, new Coordinate(loiterTurns.getLat(), loiterTurns.getLon()));
         mavlinkLoiterTurns.setAltitude(loiterTurns.getAltitude());
-        mavlinkLoiterTurns.setRadius(loiterTurns.getRadius());
         mavlinkLoiterTurns.setTurns(loiterTurns.getTurns());
         LOGGER.debug("Database LoiterTurns:\n{}\nWas converted to:\n{}", loiterTurns, mavlinkLoiterTurns);
         droneMission.addMissionItem(mavlinkLoiterTurns);
@@ -107,7 +106,6 @@ public class DatabaseToMavlinkItemConverter {
         MavlinkLoiterTime mavlinkLoiterTime = new MavlinkLoiterTime(droneMission, new Coordinate(loiterTime.getLat(), loiterTime.getLon()));
         mavlinkLoiterTime.setAltitude(loiterTime.getAltitude());
         mavlinkLoiterTime.setSeconds(loiterTime.getSeconds());
-
         LOGGER.debug("Database LoiterTime:\n{}\nWas converted to:\n{}", loiterTime, mavlinkLoiterTime);
         droneMission.addMissionItem(mavlinkLoiterTime);
     }

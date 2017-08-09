@@ -192,6 +192,8 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemDist.setDisable(!drone.getGps().isPositionValid());
         menuItemMissionAddWayPoint.setVisible(isMissionBuildMode);
         menuItemMissionAddLoiterTurns.setVisible(isMissionBuildMode);
+        menuItemMissionAddLoiterTime.setVisible(isMissionBuildMode);
+        menuItemMissionAddLoiterUnlimited.setVisible(isMissionBuildMode);
         menuItemMissionAddROI.setVisible(isMissionBuildMode);
         menuItemMissionSetHome.setVisible(drone.getGps().isPositionValid() && !isMissionBuildMode && !isPerimeterBuildMode);
         menuItemMissionSetLandPoint.setVisible(isMissionBuildMode);
@@ -221,7 +223,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         popup.getItems().add(menuItemMissionAddWayPoint);
         popup.getItems().add(menuItemMissionAddLoiterTurns);
         popup.getItems().add(menuItemMissionAddLoiterTime);
-        popup.getItems().add(menuItemMissionAddLoiterTurns);
+        popup.getItems().add(menuItemMissionAddLoiterUnlimited);
         popup.getItems().add(menuItemMissionAddROI);
         popup.getItems().add(menuItemMissionSetLandPoint);
         popup.getItems().add(menuItemMissionSetRTL);
@@ -342,12 +344,21 @@ OnDroneListener, EventHandler<ActionEvent> {
         menuItemMissionBuild.setOnAction( arg -> {
             try {
                 if (modifyiedLayerMissionOriginal == null) {
+                    String DEF_VALUE = "60";
+                    String val = dialogManagerSvc.showInputDialog("Set default height for the mission items", "",null, null, DEF_VALUE);
+                    if (val == null) {
+                        loggerDisplayerSvc.logGeneral(getClass().getName() + " Setting mission default height canceled");
+                        val = DEF_VALUE;
+                    }
+                    double defaultHeight = Double.parseDouble(val);
+
                     modifyiedLayerMissionOriginal = new LayerMission("New DroneMission", this);
                     modifyiedLayerMissionOriginal.setApplicationContext(applicationContext);
                     getOperationalViewTree().addLayer(modifyiedLayerMissionOriginal);
                     isMissionBuildMode = true;
                     missionEditor = missionsManager.openMissionEditor(modifyiedLayerMissionOriginal.getName());
                     modifyiedLayerMissionOriginal.setMission(missionEditor.getModifiedMission());
+                    missionEditor.getModifiedMission().setDefaultAlt(defaultHeight);
                     
                     super.startModifiedLayerMode(modifyiedLayerMissionOriginal);
                     eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifyiedLayerMissionOriginal));
