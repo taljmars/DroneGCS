@@ -259,6 +259,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             LoiterTime loiterTime = missionEditor.createLoiterTime();
 
             loiterTime.setAltitude(mavlinkLoiterTime.getAltitude());
+            LOGGER.error("TAL {} {} ", loiterTime.getAltitude(), mavlinkLoiterTime.getAltitude());
             loiterTime.setSeconds(mavlinkLoiterTime.getSeconds());
             loiterTime.setLat(mavlinkLoiterTime.getCoordinate().getLat());
             loiterTime.setLon(mavlinkLoiterTime.getCoordinate().getLon());

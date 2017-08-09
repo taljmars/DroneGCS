@@ -8,6 +8,7 @@ import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -28,6 +29,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,6 +52,9 @@ public class MissionTableProfile extends TableProfile {
 
     @Autowired @NotNull(message = "Internal Error: Failed to get logger")
     private Logger logger;
+
+    @Autowired @NotNull(message = "Internal Error: Failed to get drone")
+    private Drone drone;
 
     @Autowired @NotNull(message = "Internal Error: Failed to get validator")
     private RuntimeValidator runtimeValidator;
@@ -89,50 +95,45 @@ public class MissionTableProfile extends TableProfile {
         panelTableBox.getLat().setCellValueFactory(new PropertyValueFactory<>("lat"));
         panelTableBox.getLon().setCellValueFactory(new PropertyValueFactory<>("lon"));
 
-        panelTableBox.getAltitude().setCellValueFactory(new PropertyValueFactory<>("height"));
+        panelTableBox.getAltitude().setCellValueFactory(new PropertyValueFactory<>("altitude"));
         panelTableBox.getAltitude().setCellFactory(cellFactoryDouble);
         panelTableBox.getAltitude().setOnEditCommit(t -> {
             TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
-//        	if (entry.getReferedItem() instanceof Altitudable) {
-//        		Altitudable wp = (Altitudable) entry.getReferedItem();
-//        		wp.setAltitude(t.getNewValue());
-//        	}
+            if (!(entry.getReferedItem() instanceof Takeoff)) {
+                try {
+                    Method method = entry.getReferedItem().getClass().getMethod("setAltitude",null);
+                    method.invoke(entry.getReferedItem(), t.getNewValue());
+                }
+                catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                    LOGGER.error("Failed to handle altitude change", e);
+                }
+            }
             generateTable(true, this.layerMission);
             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
 
-        panelTableBox.getDelayOrTime().setCellValueFactory(new PropertyValueFactory<>("delay"));
+        panelTableBox.getDelayOrTime().setCellValueFactory(new PropertyValueFactory<>("delayOrTime"));
         panelTableBox.getDelayOrTime().setCellFactory(cellFactoryDouble);
         panelTableBox.getDelayOrTime().setOnEditCommit(t -> {
-            TableItemEntry entry = (TableItemEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-//        	if (entry.getReferedItem() instanceof Delayable) {
-//        		Delayable wp = (Delayable) entry.getReferedItem();
-//        		wp.setDelay(t.getNewValue());
-//        	}
-            generateTable(true, layerMission);
+            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
+        	    if (entry.getReferedItem() instanceof LoiterTime) {
+        		    LoiterTime wp = (LoiterTime) entry.getReferedItem();
+        		    wp.setSeconds(t.getNewValue().intValue());
+        	    }
+            generateTable(true, this.layerMission);
             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
 
         panelTableBox.getRadius().setCellValueFactory(new PropertyValueFactory<>("radius"));
-        panelTableBox.getRadius().setCellFactory(cellFactoryDouble);
-        panelTableBox.getRadius().setOnEditCommit(t -> {
-            TableItemEntry entry = (TableItemEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-//        	if (entry.getReferedItem() instanceof Radiusable) {
-//        		Radiusable wp = (Radiusable) entry.getReferedItem();
-//        		wp.setRadius(t.getNewValue());
-//        	}
-            generateTable(true, this.layerMission);
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
-        });
 
         panelTableBox.getTurns().setCellValueFactory(new PropertyValueFactory<>("turns"));
         panelTableBox.getTurns().setCellFactory(cellFactoryInteger);
         panelTableBox.getTurns().setOnEditCommit(t -> {
-            TableItemEntry entry = (TableItemEntry) t.getTableView().getItems().get(t.getTablePosition().getRow());
-//        	if (entry.getReferedItem() instanceof Radiusable) {
-//        		Radiusable wp = (Radiusable) entry.getReferedItem();
-//        		wp.setRadius(t.getNewValue());
-//        	}
+            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            if (entry.getReferedItem() instanceof LoiterTurns) {
+                LoiterTurns wp = (LoiterTurns) entry.getReferedItem();
+                wp.setTurns(t.getNewValue().intValue());
+            }
             generateTable(true, this.layerMission);
             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
         });
@@ -240,6 +241,11 @@ public class MissionTableProfile extends TableProfile {
 
         // Setting columns
         panelTableBox.getTable().getColumns().removeAll(panelTableBox.getTable().getColumns());
+
+        int radiusCentimeters = 0;
+        if ((drone.getParameters()) != null && drone.getParameters().getParameter("CIRCLE_RADIUS") != null)
+            radiusCentimeters = Integer.parseInt(drone.getParameters().getParameter("CIRCLE_RADIUS").getValue());
+        double radiusMeters = radiusCentimeters / 100;
         if (!editMode)
             panelTableBox.getTable().getColumns().addAll(
                     panelTableBox.getOrder(), panelTableBox.getType(),
@@ -254,7 +260,7 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getAltitude().setEditable(editMode);
         panelTableBox.getDelayOrTime().setEditable(editMode);
-        panelTableBox.getRadius().setEditable(editMode);
+//        panelTableBox.getRadius().setEditable(editMode);
         panelTableBox.getTurns().setEditable(editMode);
 
         // Start loading items
@@ -275,19 +281,19 @@ public class MissionTableProfile extends TableProfile {
             }
             else if (mItem instanceof SplineWaypoint) {
                 SplineWaypoint wp = (SplineWaypoint) mItem;
-                entry = new TableItemEntry(i, SplineWaypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), 0.0, 0.0, 0.0,0, mItem);
+                entry = new TableItemEntry(i, SplineWaypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, 0.0,0, mItem);
             }
             else if (mItem instanceof LoiterTurns) {
                 LoiterTurns wp = (LoiterTurns) mItem;
-                entry = new TableItemEntry(i, LoiterTurns.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, wp.getRadius(), wp.getTurns(), mItem);
+                entry = new TableItemEntry(i, LoiterTurns.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, radiusMeters, wp.getTurns(), mItem);
             }
             else if (mItem instanceof LoiterTime) {
                 LoiterTime wp = (LoiterTime) mItem;
-                entry = new TableItemEntry(i, LoiterTime.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getSeconds() * 1.0, wp.getRadius(), 0, mItem);
+                entry = new TableItemEntry(i, LoiterTime.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getSeconds() * 1.0, radiusMeters, 0, mItem);
             }
             else if (mItem instanceof LoiterUnlimited) {
                 LoiterUnlimited wp = (LoiterUnlimited) mItem;
-                entry = new TableItemEntry(i, LoiterUnlimited.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, wp.getRadius(), 0, mItem);
+                entry = new TableItemEntry(i, LoiterUnlimited.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, radiusMeters, 0, mItem);
             }
             else if (mItem instanceof Land) {
                 entry = new TableItemEntry(i, Land.class.getSimpleName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0, mItem);
@@ -298,6 +304,10 @@ public class MissionTableProfile extends TableProfile {
             else if (mItem instanceof Takeoff) {
 				Takeoff takeoff = (Takeoff) mItem;
 				entry = new TableItemEntry(i, Takeoff.class.getSimpleName(), 0.0, 0.0, takeoff.getFinishedAlt(), 0.0, 0.0, 0, mItem);
+            }
+            else if (mItem instanceof RegionOfInterest) {
+                RegionOfInterest regionOfInterest = (RegionOfInterest) mItem;
+                entry = new TableItemEntry(i, RegionOfInterest.class.getSimpleName(), regionOfInterest.getLat(), regionOfInterest.getLon(), regionOfInterest.getAltitude(), 0.0, 0.0, 0, mItem);
             }
             else {
                 throw new RuntimeException("Unexpected type: " + mItem);

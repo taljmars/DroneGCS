@@ -445,7 +445,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifyiedLayerMissionOriginal));
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
-                catch (MissionUpdateException e) {
+            catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
             }
         });

@@ -149,6 +149,7 @@ public class LayerMission extends EditedLayer {
 				Coordinate coordinate = new Coordinate(splineWaypoint.getLat(), splineWaypoint.getLon());
 				MapMarkerDot m = new MapMarkerDot(Color.MAROON, coordinate);
 				addMapMarker(m);
+                points.add(coordinate);
 			}
 			else {
 				throw new RuntimeException("Unexpected Type: " + item);
