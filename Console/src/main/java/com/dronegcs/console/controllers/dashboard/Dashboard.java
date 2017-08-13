@@ -43,6 +43,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
+
 @Component
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
 
@@ -285,6 +287,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Override
     public void onParameterReceived(Parameter parameter, int index, int count) {
+        if (index == UNINDEX_PARAM) {
+            return;
+        }
         LOGGER.debug("Received parameter {}/{}: {}", index, count, parameter);
         int prc = drone.getParameters().getPrecentageComplete();
         if (prc > 95) {

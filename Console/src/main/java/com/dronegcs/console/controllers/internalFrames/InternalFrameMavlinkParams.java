@@ -38,6 +38,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
+
 @Component
 public class InternalFrameMavlinkParams extends Pane implements OnDroneListener, Initializable, DroneInterfaces.OnParameterManagerListener {
 
@@ -180,10 +182,18 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	public void onBeginReceivingParameters() {}
 
 	@Override
-	public void onParameterReceived(Parameter parameter, int i, int i1) {}
+	public void onParameterReceived(Parameter parameter, int i, int i1) {
+		if (i != UNINDEX_PARAM)
+			return;
+
+		LOGGER.debug("Received updated parameter {}", parameter);
+		LOGGER.debug("new value -> {}", drone.getParameters().getParameter(parameter.name));
+		Platform.runLater(() -> loadTable());
+	}
 
 	@Override
 	public void onEndReceivingParameters(List<Parameter> list) {
+		LOGGER.debug("Received updated parameter, amount {}", list.size());
 		Platform.runLater(() -> loadTable());
 	}
 }

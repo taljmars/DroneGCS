@@ -16,10 +16,10 @@ public class EditingCell<T> extends TableCell<ParamsTableEntry, T> {
     private ApplicationContext applicationContext;
 
     private TextField textField;
-    private StringConverter<T> convertor;
+    private StringConverter<T> converter;
 
     public EditingCell(StringConverter<T> converter) {
-        this.convertor = converter;
+        this.converter = converter;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class EditingCell<T> extends TableCell<ParamsTableEntry, T> {
     public void cancelEdit() {
         super.cancelEdit();
 
-        setText("" + (Double) getItem());
+        setText("" + getItem());
         setGraphic(null);
     }
 
@@ -69,7 +69,7 @@ public class EditingCell<T> extends TableCell<ParamsTableEntry, T> {
             if (!arg2) {
                 T newVal;
                 try {
-                    newVal = convertor.fromString(textField.getText());
+                    newVal = converter.fromString(textField.getText());
                     commitEdit(newVal);
                 } catch (NumberFormatException e) {
                     DialogManagerSvc dialogManager = applicationContext.getBean(DialogManagerSvc.class);
