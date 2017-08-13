@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
@@ -25,12 +26,15 @@ import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,6 +60,9 @@ public class MissionTableProfile extends TableProfile {
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
+    @Autowired @NotNull(message = "Internal Error: Failed to get application context")
+    private ApplicationContext applicationContext;
+
     @Autowired @NotNull(message = "Internal Error: Failed to get validator")
     private RuntimeValidator runtimeValidator;
 
@@ -80,13 +87,37 @@ public class MissionTableProfile extends TableProfile {
 
         Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactoryDouble = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
             public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
-                return new EditingCell<Double>(new DoubleStringConverter());
+                EditingCell editingCell = new EditingCell<TableItemEntry, Double>(new DoubleStringConverter());
+                editingCell.setApplicationContext(applicationContext);
+                return editingCell;
             }
         };
 
         Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>> cellFactoryInteger = new Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>>() {
             public TableCell<TableItemEntry, Integer> call(TableColumn<TableItemEntry, Integer> p) {
-                return new EditingCell<Integer>(new IntegerStringConverter());
+                EditingCell editingCell = new EditingCell<TableItemEntry, Integer>(new IntegerStringConverter());
+                editingCell.setApplicationContext(applicationContext);
+                return editingCell;
+            }
+        };
+
+        ColumnTypeAwareEditingCell.PostCommit postAction = new ColumnTypeAwareEditingCell.PostCommit() {
+            @Override
+            public boolean call(Object entry) {
+                try {
+                    // Updating DB
+                    MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
+                    missionEditor.updateMissionItem((MissionItem) entry);
+
+                    // Refresh view
+                    generateTable(true, layerMission);
+                    eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                    return true;
+                }
+                catch (MissionUpdateException e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
         };
 
@@ -96,46 +127,32 @@ public class MissionTableProfile extends TableProfile {
         panelTableBox.getLon().setCellValueFactory(new PropertyValueFactory<>("lon"));
 
         panelTableBox.getAltitude().setCellValueFactory(new PropertyValueFactory<>("altitude"));
-        panelTableBox.getAltitude().setCellFactory(cellFactoryDouble);
-        panelTableBox.getAltitude().setOnEditCommit(t -> {
-            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            if (!(entry.getReferedItem() instanceof Takeoff)) {
-                try {
-                    Method method = entry.getReferedItem().getClass().getMethod("setAltitude",null);
-                    method.invoke(entry.getReferedItem(), t.getNewValue());
-                }
-                catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                    LOGGER.error("Failed to handle altitude change", e);
-                }
-            }
-            generateTable(true, this.layerMission);
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        panelTableBox.getAltitude().setCellFactory(param -> {
+            ColumnTypeAwareEditingCell col = new ColumnTypeAwareEditingCell<>(Arrays.asList(Takeoff.class), null,
+                    new DoubleStringConverter(),
+                    "setAltitude", "getAltitude",
+                    postAction);
+            return col;
         });
 
         panelTableBox.getDelayOrTime().setCellValueFactory(new PropertyValueFactory<>("delayOrTime"));
-        panelTableBox.getDelayOrTime().setCellFactory(cellFactoryDouble);
-        panelTableBox.getDelayOrTime().setOnEditCommit(t -> {
-            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
-        	    if (entry.getReferedItem() instanceof LoiterTime) {
-        		    LoiterTime wp = (LoiterTime) entry.getReferedItem();
-        		    wp.setSeconds(t.getNewValue().intValue());
-        	    }
-            generateTable(true, this.layerMission);
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        panelTableBox.getDelayOrTime().setCellFactory(t -> {
+            ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTime.class),
+                    new IntegerStringConverter(),
+                    "setSeconds", "getSeconds",
+                    postAction);
+            return col;
         });
 
         panelTableBox.getRadius().setCellValueFactory(new PropertyValueFactory<>("radius"));
 
         panelTableBox.getTurns().setCellValueFactory(new PropertyValueFactory<>("turns"));
-        panelTableBox.getTurns().setCellFactory(cellFactoryInteger);
-        panelTableBox.getTurns().setOnEditCommit(t -> {
-            TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            if (entry.getReferedItem() instanceof LoiterTurns) {
-                LoiterTurns wp = (LoiterTurns) entry.getReferedItem();
-                wp.setTurns(t.getNewValue().intValue());
-            }
-            generateTable(true, this.layerMission);
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+        panelTableBox.getTurns().setCellFactory(t -> {
+            ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTurns.class),
+                    new IntegerStringConverter(),
+                    "setTurns", "getTurns",
+                    postAction);
+            return col;
         });
 
         panelTableBox.getUp().setCellFactory(param -> {
@@ -151,7 +168,7 @@ public class MissionTableProfile extends TableProfile {
                             TableItemEntry entry = getTableView().getItems().get( getIndex() );
                             Mission mission = layerMission.getMission();
                             mission.getMissionItemsUids().remove(getIndex());
-                            mission.getMissionItemsUids().add(getIndex() - 1, ((MissionItem) entry.getReferedItem()).getKeyId().getObjId());
+                            mission.getMissionItemsUids().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
@@ -175,7 +192,7 @@ public class MissionTableProfile extends TableProfile {
                             TableItemEntry entry = getTableView().getItems().get( getIndex() );
                             Mission mission = layerMission.getMission();
                             mission.getMissionItemsUids().remove(getIndex());
-                            mission.getMissionItemsUids().add(getIndex() + 1, ((MissionItem)entry.getReferedItem()).getKeyId().getObjId());
+                            mission.getMissionItemsUids().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
@@ -199,7 +216,7 @@ public class MissionTableProfile extends TableProfile {
                             try {
                                 TableItemEntry entry = getTableView().getItems().get( getIndex() );
                                 MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
-                                missionEditor.removeMissionItem((MissionItem) entry.getReferedItem());
+                                missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
                                 generateTable(true, layerMission);
                                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                             }
@@ -284,10 +301,12 @@ public class MissionTableProfile extends TableProfile {
                 entry = new TableItemEntry(i, SplineWaypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, 0.0,0, mItem);
             }
             else if (mItem instanceof LoiterTurns) {
+                LOGGER.error("MITEM- {}", mItem);
                 LoiterTurns wp = (LoiterTurns) mItem;
                 entry = new TableItemEntry(i, LoiterTurns.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, radiusMeters, wp.getTurns(), mItem);
             }
             else if (mItem instanceof LoiterTime) {
+                LOGGER.error("MITEM- {}", mItem);
                 LoiterTime wp = (LoiterTime) mItem;
                 entry = new TableItemEntry(i, LoiterTime.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getSeconds() * 1.0, radiusMeters, 0, mItem);
             }

@@ -119,7 +119,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public LoiterTurns addLoiterTurns(Coordinate position, int turns) throws MissionUpdateException {
+    public LoiterTurns addLoiterTurns(Coordinate position, Integer turns) throws MissionUpdateException {
         LoiterTurns loiterTurns = createLoiterTurns();
         Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         loiterTurns.setLon(c3.getLon());
@@ -135,7 +135,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public LoiterTime addLoiterTime(Coordinate position, int seconds) throws MissionUpdateException {
+    public LoiterTime addLoiterTime(Coordinate position, Integer seconds) throws MissionUpdateException {
         LoiterTime loiterTime = createLoiterTime();
         Coordinate c3 = new Coordinate(position, mission.getDefaultAlt());
         loiterTime.setLon(c3.getLon());
@@ -269,7 +269,10 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         T res = null;
         try {
             res = (T) droneDbCrudSvcRemote.update(missionItem);
-            mission.getMissionItemsUids().add(res.getKeyId().getObjId());
+            if (!mission.getMissionItemsUids().contains(res.getKeyId().getObjId())) {
+                LOGGER.debug("MissionItem {} is not part of the mission, adding it", res.getKeyId().getObjId());
+                mission.getMissionItemsUids().add(res.getKeyId().getObjId());
+            }
             // Update Mission
             mission = (Mission) droneDbCrudSvcRemote.update(mission);
             return res;

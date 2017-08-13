@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames;
 
-import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.EditingCell;
+import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -28,6 +28,7 @@ import javafx.util.converter.DoubleStringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +64,10 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
-	
+
+	@Autowired @NotNull( message="Internal Error: Failed to get application context" )
+	private ApplicationContext applicationContext;
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
@@ -80,7 +84,9 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 
 		Callback<TableColumn<ParamsTableEntry, Double>, TableCell<ParamsTableEntry, Double>> cellFactory = new Callback<TableColumn<ParamsTableEntry, Double>, TableCell<ParamsTableEntry, Double>>() {
 			public TableCell<ParamsTableEntry, Double> call(TableColumn<ParamsTableEntry, Double> p) {
-				return new EditingCell<Double>(new DoubleStringConverter());
+				EditingCell editingCell = new EditingCell<ParamsTableEntry, Double>(new DoubleStringConverter());
+				editingCell.setApplicationContext(applicationContext);
+				return editingCell;
 			}
 		};
 

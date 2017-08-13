@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
@@ -25,6 +26,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +53,9 @@ public class PerimeterTableProfile extends TableProfile {
     @Autowired @NotNull(message = "Internal Error: Failed to get logger")
     private Logger logger;
 
+    @Autowired @NotNull(message = "Internal Error: Failed to get application context")
+    private ApplicationContext applicationContext;
+
     @Autowired @NotNull(message = "Internal Error: Failed to get validator")
     private RuntimeValidator runtimeValidator;
 
@@ -74,7 +79,9 @@ public class PerimeterTableProfile extends TableProfile {
 
         Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactory = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
             public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
-                return new EditingCell<>(new DoubleStringConverter());
+                EditingCell editingCell = new EditingCell<>(new DoubleStringConverter());;
+                editingCell.setApplicationContext(applicationContext);
+                return editingCell;
             }
         };
 
@@ -86,7 +93,7 @@ public class PerimeterTableProfile extends TableProfile {
         panelTableBox.getRadius().setCellFactory(cellFactory);
         panelTableBox.getRadius().setOnEditCommit(t -> {
             TableItemEntry entry = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            CirclePerimeter perimeter = (CirclePerimeter) entry.getReferedItem();
+            CirclePerimeter perimeter = (CirclePerimeter) entry.getReferredItem();
             perimeter.setRadius(t.getNewValue());
             generateTable(true, this.layerPerimeter);
             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
@@ -105,7 +112,7 @@ public class PerimeterTableProfile extends TableProfile {
                             TableItemEntry entry = getTableView().getItems().get( getIndex() );
                             PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter();
                             polygonPerimeter.getPoints().remove(getIndex());
-                            polygonPerimeter.getPoints().add(getIndex() - 1, ((MissionItem) entry.getReferedItem()).getKeyId().getObjId());
+                            polygonPerimeter.getPoints().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
@@ -129,7 +136,7 @@ public class PerimeterTableProfile extends TableProfile {
                             TableItemEntry entry = getTableView().getItems().get( getIndex() );
                             PolygonPerimeter polygonPerimeter = ((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter();
                             polygonPerimeter.getPoints().remove(getIndex());
-                            polygonPerimeter.getPoints().add(getIndex() + 1, ((MissionItem)entry.getReferedItem()).getKeyId().getObjId());
+                            polygonPerimeter.getPoints().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
                             eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
@@ -153,7 +160,7 @@ public class PerimeterTableProfile extends TableProfile {
                             try {
                                 TableItemEntry entry = getTableView().getItems().get( getIndex() );
                                 PolygonPerimeterEditor polygonPerimeterEditor = perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
-                                polygonPerimeterEditor.removePoint((Point) entry.getReferedItem());
+                                polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
                                 generateTable(true, layerPerimeter);
                                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
                             }

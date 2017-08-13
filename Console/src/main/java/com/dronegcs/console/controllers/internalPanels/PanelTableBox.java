@@ -28,7 +28,7 @@ public class PanelTableBox extends Pane implements Initializable {
 	@NotNull @FXML private TableColumn<TableItemEntry,Double> lat;
 	@NotNull @FXML private TableColumn<TableItemEntry,Double> lon;
 	@NotNull @FXML private TableColumn<TableItemEntry,Double> altitude;
-	@NotNull @FXML private TableColumn<TableItemEntry,Double> delayOrTime;
+	@NotNull @FXML private TableColumn<TableItemEntry,Integer> delayOrTime;
 	@NotNull @FXML private TableColumn<TableItemEntry,Double> radius;
 	@NotNull @FXML private TableColumn<TableItemEntry,Integer> turns;
 	@NotNull @FXML private TableColumn<TableItemEntry,String> up;
@@ -88,7 +88,7 @@ public class PanelTableBox extends Pane implements Initializable {
 		return altitude;
 	}
 
-	public TableColumn<TableItemEntry, Double> getDelayOrTime() {
+	public TableColumn<TableItemEntry, Integer> getDelayOrTime() {
 		return delayOrTime;
 	}
 

@@ -17,10 +17,10 @@ public interface MissionEditor {
     SplineWaypoint addSplineWaypoint (Coordinate position) throws MissionUpdateException;
 
     LoiterTurns createLoiterTurns();
-    LoiterTurns addLoiterTurns(Coordinate position, int turns) throws MissionUpdateException;
+    LoiterTurns addLoiterTurns(Coordinate position, Integer turns) throws MissionUpdateException;
 
     LoiterTime createLoiterTime();
-    LoiterTime addLoiterTime(Coordinate position, int seconds) throws MissionUpdateException;
+    LoiterTime addLoiterTime(Coordinate position, Integer seconds) throws MissionUpdateException;
 
     LoiterUnlimited createLoiterUnlimited();
     LoiterUnlimited addLoiterUnlimited(Coordinate position) throws MissionUpdateException;

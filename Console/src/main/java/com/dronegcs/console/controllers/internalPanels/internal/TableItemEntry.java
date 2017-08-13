@@ -5,19 +5,19 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-public class TableItemEntry {
+public class TableItemEntry implements ReferredTableEntry {
 	
     private final SimpleIntegerProperty order;
     private final SimpleStringProperty type;
     private final SimpleDoubleProperty lat, lon, altitude, delayOrTime, radius;
     private final SimpleIntegerProperty turns;
-    private final SimpleObjectProperty<Object> referedItem;
+    private final SimpleObjectProperty<Object> referredItem;
  
     public TableItemEntry(Integer pOrder,
                           String itemType,
                           Double pLat, Double pLon, Double pAltitude,
                           Double pDelayOrTime, Double pRadius, Integer pTurns,
-                          Object pReferedItem) {
+                          Object pReferredItem) {
     	
         this.order = new SimpleIntegerProperty(pOrder);
         this.type = new SimpleStringProperty(itemType);
@@ -27,7 +27,7 @@ public class TableItemEntry {
         this.delayOrTime = new SimpleDoubleProperty(pDelayOrTime);
         this.radius = new SimpleDoubleProperty(pRadius);
         this.turns = new SimpleIntegerProperty(pTurns);
-        this.referedItem = new SimpleObjectProperty<Object>(pReferedItem);
+        this.referredItem = new SimpleObjectProperty<Object>(pReferredItem);
     }
 
 
@@ -54,7 +54,9 @@ public class TableItemEntry {
 
     public Integer getTurns() {return this.turns.get();}
     public void setTurns(Integer pTurns) {this.turns.set(pTurns);}
-    
-    public Object getReferedItem() {return this.referedItem.get();}
-    public void setReferedItem(Object object) {this.referedItem.set(object);}
+
+    @Override
+    public Object getReferredItem() {return this.referredItem.get();}
+    public void setReferredItem(Object object) {this.referredItem.set(object);}
+
 }
