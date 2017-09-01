@@ -23,24 +23,20 @@ public class DroneServerClientPluginConfig {
     // DB Access
 
     private static <T> T LoadServices(Class<T> clz) throws ClientPluginException {
-        try {
-            return getSrvicePort(clz, "127.0.0.1", 1234);
-        }
+        try { return getServicePort(clz, "127.0.0.1", 1234); }
         catch (Throwable e) {
             LOGGER.error("Failed to connect to the local database server, " + e.getMessage());
-
-            try {
-                return getSrvicePort(clz, "178.62.1.156", 1234);
-            }
-            catch (Throwable e1) {
-                LOGGER.debug("Failed to connect to the external database server, " + e.getMessage());
-            }
         }
+
+//        try { return getServicePort(clz, "178.62.1.156", 1234); }
+//        catch (Throwable e) {
+//            LOGGER.debug("Failed to connect to the external database server, " + e.getMessage());
+//        }
 
         throw new ClientPluginException("Failed to build connection to web service port");
     }
 
-    private static <T> T getSrvicePort(Class<T> clz, String ipStr, int port) throws MalformedURLException {
+    private static <T> T getServicePort(Class<T> clz, String ipStr, int port) throws MalformedURLException {
         System.err.println("Got " + clz.getSimpleName() + " on ip " + ipStr + " port " + port);
         //URL url = new URL("http://localhost:9999/ws/" + clz.getSimpleName() + "?wsdl");
         URL url = new URL("http://" + ipStr + ":" + port + "/ws/" + clz.getSimpleName() + "?wsdl");
