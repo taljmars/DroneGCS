@@ -80,26 +80,28 @@ public class MissionTableProfile extends TableProfile {
 
     private void load() {
 
+        LOGGER.debug("{}: Loading profile - Start", getClass().getSimpleName());
+
         // Validate all the relevant fields were initialised
         ValidatorResponse validatorResponse = runtimeValidator.validate(this);
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-        Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactoryDouble = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
-            public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
-                EditingCell editingCell = new EditingCell<TableItemEntry, Double>(new DoubleStringConverter());
-                editingCell.setApplicationContext(applicationContext);
-                return editingCell;
-            }
-        };
+//        Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactoryDouble = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
+//            public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
+//                EditingCell editingCell = new EditingCell<TableItemEntry, Double>(new DoubleStringConverter());
+//                editingCell.setApplicationContext(applicationContext);
+//                return editingCell;
+//            }
+//        };
 
-        Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>> cellFactoryInteger = new Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>>() {
-            public TableCell<TableItemEntry, Integer> call(TableColumn<TableItemEntry, Integer> p) {
-                EditingCell editingCell = new EditingCell<TableItemEntry, Integer>(new IntegerStringConverter());
-                editingCell.setApplicationContext(applicationContext);
-                return editingCell;
-            }
-        };
+//        Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>> cellFactoryInteger = new Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>>() {
+//            public TableCell<TableItemEntry, Integer> call(TableColumn<TableItemEntry, Integer> p) {
+//                EditingCell editingCell = new EditingCell<TableItemEntry, Integer>(new IntegerStringConverter());
+//                editingCell.setApplicationContext(applicationContext);
+//                return editingCell;
+//            }
+//        };
 
         ColumnTypeAwareEditingCell.PostCommit postAction = new ColumnTypeAwareEditingCell.PostCommit() {
             @Override
@@ -128,6 +130,7 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getAltitude().setCellValueFactory(new PropertyValueFactory<>("altitude"));
         panelTableBox.getAltitude().setCellFactory(param -> {
+            LOGGER.debug("TALMA, Altitude cell factory called {}", param);
             ColumnTypeAwareEditingCell col = new ColumnTypeAwareEditingCell<>(Arrays.asList(Takeoff.class), null,
                     new DoubleStringConverter(),
                     "setAltitude", "getAltitude",
@@ -137,6 +140,7 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getDelayOrTime().setCellValueFactory(new PropertyValueFactory<>("delayOrTime"));
         panelTableBox.getDelayOrTime().setCellFactory(t -> {
+            LOGGER.debug("TALMA, DelayTime cell factory called {}", t);
             ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTime.class),
                     new IntegerStringConverter(),
                     "setSeconds", "getSeconds",
@@ -148,6 +152,7 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getTurns().setCellValueFactory(new PropertyValueFactory<>("turns"));
         panelTableBox.getTurns().setCellFactory(t -> {
+            LOGGER.debug("TALMA, Turns cell factory called {}", t);
             ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTurns.class),
                     new IntegerStringConverter(),
                     "setTurns", "getTurns",
@@ -230,6 +235,8 @@ public class MissionTableProfile extends TableProfile {
             };
             return cell;
         });
+
+        LOGGER.debug("{}: Loading profile - Done", getClass().getSimpleName());
     }
 
     @Override
@@ -292,6 +299,8 @@ public class MissionTableProfile extends TableProfile {
 
             MissionItem mItem = (it.next());
 
+            LOGGER.error("MITEM- {}", mItem);
+
             if (mItem instanceof Waypoint) {
                 Waypoint wp = (Waypoint) mItem;
                 entry = new TableItemEntry(i, Waypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getDelay(), 0.0, 0, mItem);
@@ -301,12 +310,10 @@ public class MissionTableProfile extends TableProfile {
                 entry = new TableItemEntry(i, SplineWaypoint.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, 0.0,0, mItem);
             }
             else if (mItem instanceof LoiterTurns) {
-                LOGGER.error("MITEM- {}", mItem);
                 LoiterTurns wp = (LoiterTurns) mItem;
                 entry = new TableItemEntry(i, LoiterTurns.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), 0.0, radiusMeters, wp.getTurns(), mItem);
             }
             else if (mItem instanceof LoiterTime) {
-                LOGGER.error("MITEM- {}", mItem);
                 LoiterTime wp = (LoiterTime) mItem;
                 entry = new TableItemEntry(i, LoiterTime.class.getSimpleName(), wp.getLat(), wp.getLon(), wp.getAltitude(), wp.getSeconds() * 1.0, radiusMeters, 0, mItem);
             }
