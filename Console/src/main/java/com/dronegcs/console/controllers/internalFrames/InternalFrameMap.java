@@ -72,7 +72,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 	}
 
 	@Override
-	public void changed(ObservableValue<? extends Number> property, Number fromPrecentage, Number toPrecentage) {
+	public void changed(ObservableValue<? extends Number> property, Number fromPercentage, Number toPrecentage) {
 		operationalViewMap.setMapBounds(0, 0, (int) (splitPane.getPrefWidth() - splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 		operationalViewTree.getTree().setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 	}

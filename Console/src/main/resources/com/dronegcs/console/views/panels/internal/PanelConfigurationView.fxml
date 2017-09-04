@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import java.lang.String?>
 <Pane prefHeight="175.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalPanels.PanelConfigurationBox">
    <children>
       <GridPane hgap="5.0" prefHeight="175.0" prefWidth="500.0" vgap="5.0">
@@ -50,6 +51,23 @@
                   <Button fx:id="btnUpdateDevice" text="Update" />
                </children>
             </HBox>
+
+             <Label text="Map icons font size" GridPane.rowIndex="3" />
+             <ComboBox fx:id="cmbMapIconFontSize" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                 <items>
+                     <FXCollections fx:factory="observableArrayList">
+                         <String fx:value="16" />
+                         <String fx:value="18" />
+                         <String fx:value="20" />
+                         <String fx:value="24" />
+                         <String fx:value="28" />
+                         <String fx:value="36" />
+                     </FXCollections>
+                 </items>
+                 <value>
+                     <String fx:value="20" />
+                 </value>
+             </ComboBox>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

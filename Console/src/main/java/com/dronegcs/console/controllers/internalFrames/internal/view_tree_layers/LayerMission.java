@@ -83,7 +83,7 @@ public class LayerMission extends EditedLayer {
 			if (item instanceof Waypoint) {
 				Waypoint wp = (Waypoint) item;
 				//MapMarkerDot m = new MapMarkerDot(this,  MissionItemsType.WAYPOINT.getName() + i, wp.getCoordinate().getLat(), wp.getCoordinate().getLng());
-				MapMarkerDot m = new MapMarkerDot(wp.getLat(), wp.getLon());
+				MapMarkerDot m = new MapMarkerDot("W" + i, wp.getLat(), wp.getLon());
 				addMapMarker(m);
 				points.add(m.getCoordinate());
 
@@ -99,40 +99,40 @@ public class LayerMission extends EditedLayer {
 			else if (item instanceof LoiterTurns) {
                 LoiterTurns wp = (LoiterTurns) item;
 				Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
-				MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
+				MapMarkerCircle m = new MapMarkerCircle("" + wp.getTurns() + "T", coordinate, GeoTools.metersTolat(10));
 				addMapMarker(m);
 				points.add(coordinate);
 			}
             else if (item instanceof LoiterTime) {
                 LoiterTime wp = (LoiterTime) item;
                 Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
-                MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
+                MapMarkerCircle m = new MapMarkerCircle(wp.getSeconds() + "S", coordinate, GeoTools.metersTolat(10));
                 addMapMarker(m);
                 points.add(coordinate);
             }
             else if (item instanceof LoiterUnlimited) {
                 LoiterUnlimited wp = (LoiterUnlimited) item;
                 Coordinate coordinate = new Coordinate(wp.getLat(), wp.getLon());
-                MapMarkerCircle m = new MapMarkerCircle(coordinate, GeoTools.metersTolat(10));
+                MapMarkerCircle m = new MapMarkerCircle("", coordinate, GeoTools.metersTolat(10));
                 addMapMarker(m);
                 points.add(coordinate);
             }
 			else if (item instanceof Land) {
 				Land lnd = (Land) item;
 				Coordinate coordinate = new Coordinate(lnd.getLat(), lnd.getLon());
-				MapMarkerDot m = new MapMarkerDot(Color.MAGENTA, coordinate);
+				MapMarkerDot m = new MapMarkerDot("L", Color.MAGENTA, coordinate);
 				addMapMarker(m);
 				points.add(coordinate);
 			}
 			else if (item instanceof ReturnToHome) {
 				Coordinate c = points.get(points.size() - 1);
-				MapMarkerDot m = new MapMarkerDot(Color.MAGENTA, c);
+				MapMarkerDot m = new MapMarkerDot("RTL", Color.MAGENTA, c);
 				addMapMarker(m);
 			}
 			else if (item instanceof RegionOfInterest) {
 				RegionOfInterest regionOfInterest = (RegionOfInterest) item;
 				Coordinate coordinate = new Coordinate(regionOfInterest.getLat(), regionOfInterest.getLon());
-				MapMarkerDot m = new MapMarkerDot(Color.MAGENTA, coordinate);
+				MapMarkerDot m = new MapMarkerDot("ROI", Color.MAGENTA, coordinate);
 				addMapMarker(m);
 			}
 			else if (item instanceof Takeoff) {
@@ -147,7 +147,7 @@ public class LayerMission extends EditedLayer {
 			else if (item instanceof SplineWaypoint) {
 				SplineWaypoint splineWaypoint = (SplineWaypoint) item;
 				Coordinate coordinate = new Coordinate(splineWaypoint.getLat(), splineWaypoint.getLon());
-				MapMarkerDot m = new MapMarkerDot(Color.MAROON, coordinate);
+				MapMarkerDot m = new MapMarkerDot("W" + i, Color.MAROON, coordinate);
 				addMapMarker(m);
                 points.add(coordinate);
 			}

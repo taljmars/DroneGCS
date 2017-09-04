@@ -236,7 +236,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         popup.getItems().add(menuItemFindClosest);
         
         menuItemFindClosest.setOnAction( arg -> {
-            MapMarker mm = new MapMarkerDot(getPosition(point));
+            MapMarker mm = new MapMarkerDot("", getPosition(point));
             addMapMarker(mm);
         });
 
@@ -263,7 +263,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
                     drone.getGuidedPoint().forcedGuidedCoordinate(coord2d);
 
-                    guidedPoint = new MapMarkerDot(coord.getLat(), coord.getLon());
+                    guidedPoint = new MapMarkerDot("G", coord.getLat(), coord.getLon());
                     addMapMarker(guidedPoint);
                     loggerDisplayerSvc.logGeneral("Flying to guided point " + guidedPoint.getCoordinate().toString());
                 } catch (Exception e1) {
@@ -597,7 +597,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (myMapCircle100 != null)
             removeMapMarker(myMapCircle100);
 
-        myHome = new MapMarkerDot(Color.BLUE, home.getCoord());
+        myHome = new MapMarkerDot("H", Color.BLUE, home.getCoord());
         addMapMarker(myHome);
 
         myMapCircle25 = new MapMarkerCircle(myHome.getCoordinate(), 25);
@@ -633,7 +633,7 @@ OnDroneListener, EventHandler<ActionEvent> {
     private void SetPerimeterBreachPoint() {
         if (perimeterBreachPointMarker == null) {
             perimeterBreachPoint = drone.getPerimeter().getClosestPointOnPerimeterBorder();
-            perimeterBreachPointMarker = new MapMarkerDot(perimeterBreachPoint.getLat(),perimeterBreachPoint.getLon());
+            perimeterBreachPointMarker = new MapMarkerDot("X", perimeterBreachPoint.getLat(),perimeterBreachPoint.getLon());
             addMapMarker(perimeterBreachPointMarker);
         }
     }
@@ -678,7 +678,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
     private void UpdateGCSOnMap(Coordinate coord) {
         if (myGCS == null) {
-            myGCS = new MapMarkerDot(coord.getLat(), coord.getLon());
+            myGCS = new MapMarkerDot("H", coord.getLat(), coord.getLon());
             myGCS.setColor(Color.MAGENTA); 
         } 
         else if (myGCS.getCoordinate() == coord) {
@@ -686,7 +686,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         } 
         else {
             removeMapMarker(myGCS);
-            myGCS = new MapMarkerDot(Color.MAGENTA, coord);
+            myGCS = new MapMarkerDot("GCS", Color.MAGENTA, coord);
         }
 
         addMapMarker(myGCS);
@@ -695,7 +695,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
     private void UpdateBeaconOnMap(Coordinate coord) {
         if (myBeacon == null) {
-            myBeacon = new MapMarkerDot(coord.getLat(),coord.getLon());
+            myBeacon = new MapMarkerDot("X", coord.getLat(),coord.getLon());
             myBeacon.setColor(Color.MAGENTA); 
         }
         else if (myBeacon.getCoordinate() == coord) {
@@ -703,7 +703,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         }
         else {
             removeMapMarker(myBeacon);
-            myBeacon = new MapMarkerDot(coord.getLat(),coord.getLon());
+            myBeacon = new MapMarkerDot("X", coord.getLat(),coord.getLon());
             myBeacon.setColor(Color.MAGENTA); 
         }
 
@@ -732,7 +732,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (myPos == null || myPos.getColor() == Color.RED)
             return;
 
-        MapMarkerDot tmp = new MapMarkerDot( Color.RED, myPos.getCoordinate());
+        MapMarkerDot tmp = new MapMarkerDot( "", Color.RED, myPos.getCoordinate());
         removeMapMarker(myPos);
         myPos = tmp;
         addMapMarker(myPos);
@@ -746,7 +746,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             return;
         }
 
-        MapMarkerDot tmp = new MapMarkerDot(Color.GREENYELLOW, c);
+        MapMarkerDot tmp = new MapMarkerDot("", Color.GREENYELLOW, c);
 
         if (myPos != null) {
             removeMapMarker(myPos);

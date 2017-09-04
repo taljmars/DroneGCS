@@ -72,7 +72,7 @@ public class LayerCircledPerimeter extends LayerPerimeter<CirclePerimeter> {
 		}
 		Point point = pointList.get(0);
 
-		MapMarkerCircle mapPolygon = new MapMarkerCircle(point.getLat(), point.getLon(), perimeter.getRadius());
+		MapMarkerCircle mapPolygon = new MapMarkerCircle(getName(true), point.getLat(), point.getLon(), perimeter.getRadius());
 		currentMarker = mapPolygon;
 		addMapMarker(currentMarker);
 	}
