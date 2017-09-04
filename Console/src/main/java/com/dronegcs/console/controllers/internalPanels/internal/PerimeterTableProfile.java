@@ -182,7 +182,7 @@ public class PerimeterTableProfile extends TableProfile {
 
         setLayerPerimeter((LayerPerimeter) contentPayload);
 
-        logger.LogErrorMessege("Receiverd " + contentPayload);
+        logger.LogErrorMessege("Received " + contentPayload);
 
         TableItemEntry entry = null;
 

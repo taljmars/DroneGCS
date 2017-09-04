@@ -45,6 +45,7 @@ import java.util.List;
 public class MissionTableProfile extends TableProfile {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MissionTableProfile.class);
+    private static final int CIRCLE_RADIUS = 1000; //10 Meter - Default in case we couldn't get it from drone
 
     private LayerMission layerMission;
 
@@ -87,22 +88,6 @@ public class MissionTableProfile extends TableProfile {
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-//        Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>> cellFactoryDouble = new Callback<TableColumn<TableItemEntry, Double>, TableCell<TableItemEntry, Double>>() {
-//            public TableCell<TableItemEntry, Double> call(TableColumn<TableItemEntry, Double> p) {
-//                EditingCell editingCell = new EditingCell<TableItemEntry, Double>(new DoubleStringConverter());
-//                editingCell.setApplicationContext(applicationContext);
-//                return editingCell;
-//            }
-//        };
-
-//        Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>> cellFactoryInteger = new Callback<TableColumn<TableItemEntry, Integer>, TableCell<TableItemEntry, Integer>>() {
-//            public TableCell<TableItemEntry, Integer> call(TableColumn<TableItemEntry, Integer> p) {
-//                EditingCell editingCell = new EditingCell<TableItemEntry, Integer>(new IntegerStringConverter());
-//                editingCell.setApplicationContext(applicationContext);
-//                return editingCell;
-//            }
-//        };
-
         ColumnTypeAwareEditingCell.PostCommit postAction = new ColumnTypeAwareEditingCell.PostCommit() {
             @Override
             public boolean call(Object entry) {
@@ -130,7 +115,6 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getAltitude().setCellValueFactory(new PropertyValueFactory<>("altitude"));
         panelTableBox.getAltitude().setCellFactory(param -> {
-            LOGGER.debug("TALMA, Altitude cell factory called {}", param);
             ColumnTypeAwareEditingCell col = new ColumnTypeAwareEditingCell<>(Arrays.asList(Takeoff.class), null,
                     new DoubleStringConverter(),
                     "setAltitude", "getAltitude",
@@ -140,7 +124,6 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getDelayOrTime().setCellValueFactory(new PropertyValueFactory<>("delayOrTime"));
         panelTableBox.getDelayOrTime().setCellFactory(t -> {
-            LOGGER.debug("TALMA, DelayTime cell factory called {}", t);
             ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTime.class),
                     new IntegerStringConverter(),
                     "setSeconds", "getSeconds",
@@ -152,7 +135,6 @@ public class MissionTableProfile extends TableProfile {
 
         panelTableBox.getTurns().setCellValueFactory(new PropertyValueFactory<>("turns"));
         panelTableBox.getTurns().setCellFactory(t -> {
-            LOGGER.debug("TALMA, Turns cell factory called {}", t);
             ColumnTypeAwareEditingCell<TableItemEntry, Integer> col = new ColumnTypeAwareEditingCell<TableItemEntry, Integer>(null, Arrays.asList(LoiterTurns.class),
                     new IntegerStringConverter(),
                     "setTurns", "getTurns",
@@ -266,7 +248,7 @@ public class MissionTableProfile extends TableProfile {
         // Setting columns
         panelTableBox.getTable().getColumns().removeAll(panelTableBox.getTable().getColumns());
 
-        int radiusCentimeters = 0;
+        int radiusCentimeters = CIRCLE_RADIUS; // 10M
         if ((drone.getParameters()) != null && drone.getParameters().getParameter("CIRCLE_RADIUS") != null)
             radiusCentimeters = Integer.parseInt(drone.getParameters().getParameter("CIRCLE_RADIUS").getValue());
         double radiusMeters = radiusCentimeters / 100;
@@ -299,7 +281,7 @@ public class MissionTableProfile extends TableProfile {
 
             MissionItem mItem = (it.next());
 
-            LOGGER.error("MITEM- {}", mItem);
+            LOGGER.debug("Updating item in table: {}", mItem);
 
             if (mItem instanceof Waypoint) {
                 Waypoint wp = (Waypoint) mItem;

@@ -33,6 +33,8 @@ import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.*;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -732,7 +734,13 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (myPos == null || myPos.getColor() == Color.RED)
             return;
 
-        MapMarkerDot tmp = new MapMarkerDot( "", Color.RED, myPos.getCoordinate());
+        Image img = new Image(this.getClass().getResource("/com/dronegcs/console/guiImages/droneDisconnected.png").toString());
+        ImageView iview = new ImageView(img);
+        iview.setFitHeight(50);
+        iview.setFitWidth(50);
+
+        //MapMarkerDot tmp = new MapMarkerDot( "", Color.RED, myPos.getCoordinate());
+        MapMarkerDot tmp = new MapMarkerDot(iview, drone.getNavigation().getNavBearing(), myPos.getCoordinate());
         removeMapMarker(myPos);
         myPos = tmp;
         addMapMarker(myPos);
@@ -746,7 +754,13 @@ OnDroneListener, EventHandler<ActionEvent> {
             return;
         }
 
-        MapMarkerDot tmp = new MapMarkerDot("", Color.GREENYELLOW, c);
+        Image img = new Image(this.getClass().getResource("/com/dronegcs/console/guiImages/droneConnected.png").toString());
+        ImageView iview = new ImageView(img);
+        iview.setFitHeight(50);
+        iview.setFitWidth(50);
+
+//        MapMarkerDot tmp = new MapMarkerDot("", Color.GREENYELLOW, c);
+        MapMarkerDot tmp = new MapMarkerDot(iview, drone.getNavigation().getNavBearing(), c);
 
         if (myPos != null) {
             removeMapMarker(myPos);
