@@ -9,7 +9,7 @@ import com.dronegcs.mavlink.is.drone.mission.DroneMission;
  */
 public interface MissionCompilerSvc
 {
-    DroneMission compile(Mission mission);
+    DroneMission compile(Mission mission) throws MissionCompilationException;
 
     Mission decompile(DroneMission mission) throws MissionCompilationException;
 }

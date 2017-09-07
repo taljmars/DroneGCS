@@ -74,6 +74,10 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
     private PerimetersManager perimetersManager;
 
     @Autowired
+    @NotNull(message = "Internal Error: Failed to get dialog manager")
+    private DialogManagerSvc dialogManagerSvc;
+
+    @Autowired
     @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
@@ -227,14 +231,18 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
     @Override
     public void updateTreeItemName(String fromText, TreeItem<Layer> treeItem) {
         if (treeItem.getValue() instanceof LayerMission) {
+            LOGGER.debug("Updating mission name");
             LayerMission layerMission = (LayerMission) treeItem.getValue();
-            LOGGER.info("Found mission to update it name");
+            LOGGER.debug("Layer Mission details:\n{}", layerMission.toString2());
             String newName = layerMission.getName(true);
             Mission mission = layerMission.getMission();
             try {
                 MissionEditor missionEditor = missionsManager.openMissionEditor(mission);
+                LOGGER.debug("Mission Editor:\n{}", missionEditor);
                 mission.setName(newName);
-                missionEditor.update(mission);
+                Mission mm = missionEditor.update(mission);
+                LOGGER.debug("Mission1: {} {}", mission.getName() , mission.getMissionItemsUids().size());
+                LOGGER.debug("Mission2: {} {}", mm.getName(), mm.getMissionItemsUids().size());
                 layerMission.setMission(mission);
                 eventPublisherSvc.publish(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
             } catch (MissionUpdateException e) {
@@ -329,15 +337,21 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         MenuItem menuItemUploadPerimeter = new MenuItem("Upload Perimeter");
 
         menuItemUploadMission.setOnAction(e -> {
-            if (layer instanceof LayerMission) {
-                uploadedLayerMissionCandidate = (LayerMission) layer;
-                if (uploadedLayerMissionCandidate.getMission() != null) {
-                    loggerDisplayerSvc.logOutgoing("Uploading DroneMission To APM");
-                    LOGGER.debug("Uploading DroneMission To APM");
-                    DroneMission droneMission = missionCompilerSvc.compile(uploadedLayerMissionCandidate.getMission());
-                    droneMission.sendMissionToAPM();
-                    textNotificationPublisherSvc.publish("Uploading DroneMission");
+            try {
+                if (layer instanceof LayerMission) {
+                    uploadedLayerMissionCandidate = (LayerMission) layer;
+                    if (uploadedLayerMissionCandidate.getMission() != null) {
+                        loggerDisplayerSvc.logOutgoing("Uploading DroneMission To APM");
+                        LOGGER.debug("Uploading DroneMission To APM");
+                        DroneMission droneMission = null;
+                        droneMission = missionCompilerSvc.compile(uploadedLayerMissionCandidate.getMission());
+                        droneMission.sendMissionToAPM();
+                        textNotificationPublisherSvc.publish("Uploading DroneMission");
+                    }
                 }
+            }
+            catch(MissionCompilationException e1){
+                dialogManagerSvc.showErrorMessageDialog("Failed to upload mission", e1);
             }
         });
 
@@ -487,6 +501,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                         lm = new LayerMission(mission, getLayeredViewMap(), true);
                         lm.setApplicationContext(applicationContext);
                         addLayer(lm);
+                        LOGGER.debug("New layer was added {}", lm.toString2());
                     }
                     else {
                         LOGGER.debug("Found layer with the same mission named '{}'", lm.getName());
@@ -501,11 +516,11 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
                     textNotificationPublisherSvc.publish("DroneMission successfully downloaded");
 				}
 				catch (MissionCompilationException e) {
-					loggerDisplayerSvc.logError("Failed to decompile mission");
+					dialogManagerSvc.showErrorMessageDialog("Failed to decompile mission", e);
 					return;
 				}
 				catch (MissionUpdateException e) {
-                    loggerDisplayerSvc.logError("Failed to decompile mission");
+                    dialogManagerSvc.showErrorMessageDialog("Failed to decompile mission", e);
                     return;
                 }
                 return;
@@ -526,6 +541,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			
 			loggerDisplayerSvc.logError("Failed to Sync Waypoints (" + wpEvent.name() + ")");
 			textNotificationPublisherSvc.publish("DroneMission Sync failed");
+             dialogManagerSvc.showErrorMessageDialog("Failed to upload mission", null);
 		});
 	}
 

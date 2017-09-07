@@ -70,13 +70,13 @@ public class MissionsManagerImpl implements MissionsManager {
 		LOGGER.debug("Setting new mission to mission editor");
 		ClosableMissionEditor missionEditor = findMissionEditorByMission(mission);
 		if (missionEditor == null) {
-			System.err.println("Editor not exist for mission " + mission.getName() + ", creating new one");
+			LOGGER.debug("Editor not exist for mission " + mission.getName() + ", creating new one");
 			missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 			missionEditor.open(mission);
 			closableMissionEditorList.add(missionEditor);
 		}
 		else {
-			System.err.println("Found existing mission editor");
+			LOGGER.debug("Found existing mission editor");
 		}
 		return missionEditor;
 	}

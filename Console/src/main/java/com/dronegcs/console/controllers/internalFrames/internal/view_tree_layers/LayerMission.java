@@ -166,4 +166,9 @@ public class LayerMission extends EditedLayer {
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
+
+	public String toString2() {
+		return String.format("LayerMission: %s\nMission Name:%s ,Mission Items: %d",
+				getName(true), mission.getName(), mission.getMissionItemsUids().size());
+	}
 }

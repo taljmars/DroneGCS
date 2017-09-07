@@ -40,6 +40,7 @@ public class DownloadedMissionComparator {
             return false;
         }
 
+        LOGGER.debug("Both mission have {} items", downloadedMission.getMissionItemsUids().size());
 
         Iterator<MissionItem> itrMission = missionsManager.getMissionItems(mission).iterator();
         Iterator<MissionItem> itrDownloadedMission = missionsManager.getMissionItems(downloadedMission).iterator();
@@ -58,6 +59,7 @@ public class DownloadedMissionComparator {
             }
         }
 
+        LOGGER.debug("Mission are equal");
         return true;
     }
 

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import sun.rmi.runtime.Log;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -220,7 +221,10 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public Mission update(Mission mission) throws MissionUpdateException {
         try {
+            LOGGER.debug("Current mission named '{}' have '{}' items", this.mission.getName(), this.mission.getMissionItemsUids().size());
+            LOGGER.debug("After update, mission will be named '{}' with '{}' items", mission.getName(), mission.getMissionItemsUids().size());
             this.mission = (Mission) droneDbCrudSvcRemote.update(mission);
+            LOGGER.debug("Updated mission name is '{}' with '{}' items", this.mission.getName(), this.mission.getMissionItemsUids().size());
             return this.mission;
         }
         catch (Exception e) {
@@ -272,6 +276,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             if (!mission.getMissionItemsUids().contains(res.getKeyId().getObjId())) {
                 LOGGER.debug("MissionItem {} is not part of the mission, adding it", res.getKeyId().getObjId());
                 mission.getMissionItemsUids().add(res.getKeyId().getObjId());
+                LOGGER.debug("Mission items amount is now {} ", mission.getMissionItemsUids().size());
             }
             // Update Mission
             mission = (Mission) droneDbCrudSvcRemote.update(mission);
