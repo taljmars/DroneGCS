@@ -50,7 +50,7 @@ public class OpArmQuad extends OperationHandler {
 		while (retry > 0) {
 			if (drone.getState().isArmed())
 				break;
-			System.out.println("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
+			LOGGER.debug("Sleeps for " + sleep_time + " ms (retries " + retry + ")");
 			loggerDisplayerSvc.logGeneral("Waiting for arming approval (" + retry + ")");
 			Thread.sleep(sleep_time);
 			retry--;

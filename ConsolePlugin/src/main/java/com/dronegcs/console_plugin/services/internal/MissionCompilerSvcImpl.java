@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.services.internal;
 
 import com.dronedb.persistence.scheme.Mission;
+import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
@@ -71,6 +72,8 @@ public class MissionCompilerSvcImpl implements MissionCompilerSvc {
             LOGGER.debug("De-Compilation result is mission named '{}' with {} mission items", res.getName(), res.getMissionItemsUids().size());
 
             if (droneMission.getItems().size() != res.getMissionItemsUids().size()) {
+                LOGGER.debug("De-Compilation failed due to gaps between items amount, closing editor");
+                ClosingPair<Mission> a = missionsManager.closeMissionEditor(missionEditor, false);
                 throw new MissionCompilationException(String.format("Converted mission item's (%s) are not equal to the origin (%s)",
                         droneMission.getItems().size(), res.getMissionItemsUids().size()));
             }

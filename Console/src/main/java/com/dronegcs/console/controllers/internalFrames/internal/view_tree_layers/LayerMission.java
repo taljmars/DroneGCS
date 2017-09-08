@@ -78,8 +78,6 @@ public class LayerMission extends EditedLayer {
 		int i = 0;
 		while (it.hasNext()) {
 			MissionItem item = it.next();
-			//TODO: Remove print
-			System.out.println(item.getClass());
 			if (item instanceof Waypoint) {
 				Waypoint wp = (Waypoint) item;
 				//MapMarkerDot m = new MapMarkerDot(this,  MissionItemsType.WAYPOINT.getName() + i, wp.getCoordinate().getLat(), wp.getCoordinate().getLng());

@@ -80,9 +80,9 @@ public class ColumnTypeAwareEditingCell<TE extends ReferredTableEntry,T> extends
         super.updateItem( item, empty );
         if ( !empty && getIndex() >= 0 ) {
             TE entry = getTableView().getItems().get( getIndex() );
-            LOGGER.debug("TALMA {} ColumnTypeAddress {}" , entry.getReferredItem(), this);
+            LOGGER.debug("Referred item: {}, ColumnTypeAddress: {}" , entry.getReferredItem(), this);
             if (isIgnored(entry) || !isPermit(entry)) {
-                LOGGER.debug("TALMA not call getter");
+                LOGGER.debug("Skipped getter");
                 setText(null);
                 setGraphic(null);
                 return;
@@ -93,14 +93,14 @@ public class ColumnTypeAwareEditingCell<TE extends ReferredTableEntry,T> extends
                 try {
                     Method method = entry.getReferredItem().getClass().getMethod(getter, null);
                     val = (T) method.invoke(entry.getReferredItem());
-                    LOGGER.debug("TALMA call getter '{}', val '{}'", getter, val);
+                    LOGGER.debug("Calling getter '{}', val '{}'", getter, val);
                 } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
                     LOGGER.error("Failed to handle altitude change", e);
                 }
                 setText("" + val);
             }
             else {
-                LOGGER.debug("TALMA not call getter - not editing");
+                LOGGER.debug("Not editing, getter was skipped");
             }
         }
     }
@@ -119,10 +119,10 @@ public class ColumnTypeAwareEditingCell<TE extends ReferredTableEntry,T> extends
             // Updating object
             Method method = entry.getReferredItem().getClass().getMethod(setter, newValue.getClass());
             method.invoke(entry.getReferredItem(), converter.fromString(newValue.toString()));
-            LOGGER.debug("TALMA updating value to '{}', '{}'", newValue, setter);
+            LOGGER.debug("Updating value to '{}', '{}'", newValue, setter);
 
             if (!postAction.call(entry.getReferredItem())) {
-                LOGGER.debug("TALMA failed to call getter");
+                LOGGER.debug("Failed to call getter");
                 return false;
             }
 

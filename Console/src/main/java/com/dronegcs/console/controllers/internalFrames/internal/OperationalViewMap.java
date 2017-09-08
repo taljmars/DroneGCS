@@ -750,7 +750,6 @@ OnDroneListener, EventHandler<ActionEvent> {
         Coordinate c = new Coordinate(coord.getLat(), coord.getLon());
         if (myPos != null && myPos.getCoordinate().getLat() == c.getLat()
                 && myPos.getCoordinate().getLon() == c.getLon()) {
-            // System.out.println(getClass().getName() + " Same position");
             return;
         }
 

@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers;
 
 import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
+import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -37,6 +38,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 	@Autowired
 	private KeyBoardController keyBoardController;
 
+	@Autowired
+	private SerialConnection serialConnection;
+
 	private Stage stage;
 
     @Override
@@ -58,6 +62,12 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 			else {
 				globalStatus.setComponentStatus(GlobalStatusSvc.Component.ANTENNA, true);
 			}
+
+			Thread a = new Thread(() -> {
+				LOGGER.debug("Loading library for usb connection");
+				serialConnection.listPorts();
+			});
+			a.start();
 
 //			guiAppConfig.setPrimaryStage(primaryStage);
 			stage = primaryStage;

@@ -102,8 +102,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             throw new RuntimeException(validatorResponse.toString());
 
         initializeDefinitions();
-
-        //System.out.println(droneDbCrudSvcRemote.CheckConnection());
     }
 
     @Override
