@@ -57,7 +57,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
         return result.get() == ButtonType.OK;
     }
 
-    public boolean showErrorMessageDialog(String msg, Exception exception) {
+    public boolean showErrorMessageDialog(String msg, Throwable throwable) {
         Alert alert = genAlert(Alert.AlertType.ERROR);
 
         alert.setTitle("Error");
@@ -67,7 +67,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
         // Create expandable Exception.
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
+        throwable.printStackTrace(pw);
         String exceptionText = sw.toString();
 
         Label label = new Label("The exception stacktrace was:");
@@ -143,7 +143,7 @@ public class DialogManagerSvcImpl implements DialogManagerSvc {
         return null;
     }
 
-    public Pair<Object, Object> showMuliComboBoxMessageDialog(String labelList1, Object[] list1, Object list1default, String labelList2, Object[] list2, Object list2default) {
+    public Pair<Object, Object> showMultiComboBoxMessageDialog(String labelList1, Object[] list1, Object list1default, String labelList2, Object[] list2, Object list2default) {
         Alert alert = genAlert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText(null);

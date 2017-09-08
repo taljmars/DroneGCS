@@ -386,6 +386,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add waypoint point.\n" + e.getMessage(), e);
             }
         });
 
@@ -405,6 +406,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter turns point.\n" + e.getMessage(), e);
             }
         });
 
@@ -424,6 +426,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter point.\n" + e.getMessage(), e);
             }
         });
 
@@ -436,6 +439,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter unlimited point.\n" + e.getMessage(), e);
             }
         });
 
@@ -448,6 +452,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add land point.\n" + e.getMessage(), e);
             }
         });
         
@@ -460,6 +465,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add ROI point.\n" + e.getMessage(), e);
             }
         });
 
@@ -472,6 +478,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add RTL point.\n" + e.getMessage(), e);
             }
         });
 
@@ -491,6 +498,7 @@ OnDroneListener, EventHandler<ActionEvent> {
             }
             catch (MissionUpdateException e) {
                 loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Failed to add takeoff point.\n" + e.getMessage(), e);
             }
         });
 
@@ -956,6 +964,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         }
         catch (MissionUpdateException | PerimeterUpdateException e) {
             loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
+            dialogManagerSvc.showErrorMessageDialog("Failed to update item.\n" + e.getMessage(), e);
         }
     }
 }

@@ -102,7 +102,8 @@ public class MissionTableProfile extends TableProfile {
                     return true;
                 }
                 catch (MissionUpdateException e) {
-                    e.printStackTrace();
+                    logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());
+
                     return false;
                 }
             }

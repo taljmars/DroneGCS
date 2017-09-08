@@ -151,7 +151,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
 					return;
 				}
-				Pair<Object, Object> res = dialogManagerSvc.showMuliComboBoxMessageDialog("Select port: ", ports, ports[0], "Select baud rate: ", serialConnection.baudList(), serialConnection.getDefaultBaud());
+				Pair<Object, Object> res = dialogManagerSvc.showMultiComboBoxMessageDialog("Select port: ", ports, ports[0], "Select baud rate: ", serialConnection.baudList(), serialConnection.getDefaultBaud());
 				if (res != null) {
 					String port_name = (String) res.getKey();
 					Integer baud = (Integer) res.getValue();

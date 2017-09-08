@@ -11,7 +11,7 @@ public interface DialogManagerSvc {
 
 	boolean showAlertMessageDialog(String msg);
 	
-	boolean showErrorMessageDialog(String msg, Exception exception);
+	boolean showErrorMessageDialog(String msg, Throwable throwable);
 
 	int showOptionsDialog(String text, String title, Object object2, String[] options, String initialValue);
 	
@@ -19,5 +19,5 @@ public interface DialogManagerSvc {
 
 	String showInputDialog(String text, String title, Object object2, Object object3, String initialValue);
 	
-	Pair<Object, Object> showMuliComboBoxMessageDialog(String labelList1, Object[] list1, Object list1default, String labelList2, Object[] list2, Object list2default);
+	Pair<Object, Object> showMultiComboBoxMessageDialog(String labelList1, Object[] list1, Object list1default, String labelList2, Object[] list2, Object list2default);
 }

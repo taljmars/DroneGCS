@@ -31,7 +31,7 @@ public class InternalFrameMavlinkConfiguration extends Pane implements OnDroneLi
 	private final static Logger LOGGER = LoggerFactory.getLogger(InternalFrameMavlinkConfiguration.class);
 
 	@Autowired
-	@NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
+	@NotNull(message = "Internal Error: Failed to get logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )

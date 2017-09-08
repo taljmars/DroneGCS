@@ -3,7 +3,6 @@ package com.dronegcs.console.controllers;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console_plugin.ConsolePluginConfig;
 import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
-import com.dronegcs.mavlink.spring.MavlinkSpringConfig;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
@@ -14,7 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import javax.validation.Validator;
 import java.net.URISyntaxException;
 
 @Import({GuiAppConfig.class, InternalFrameMap.class , OpGCSTerminationHandler.class,
@@ -52,8 +53,15 @@ public class AppConfig {
 	}
 
 	@Bean
-	public RuntimeValidator runtimeValidator() {
-		return new RuntimeValidator();
+	public Validator validator() {
+		return new LocalValidatorFactoryBean();
+	}
+
+	@Bean
+	public RuntimeValidator runtimeValidator(@Autowired Validator validator) {
+		RuntimeValidator rtv = new RuntimeValidator();
+		rtv.setValidator(validator);
+		return rtv;
 	}
 
 	@Bean(name = "GuiCSS")

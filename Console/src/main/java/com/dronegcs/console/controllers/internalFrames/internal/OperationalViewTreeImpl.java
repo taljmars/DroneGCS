@@ -247,6 +247,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
             } catch (MissionUpdateException e) {
                 layerMission.setName(fromText);
                 loggerDisplayerSvc.logError("Database is out of sync, failed to update mission name , error: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Critical error, Databsae is out of sync.\n" + e.getMessage(), e);
             }
             refresh();
             LOGGER.debug("Mission manager status: \n" + missionsManager.toString());
