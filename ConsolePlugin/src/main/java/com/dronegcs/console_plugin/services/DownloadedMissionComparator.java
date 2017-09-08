@@ -2,6 +2,7 @@ package com.dronegcs.console_plugin.services;
 
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.services.internal.MissionComparatorException;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class DownloadedMissionComparator {
     @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
     private MissionsManager missionsManager;
 
-    public boolean isEqual(Mission mission, Mission downloadedMission) {
+    public boolean isEqual(Mission mission, Mission downloadedMission) throws MissionComparatorException {
         LOGGER.debug("Comparing '{}' and '{}'", mission.getName(), downloadedMission.getName());
         // TODO: enable this code section
 //        if (mission.getDefaultAlt() != downloadedMission.getDefaultAlt()) {
@@ -63,19 +64,27 @@ public class DownloadedMissionComparator {
         return true;
     }
 
-    public boolean eval(MissionItem missionItem, MissionItem downloadedMissionItem) {
+    public boolean eval(MissionItem missionItem, MissionItem downloadedMissionItem) throws MissionComparatorException {
         // Using reflection to call the relevant function
         // It is a factory pattern based on reflection
         LOGGER.debug("comparing '{}' to '{}'", missionItem, downloadedMissionItem);
         Method[] allMethods = this.getClass().getDeclaredMethods();
         for (int i = 0 ; i < allMethods.length ; i++) {
             Method method = allMethods[i];
-            if (!method.getName().equals("visit"))
+            LOGGER.debug("Checking method: {}", method);
+
+            if (!method.getName().equals("visit")) {
+                LOGGER.debug("Failed to find visit function");
                 continue;
-            if (method.getParameterTypes().length != 2)
+            }
+            if (method.getParameterTypes().length != 2) {
+                LOGGER.debug("visit function receives {}, expected 2", method.getParameterTypes().length);
                 continue;
-            if (method.getParameterTypes()[0] != missionItem.getClass())
+            }
+            if (method.getParameterTypes()[0] != missionItem.getClass()) {
+                LOGGER.debug("First parameter of method is {}, expected {}", method.getParameterTypes()[0], missionItem.getClass());
                 continue;
+            }
 
             method.setAccessible(true);
             try {
@@ -88,7 +97,7 @@ public class DownloadedMissionComparator {
         }
 
         LOGGER.error("Found unknown type: {}, Object: {}", missionItem.getClass(), missionItem);
-        return false;
+        throw new MissionComparatorException("Failed to find comparator function for " + missionItem.getClass());
     }
 
     private boolean visit(Land land, Land dLand) {
@@ -138,7 +147,36 @@ public class DownloadedMissionComparator {
     }
 
     private boolean visit(RegionOfInterest regionOfInterest, RegionOfInterest dRegionOfInterest) {
-        // TODO
+        if (CheckCoordinate(regionOfInterest, dRegionOfInterest) &&
+                regionOfInterest.getAltitude().equals(dRegionOfInterest.getAltitude()))
+            return true;
+
+        return false;
+    }
+
+    private boolean visit(LoiterTurns loiterTurns, LoiterTurns dlLoiterTurns) {
+        if (CheckCoordinate(loiterTurns, dlLoiterTurns) &&
+                loiterTurns.getAltitude().equals(dlLoiterTurns.getAltitude()) &&
+                loiterTurns.getTurns() == dlLoiterTurns.getTurns())
+            return true;
+
+        return false;
+    }
+
+    private boolean visit(LoiterTime loiterTime, LoiterTime dloiterTime) {
+        if (CheckCoordinate(loiterTime, dloiterTime) &&
+                loiterTime.getAltitude().equals(dloiterTime.getAltitude()) &&
+                loiterTime.getSeconds() == dloiterTime.getSeconds())
+            return true;
+
+        return false;
+    }
+
+    private boolean visit(LoiterUnlimited loiterUnlimited, LoiterUnlimited dloiterUnlimited) {
+        if (CheckCoordinate(loiterUnlimited, dloiterUnlimited) &&
+                loiterUnlimited.getAltitude().equals(dloiterUnlimited.getAltitude()))
+            return true;
+
         return false;
     }
 
