@@ -1,6 +1,8 @@
 package com.dronegcs.console.controllers.internalFrames.internal;
 
+import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;

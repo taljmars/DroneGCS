@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.*;
 import com.geo_tools.Coordinate;
 
 import java.util.List;
@@ -10,31 +11,31 @@ import java.util.List;
  */
 public interface MissionEditor {
 
-    Waypoint createWaypoint();
+    Waypoint createWaypoint() throws MissionUpdateException;
     Waypoint addWaypoint(Coordinate position) throws MissionUpdateException;
 
-    SplineWaypoint createSplineWaypoint();
+    SplineWaypoint createSplineWaypoint() throws MissionUpdateException;
     SplineWaypoint addSplineWaypoint (Coordinate position) throws MissionUpdateException;
 
-    LoiterTurns createLoiterTurns();
+    LoiterTurns createLoiterTurns() throws MissionUpdateException;
     LoiterTurns addLoiterTurns(Coordinate position, Integer turns) throws MissionUpdateException;
 
-    LoiterTime createLoiterTime();
+    LoiterTime createLoiterTime() throws MissionUpdateException;
     LoiterTime addLoiterTime(Coordinate position, Integer seconds) throws MissionUpdateException;
 
-    LoiterUnlimited createLoiterUnlimited();
+    LoiterUnlimited createLoiterUnlimited() throws MissionUpdateException;
     LoiterUnlimited addLoiterUnlimited(Coordinate position) throws MissionUpdateException;
 
-    ReturnToHome createReturnToLaunch();
+    ReturnToHome createReturnToLaunch() throws MissionUpdateException;
     ReturnToHome addReturnToLaunch() throws MissionUpdateException;
 
-    Land createLandPoint();
+    Land createLandPoint() throws MissionUpdateException;
     Land addLandPoint(Coordinate position) throws MissionUpdateException;
 
-    Takeoff createTakeOff();
+    Takeoff createTakeOff() throws MissionUpdateException;
     Takeoff addTakeOff(double altitude) throws MissionUpdateException;
 
-    RegionOfInterest createRegionOfInterest();
+    RegionOfInterest createRegionOfInterest() throws MissionUpdateException;
     RegionOfInterest addRegionOfInterest(Coordinate position) throws MissionUpdateException;
 
     <T extends MissionItem> void removeMissionItem(T missionItem) throws MissionUpdateException;
@@ -47,5 +48,5 @@ public interface MissionEditor {
 
     List<MissionItem> getMissionItems();
 
-    void delete() throws MissionUpdateException;
+    Mission delete() throws MissionUpdateException;
 }

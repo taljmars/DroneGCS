@@ -1,11 +1,17 @@
 package com.dronegcs.console_plugin.mission_editor;
 
+import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
+import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
+import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
+import com.db.persistence.scheme.BaseObject;
+import com.db.persistence.wsSoap.QueryRequestRemote;
+import com.db.persistence.wsSoap.QueryResponseRemote;
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
-import com.dronedb.persistence.ws.internal.*;
-import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
-import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.ClosingPair;
+import com.dronegcs.console_plugin.remote_services_wrappers.MissionCrudSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
@@ -28,13 +31,13 @@ public class MissionsManagerImpl implements MissionsManager {
 	private ApplicationContext applicationContext;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
-	private DroneDbCrudSvcRemote droneDbCrudSvcRemote;
+	private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get query")
-	private QuerySvcRemote querySvcRemote;
+	private QuerySvcRemoteWrapper querySvcRemote;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission object crud")
-	private MissionCrudSvcRemote missionCrudSvcRemote;
+	private MissionCrudSvcRemoteWrapper missionCrudSvcRemote;
 
 	private List<ClosableMissionEditor> closableMissionEditorList;
 
@@ -102,11 +105,11 @@ public class MissionsManagerImpl implements MissionsManager {
 		try {
 			ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
 			if (closableMissionEditor == null)
-				return (Mission) droneDbCrudSvcRemote.update(mission);
+				return (Mission) objectCrudSvcRemote.update(mission);
 
 			return closableMissionEditor.update(mission);
 		}
-		catch (DatabaseValidationRemoteException e) {
+		catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
 			throw new MissionUpdateException(e.getMessage());
 		}
 	}
@@ -116,9 +119,7 @@ public class MissionsManagerImpl implements MissionsManager {
 		try {
 			return missionCrudSvcRemote.cloneMission(mission);
 		}
-		catch (DatabaseValidationRemoteException e) {
-			throw new MissionUpdateException(e.getMessage());
-		} catch (ObjectNotFoundRemoteException e) {
+		catch (ObjectNotFoundRemoteException | DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
 			throw new MissionUpdateException(e.getMessage());
 		}
 	}
@@ -158,11 +159,12 @@ public class MissionsManagerImpl implements MissionsManager {
 			leadMission = closableMissionEditor.getModifiedMission();
 
 		List<MissionItem> missionItemList = new ArrayList<>();
-		List<String> uuidList = leadMission.getMissionItemsUids();
-		for (String uuid : uuidList) {
+		List<UUID> uuidList = leadMission.getMissionItemsUids();
+		for (UUID uuid : uuidList) {
 			try {
-				missionItemList.add((MissionItem) droneDbCrudSvcRemote.readByClass(uuid.toString(), MissionItem.class.getName()));
-			} catch (ObjectNotFoundException e) {
+				missionItemList.add((MissionItem) objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
+			}
+			catch (ObjectNotFoundRemoteException e) {
 				LOGGER.error("Failed to get mission item", e);
 			}
 		}
@@ -173,20 +175,22 @@ public class MissionsManagerImpl implements MissionsManager {
 	@Override
 	public List<BaseObject> getAllMissions() {
 		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(Mission.class.getName());
+		queryRequestRemote.setClz(Mission.class.getCanonicalName());
 		queryRequestRemote.setQuery("GetAllMissions");
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
 		List<BaseObject> missionList = queryResponseRemote.getResultList();
+		LOGGER.debug("There are currently {} missions in total", missionList.size());
 		return missionList;
 	}
 
 	@Override
 	public List<BaseObject> getAllModifiedMissions() {
 		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(Mission.class.getName());
+		queryRequestRemote.setClz(Mission.class.getCanonicalName());
 		queryRequestRemote.setQuery("GetAllModifiedMissions");
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
 		List<BaseObject> missionList = queryResponseRemote.getResultList();
+		LOGGER.debug("There are currently {} modified missions in total", missionList.size());
 		return missionList;
 	}
 

@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.geo_tools.Coordinate;

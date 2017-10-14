@@ -1,10 +1,10 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
+import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
+import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.dronedb.persistence.scheme.Point;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
-import com.dronedb.persistence.ws.internal.PerimeterCrudSvcRemote;
-import com.dronedb.persistence.ws.internal.QuerySvcRemote;
+import com.dronegcs.console_plugin.remote_services_wrappers.PerimeterCrudSvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,8 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PolygonPerimeterEditorImpl.class);
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get query")
-    private QuerySvcRemote querySvcRemote;
-
     @Autowired @NotNull(message = "Internal Error: Failed to get perimeter object crud")
-    private PerimeterCrudSvcRemote perimeterCrudSvcRemote;
+    private PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemote;
 
     @Override
     public PolygonPerimeter open(PolygonPerimeter perimeter) throws PerimeterUpdateException {
@@ -42,18 +39,21 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     @Override
     public Point addPoint(Coordinate coordinate) throws PerimeterUpdateException {
         try {
-            Point point = new Point();
+            Point point = objectCrudSvcRemote.create(Point.class.getCanonicalName());
             point.setLat(coordinate.getLat());
             point.setLon(coordinate.getLon());
 
             // Update Item
-            Point res = (Point) droneDbCrudSvcRemote.update(point);
-            perimeter.getPoints().add(res.getKeyId().getObjId());
+            Point res = (Point) objectCrudSvcRemote.update(point);
+            if (!perimeter.getPoints().contains(point.getKeyId().getObjId())) {
+                perimeter.getPoints().add(res.getKeyId().getObjId());
+            }
             // Update Mission
-            perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(perimeter);
+            perimeter = super.update(perimeter);
+//            perimeter = (PolygonPerimeter) objectCrudSvcRemote.update(perimeter);
             return res;
         }
-        catch (DatabaseValidationRemoteException e) {
+        catch (ObjectInstanceRemoteException | DatabaseValidationRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
@@ -61,10 +61,21 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     @Override
     public void removePoint(Point point) throws PerimeterUpdateException {
         perimeter.getPoints().remove(point.getKeyId().getObjId());
+//        try {
+//            perimeter = (PolygonPerimeter) objectCrudSvcRemote.update(perimeter);
+            perimeter = super.update(perimeter);
+//        }
+//        catch (ObjectInstanceRemoteException | DatabaseValidationRemoteException e) {
+//            throw new PerimeterUpdateException(e.getMessage());
+//        }
+    }
+
+    @Override
+    public Point updatePoint(Point point) throws PerimeterUpdateException {
         try {
-            perimeter = (PolygonPerimeter) droneDbCrudSvcRemote.update(perimeter);
+            return objectCrudSvcRemote.update(point);
         }
-        catch (DatabaseValidationRemoteException e) {
+        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }

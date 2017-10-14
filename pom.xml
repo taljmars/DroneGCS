@@ -13,6 +13,7 @@
         <module>Console</module>
         <module>ConsolePlugin</module>
         <module>DroneServerClientPlugin</module>
+        <module>Tester</module>
     </modules>
 
     <parent>
@@ -48,9 +49,17 @@
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <site-maven-plugin.version>0.12</site-maven-plugin.version>
-        <slf4jVersion>1.7.16</slf4jVersion>
+
+        <!--Spring-->
+        <spring-ver>4.3.3.RELEASE</spring-ver>
+
+        <!--Logging-->
+        <!--<slf4jVersion>1.7.16</slf4jVersion>-->
+        <slf4jVersion>1.7.25</slf4jVersion>
+
+        <!--Building-->
         <build.output>CMpub</build.output>
-        </properties>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -70,25 +79,25 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>4.3.3.RELEASE</version>
+                <version>${spring-ver}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>4.3.3.RELEASE</version>
+                <version>${spring-ver}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>4.3.3.RELEASE</version>
+                <version>${spring-ver}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-expression</artifactId>
-                <version>4.3.3.RELEASE</version>
+                <version>${spring-ver}</version>
             </dependency>
 
             <dependency>
@@ -114,6 +123,13 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4jVersion}</version>
             </dependency>
+
+            <!--<dependency>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-jdk14</artifactId>-->
+                <!--<version>${slf4jVersion}</version>-->
+            <!--</dependency>-->
+
 
             <dependency>
                 <groupId>RXTXComm</groupId>

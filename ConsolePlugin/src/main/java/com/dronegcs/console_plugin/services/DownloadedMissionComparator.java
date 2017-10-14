@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.services;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.internal.MissionComparatorException;
 import com.geo_tools.Coordinate;
@@ -129,15 +130,15 @@ public class DownloadedMissionComparator {
         return false;
     }
 
-    private boolean visit(Circle circle, Circle dCircle) {
-        if (CheckCoordinate(circle, dCircle) &&
-            circle.getAltitude().equals(dCircle.getAltitude()) &&
-            circle.getTurns() == dCircle.getTurns() &&
-            circle.getRadius().equals(dCircle.getRadius()))
-            return true;
-
-        return false;
-    }
+//    private boolean visit(Circle circle, Circle dCircle) {
+//        if (CheckCoordinate(circle, dCircle) &&
+//            circle.getAltitude().equals(dCircle.getAltitude()) &&
+//            circle.getTurns() == dCircle.getTurns() &&
+//            circle.getRadius().equals(dCircle.getRadius()))
+//            return true;
+//
+//        return false;
+//    }
 
     private boolean visit(ReturnToHome returnToHome, ReturnToHome dReturnToHome) {
         if (CheckCoordinate(returnToHome, dReturnToHome) && returnToHome.getAltitude().equals(dReturnToHome.getAltitude()))

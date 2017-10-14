@@ -1,6 +1,10 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.dronedb.persistence.scheme.*;
+import com.db.persistence.scheme.BaseObject;
+import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.dronedb.persistence.scheme.Perimeter;
+import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.gui.core.mapTreeObjects.LayerSingle;

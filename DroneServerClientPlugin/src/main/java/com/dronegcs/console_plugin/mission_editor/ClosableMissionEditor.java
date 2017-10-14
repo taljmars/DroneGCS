@@ -1,6 +1,5 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-
 import com.dronedb.persistence.scheme.Mission;
 import com.dronegcs.console_plugin.ClosingPair;
 

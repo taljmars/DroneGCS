@@ -3,6 +3,7 @@ package com.dronegcs.console_plugin.perimeter_editor;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronedb.persistence.ws.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

@@ -11,5 +11,5 @@ public interface PerimeterEditor<T extends Perimeter> {
 
     T update(T perimeter) throws PerimeterUpdateException;
 
-    void delete() throws PerimeterUpdateException;
+    T delete() throws PerimeterUpdateException;
 }

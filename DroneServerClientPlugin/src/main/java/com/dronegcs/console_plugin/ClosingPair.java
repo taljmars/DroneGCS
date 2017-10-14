@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin;
 
-import com.dronedb.persistence.scheme.BaseObject;
+
+import com.db.persistence.scheme.BaseObject;
 
 /**
  * Created by taljmars on 5/6/17.

@@ -1,11 +1,17 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
+import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
+import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
+import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
+import com.db.persistence.scheme.BaseObject;
+import com.db.persistence.wsSoap.QueryRequestRemote;
+import com.db.persistence.wsSoap.QueryResponseRemote;
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.internal.DatabaseValidationRemoteException;
-import com.dronedb.persistence.ws.internal.*;
-import com.dronedb.persistence.ws.internal.ObjectNotFoundException;
-import com.dronedb.persistence.ws.internal.ObjectNotFoundRemoteException;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.ClosingPair;
+import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.PerimeterCrudSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by taljmars on 3/26/17.
@@ -28,19 +31,19 @@ public class PerimetersManagerImpl implements PerimetersManager {
     private final static Logger LOGGER = LoggerFactory.getLogger(PerimetersManagerImpl.class);
 
     @Autowired
-    private QuerySvcRemote querySvcRemote;
+    private QuerySvcRemoteWrapper querySvcRemote;
 
     @Autowired
-    private DroneDbCrudSvcRemote droneDbCrudSvcRemote;
+    private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
+
+    @Autowired  @NotNull(message = "Internal Error: Failed to get perimeter object crud")
+    private PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemote;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private PerimeterEditorFactory perimeterEditorFactory;
-
-    @Autowired  @NotNull(message = "Internal Error: Failed to get perimeter object crud")
-    private PerimeterCrudSvcRemote perimeterCrudSvcRemote;
 
     List<ClosablePerimeterEditor> closablePerimeterEditorList;
 
@@ -78,14 +81,14 @@ public class PerimetersManagerImpl implements PerimetersManager {
         LOGGER.debug("Setting new perimeter to perimeter editor");
         ClosablePerimeterEditor perimeterEditor = findPerimeterEditorByPerimeter(perimeter);
         if (perimeterEditor == null) {
-            System.err.println("Editor not exist for perimeter " + perimeter.getName() + ", creating new one");
+            LOGGER.debug("Editor not exist for perimeter " + perimeter.getName() + ", creating new one");
             PerimeterEditorFactory perimeterEditorFactory = applicationContext.getBean(PerimeterEditorFactory.class);
             perimeterEditor = perimeterEditorFactory.getEditor(perimeter.getClass());
             perimeterEditor.open(perimeter);
             closablePerimeterEditorList.add(perimeterEditor);
         }
         else {
-            System.err.println("Found existing perimeter editor");
+            LOGGER.debug("Found existing perimeter editor");
         }
         return (T) perimeterEditor;
     }
@@ -109,12 +112,12 @@ public class PerimetersManagerImpl implements PerimetersManager {
         try {
             ClosablePerimeterEditor closablePerimeterEditor = findPerimeterEditorByPerimeter(perimeter);
             if (closablePerimeterEditor == null)
-                return (P) droneDbCrudSvcRemote.update(perimeter);
+                return (P) objectCrudSvcRemote.update(perimeter);
 
             return (P) closablePerimeterEditor.update(perimeter);
 
         }
-        catch (DatabaseValidationRemoteException e) {
+        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
@@ -124,10 +127,11 @@ public class PerimetersManagerImpl implements PerimetersManager {
         try {
             return (P) perimeterCrudSvcRemote.clonePerimeter(perimeter);
         }
-        catch (DatabaseValidationRemoteException e) {
+        catch (ObjectInstanceRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
-        }
-        catch (ObjectNotFoundRemoteException e) {
+        } catch (DatabaseValidationRemoteException e) {
+            throw new PerimeterUpdateException(e.getMessage());
+        } catch (ObjectNotFoundRemoteException e) {
             throw new PerimeterUpdateException(e.getMessage());
         }
     }
@@ -162,13 +166,13 @@ public class PerimetersManagerImpl implements PerimetersManager {
     @Override
     public List<BaseObject> getAllPerimeters() {
         QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(PolygonPerimeter.class.getName());
+        queryRequestRemote.setClz(PolygonPerimeter.class.getCanonicalName());
         queryRequestRemote.setQuery("GetAllPolygonPerimeters");
         QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
         List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultList();
 
         queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(CirclePerimeter.class.getName());
+        queryRequestRemote.setClz(CirclePerimeter.class.getCanonicalName());
         queryRequestRemote.setQuery("GetAllCirclePerimeters");
         queryResponseRemote = querySvcRemote.query(queryRequestRemote);
         List<BaseObject> circlePerimeterList = queryResponseRemote.getResultList();
@@ -182,13 +186,13 @@ public class PerimetersManagerImpl implements PerimetersManager {
     @Override
     public List<BaseObject> getAllModifiedPerimeters() {
         QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(PolygonPerimeter.class.getName());
+        queryRequestRemote.setClz(PolygonPerimeter.class.getCanonicalName());
         queryRequestRemote.setQuery("GetAllModifiedPolygonPerimeters");
         QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
         List<BaseObject> polygonPerimeterList = queryResponseRemote.getResultList();
 
         queryRequestRemote = new QueryRequestRemote();
-        queryRequestRemote.setClz(CirclePerimeter.class.getName());
+        queryRequestRemote.setClz(CirclePerimeter.class.getCanonicalName());
         queryRequestRemote.setQuery("GetAllModifiedCirclePerimeters");
         queryResponseRemote = querySvcRemote.query(queryRequestRemote);
         List<BaseObject> circlePerimeterList = queryResponseRemote.getResultList();
@@ -205,22 +209,25 @@ public class PerimetersManagerImpl implements PerimetersManager {
         List<Point> res = new ArrayList<>();
 
         if (perimeter instanceof PolygonPerimeter) {
-            List<String> uuidList = ((PolygonPerimeter) perimeter).getPoints();
-            for (String uuid : uuidList)
+            List<UUID> uuidList = ((PolygonPerimeter) perimeter).getPoints();
+            for (UUID uuid : uuidList)
                 try {
-                    res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
-                } catch (ObjectNotFoundException e) {
+                    res.add((Point) objectCrudSvcRemote.readByClass(uuid, Point.class.getCanonicalName()));
+                }
+                catch (ObjectNotFoundRemoteException e) {
                     LOGGER.error("Failed to perimeter points", e);
                 }
             return res;
         }
 
         if (perimeter instanceof CirclePerimeter) {
-            String uuid = ((CirclePerimeter) perimeter).getCenter();
-            if (uuid != null && !uuid.isEmpty()) {
+            UUID uuid = ((CirclePerimeter) perimeter).getCenter();
+            if (uuid != null) {
                 try {
-                    res.add((Point) droneDbCrudSvcRemote.readByClass(uuid.toString(), Point.class.getName()));
-                } catch (ObjectNotFoundException e) {
+                    res.add((Point) objectCrudSvcRemote.readByClass(uuid, Point.class.getCanonicalName()));
+                }
+                catch (ObjectNotFoundRemoteException e) {
+                    e.printStackTrace();
                     LOGGER.error("Failed to get point", e);
                 }
             }

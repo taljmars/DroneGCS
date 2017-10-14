@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-import com.dronedb.persistence.scheme.BaseObject;
+
+import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.MissionItem;
 import com.dronegcs.console_plugin.ClosingPair;

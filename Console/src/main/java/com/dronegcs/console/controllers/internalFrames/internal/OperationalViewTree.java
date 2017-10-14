@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal;
 
-import com.dronedb.persistence.scheme.BaseObject;
+import com.db.persistence.scheme.BaseObject;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.gui.core.mapTree.CheckBoxViewTree;
 import com.gui.core.mapTreeObjects.Layer;

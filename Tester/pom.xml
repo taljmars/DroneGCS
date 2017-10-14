@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>DroneGCS</artifactId>
+        <groupId>com.dronegcs</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>Tester</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>DroneServerClientPlugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>ConsolePlugin</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.image_processing</groupId>
+            <artifactId>Detector</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Environment</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Logger</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Validations</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

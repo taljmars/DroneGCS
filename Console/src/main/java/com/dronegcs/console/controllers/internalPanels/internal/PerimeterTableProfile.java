@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
 import com.dronedb.persistence.scheme.*;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;

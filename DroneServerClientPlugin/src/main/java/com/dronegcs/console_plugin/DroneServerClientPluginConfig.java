@@ -1,6 +1,9 @@
 package com.dronegcs.console_plugin;
 
-import com.dronedb.persistence.ws.internal.*;
+import com.db.persistence.wsSoap.ObjectCrudSvcRemote;
+import com.db.persistence.wsSoap.QuerySvcRemote;
+import com.db.persistence.wsSoap.SessionsSvcRemote;
+import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.exceptions.ClientPluginException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditorFactoryImpl;
 import org.slf4j.LoggerFactory;
@@ -40,34 +43,35 @@ public class DroneServerClientPluginConfig {
         System.err.println("Got " + clz.getSimpleName() + " on ip " + ipStr + " port " + port);
         //URL url = new URL("http://localhost:9999/ws/" + clz.getSimpleName() + "?wsdl");
         URL url = new URL("http://" + ipStr + ":" + port + "/ws/" + clz.getSimpleName() + "?wsdl");
-        QName qName = new QName("http://internal.ws.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
+//        QName qName = new QName("http://internal.ws.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
+        QName qName = new QName("http://scheme.persistence.dronedb.com/", clz.getSimpleName() + "ImplService");
         Service service = Service.create(url, qName);
         return service.getPort(clz);
     }
 
-    @Bean
-    public MissionCrudSvcRemote missionCrudSvcRemote() throws ClientPluginException {
-        return LoadServices(MissionCrudSvcRemote.class);
-    }
-
-    @Bean
-    public QuerySvcRemote querySvcRemote() throws ClientPluginException {
-        return LoadServices(QuerySvcRemote.class);
-    }
-
-    @Bean
-    public DroneDbCrudSvcRemote droneDbCrudSvcRemote() throws ClientPluginException {
-        return LoadServices(DroneDbCrudSvcRemote.class);
-    }
-
-    @Bean
-    public PerimeterCrudSvcRemote perimeterCrudSvcRemote() throws ClientPluginException {
-        return LoadServices(PerimeterCrudSvcRemote.class);
-    }
-
-    @Bean
-    public SessionsSvcRemote sessionsSvcRemote() throws ClientPluginException {
-        return LoadServices(SessionsSvcRemote.class);
-    }
+//    @Bean
+//    public MissionCrudSvcRemote missionCrudSvcRemote() throws ClientPluginException {
+//        return LoadServices(MissionCrudSvcRemote.class);
+//    }
+//
+//    @Bean
+//    public QuerySvcRemote querySvcRemote() throws ClientPluginException {
+//        return LoadServices(QuerySvcRemote.class);
+//    }
+//
+//    @Bean
+//    public ObjectCrudSvcRemote objectCrudSvcRemote() throws ClientPluginException {
+//        return LoadServices(ObjectCrudSvcRemote.class);
+//    }
+//
+//    @Bean
+//    public PerimeterCrudSvcRemote perimeterCrudSvcRemote() throws ClientPluginException {
+//        return LoadServices(PerimeterCrudSvcRemote.class);
+//    }
+//
+//    @Bean
+//    public SessionsSvcRemote sessionsSvcRemote() throws ClientPluginException {
+//        return LoadServices(SessionsSvcRemote.class);
+//    }
 
 }

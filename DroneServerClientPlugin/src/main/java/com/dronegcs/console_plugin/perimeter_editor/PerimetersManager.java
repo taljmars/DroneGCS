@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.dronedb.persistence.scheme.BaseObject;
+import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.Point;
 import com.dronegcs.console_plugin.ClosingPair;
