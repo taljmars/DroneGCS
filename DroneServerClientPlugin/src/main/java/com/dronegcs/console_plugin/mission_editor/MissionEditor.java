@@ -1,7 +1,6 @@
 package com.dronegcs.console_plugin.mission_editor;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.*;
 import com.geo_tools.Coordinate;
 
 import java.util.List;

@@ -3,20 +3,16 @@ package com.dronegcs.console_plugin.mission_editor;
 import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
 import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
-
-import com.dronedb.persistence.ws.*;
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.remote_services_wrappers.MissionCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
-import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import sun.rmi.runtime.Log;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;

@@ -1,13 +1,8 @@
 package com.dronegcs.console_plugin;
 
-import com.db.persistence.wsSoap.ObjectCrudSvcRemote;
-import com.db.persistence.wsSoap.QuerySvcRemote;
-import com.db.persistence.wsSoap.SessionsSvcRemote;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.exceptions.ClientPluginException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditorFactoryImpl;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.xml.namespace.QName;

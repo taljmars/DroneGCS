@@ -2,13 +2,12 @@ package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layer
 
 import com.dronedb.persistence.scheme.Point;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
+import com.geo_tools.Coordinate;
 import com.gui.core.mapViewer.LayeredViewMap;
 import com.gui.core.mapViewerObjects.MapPolygonImpl;
 import com.gui.is.interfaces.mapObjects.MapPolygon;
-import com.geo_tools.Coordinate;
 
 import java.util.List;
 

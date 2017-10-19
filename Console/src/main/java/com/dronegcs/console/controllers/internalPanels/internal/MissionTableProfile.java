@@ -1,8 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.*;
-import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
@@ -20,9 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.slf4j.LoggerFactory;
@@ -32,9 +28,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

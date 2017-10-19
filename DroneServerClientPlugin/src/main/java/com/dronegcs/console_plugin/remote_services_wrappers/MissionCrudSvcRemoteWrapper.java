@@ -5,13 +5,11 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.MissionItem;
-import com.dronedb.persistence.ws.MissionCrudSvcRemote;
 import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ public class MissionCrudSvcRemoteWrapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(MissionCrudSvcRemoteWrapper.class);
 
 //    @Autowired
-    private MissionCrudSvcRemote missionCrudSvcRemote;
+    private MissionCrudSvcRemoteWrapper missionCrudSvcRemote;
 
     @Autowired
     private RestClientHelper restClientHelper;

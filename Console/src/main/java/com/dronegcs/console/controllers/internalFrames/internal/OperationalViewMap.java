@@ -29,7 +29,6 @@ import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;

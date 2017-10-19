@@ -1,7 +1,6 @@
 package com.dronegcs.console_plugin.services.internal.convertors;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.dronegcs.mavlink.is.drone.mission.commands.MavlinkReturnToHome;

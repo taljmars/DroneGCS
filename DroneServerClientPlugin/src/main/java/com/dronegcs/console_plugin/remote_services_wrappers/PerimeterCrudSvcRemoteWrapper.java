@@ -5,7 +5,6 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.Point;
-import com.dronedb.persistence.ws.PerimeterCrudSvcRemote;
 import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
@@ -25,7 +24,7 @@ public class PerimeterCrudSvcRemoteWrapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(PerimeterCrudSvcRemoteWrapper.class);
 
 //    @Autowired
-    private PerimeterCrudSvcRemote perimeterCrudSvcRemote;
+    private PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemote;
 
     @Autowired
     private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;

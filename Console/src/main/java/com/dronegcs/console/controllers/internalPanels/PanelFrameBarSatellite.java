@@ -5,7 +5,6 @@ import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;

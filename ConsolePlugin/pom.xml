@@ -13,6 +13,12 @@
 
     <artifactId>ConsolePlugin</artifactId>
 
+    <properties>
+        <jar.path>../${build.output}/jars/</jar.path>
+        <class.path>../${build.output}/classes/</class.path>
+        <pkg_server.path>../${build.output}/pkg_server</pkg_server.path>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.dronegcs</groupId>
@@ -58,43 +64,22 @@
     </dependencyManagement>
 
     <build>
-        <outputDirectory>../${build.output}/classes</outputDirectory>
+        <outputDirectory>${class.path}</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outputDirectory>../${build.output}/jars</outputDirectory>
-                </configuration>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <executions><execution><phase>none</phase></execution></executions>
+                <configuration><skip>true</skip></configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<version>2.7</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-resource-one</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-
-                        <!--<configuration>-->
-                            <!--<outputDirectory>../${build.output}/pkg_server</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>target</directory>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>${site-maven-plugin.version}</version>
+                <executions><execution><phase>none</phase></execution></executions>
+                <configuration><skip>true</skip></configuration>
+            </plugin>
         </plugins>
     </build>
 

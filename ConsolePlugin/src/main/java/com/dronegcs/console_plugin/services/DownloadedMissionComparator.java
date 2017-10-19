@@ -1,7 +1,6 @@
 package com.dronegcs.console_plugin.services;
 
 import com.dronedb.persistence.scheme.*;
-import com.dronedb.persistence.ws.*;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.internal.MissionComparatorException;
 import com.geo_tools.Coordinate;

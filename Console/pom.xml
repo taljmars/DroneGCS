@@ -15,6 +15,12 @@
     <packaging>jar</packaging>
     <name>Console</name>
 
+    <properties>
+        <jar.path>../${build.output}/jars/</jar.path>
+        <class.path>../${build.output}/classes/</class.path>
+        <pkg_server.path>../${build.output}/pkg_server</pkg_server.path>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,72 +107,38 @@
     </dependencies>
 
     <build>
-        <outputDirectory>../${build.output}/classes</outputDirectory>
+        <outputDirectory>${class.path}</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <executions><execution><phase>none</phase></execution></executions>
+                <configuration><skip>true</skip></configuration>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>../${build.output}/jars/</outputDirectory>
-                            <excludeArtifactIds>opencv-310,rxtx</excludeArtifactIds>
-                        </configuration>
-                    </execution>
-                </executions>
-<!--                <configuration>
-                    <executable>true</executable>
-                </configuration>-->
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>${site-maven-plugin.version}</version>
+                <executions><execution><phase>none</phase></execution></executions>
+                <configuration><skip>true</skip></configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-resource-one</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
+            <!--<plugin>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>repackage</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<outputDirectory>${jar.path}</outputDirectory>-->
+                            <!--<excludeArtifactIds>opencv-310,rxtx</excludeArtifactIds>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
-                        <configuration>
-                            <outputDirectory>../${build.output}/pkg_server</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../${build.output}/jars/</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>../${build.output}/pkg_server/</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
