@@ -35,8 +35,8 @@ public class QuerySvcRemoteWrapper {
     public QueryResponseRemote query(QueryRequestRemote queryRequestRemote) {
         try {
             //        return querySvcRemote.query(queryRequestRemote);
-
-            WebResource.Builder builder = restClientHelper.getWebResource("query");
+//            System.out.println("TALMA running: " + queryRequestRemote.getQuery());
+            WebResource.Builder builder = restClientHelper.getWebResource("queryForUser", "userName", ObjectCrudSvcRemoteWrapper.userNametest);
             ObjectMapper mapper = new ObjectMapper();
 
             LOGGER.debug("Request to be send: {} " + mapper.writeValueAsString(queryRequestRemote));
@@ -55,7 +55,8 @@ public class QuerySvcRemoteWrapper {
             MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
             multivaluedMap.add("queryString", queryString);
             multivaluedMap.add("clz", clz);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryWithClass", multivaluedMap);
+            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryWithClassForUser", multivaluedMap);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
@@ -70,7 +71,8 @@ public class QuerySvcRemoteWrapper {
             //        return querySvcRemote.runNativeQuery(queryString, clz);
             MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
             multivaluedMap.add("queryString", queryString);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQuery", multivaluedMap);
+            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryForUser", multivaluedMap);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
@@ -86,7 +88,8 @@ public class QuerySvcRemoteWrapper {
             MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
             multivaluedMap.add("queryString", queryString);
             multivaluedMap.add("clz", clz);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNamedQuery", multivaluedMap);
+            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("runNamedQueryForUser", multivaluedMap);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
@@ -100,7 +103,7 @@ public class QuerySvcRemoteWrapper {
         ClientResponse.Status status = response.getClientResponseStatus();
 
         if (status != ClientResponse.Status.OK)
-            throw new RuntimeException("Failed to run query: " + response.getResponseDate());
+            throw new RuntimeException("Failed to run query: " + response.getClientResponseStatus().getReasonPhrase());
 
         if (!response.hasEntity())
             throw new RuntimeException(status.getReasonPhrase() + ", status:" + status.getStatusCode());

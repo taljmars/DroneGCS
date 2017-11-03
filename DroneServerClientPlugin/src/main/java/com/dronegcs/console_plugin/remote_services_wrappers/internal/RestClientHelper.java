@@ -9,6 +9,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class RestClientHelper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RestClientHelper.class);
 
+    private static final String SERVER_URL = "http://localhost:8080/";
+//    private static final String SERVER_URL = "http://localhost:8081/ServerCore-1.5.8.RELEASE/";
+
     private Client client;
 
     @PostConstruct
@@ -39,7 +43,7 @@ public class RestClientHelper {
     }
 
     public WebResource.Builder getWebResource(String path, String s, Object... objs) {
-        UriBuilder uriBuilder  = UriBuilder.fromUri("http://localhost:8080/" + path);
+        UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
         if (s != null && !s.isEmpty() && objs != null)
             uriBuilder.queryParam(s, objs);
         WebResource webResource = client.resource(uriBuilder.build());
@@ -47,7 +51,7 @@ public class RestClientHelper {
     }
 
     public WebResource.Builder getWebResource(String path, MultivaluedMap queries) {
-        UriBuilder uriBuilder  = UriBuilder.fromUri("http://localhost:8080/" + path);
+        UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
         WebResource webResource = client.resource(uriBuilder.build());
         webResource = webResource.queryParams(queries);
         return webResource.type(MediaType.APPLICATION_JSON_TYPE);
@@ -67,7 +71,12 @@ public class RestClientHelper {
     public Pair<Class, ? extends Exception> getErrorAndMessage(ClientResponse response) throws ClassNotFoundException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = response.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONObject jsonObject;
+        try { jsonObject = new JSONObject(jsonString); }
+        catch (JSONException e) {
+            System.out.println("Failed to parse JSON:\n" + jsonString);
+            throw new IOException(e);
+        }
         String actualClass = (String) jsonObject.remove("clz");
         Class cls = Class.forName(actualClass);
         Exception exception = mapper.readValue(jsonObject.toString(), Exception.class);

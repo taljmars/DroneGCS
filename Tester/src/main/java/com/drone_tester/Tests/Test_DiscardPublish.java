@@ -89,10 +89,10 @@ public class Test_DiscardPublish extends Test {
             objectCrudSvcRemoteWrapper.delete(mission);
             publish(new TestEvent(this, Status.IN_PROGRESS, "delete mission", ++idx, total));
 
-            Assert.isTrue(missionsManager.getAllModifiedMissions().size() == 1);
+            Assert.isTrue(missionsManager.getAllModifiedMissions().isEmpty());
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify no modified mission exist", ++idx, total));
 
-            Assert.isTrue(missionsManager.getAllMissions().size() == 2);//TODO: 1);
+            Assert.isTrue(missionsManager.getAllMissions().isEmpty());
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify one publish mission exist", ++idx, total));
 
             sessionsSvcRemoteWrapper.discard();

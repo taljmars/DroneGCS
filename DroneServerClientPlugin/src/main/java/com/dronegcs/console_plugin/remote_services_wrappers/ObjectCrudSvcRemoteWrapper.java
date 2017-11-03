@@ -32,9 +32,14 @@ public class ObjectCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectCrudSvcRemoteWrapper.class);
 
+    public static String userNametest = "talma1";
+
     public <T extends BaseObject> T create(String clz) throws ObjectInstanceRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("create", "clz", clz);
+            MultivaluedMap formData = new MultivaluedMapImpl();
+            formData.add("clz", clz);
+            formData.add("userName", userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("createForUser", formData);
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
             if (!response.hasEntity())
@@ -63,7 +68,7 @@ public class ObjectCrudSvcRemoteWrapper {
     public <T extends BaseObject> T update(T obj) throws DatabaseValidationRemoteException, ObjectInstanceRemoteException {
         T baseObject = null;
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("update");
+            WebResource.Builder builder = restClientHelper.getWebResource("updateForUser", "userName", userNametest);
             ObjectMapper mapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(obj));
@@ -95,7 +100,10 @@ public class ObjectCrudSvcRemoteWrapper {
 
     public <T extends BaseObject> T read(UUID objId) throws ObjectNotFoundRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("read","objId", objId.toString());
+            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
+            multivaluedMap.add("objId", objId.toString());
+            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("readForUser",multivaluedMap);
 
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
@@ -135,7 +143,8 @@ public class ObjectCrudSvcRemoteWrapper {
             MultivaluedMap formData = new MultivaluedMapImpl();
             formData.add("objId", objId.toString());
             formData.add("clz", canonicalName);
-            WebResource.Builder builder = restClientHelper.getWebResource("readByClass",formData);
+            formData.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
+            WebResource.Builder builder = restClientHelper.getWebResource("readByClassForUser",formData);
 //            System.err.println("readByClass string: " + builder.toString() + ", objId.toString():" + objId.toString());
 
             ClientResponse response = builder.get(ClientResponse.class);
@@ -173,7 +182,7 @@ public class ObjectCrudSvcRemoteWrapper {
 
     public <T extends BaseObject> T delete(T obj) throws ObjectInstanceRemoteException, DatabaseValidationRemoteException, ObjectNotFoundRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("delete");
+            WebResource.Builder builder = restClientHelper.getWebResource("deleteForUser", "userName", ObjectCrudSvcRemoteWrapper.userNametest);
             ObjectMapper objectMapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, objectMapper.writeValueAsString(obj));
