@@ -85,30 +85,30 @@ public class Test_CirclePerimeters extends Test {
             sessionsSvcRemoteWrapper.publish();
             publish(new TestEvent(this, Status.IN_PROGRESS, "publish perimeter changes", ++idx, total));
 
-//            List<BaseObject> perimeterList = perimetersManager.getAllPerimeters();
-//            Assert.isTrue(perimeterList.size() == 1);
+            List<BaseObject> perimeterList = perimetersManager.getAllPerimeters();
+            Assert.isTrue(perimeterList.size() == 1);
             publish(new TestEvent(this, Status.IN_PROGRESS, "get all perimeters", ++idx, total));
 
-//            pointList = perimetersManager.getPoints(circlePerimeter);
-//            Assert.isTrue(pointList.get(0).getLat() == 44.44);
+            pointList = perimetersManager.getPoints(circlePerimeter);
+            Assert.isTrue(pointList.get(0).getLat() == 44.44);
             publish(new TestEvent(this, Status.IN_PROGRESS, "Validate center point recent values", ++idx, total));
 
             circlePerimeterEditor = perimetersManager.openPerimeterEditor(circlePerimeter);
-//            circlePerimeter = circlePerimeterEditor.delete();
+            circlePerimeter = circlePerimeterEditor.delete();
             publish(new TestEvent(this, Status.IN_PROGRESS, "delete perimeter", ++idx, total));
 
-//            Assert.isTrue(circlePerimeter.isDeleted());
+            Assert.isTrue(circlePerimeter.isDeleted());
             publish(new TestEvent(this, Status.IN_PROGRESS, "Validate deleted mark", ++idx, total));
 
-//            sessionsSvcRemoteWrapper.discard();
+            sessionsSvcRemoteWrapper.discard();
             publish(new TestEvent(this, Status.IN_PROGRESS, "Discarding deletion", ++idx, total));
 
-//            perimeterList = perimetersManager.getAllPerimeters();
-//            Assert.isTrue(perimeterList.size() == 1);
+            perimeterList = perimetersManager.getAllPerimeters();
+            Assert.isTrue(perimeterList.size() == 1);
             publish(new TestEvent(this, Status.IN_PROGRESS, "get all perimeters", ++idx, total));
 
-//            circlePerimeter = (CirclePerimeter) perimeterList.get(0);
-//            Assert.isTrue(!circlePerimeter.isDeleted());
+            circlePerimeter = (CirclePerimeter) perimeterList.get(0);
+            Assert.isTrue(!circlePerimeter.isDeleted());
             publish(new TestEvent(this, Status.IN_PROGRESS, "Validate non deleted mark", ++idx, total));
 
             publish(new TestEvent(this, Status.IN_PROGRESS, "test core finished", ++idx, total));

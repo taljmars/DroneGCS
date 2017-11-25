@@ -45,7 +45,7 @@ public class Test_DummyObject extends Test {
                     System.out.println("Object: " + baseObject.getKeyId() + " " + ((Mission) baseObject).getName());
                 }
             }
-//            sessionsSvcRemoteWrapper.publish();
+            sessionsSvcRemoteWrapper.publish();
 //            System.out.println("");
 //            objectCrudSvcRemoteWrapper.userNametest = "bbb";
 //            mission = objectCrudSvcRemoteWrapper.create(Mission.class.getCanonicalName());
