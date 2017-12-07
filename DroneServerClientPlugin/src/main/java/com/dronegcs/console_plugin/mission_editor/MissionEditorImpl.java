@@ -279,7 +279,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     public <T extends MissionItem> void removeMissionItem(T missionItem) throws MissionUpdateException {
         mission.getMissionItemsUids().remove(missionItem.getKeyId().getObjId());
         try {
-            mission = (Mission) objectCrudSvcRemote.update(mission);
+            mission = objectCrudSvcRemote.update(mission);
         }
         catch (DatabaseValidationRemoteException e) {
             throw new MissionUpdateException(e.getMessage());

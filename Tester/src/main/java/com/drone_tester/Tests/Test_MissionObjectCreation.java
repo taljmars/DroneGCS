@@ -48,6 +48,7 @@ public class Test_MissionObjectCreation extends Test {
             Takeoff takeoff = missionEditor.createTakeOff();
             takeoff.setLat(44.44);
             takeoff.setLon(44.44);
+            takeoff.setFinishedAlt(10.0);
             takeoff = missionEditor.updateMissionItem(takeoff);
             publish(new TestEvent(this, Status.IN_PROGRESS, "takeoff point created", ++idx, total));
 

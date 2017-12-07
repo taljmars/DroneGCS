@@ -46,10 +46,6 @@ public class Test_CirclePerimeters extends Test {
             perimeter = perimetersManager.update(perimeter);
             publish(new TestEvent(this, Status.IN_PROGRESS, "Updating perimeter name", ++idx, total));
 
-//            if (1 == 1){
-//                System.exit(0);
-//            }
-
             String LAST_NAME = "talma2to3";
             perimeter.setName(LAST_NAME);
             perimeter = perimetersManager.update(perimeter);

@@ -119,7 +119,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))
@@ -161,7 +161,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))
@@ -197,7 +197,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))

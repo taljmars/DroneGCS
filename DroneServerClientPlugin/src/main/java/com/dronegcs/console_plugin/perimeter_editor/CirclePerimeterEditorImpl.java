@@ -50,12 +50,12 @@ public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimet
     @Override
     public Point setCenter(Coordinate position) throws PerimeterUpdateException{
         try {
-            Point center = (Point) objectCrudSvcRemote.create(Point.class.getCanonicalName());
+            Point center = objectCrudSvcRemote.create(Point.class.getCanonicalName());
             center.setLat(position.getLat());
             center.setLon(position.getLon());
-            center = (Point) objectCrudSvcRemote.update(center);
+            center = objectCrudSvcRemote.update(center);
             perimeter.setCenter(center.getKeyId().getObjId());
-            perimeter = (CirclePerimeter) objectCrudSvcRemote.update(perimeter);
+            perimeter = objectCrudSvcRemote.update(perimeter);
             return center;
         }
         catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {

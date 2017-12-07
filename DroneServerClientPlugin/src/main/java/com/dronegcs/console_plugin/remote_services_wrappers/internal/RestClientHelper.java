@@ -69,7 +69,6 @@ public class RestClientHelper {
     }
 
     public Pair<Class, ? extends Exception> getErrorAndMessage(ClientResponse response) throws ClassNotFoundException, IOException {
-        ObjectMapper mapper = new ObjectMapper();
         String jsonString = response.getEntity(String.class);
         JSONObject jsonObject;
         try { jsonObject = new JSONObject(jsonString); }
@@ -77,6 +76,11 @@ public class RestClientHelper {
             System.out.println("Failed to parse JSON:\n" + jsonString);
             throw new IOException(e);
         }
+        return getErrorAndMessageFromJson(jsonObject);
+    }
+
+    public Pair<Class, ? extends Exception> getErrorAndMessageFromJson(JSONObject jsonObject) throws ClassNotFoundException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
         String actualClass = (String) jsonObject.remove("clz");
         Class cls = Class.forName(actualClass);
         Exception exception = mapper.readValue(jsonObject.toString(), Exception.class);
