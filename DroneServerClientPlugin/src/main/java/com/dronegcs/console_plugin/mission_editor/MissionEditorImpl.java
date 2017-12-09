@@ -69,7 +69,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
             LOGGER.debug(String.format("Delete mission %s %s", res.getKeyId().getObjId(), res.getName()));
 //            objectCrudSvcRemote.delete(mission);
             try {
-                res = (Mission) objectCrudSvcRemote.readByClass(mission.getKeyId().getObjId(), Mission.class.getCanonicalName());
+                res = objectCrudSvcRemote.readByClass(mission.getKeyId().getObjId(), Mission.class.getCanonicalName());
                 LOGGER.debug("Found original mission " + res.getKeyId().getObjId() + " " + res.getName());
                 missionClosingPair = new ClosingPair(res, false);
             }
