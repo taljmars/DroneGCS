@@ -47,9 +47,9 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     public Mission open(String missionName) throws MissionUpdateException {
         LOGGER.debug("Setting new mission to mission editor");
         try {
-            this.mission = (Mission) objectCrudSvcRemote.create(Mission.class.getCanonicalName());
+            this.mission = objectCrudSvcRemote.create(Mission.class.getCanonicalName());
             this.mission.setName(missionName);
-            this.mission = (Mission) objectCrudSvcRemote.update(this.mission);
+            this.mission = objectCrudSvcRemote.update(this.mission);
             return this.mission;
         }
         catch (ObjectInstanceRemoteException e) {

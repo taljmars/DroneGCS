@@ -164,7 +164,7 @@ public class MissionsManagerImpl implements MissionsManager {
 		List<UUID> uuidList = leadMission.getMissionItemsUids();
 		for (UUID uuid : uuidList) {
 			try {
-				missionItemList.add((MissionItem) objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
+				missionItemList.add(objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
 			}
 			catch (ObjectNotFoundRemoteException e) {
 				LOGGER.error("Failed to get mission item", e);
