@@ -370,7 +370,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                 }
             }
             catch (Throwable t) {
-                loggerDisplayerSvc.logError("Critical Error: failed to create item in database, error: " + t.getMessage());
+                loggerDisplayerSvc.logError("Critical Error: failed to create item in database: " + t.getMessage());
                 LOGGER.error("Failed to build new mission", t);
                 isMissionBuildMode = false;
                 if (modifyiedLayerMissionOriginal != null) {
@@ -388,8 +388,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add waypoint point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Waypoint point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -408,8 +408,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter turns point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Loiter turns point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -428,8 +428,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Loiter point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -441,8 +441,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add loiter unlimited point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Loiter unlimited point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -454,8 +454,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add land point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Land point wasn't added.\n" + e.getMessage(), e);
             }
         });
         
@@ -467,8 +467,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add ROI point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("ROI point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -480,8 +480,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add RTL point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("RTL point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -500,8 +500,8 @@ OnDroneListener, EventHandler<ActionEvent> {
                 modifyiedLayerMissionOriginal.regenerateMapObjects();
             }
             catch (MissionUpdateException e) {
-                loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-                dialogManagerSvc.showErrorMessageDialog("Failed to add takeoff point.\n" + e.getMessage(), e);
+                loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
+                dialogManagerSvc.showErrorMessageDialog("Takeoff point wasn't added.\n" + e.getMessage(), e);
             }
         });
 
@@ -684,7 +684,6 @@ OnDroneListener, EventHandler<ActionEvent> {
                 }
                 UpdateGCSOnMap(drone.getGCS().getPosition().dot(1));
                 SetBearing(drone.getNavigation().getNavBearing());
-                return;
             }
         });
     }
