@@ -98,7 +98,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
-    public <T extends BaseObject> T read(UUID objId) throws ObjectNotFoundRemoteException {
+    public <T extends BaseObject> T read(String objId) throws ObjectNotFoundRemoteException {
         try {
             MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
             multivaluedMap.add("objId", objId.toString());
@@ -138,7 +138,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
-    public <T extends BaseObject> T readByClass(UUID objId, String canonicalName) throws ObjectNotFoundRemoteException {
+    public <T extends BaseObject> T readByClass(String objId, String canonicalName) throws ObjectNotFoundRemoteException {
         try {
             MultivaluedMap formData = new MultivaluedMapImpl();
             formData.add("objId", objId.toString());

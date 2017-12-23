@@ -213,8 +213,8 @@ public class PerimetersManagerImpl implements PerimetersManager {
         List<Point> res = new ArrayList<>();
 
         if (perimeter instanceof PolygonPerimeter) {
-            List<UUID> uuidList = ((PolygonPerimeter) perimeter).getPoints();
-            for (UUID uuid : uuidList)
+            List<String> uuidList = ((PolygonPerimeter) perimeter).getPoints();
+            for (String uuid : uuidList)
                 try {
                     res.add((Point) objectCrudSvcRemote.readByClass(uuid, Point.class.getCanonicalName()));
                 }
@@ -225,7 +225,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
         }
 
         if (perimeter instanceof CirclePerimeter) {
-            UUID uuid = ((CirclePerimeter) perimeter).getCenter();
+            String uuid = ((CirclePerimeter) perimeter).getCenter();
             if (uuid != null) {
                 try {
                     res.add((Point) objectCrudSvcRemote.readByClass(uuid, Point.class.getCanonicalName()));

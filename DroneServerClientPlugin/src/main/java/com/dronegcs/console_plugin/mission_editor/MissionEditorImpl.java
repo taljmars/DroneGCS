@@ -291,8 +291,8 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public List<MissionItem> getMissionItems() {
         List<MissionItem> missionItemList = new ArrayList<>();
-        List<UUID> uuidList = mission.getMissionItemsUids();
-        uuidList.forEach((UUID uuid) -> {
+        List<String> uuidList = mission.getMissionItemsUids();
+        uuidList.forEach((String uuid) -> {
             try {
                 missionItemList.add((MissionItem) objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
             }

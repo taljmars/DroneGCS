@@ -161,8 +161,8 @@ public class MissionsManagerImpl implements MissionsManager {
 			leadMission = closableMissionEditor.getModifiedMission();
 
 		List<MissionItem> missionItemList = new ArrayList<>();
-		List<UUID> uuidList = leadMission.getMissionItemsUids();
-		for (UUID uuid : uuidList) {
+		List<String> uuidList = leadMission.getMissionItemsUids();
+		for (String uuid : uuidList) {
 			try {
 				missionItemList.add(objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
 			}

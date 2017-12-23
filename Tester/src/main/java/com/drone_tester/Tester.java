@@ -21,6 +21,7 @@ public class Tester implements ApplicationListener<TestEvent> {
     @Autowired Test_PolylinePerimeters      test_polylinePerimeters;
     @Autowired Test_CirclePerimeters        test_circlePerimeters;
     @Autowired Test_DummyObject             test_dummyObject;
+    @Autowired Test_MulitUsers_Simple       test_mulitUsers_simple;
 
     @Autowired Logger logger;
 
@@ -39,6 +40,7 @@ public class Tester implements ApplicationListener<TestEvent> {
         lst.add(test_missionObjectCreation);
         lst.add(test_discardPublish);
         lst.add(test_singleMissionSingleItem);
+//        lst.add(test_mulitUsers_simple);
 
         return lst;
     }
