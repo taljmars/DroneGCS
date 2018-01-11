@@ -46,6 +46,7 @@ public class RestClientHelper {
         UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
         if (s != null && !s.isEmpty() && objs != null)
             uriBuilder.queryParam(s, objs);
+        System.out.println("Address: " + uriBuilder.build());
         WebResource webResource = client.resource(uriBuilder.build());
         return webResource.type(MediaType.APPLICATION_JSON_TYPE);
     }

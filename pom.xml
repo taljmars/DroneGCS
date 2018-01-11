@@ -14,6 +14,7 @@
         <module>ConsolePlugin</module>
         <module>DroneServerClientPlugin</module>
         <module>Tester</module>
+        <module>NGXBridge</module>
     </modules>
 
     <parent>
