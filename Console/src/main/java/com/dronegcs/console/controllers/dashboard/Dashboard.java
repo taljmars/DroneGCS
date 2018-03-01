@@ -2,7 +2,7 @@ package com.dronegcs.console.controllers.dashboard;
 
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
-import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;

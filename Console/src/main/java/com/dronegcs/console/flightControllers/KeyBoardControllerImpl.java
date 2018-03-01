@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.flightControllers;
+package com.dronegcs.console.flightControllers;
 
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkRC;

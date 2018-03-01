@@ -26,12 +26,12 @@ public class LoggerDisplayerSvc {
 	
 	private static int called;
 	/**
-	 * Safety method that verify that the object is indeed a singletone
+	 * Safety method that verify that the object is indeed a singleton
 	 */
 	@PostConstruct
 	private void init() {
 		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+			throw new RuntimeException("Not a Singleton");
 	}
 
 	/**

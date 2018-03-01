@@ -46,7 +46,8 @@ public class RestClientHelper {
         UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
         if (s != null && !s.isEmpty() && objs != null)
             uriBuilder.queryParam(s, objs);
-        System.out.println("Address: " + uriBuilder.build());
+//        System.out.println("Address: " + uriBuilder.build());
+        LOGGER.debug("Address: " + uriBuilder.build());
         WebResource webResource = client.resource(uriBuilder.build());
         return webResource.type(MediaType.APPLICATION_JSON_TYPE);
     }
@@ -74,7 +75,7 @@ public class RestClientHelper {
         JSONObject jsonObject;
         try { jsonObject = new JSONObject(jsonString); }
         catch (JSONException e) {
-            System.out.println("Failed to parse JSON:\n" + jsonString);
+            LOGGER.error("Failed to parse JSON:\n" + jsonString);
             throw new IOException(e);
         }
         return getErrorAndMessageFromJson(jsonObject);

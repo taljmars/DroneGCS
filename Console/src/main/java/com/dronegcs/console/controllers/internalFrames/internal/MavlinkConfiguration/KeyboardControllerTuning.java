@@ -1,15 +1,11 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
-import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
+import com.dronegcs.console.flightControllers.KeyBoardController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.TouchEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

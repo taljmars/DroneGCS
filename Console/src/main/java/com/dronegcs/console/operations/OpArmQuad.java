@@ -1,6 +1,6 @@
-package com.dronegcs.console_plugin.operations;
+package com.dronegcs.console.operations;
 
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import javafx.application.Platform;
 import javax.annotation.PostConstruct;

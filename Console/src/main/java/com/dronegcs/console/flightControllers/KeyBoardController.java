@@ -1,9 +1,7 @@
-package com.dronegcs.console_plugin.flightControllers;
+package com.dronegcs.console.flightControllers;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface KeyBoardController extends EventHandler<KeyEvent> {
 

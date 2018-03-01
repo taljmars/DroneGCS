@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.flightControllers;
+package com.dronegcs.console.flightControllers;
 
 import com.generic_tools.environment.Environment;
 import com.generic_tools.logger.Logger;

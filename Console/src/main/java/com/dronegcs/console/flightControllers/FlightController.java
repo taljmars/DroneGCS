@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.flightControllers;
+package com.dronegcs.console.flightControllers;
 
 public enum FlightController {
 	UNKNOWN,

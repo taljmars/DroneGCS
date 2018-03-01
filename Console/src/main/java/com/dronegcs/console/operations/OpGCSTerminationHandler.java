@@ -1,6 +1,6 @@
-package com.dronegcs.console_plugin.operations;
+package com.dronegcs.console.operations;
 
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;

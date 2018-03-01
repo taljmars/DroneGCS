@@ -1,14 +1,12 @@
 package com.dronegcs.console.controllers;
 
-import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
+import com.dronegcs.console.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

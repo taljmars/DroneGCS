@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
         "com.generic_tools.logger",
         /*"com.dronegcs.console",*/
         "com.dronegcs.console_plugin",
-        "com.dronegcs.console.console_services"
+//        "com.dronegcs.console.console_services"
 })
 @Configurable
 public class TestSpringConfig {

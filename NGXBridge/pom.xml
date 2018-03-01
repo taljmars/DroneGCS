@@ -5,8 +5,10 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>RELEASE</version>
+        <!--<version>RELEASE</version>-->
+        <version>1.5.9.RELEASE</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>NGXBridge</artifactId>
@@ -15,22 +17,17 @@
         <slf4jVersion>1.7.25</slf4jVersion>
         <java.version>1.8</java.version>
         <build.output>CMpub</build.output>
-        <spring-ver>4.3.3.RELEASE</spring-ver>
+        <!--<spring-ver>4.3.3.RELEASE</spring-ver>-->
         <encoding>UTF-8</encoding>
     </properties>
 
     <dependencies>
 
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-web</artifactId>-->
-            <!--<version>${spring-ver}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-beans</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!--<version>RELEASE</version>-->
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -39,17 +36,74 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
+            <groupId>com.dronegcs</groupId>
+            <artifactId>ConsolePlugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <!--<version>RELEASE</version>-->
+            <groupId>com.dronegcs</groupId>
+            <artifactId>MavlinkProtocol</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Logger</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Validations</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>RXTXcomm</groupId>
+            <artifactId>RXTXcomm</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mapviewer</groupId>
+            <artifactId>GeoTools</artifactId>
+            <version>1.0</version>
         </dependency>
 
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>RXTXcomm</groupId>
+                <artifactId>RXTXcomm</artifactId>
+                <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/../ExtLib/RXTX/Linux32/RXTXcomm.jar</systemPath>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>taljmars-mvn-repo</id>
+            <name>taljmars-mvn-repo</name>
+            <url>https://raw.github.com/taljmars/mvn-repo/master/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

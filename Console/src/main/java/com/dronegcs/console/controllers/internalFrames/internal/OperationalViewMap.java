@@ -46,7 +46,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
+import com.dronegcs.console.flightControllers.KeyBoardController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import com.gui.core.mapTreeObjects.Layer;
@@ -57,7 +57,7 @@ import com.gui.core.mapViewerObjects.MapMarkerDot;
 import com.gui.core.mapViewerObjects.MapVectorImpl;
 import com.gui.is.interfaces.mapObjects.MapLine;
 import com.gui.is.interfaces.mapObjects.MapMarker;
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import javafx.event.EventHandler;

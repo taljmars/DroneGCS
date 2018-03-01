@@ -1,7 +1,6 @@
 package com.dronegcs.console.controllers;
 
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
-import javafx.beans.value.ObservableValue;
+import com.dronegcs.console.DialogManagerSvc;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;

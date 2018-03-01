@@ -2,7 +2,7 @@ package com.dronegcs.console.controllers;
 
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console_plugin.ConsolePluginConfig;
-import com.dronegcs.console_plugin.operations.OpGCSTerminationHandler;
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;

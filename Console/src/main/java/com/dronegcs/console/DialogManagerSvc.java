@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.services;
+package com.dronegcs.console;
 
 import javafx.util.Pair;
 

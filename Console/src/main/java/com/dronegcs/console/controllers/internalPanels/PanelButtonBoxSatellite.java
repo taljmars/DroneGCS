@@ -1,13 +1,13 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronegcs.console_plugin.operations.*;
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.operations.*;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
-import com.dronegcs.console_plugin.flightControllers.FlightController;
+import com.dronegcs.console.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;

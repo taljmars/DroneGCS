@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.flightControllers;
+package com.dronegcs.console.flightControllers;
 
 import org.slf4j.LoggerFactory;
 

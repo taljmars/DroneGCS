@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +35,16 @@ public class QuerySvcRemoteWrapper {
 
     public QueryResponseRemote query(QueryRequestRemote queryRequestRemote) {
         try {
-            //        return querySvcRemote.query(queryRequestRemote);
-//            System.out.println("TALMA running: " + queryRequestRemote.getQuery());
             WebResource.Builder builder = restClientHelper.getWebResource("queryForUser", "userName", ObjectCrudSvcRemoteWrapper.userNametest);
             ObjectMapper mapper = new ObjectMapper();
 
             LOGGER.debug("Request to be send: {} " + mapper.writeValueAsString(queryRequestRemote));
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(queryRequestRemote));
             return resolveResponse(response);
+        }
+        catch (ConnectException e) {
+            LOGGER.error("Connection to server failed", e);
+            throw new RuntimeException(e); //TODO: handle connection issue nicely
         }
         catch (IOException | ClassNotFoundException e) {
             LOGGER.error("Failed to read object", e);

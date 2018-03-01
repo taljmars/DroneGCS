@@ -1,4 +1,4 @@
-package com.dronegcs.console_plugin.operations;
+package com.dronegcs.console.operations;
 
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import javax.annotation.PostConstruct;

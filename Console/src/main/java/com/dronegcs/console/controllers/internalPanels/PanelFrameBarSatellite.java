@@ -1,6 +1,5 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.db.persistence.wsSoap.SessionsSvcRemote;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
@@ -16,7 +15,7 @@ import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;

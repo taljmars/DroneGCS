@@ -1,6 +1,6 @@
-package com.dronegcs.console_plugin.operations;
+package com.dronegcs.console.operations;
 
-import com.dronegcs.console_plugin.services.DialogManagerSvc;
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.generic_tools.logger.Logger;
 
@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.console_plugin.flightControllers.KeyBoardController;
-import com.dronegcs.console_plugin.flightControllers.FlightController;
+import com.dronegcs.console.flightControllers.KeyBoardController;
+import com.dronegcs.console.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkRC;
 import com.generic_tools.validations.RuntimeValidator;
