@@ -15,6 +15,7 @@ import java.util.List;
 @Component
 public class Tester implements ApplicationListener<TestEvent> {
 
+    @Autowired Test_Login                   test_login;
     @Autowired Test_SingleMissionSingleItem test_singleMissionSingleItem;
     @Autowired Test_DiscardPublish          test_discardPublish;
     @Autowired Test_MissionObjectCreation   test_missionObjectCreation;
@@ -34,12 +35,13 @@ public class Tester implements ApplicationListener<TestEvent> {
     public List<Test> getTestList() {
         List<Test> lst = new ArrayList<>();
 
+//        lst.add(test_login);
         lst.add(test_dummyObject);
-        lst.add(test_circlePerimeters);
-        lst.add(test_polylinePerimeters);
-        lst.add(test_missionObjectCreation);
-        lst.add(test_discardPublish);
-        lst.add(test_singleMissionSingleItem);
+//        lst.add(test_circlePerimeters);
+//        lst.add(test_polylinePerimeters);
+//        lst.add(test_missionObjectCreation);
+//        lst.add(test_discardPublish);
+//        lst.add(test_singleMissionSingleItem);
 //        lst.add(test_mulitUsers_simple);
 
         return lst;

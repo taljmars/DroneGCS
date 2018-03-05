@@ -49,16 +49,17 @@ public class MissionsManagerImpl implements MissionsManager {
 	@PostConstruct
 	@Profile(value = "!test")
 	public void init() {
-		List<BaseObject> missionList = getAllModifiedMissions();
-		for (BaseObject item : missionList) {
-			Mission mission = (Mission) item;
-			try {
-				LOGGER.debug("Mission '" + mission.getName() + "' is in edit mode");
-				openMissionEditor(mission);
-			} catch (MissionUpdateException e) {
-				LOGGER.error("Failed to initialize mission manager", e);
-			}
-		}
+		return; // TODO: temporary
+//		List<BaseObject> missionList = getAllModifiedMissions();
+//		for (BaseObject item : missionList) {
+//			Mission mission = (Mission) item;
+//			try {
+//				LOGGER.debug("Mission '" + mission.getName() + "' is in edit mode");
+//				openMissionEditor(mission);
+//			} catch (MissionUpdateException e) {
+//				LOGGER.error("Failed to initialize mission manager", e);
+//			}
+//		}
 	}
 
 	@Override

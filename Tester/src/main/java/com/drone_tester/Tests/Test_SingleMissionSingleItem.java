@@ -20,6 +20,9 @@ public class Test_SingleMissionSingleItem extends Test {
 
     @Override
     public Test.Status preTestCheck() {
+        restClientHelper.setToken(login("tester1", "tester1"));
+        System.out.println(restClientHelper.getToken());
+
         Assert.isTrue(missionsManager.getAllMissions().isEmpty());
         publish(new TestEvent(this, Status.IN_PROGRESS, "No mission", ++idx, total));
 
@@ -96,6 +99,8 @@ public class Test_SingleMissionSingleItem extends Test {
 
         Assert.isTrue(missionsManager.getAllMissions().isEmpty());
         publish(new TestEvent(this, Status.IN_PROGRESS, "verify not modified mission exist", ++idx, total));
+
+        logout();
 
         publish(new TestEvent(this, Status.SUCCESS, "test completed", ++idx, total));
         return Status.SUCCESS;

@@ -5,7 +5,7 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.wsSoap.ObjectCrudSvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
+import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
-import java.util.UUID;
 
 @Component
 public class ObjectCrudSvcRemoteWrapper {
@@ -32,34 +31,37 @@ public class ObjectCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectCrudSvcRemoteWrapper.class);
 
-    public static String userNametest = "talma1";
-
     public <T extends BaseObject> T create(String clz) throws ObjectInstanceRemoteException {
         try {
-            MultivaluedMap formData = new MultivaluedMapImpl();
-            formData.add("clz", clz);
-            formData.add("userName", userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("createForUser", formData);
+//            MultivaluedMap formData = new MultivaluedMapImpl();
+//            formData.add("clz", clz);
+//            formData.add("token", restClientHelper.getToken());
+            WebResource.Builder builder = restClientHelper.getWebResource("create", "clz", clz);
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
             if (!response.hasEntity())
                 throw new ObjectInstanceRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
-            if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
-                Class cls = pair.getFirst();
+            switch (status) {
+                case OK:
+                    break;
+                case UNAUTHORIZED:
+                    throw new RuntimeException("Unauthorized access, " + status.getReasonPhrase());
+                default:
+                    Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                    Class cls = pair.getFirst();
 
-                if (cls.equals(ObjectInstanceRemoteException.class))
-                    throw new ObjectInstanceRemoteException(pair.getSecond().getMessage());
+                    if (cls.equals(ObjectInstanceRemoteException.class))
+                        throw new ObjectInstanceRemoteException(pair.getSecond().getMessage());
 
-                throw new RuntimeException("Unexpected exception, code: " + status.getStatusCode() + ", reason: " + status.getReasonPhrase());
+                    throw new RuntimeException("Unexpected exception, code: " + status.getStatusCode() + ", reason: " + status.getReasonPhrase());
             }
 
             T baseObject = response.getEntity((Class<T>) Class.forName(clz));
 //            T baseObject = objectCrudSvcRemote.create(clz);
             return baseObject;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }
@@ -68,7 +70,8 @@ public class ObjectCrudSvcRemoteWrapper {
     public <T extends BaseObject> T update(T obj) throws DatabaseValidationRemoteException, ObjectInstanceRemoteException {
         T baseObject = null;
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("updateForUser", "userName", userNametest);
+//            WebResource.Builder builder = restClientHelper.getWebResource("update", "token", restClientHelper.getToken());
+            WebResource.Builder builder = restClientHelper.getWebResource("update");
             ObjectMapper mapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(obj));
@@ -92,7 +95,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            baseObject = objectCrudSvcRemote.update(obj);
             return baseObject;
         }
-        catch (IOException | ClassNotFoundException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }
@@ -100,10 +103,11 @@ public class ObjectCrudSvcRemoteWrapper {
 
     public <T extends BaseObject> T read(String objId) throws ObjectNotFoundRemoteException {
         try {
-            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
-            multivaluedMap.add("objId", objId.toString());
-            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("readForUser",multivaluedMap);
+//            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
+//            multivaluedMap.add("objId", objId.toString());
+//            multivaluedMap.add("token", restClientHelper.getToken());
+//            WebResource.Builder builder = restClientHelper.getWebResource("read",multivaluedMap);
+            WebResource.Builder builder = restClientHelper.getWebResource("read","objId", objId.toString());
 
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
@@ -112,6 +116,8 @@ public class ObjectCrudSvcRemoteWrapper {
 
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonString = response.getEntity(String.class);
+            LOGGER.debug("Response: {}", jsonString);
+//            System.out.println("Response: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
             LOGGER.debug("Response: {}", jsonObject);
 
@@ -132,7 +138,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            T baseObject = objectCrudSvcRemote.read(objId);
             return baseObject;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectNotFoundRemoteException(e.getMessage());
         }
@@ -140,11 +146,15 @@ public class ObjectCrudSvcRemoteWrapper {
 
     public <T extends BaseObject> T readByClass(String objId, String canonicalName) throws ObjectNotFoundRemoteException {
         try {
-            MultivaluedMap formData = new MultivaluedMapImpl();
-            formData.add("objId", objId.toString());
-            formData.add("clz", canonicalName);
-            formData.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("readByClassForUser",formData);
+//            MultivaluedMap formData = new MultivaluedMapImpl();
+//            formData.add("objId", objId.toString());
+//            formData.add("clz", canonicalName);
+//            formData.add("token", restClientHelper.getToken());
+//            WebResource.Builder builder = restClientHelper.getWebResource("readByClass",formData);
+            WebResource.Builder builder = restClientHelper.getWebResource(
+                    "readByClass",
+                    "objId", objId.toString(),
+                    "clz", canonicalName);
 //            System.err.println("readByClass string: " + builder.toString() + ", objId.toString():" + objId.toString());
 
             ClientResponse response = builder.get(ClientResponse.class);
@@ -174,7 +184,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            T baseObject = objectCrudSvcRemote.readByClass(objId, (Class<T>) Class.forName(canonicalName));
             return baseObject;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectNotFoundRemoteException(e.getMessage());
         }
@@ -182,7 +192,8 @@ public class ObjectCrudSvcRemoteWrapper {
 
     public <T extends BaseObject> T delete(T obj) throws ObjectInstanceRemoteException, DatabaseValidationRemoteException, ObjectNotFoundRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("deleteForUser", "userName", ObjectCrudSvcRemoteWrapper.userNametest);
+//            WebResource.Builder builder = restClientHelper.getWebResource("delete", "token", restClientHelper.getToken());
+            WebResource.Builder builder = restClientHelper.getWebResource("delete");
             ObjectMapper objectMapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, objectMapper.writeValueAsString(obj));
@@ -220,7 +231,7 @@ public class ObjectCrudSvcRemoteWrapper {
             LOGGER.error("Failed to read object", e);
             throw new ObjectNotFoundRemoteException(e.getMessage());
         }
-        catch (IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }

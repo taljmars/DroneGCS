@@ -1,12 +1,10 @@
 package com.drone_tester.Tests;
 
-import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.DummyBaseObject;
 import com.db.persistence.wsSoap.QueryResponseRemote;
 import com.drone_tester.Test;
 import com.drone_tester.TestEvent;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -29,14 +27,15 @@ public class Test_MulitUsers_Simple extends Test {
     @Override
     public Status test() {
         try {
-            ObjectCrudSvcRemoteWrapper.userNametest = "user1";
+            restClientHelper.setToken(login("tester1", "tester1"));
             baseObjectUser1 = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
             baseObjectUser1.setName("user1_bObj");
             baseObjectUser1 = objectCrudSvcRemoteWrapper.update(baseObjectUser1);
             Assert.isTrue(baseObjectUser1.getName().equals("user1_bObj"));
             publish(new TestEvent(this, Status.IN_PROGRESS, "update for the first time in private", ++idx, total));
+            logout();
 
-            ObjectCrudSvcRemoteWrapper.userNametest = "user2";
+            restClientHelper.setToken(login("tester2", "tester2"));
             baseObjectUser2 = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
             baseObjectUser2.setName("user2_bObj");
             baseObjectUser2 = objectCrudSvcRemoteWrapper.update(baseObjectUser2);
@@ -50,6 +49,8 @@ public class Test_MulitUsers_Simple extends Test {
 
 //            sessionsSvcRemoteWrapper.publish();
 //            publish(new TestEvent(this, Status.IN_PROGRESS, "publishing", ++idx, total));
+
+            logout();
 
             return Status.SUCCESS;
         }

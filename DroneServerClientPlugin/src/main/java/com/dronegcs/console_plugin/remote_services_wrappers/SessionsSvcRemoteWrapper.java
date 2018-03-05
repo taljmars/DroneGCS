@@ -1,7 +1,7 @@
 package com.dronegcs.console_plugin.remote_services_wrappers;
 
 import com.db.persistence.wsSoap.SessionsSvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
+import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -20,9 +20,10 @@ public class SessionsSvcRemoteWrapper {
     private RestClientHelper restClientHelper;
 
     public void publish() {
-        MultivaluedMap formData = new MultivaluedMapImpl();
-        formData.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-        WebResource.Builder builder = restClientHelper.getWebResource("publishForUser", formData);
+//        MultivaluedMap formData = new MultivaluedMapImpl();
+//        formData.add("token", restClientHelper.getToken());
+//        WebResource.Builder builder = restClientHelper.getWebResource("publish", formData);
+        WebResource.Builder builder = restClientHelper.getWebResource("publish");
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 
@@ -31,9 +32,10 @@ public class SessionsSvcRemoteWrapper {
     }
 
     public void discard() {
-        MultivaluedMap formData = new MultivaluedMapImpl();
-        formData.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-        WebResource.Builder builder = restClientHelper.getWebResource("discardForUser", formData);
+//        MultivaluedMap formData = new MultivaluedMapImpl();
+//        formData.add("token", restClientHelper.getToken());
+//        WebResource.Builder builder = restClientHelper.getWebResource("discard", formData);
+        WebResource.Builder builder = restClientHelper.getWebResource("discard");
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 

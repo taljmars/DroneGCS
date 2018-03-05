@@ -23,6 +23,9 @@ public class Test_MissionObjectCreation extends Test {
 
     @Override
     public Status preTestCheck() {
+        restClientHelper.setToken(login("tester1", "tester1"));
+        System.out.println(restClientHelper.getToken());
+
         Assert.isTrue(missionsManager.getAllMissions().isEmpty());
         publish(new TestEvent(this, Status.IN_PROGRESS, "No mission", ++idx, total));
 
@@ -118,6 +121,8 @@ public class Test_MissionObjectCreation extends Test {
 
             sessionsSvcRemoteWrapper.publish();
             publish(new TestEvent(this, Status.IN_PROGRESS, "publish deletion", ++idx, total));
+
+            logout();
 
             publish(new TestEvent(this, Status.IN_PROGRESS, "test core finished", ++idx, total));
             return Status.SUCCESS;

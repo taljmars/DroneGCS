@@ -5,12 +5,11 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.Point;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
+import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class PerimeterCrudSvcRemoteWrapper {
 //          P perimeterResponse = perimeterCrudSvcRemote.clonePerimeter(perimeter);
             return perimeterResponse;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }
@@ -90,7 +89,7 @@ public class PerimeterCrudSvcRemoteWrapper {
     //            Point point = perimeterCrudSvcRemote.createPoint();
             return point;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }

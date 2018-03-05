@@ -4,7 +4,7 @@ import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.wsSoap.QueryRequestRemote;
 import com.db.persistence.wsSoap.QueryResponseRemote;
 import com.db.persistence.wsSoap.QuerySvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
+import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -35,7 +35,8 @@ public class QuerySvcRemoteWrapper {
 
     public QueryResponseRemote query(QueryRequestRemote queryRequestRemote) {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("queryForUser", "userName", ObjectCrudSvcRemoteWrapper.userNametest);
+//            WebResource.Builder builder = restClientHelper.getWebResource("query", "token", restClientHelper.getToken());
+            WebResource.Builder builder = restClientHelper.getWebResource("query");
             ObjectMapper mapper = new ObjectMapper();
 
             LOGGER.debug("Request to be send: {} " + mapper.writeValueAsString(queryRequestRemote));
@@ -46,7 +47,7 @@ public class QuerySvcRemoteWrapper {
             LOGGER.error("Connection to server failed", e);
             throw new RuntimeException(e); //TODO: handle connection issue nicely
         }
-        catch (IOException | ClassNotFoundException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new RuntimeException(e);
         }
@@ -55,15 +56,19 @@ public class QuerySvcRemoteWrapper {
     public <T extends BaseObject> QueryResponseRemote runNativeQueryWithClass(String queryString, String clz) {
         try {
             //        return querySvcRemote.runNativeQuery(queryString, clz);
-            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
-            multivaluedMap.add("queryString", queryString);
-            multivaluedMap.add("clz", clz);
-            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryWithClassForUser", multivaluedMap);
+//            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
+//            multivaluedMap.add("queryString", queryString);
+//            multivaluedMap.add("clz", clz);
+//            multivaluedMap.add("token", restClientHelper.getToken());
+//            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryWithClass", multivaluedMap);
+            WebResource.Builder builder = restClientHelper.getWebResource(
+                    "runNativeQueryWithClass",
+                    "queryString", queryString,
+                    "clz", clz);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
-        catch (IOException | ClassNotFoundException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new RuntimeException(e);
         }
@@ -72,14 +77,15 @@ public class QuerySvcRemoteWrapper {
     public <T extends BaseObject> QueryResponseRemote runNativeQuery(String queryString) {
         try {
             //        return querySvcRemote.runNativeQuery(queryString, clz);
-            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
-            multivaluedMap.add("queryString", queryString);
-            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryForUser", multivaluedMap);
+//            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
+//            multivaluedMap.add("queryString", queryString);
+//            multivaluedMap.add("token", restClientHelper.getToken());
+//            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQuery", multivaluedMap);
+            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQuery", "queryString", queryString);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
-        catch (IOException | ClassNotFoundException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new RuntimeException(e);
         }
@@ -88,21 +94,26 @@ public class QuerySvcRemoteWrapper {
     public <T extends BaseObject> QueryResponseRemote runNamedQuery(String queryString, String clz) {
         try {
         //        return querySvcRemote.runNativeQuery(queryString, clz);
-            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
-            multivaluedMap.add("queryString", queryString);
-            multivaluedMap.add("clz", clz);
-            multivaluedMap.add("userName", ObjectCrudSvcRemoteWrapper.userNametest);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNamedQueryForUser", multivaluedMap);
+//            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
+//            multivaluedMap.add("queryString", queryString);
+//            multivaluedMap.add("clz", clz);
+//            multivaluedMap.add("token", restClientHelper.getToken());
+            //WebResource.Builder builder = restClientHelper.getWebResource("runNamedQuery", multivaluedMap);
+            WebResource.Builder builder = restClientHelper.getWebResource(
+                    "runNamedQuery",
+                    "queryString", queryString,
+                    "clz", clz);
+
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
-        catch (IOException | ClassNotFoundException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new RuntimeException(e);
         }
     }
 
-    private QueryResponseRemote resolveResponse(ClientResponse response) throws IOException, ClassNotFoundException {
+    private QueryResponseRemote resolveResponse(ClientResponse response) throws Exception {
         ClientResponse.Status status = response.getClientResponseStatus();
 
         if (status != ClientResponse.Status.OK)

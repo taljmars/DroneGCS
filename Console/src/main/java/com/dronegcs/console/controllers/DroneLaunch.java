@@ -1,6 +1,11 @@
 package com.dronegcs.console.controllers;
 
+import com.db.persistence.scheme.LoginLogoutStatus;
+import com.db.persistence.scheme.LoginRequest;
+import com.db.persistence.scheme.LoginResponse;
 import com.dronegcs.console.flightControllers.KeyBoardController;
+import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
@@ -16,7 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.nio.file.Paths;
 
 @SpringBootApplication
-public class DroneLaunch extends AbstractJavaFxApplicationSupport {
+public class DroneLaunch extends AbstractJavaFxApplicationSupport implements DroneLaunchPreloader.LoginLoader {
 
     private final Logger LOGGER = LoggerFactory.getLogger(DroneLaunch.class);
 
@@ -39,7 +44,13 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 	@Autowired
 	private SerialConnection serialConnection;
 
-	private Stage stage;
+	@Autowired
+	private LoginSvcRemoteWrapper loginSvcRemoteWrapper;
+
+	@Autowired
+	private RestClientHelper restClientHelper;
+
+	private Stage mainStage;
 
     @Override
     public void start(Stage primaryStage) {
@@ -68,16 +79,32 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 			a.start();
 
 //			guiAppConfig.setPrimaryStage(primaryStage);
-			stage = primaryStage;
-			guiAppConfig.setPrimaryStage(stage);
+			mainStage = primaryStage;
+			guiAppConfig.setPrimaryStage(mainStage);
 //			guiAppConfig.showMainScreen();
-			showMainScreen();
+//			showMainScreen();
 		}
 		catch (Throwable e) {
 			LOGGER.error("Terminating launch", e);
 			System.exit(-1);
 		}
     }
+
+    @Override
+    public LoginResponse handleLogin(String userName, String password) {
+		LoginRequest loginRestRequest = new LoginRequest();
+		loginRestRequest.setUserName(userName);
+		loginRestRequest.setApplicationName("DroneGCS GUI");
+		loginRestRequest.setTimeout(100);
+		LoginResponse loginRestResponse = loginSvcRemoteWrapper.login(loginRestRequest, password);
+        if (loginRestResponse.getReturnCode().equals(LoginLogoutStatus.OK)){
+			restClientHelper.setToken(loginRestResponse.getToken());
+            showMainScreen();
+            return loginRestResponse;
+        }
+
+        return loginRestResponse;
+	}
 
 	private void showMainScreen() {
 		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView.fxml");
@@ -86,17 +113,17 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport {
 		Scene scene = new Scene(root, WIDTH, HEIGHT);
 		//scene.getStylesheets().add("talma.css");
 		scene.setOnKeyPressed(keyBoardController);
-		stage.setResizable(false);
-		stage.setScene(scene);
-		stage.setMaximized(true);
-		stage.show();
-//		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		mainStage.setResizable(false);
+		mainStage.setScene(scene);
+		mainStage.setMaximized(true);
+		mainStage.show();
+//		mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 //			@Override
 //			public void handle(WindowEvent event) {
 //				applicationContext.close();
 //			}
 //		});
-		stage.setOnCloseRequest(guiAppConfig);
+		mainStage.setOnCloseRequest(guiAppConfig);
 	}
 
     public static void main(String[] args) {

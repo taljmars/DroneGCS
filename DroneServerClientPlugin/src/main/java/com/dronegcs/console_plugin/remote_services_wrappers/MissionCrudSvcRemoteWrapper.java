@@ -5,7 +5,7 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.MissionItem;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelper;
+import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -52,7 +52,7 @@ public class MissionCrudSvcRemoteWrapper {
             T baseObject = response.getEntity((Class<T>) Class.forName(clz));
             return baseObject;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }
@@ -86,7 +86,7 @@ public class MissionCrudSvcRemoteWrapper {
             Mission missionResponse = response.getEntity(Mission.class);
             return missionResponse;
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }
@@ -115,7 +115,7 @@ public class MissionCrudSvcRemoteWrapper {
             return mission;
 //        return missionCrudSvcRemote.createMission();
         }
-        catch (ClassNotFoundException | IOException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to read object", e);
             throw new ObjectInstanceRemoteException(e.getMessage());
         }

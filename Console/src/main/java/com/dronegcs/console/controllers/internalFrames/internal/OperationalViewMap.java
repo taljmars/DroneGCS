@@ -377,6 +377,7 @@ OnDroneListener, EventHandler<ActionEvent> {
                     getOperationalViewTree().removeLayer(modifyiedLayerMissionOriginal);
                     modifyiedLayerMissionOriginal = null;
                 }
+                dialogManagerSvc.showErrorMessageDialog("Failed to update modify mission.\n" + t.getMessage(), t);
             }
         });
 

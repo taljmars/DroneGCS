@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers;
 
+import com.db.persistence.scheme.LoginResponse;
 import com.sun.javafx.application.LauncherImpl;
 import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
@@ -26,4 +27,6 @@ public abstract class AbstractJavaFxApplicationSupport extends Application {
         AbstractJavaFxApplicationSupport.savedArgs = args;
         LauncherImpl.launchApplication(appClass, DroneLaunchPreloader.class, args);
     }
+
+    public abstract LoginResponse handleLogin(String userName, String password);
 }

@@ -23,6 +23,9 @@ public class Test_CirclePerimeters extends Test {
 
     @Override
     public Status preTestCheck() {
+        restClientHelper.setToken(login("tester1", "tester1"));
+        System.out.println(restClientHelper.getToken());
+
         Assert.isTrue(perimetersManager.getAllPerimeters().isEmpty());
         publish(new TestEvent(this, Status.IN_PROGRESS, "No perimeters", ++idx, total));
 
@@ -137,6 +140,8 @@ public class Test_CirclePerimeters extends Test {
 
             Assert.isTrue(perimetersManager.getAllPerimeters().isEmpty());
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify not modified perimeters exist", ++idx, total));
+
+            logout();
 
             publish(new TestEvent(this, Status.SUCCESS, "test completed", ++idx, total));
             return Status.SUCCESS;

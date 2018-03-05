@@ -4,6 +4,7 @@ import com.dronegcs.console_plugin.exceptions.ClientPluginException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditorFactoryImpl;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -13,6 +14,7 @@ import java.net.URL;
 /**
  * Created by talma on 5/25/17.
  */
+@EnableScheduling
 @Configuration
 public class DroneServerClientPluginConfig {
 

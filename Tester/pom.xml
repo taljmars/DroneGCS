@@ -54,6 +54,17 @@
             <version>1.0</version>
         </dependency>
 
+        <!--talma test-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.4</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>

@@ -57,16 +57,17 @@ public class PerimetersManagerImpl implements PerimetersManager {
     @PostConstruct
     @Profile(value = "!test")
     public void init() {
-        List<BaseObject> perimetersList = getAllModifiedPerimeters();
-        for (BaseObject item : perimetersList) {
-            Perimeter perimeter = (Perimeter) item;
-            try {
-                LOGGER.debug("perimeter '" + perimeter.getName() + "' is in edit mode");
-                openPerimeterEditor(perimeter);
-            } catch (PerimeterUpdateException e) {
-                LOGGER.error("Failed to initialize perimeter manager", e);
-            }
-        }
+        return; // TODO: temporary
+//        List<BaseObject> perimetersList = getAllModifiedPerimeters();
+//        for (BaseObject item : perimetersList) {
+//            Perimeter perimeter = (Perimeter) item;
+//            try {
+//                LOGGER.debug("perimeter '" + perimeter.getName() + "' is in edit mode");
+//                openPerimeterEditor(perimeter);
+//            } catch (PerimeterUpdateException e) {
+//                LOGGER.error("Failed to initialize perimeter manager", e);
+//            }
+//        }
     }
 
     @Override
