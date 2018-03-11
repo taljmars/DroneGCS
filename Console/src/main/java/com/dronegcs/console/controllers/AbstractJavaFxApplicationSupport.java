@@ -5,7 +5,9 @@ import com.sun.javafx.application.LauncherImpl;
 import javafx.application.Application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 public abstract class AbstractJavaFxApplicationSupport extends Application {
     private static String[] savedArgs;
 

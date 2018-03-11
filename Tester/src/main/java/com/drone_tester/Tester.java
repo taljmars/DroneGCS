@@ -35,13 +35,13 @@ public class Tester implements ApplicationListener<TestEvent> {
     public List<Test> getTestList() {
         List<Test> lst = new ArrayList<>();
 
-//        lst.add(test_login);
+        lst.add(test_login);
         lst.add(test_dummyObject);
-//        lst.add(test_circlePerimeters);
-//        lst.add(test_polylinePerimeters);
-//        lst.add(test_missionObjectCreation);
-//        lst.add(test_discardPublish);
-//        lst.add(test_singleMissionSingleItem);
+        lst.add(test_circlePerimeters);
+        lst.add(test_polylinePerimeters);
+        lst.add(test_missionObjectCreation);
+        lst.add(test_discardPublish);
+        lst.add(test_singleMissionSingleItem);
 //        lst.add(test_mulitUsers_simple);
 
         return lst;

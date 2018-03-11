@@ -89,6 +89,11 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     @NotNull
     @FXML
+    private Button btnEventLog;
+    private static String EVENTLOG_VIEW = "InternalFrameEventLogView.fxml";
+
+    @NotNull
+    @FXML
     private Button btnPublish;
     @NotNull
     @FXML
@@ -167,6 +172,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         btnCamera.setUserData(INTERNAL_FRAME_PATH + CAMERA_VIEW);
         btnMavlinkParams.setUserData(INTERNAL_FRAME_PATH + MAVLINKPARAM_VIEW);
         btnMavlinkConfiguration.setUserData(INTERNAL_FRAME_PATH + MAVLINKCONFIGURATION_VIEW);
+        btnEventLog.setUserData(INTERNAL_FRAME_PATH + EVENTLOG_VIEW);
     }
 
     @FXML

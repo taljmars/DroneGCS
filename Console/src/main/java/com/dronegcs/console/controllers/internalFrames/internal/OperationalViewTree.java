@@ -22,6 +22,8 @@ public interface OperationalViewTree {
 
     Layer getLayerByName(String name);
 
+    void reloadData();
+
     void addLayer(Layer layer);
 
     void removeLayer(Layer layer);

@@ -29,14 +29,14 @@ public class Test_DummyObject extends Test {
     @Override
     public Status preTestCheck() {
         restClientHelper.setToken(login("tester1", "tester1"));
-        System.out.println(restClientHelper.getToken());
+//        System.out.println(restClientHelper.getToken());
         return Status.SUCCESS;
     }
 
     @Override
     public Status test() {
         try {
-            System.out.println(restClientHelper.getToken());
+//            System.out.println(restClientHelper.getToken());
             baseObject = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
             baseObject.setName("tal1");
             baseObject = objectCrudSvcRemoteWrapper.update(baseObject);
@@ -51,7 +51,7 @@ public class Test_DummyObject extends Test {
             sessionsSvcRemoteWrapper.publish();
             publish(new TestEvent(this, Status.IN_PROGRESS, "publishing", ++idx, total));
 
-            System.out.println(baseObject.getKeyId().getObjId());
+//            System.out.println(baseObject.getKeyId().getObjId());
             baseObject = objectCrudSvcRemoteWrapper.read(baseObject.getKeyId().getObjId());
             int fromRevision = baseObject.getFromRevision();
             int toRevision = baseObject.getKeyId().getToRevision();

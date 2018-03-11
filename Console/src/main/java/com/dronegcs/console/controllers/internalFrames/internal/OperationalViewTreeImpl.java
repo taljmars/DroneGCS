@@ -117,6 +117,16 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         if (called++ > 1)
             throw new RuntimeException("Not a Singleton");
 
+        drone.getWaypointManager().addWaypointManagerListener(this);
+
+        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+        if (validatorResponse.isFailed())
+            throw new RuntimeException(validatorResponse.toString());
+    }
+
+    @Override
+    public void reloadData() {
+        LOGGER.info("Load skeleton");
         LayerGroup rootLayer = new LayerGroup("Layers");
         getLayeredViewMap().setRootLayer(rootLayer);
         CheckBoxTreeItem<Layer> rootItem = new CheckBoxTreeItem<Layer>(rootLayer);
@@ -134,14 +144,6 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
         rootItem.getChildren().addAll(itemGeneral, itemMissions, itemPerimeters);
         setRoot(rootItem);
-
-        drone.getWaypointManager().addWaypointManagerListener(this);
-
-        addSelectionHandler(getRoot());
-
-        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
-        if (validatorResponse.isFailed())
-            throw new RuntimeException(validatorResponse.toString());
 
         LOGGER.info("Load Database data");
         try {
@@ -196,6 +198,9 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
         } catch (Exception e) {
             LOGGER.error("Unexpected error occur when loading DB", e);
         }
+
+        LOGGER.info("Sign selection handler for tree");
+        addSelectionHandler(getRoot());
     }
 
     private void addSelectionHandler(TreeItem<Layer> cbox) {

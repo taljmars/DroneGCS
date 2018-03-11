@@ -67,8 +67,6 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
-
-		reloadMissionDatabase();
 	}
 
 	@Override
@@ -77,6 +75,7 @@ public class InternalFrameMap extends Pane implements ChangeListener<Number>, In
 		operationalViewTree.getTree().setTreeBound(0, 0, (int) (splitPane.getPrefWidth() * toPrecentage.doubleValue()), (int) splitPane.getPrefHeight());
 	}
 
-	private void reloadMissionDatabase() {
+	public void reloadData() {
+		operationalViewTree.reloadData();
 	}
 }

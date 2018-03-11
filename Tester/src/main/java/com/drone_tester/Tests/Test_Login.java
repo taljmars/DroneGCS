@@ -11,13 +11,19 @@ public class Test_Login extends Test {
 
     @Override
     public Status preTestCheck() {
-        restClientHelper.setToken(login("talma5","tester1"));
-        System.out.println(restClientHelper.getToken());
+        restClientHelper.setToken(login("tester1","tester1"));
+//        System.out.println(restClientHelper.getToken());
         return Status.SUCCESS;
     }
 
     @Override
     public Status test() {
+        try {
+            loginSvcRemoteWrapper.loginKeepAlive();
+        }
+        catch (Exception e) {
+            return Status.FAIL;
+        }
         return Status.SUCCESS;
     }
 

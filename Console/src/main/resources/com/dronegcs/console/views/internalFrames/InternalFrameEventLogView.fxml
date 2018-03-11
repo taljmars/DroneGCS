@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameEventLogger" >
+	<children>
+		<TableView fx:id="table" prefHeight="175.0" prefWidth="1260.0">
+			<columns>
+				<TableColumn fx:id="id" prefWidth="25.0" text="#" />
+				<TableColumn fx:id="icon" prefWidth="25.0" text="" />
+				<TableColumn fx:id="date" prefWidth="170.0" text="Date" />
+				<TableColumn fx:id="userName" prefWidth="120.0" text="User Name" />
+				<TableColumn fx:id="code" prefWidth="100.0" text="Code" />
+				<TableColumn fx:id="topic" prefWidth="100.0" text="Topic" />
+				<TableColumn fx:id="summary" prefWidth="1040.0" text="Summary" />
+			</columns>
+		</TableView>
+	</children>
+</AnchorPane>

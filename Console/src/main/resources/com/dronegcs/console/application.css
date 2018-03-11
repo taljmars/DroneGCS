@@ -22,6 +22,9 @@
 #btnMavlinkConfigurationImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/MavlinkConfiguration.png");
 }
+#btnEventLogImage {
+	-fx-image: url("/com/dronegcs/console/guiImages/Logs.png");
+}
 #btnSetModeImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/UpdateQuad.png");
 }

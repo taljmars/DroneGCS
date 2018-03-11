@@ -163,6 +163,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             event.consume();
         });
         frameContainer.setOnDragEntered((event) -> event.consume());
+
+        internalFrameMap.reloadData();
     }
 
     private int GetFrameIndexInsideContainer(double intersectedPoint) {

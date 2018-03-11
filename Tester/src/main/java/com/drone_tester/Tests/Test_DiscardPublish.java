@@ -21,7 +21,7 @@ public class Test_DiscardPublish extends Test {
     @Override
     public Status preTestCheck() {
         restClientHelper.setToken(login("tester1", "tester1"));
-        System.out.println(restClientHelper.getToken());
+//        System.out.println(restClientHelper.getToken());
 
         Assert.isTrue(missionsManager.getAllMissions().isEmpty());
         publish(new TestEvent(this, Status.IN_PROGRESS, "No mission", ++idx, total));
