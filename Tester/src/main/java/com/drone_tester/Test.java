@@ -19,9 +19,10 @@ public abstract class Test implements ApplicationEventPublisherAware {
     @Autowired protected SessionsSvcRemoteWrapper sessionsSvcRemoteWrapper;
     @Autowired protected QuerySvcRemoteWrapper querySvcRemoteWrapper;
     @Autowired protected PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemoteWrapper;
+    @Autowired protected RegistrationSvcRemoteWrapper registrationSvcRemoteWrapper;
+    @Autowired protected LoginSvcRemoteWrapper loginSvcRemoteWrapper;
     @Autowired protected MissionsManager missionsManager;
     @Autowired protected PerimetersManager perimetersManager;
-    @Autowired protected LoginSvcRemoteWrapper loginSvcRemoteWrapper;
 
     @Autowired protected RestClientHelper restClientHelper;
 

@@ -33,7 +33,7 @@ public class PerimeterCrudSvcRemoteWrapper {
 
     public <P extends Perimeter> P clonePerimeter(P perimeter) throws ObjectNotFoundRemoteException, ObjectInstanceRemoteException, DatabaseValidationRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("clonePerimeter");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("clonePerimeter");
 
             ObjectMapper mapper = new ObjectMapper();
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(perimeter));
@@ -67,7 +67,7 @@ public class PerimeterCrudSvcRemoteWrapper {
 
     public Point createPoint() throws ObjectInstanceRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("createPoint");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("createPoint");
 
             ObjectMapper mapper = new ObjectMapper();
             ClientResponse response = builder.post(ClientResponse.class);

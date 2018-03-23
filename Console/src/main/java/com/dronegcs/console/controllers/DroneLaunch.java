@@ -1,10 +1,9 @@
 package com.dronegcs.console.controllers;
 
-import com.db.persistence.scheme.LoginLogoutStatus;
-import com.db.persistence.scheme.LoginRequest;
-import com.db.persistence.scheme.LoginResponse;
+import com.db.persistence.scheme.*;
 import com.dronegcs.console.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
+import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.devices.SerialConnection;
@@ -48,6 +47,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 
 	@Autowired
 	private LoginSvcRemoteWrapper loginSvcRemoteWrapper;
+
+	@Autowired
+	private RegistrationSvcRemoteWrapper registrationSvcRemoteWrapper;
 
 	@Autowired
 	private RestClientHelper restClientHelper;
@@ -106,6 +108,14 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
         }
 
         return loginRestResponse;
+	}
+
+	@Override
+	public RegistrationResponse handleRegisterNewUser(String userName, String password) {
+		RegistrationRequest registrationRequest = new RegistrationRequest();
+		registrationRequest.setUserName(userName);
+		registrationRequest.setPassword(password);
+		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest, password);
 	}
 
 	private void showMainScreen() {

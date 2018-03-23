@@ -10,11 +10,15 @@ public interface RestClientHelper {
 
     void setHashedUsernamePassword(String encoding);
 
+    <T extends Object> T resolveResponse(ClientResponse response, Class<T> clz) throws Exception;
+
     void setToken(String token);
 
     String getToken();
 
-    WebResource.Builder getWebResource(String apiPath, Object... param);
+    WebResource.Builder getWebResourceWithAuth(String apiPath, Object... param);
+
+    WebResource.Builder getWebResourceNoAuth(String apiPath, Object... param);
 
     Pair<Class,? extends Exception> getErrorAndMessage(ClientResponse response) throws Exception;
 

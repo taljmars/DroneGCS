@@ -23,7 +23,7 @@ public class SessionsSvcRemoteWrapper {
 //        MultivaluedMap formData = new MultivaluedMapImpl();
 //        formData.add("token", restClientHelper.getToken());
 //        WebResource.Builder builder = restClientHelper.getWebResource("publish", formData);
-        WebResource.Builder builder = restClientHelper.getWebResource("publish");
+        WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("publish");
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 
@@ -35,7 +35,7 @@ public class SessionsSvcRemoteWrapper {
 //        MultivaluedMap formData = new MultivaluedMapImpl();
 //        formData.add("token", restClientHelper.getToken());
 //        WebResource.Builder builder = restClientHelper.getWebResource("discard", formData);
-        WebResource.Builder builder = restClientHelper.getWebResource("discard");
+        WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("discard");
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 

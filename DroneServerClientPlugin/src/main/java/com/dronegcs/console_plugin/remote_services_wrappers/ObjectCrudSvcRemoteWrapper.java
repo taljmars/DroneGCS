@@ -36,7 +36,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            MultivaluedMap formData = new MultivaluedMapImpl();
 //            formData.add("clz", clz);
 //            formData.add("token", restClientHelper.getToken());
-            WebResource.Builder builder = restClientHelper.getWebResource("create", "clz", clz);
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("create", "clz", clz);
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
             if (!response.hasEntity())
@@ -71,7 +71,7 @@ public class ObjectCrudSvcRemoteWrapper {
         T baseObject = null;
         try {
 //            WebResource.Builder builder = restClientHelper.getWebResource("update", "token", restClientHelper.getToken());
-            WebResource.Builder builder = restClientHelper.getWebResource("update");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("update");
             ObjectMapper mapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(obj));
@@ -107,7 +107,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            multivaluedMap.add("objId", objId.toString());
 //            multivaluedMap.add("token", restClientHelper.getToken());
 //            WebResource.Builder builder = restClientHelper.getWebResource("read",multivaluedMap);
-            WebResource.Builder builder = restClientHelper.getWebResource("read","objId", objId.toString());
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("read","objId", objId.toString());
 
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
@@ -151,7 +151,7 @@ public class ObjectCrudSvcRemoteWrapper {
 //            formData.add("clz", canonicalName);
 //            formData.add("token", restClientHelper.getToken());
 //            WebResource.Builder builder = restClientHelper.getWebResource("readByClass",formData);
-            WebResource.Builder builder = restClientHelper.getWebResource(
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth(
                     "readByClass",
                     "objId", objId.toString(),
                     "clz", canonicalName);
@@ -193,7 +193,7 @@ public class ObjectCrudSvcRemoteWrapper {
     public <T extends BaseObject> T delete(T obj) throws ObjectInstanceRemoteException, DatabaseValidationRemoteException, ObjectNotFoundRemoteException {
         try {
 //            WebResource.Builder builder = restClientHelper.getWebResource("delete", "token", restClientHelper.getToken());
-            WebResource.Builder builder = restClientHelper.getWebResource("delete");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("delete");
             ObjectMapper objectMapper = new ObjectMapper();
 
             ClientResponse response = builder.post(ClientResponse.class, objectMapper.writeValueAsString(obj));

@@ -52,13 +52,23 @@ public class RestClientHelperImpl implements RestClientHelper {
 //    }
 
 //    public WebResource.Builder getWebResource(String path, String s, Object... objs) {
+
     @Override
-    public WebResource.Builder getWebResource(String path, Object... objs) {
+    public WebResource.Builder getWebResourceNoAuth(String path, Object... objs) {
+        return getWebResource(false, path, objs);
+    }
+
+    @Override
+    public WebResource.Builder getWebResourceWithAuth(String path, Object... objs) {
+        return getWebResource(true, path, objs);
+    }
+
+    public WebResource.Builder getWebResource(boolean auth, String path, Object... objs) {
         UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
         WebResource webResource = client.resource(uriBuilder.build());
         WebResource.Builder builder;
         if (objs.length % 2 != 0) {
-            throw new RuntimeException("Unexpected amount of paramteres");
+            throw new RuntimeException("Unexpected amount of parameters");
         }
         if (objs.length != 0) {
             MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
@@ -76,7 +86,7 @@ public class RestClientHelperImpl implements RestClientHelper {
 //        LOGGER.debug("Address: " + uriBuilder.build());
 //        WebResource.Builder builder = client.resource(uriBuilder.build()).getRequestBuilder();
         builder.type(MediaType.APPLICATION_JSON_TYPE);
-        return build(builder);
+        return build(builder, auth);
     }
 
 //    public WebResource.Builder getWebResource(String path, MultivaluedMap queries) {
@@ -86,12 +96,15 @@ public class RestClientHelperImpl implements RestClientHelper {
 //        return build(builder);
 //    }
 
-    private WebResource.Builder build(WebResource.Builder builder) {
+    private WebResource.Builder build(WebResource.Builder builder, boolean auth) {
         builder
 //                .header(CONTENT_TYPE, "application/json")
-                .header(ACCEPT, "application/json")
-                .header(AUTHORIZATION, "Basic " + hashedUsernamePassword)
-                .header("token", getToken());
+                .header(ACCEPT, "application/json");
+
+        if (auth) {
+            builder.header(AUTHORIZATION, "Basic " + hashedUsernamePassword);
+            builder.header("token", getToken());
+        }
         return builder;
     }
 
@@ -135,6 +148,33 @@ public class RestClientHelperImpl implements RestClientHelper {
         Class cls = Class.forName(actualClass);
         Exception exception = mapper.readValue(jsonObject.toString(), Exception.class);
         return new Pair<>(cls, exception);
+    }
+
+    @Override
+    public <T extends Object> T resolveResponse(ClientResponse response, Class<T> clz) throws Exception {
+        ClientResponse.Status status = response.getClientResponseStatus();
+
+        switch (status) {
+            case OK:
+                break;
+            default:
+                throw new RuntimeException(status.getReasonPhrase() + "(" + status.getStatusCode() + ")");
+        }
+
+        if (!response.hasEntity())
+            throw new RuntimeException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
+
+//        System.out.println(response.getHeaders());
+//        System.out.println(response.getCookies());
+//        System.out.println(response.getAllow());
+
+        String jsonString = response.getEntity(String.class);
+//        System.out.println(jsonString);
+//        LOGGER.debug("Response: {}", jsonString);
+
+        JSONObject jsonObject = new JSONObject(jsonString);
+        T resp = resolve(jsonObject, clz);
+        return resp;
     }
 
     @Override

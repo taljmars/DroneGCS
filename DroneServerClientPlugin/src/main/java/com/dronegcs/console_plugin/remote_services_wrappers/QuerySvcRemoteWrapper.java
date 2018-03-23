@@ -36,7 +36,7 @@ public class QuerySvcRemoteWrapper {
     public QueryResponseRemote query(QueryRequestRemote queryRequestRemote) {
         try {
 //            WebResource.Builder builder = restClientHelper.getWebResource("query", "token", restClientHelper.getToken());
-            WebResource.Builder builder = restClientHelper.getWebResource("query");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("query");
             ObjectMapper mapper = new ObjectMapper();
 
             LOGGER.debug("Request to be send: {} " + mapper.writeValueAsString(queryRequestRemote));
@@ -61,7 +61,7 @@ public class QuerySvcRemoteWrapper {
 //            multivaluedMap.add("clz", clz);
 //            multivaluedMap.add("token", restClientHelper.getToken());
 //            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQueryWithClass", multivaluedMap);
-            WebResource.Builder builder = restClientHelper.getWebResource(
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth(
                     "runNativeQueryWithClass",
                     "queryString", queryString,
                     "clz", clz);
@@ -81,7 +81,7 @@ public class QuerySvcRemoteWrapper {
 //            multivaluedMap.add("queryString", queryString);
 //            multivaluedMap.add("token", restClientHelper.getToken());
 //            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQuery", multivaluedMap);
-            WebResource.Builder builder = restClientHelper.getWebResource("runNativeQuery", "queryString", queryString);
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("runNativeQuery", "queryString", queryString);
             ClientResponse response = builder.get(ClientResponse.class);
             return resolveResponse(response);
         }
@@ -99,7 +99,7 @@ public class QuerySvcRemoteWrapper {
 //            multivaluedMap.add("clz", clz);
 //            multivaluedMap.add("token", restClientHelper.getToken());
             //WebResource.Builder builder = restClientHelper.getWebResource("runNamedQuery", multivaluedMap);
-            WebResource.Builder builder = restClientHelper.getWebResource(
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth(
                     "runNamedQuery",
                     "queryString", queryString,
                     "clz", clz);

@@ -32,7 +32,7 @@ public class MissionCrudSvcRemoteWrapper {
     public <T extends MissionItem> T createMissionItem(String clz) throws ObjectInstanceRemoteException {
         try {
             //        return missionCrudSvcRemote.createMissionItem(clz);
-            WebResource.Builder builder = restClientHelper.getWebResource("createMissionItem", "clz", clz);
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("createMissionItem", "clz", clz);
 
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
@@ -61,7 +61,7 @@ public class MissionCrudSvcRemoteWrapper {
     public Mission cloneMission(Mission mission) throws ObjectNotFoundRemoteException, ObjectInstanceRemoteException, DatabaseValidationRemoteException {
         try {
             //        return missionCrudSvcRemote.cloneMission(mission);
-            WebResource.Builder builder = restClientHelper.getWebResource("cloneMission");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("cloneMission");
 
             ObjectMapper mapper = new ObjectMapper();
             ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(mission));
@@ -94,7 +94,7 @@ public class MissionCrudSvcRemoteWrapper {
 
     public Mission createMission() throws ObjectInstanceRemoteException {
         try {
-            WebResource.Builder builder = restClientHelper.getWebResource("createMission");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("createMission");
 
             ClientResponse response = builder.get(ClientResponse.class);
             ClientResponse.Status status = response.getClientResponseStatus();
