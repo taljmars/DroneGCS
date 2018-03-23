@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 @Component
-public class Test_MulitUsers_Simple extends Test {
+public class Test_MultiUsers_Simple extends Test {
 
     private int idx = 0;
     private int total = 11;

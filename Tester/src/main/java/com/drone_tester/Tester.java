@@ -4,7 +4,6 @@ import com.drone_tester.Tests.*;
 import com.generic_tools.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,7 +21,8 @@ public class Tester implements ApplicationListener<TestEvent> {
     @Autowired Test_PolylinePerimeters      test_polylinePerimeters;
     @Autowired Test_CirclePerimeters        test_circlePerimeters;
     @Autowired Test_DummyObject             test_dummyObject;
-    @Autowired Test_MulitUsers_Simple       test_mulitUsers_simple;
+    @Autowired
+    Test_MultiUsers_Simple test_multiUsers_simple;
 
     @Autowired Logger logger;
 
@@ -42,7 +42,7 @@ public class Tester implements ApplicationListener<TestEvent> {
         lst.add(test_missionObjectCreation);
         lst.add(test_discardPublish);
         lst.add(test_singleMissionSingleItem);
-        lst.add(test_mulitUsers_simple);
+        lst.add(test_multiUsers_simple);
 
         return lst;
     }
