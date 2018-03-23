@@ -1,6 +1,7 @@
 package com.dronegcs.console.operations;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -30,6 +31,9 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
+
+	@Autowired @NotNull(message = "Internal Error: Failed to get loginSvcRemote")
+	private LoginSvcRemoteWrapper loginSvcRemote;
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -49,6 +53,9 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	public boolean go() throws InterruptedException {
 		if (DialogManagerSvc.YES_OPTION == dialogManagerSvc.showConfirmDialog("Are you sure you wand to exit?", "")) {
 			LOGGER.debug("Bye Bye");
+
+			loginSvcRemote.logout();
+
     		logger.LogGeneralMessege("");
     		logger.LogGeneralMessege("Summary:");
     		logger.LogGeneralMessege("--------");
