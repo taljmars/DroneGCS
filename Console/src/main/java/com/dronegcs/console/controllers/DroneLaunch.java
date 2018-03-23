@@ -115,7 +115,7 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		RegistrationRequest registrationRequest = new RegistrationRequest();
 		registrationRequest.setUserName(userName);
 		registrationRequest.setPassword(password);
-		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest, password);
+		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest);
 	}
 
 	private void showMainScreen() {

@@ -1,10 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames;
 
 import com.auditdb.persistence.base_scheme.EventLogObject;
-import com.auditdb.persistence.scheme.AccessLog;
-import com.auditdb.persistence.scheme.ObjectCreationLog;
-import com.auditdb.persistence.scheme.ObjectDeletionLog;
-import com.auditdb.persistence.scheme.ObjectUpdateLog;
+import com.auditdb.persistence.scheme.*;
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
@@ -141,6 +138,23 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
             eventLogEntry.setUserName(logObject.getUserName());
 			eventLogEntry.setTopic(logObject.getClz().getSimpleName());
 			eventLogEntry.setSummary(logObject.isLogin() ? "Logged In" : "Logged Out");
+			return eventLogEntry;
+		}
+
+		if (eventLogObject instanceof RegistrationLog) {
+			RegistrationLog logObject = (RegistrationLog) eventLogObject;
+			LOGGER.debug("Building Entry:" + logObject.getUserName() + " " +
+					logObject.getEventCode() + " " +
+					logObject.getClz() + " " +
+					logObject.getEventTime() + " "
+			);
+			EventLogEntry eventLogEntry = new EventLogEntry();
+//			eventLogEntry.setIcon("");
+			eventLogEntry.setCode(logObject.getEventCode());
+			eventLogEntry.setDate(logObject.getEventTime());
+			eventLogEntry.setUserName(logObject.getUserName());
+			eventLogEntry.setTopic(logObject.getClz().getSimpleName());
+			eventLogEntry.setSummary(logObject.getDescription());
 			return eventLogEntry;
 		}
 

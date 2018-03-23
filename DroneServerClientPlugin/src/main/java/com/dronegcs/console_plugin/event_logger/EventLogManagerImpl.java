@@ -49,6 +49,11 @@ public class EventLogManagerImpl implements EventLogManager {
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
+        req.setQuery("GetAllRegistrationLog");
+        req.setClz(RegistrationLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
         return eventLogBundle;
     }
 
