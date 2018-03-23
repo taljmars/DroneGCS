@@ -42,20 +42,20 @@ public class Tester implements ApplicationListener<TestEvent> {
         lst.add(test_missionObjectCreation);
         lst.add(test_discardPublish);
         lst.add(test_singleMissionSingleItem);
-//        lst.add(test_mulitUsers_simple);
+        lst.add(test_mulitUsers_simple);
 
         return lst;
     }
 
 
-    public static void main(String[] args){
-        System.err.println("\n\n\n*************  Tester - Start  *************\n");
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("\n\n\n*************  Tester - Start  *************\n");
         System.setProperty("CONF.DIR", args[1]);
 
         Tester tester = TestSpringConfig.context.getBean(Tester.class);
         tester.go();
 
-        System.err.println("\n*************  Tester - Done  *************\n");
+        System.out.println("\n*************  Tester - Done  *************\n");
         System.exit(0);
     }
 
@@ -107,7 +107,7 @@ public class Tester implements ApplicationListener<TestEvent> {
                 break;
             case IN_PROGRESS:
                 if (lastMarkersAmount != markersAmount) {
-                    System.err.print(String.join("", Collections.nCopies(markersAmount - lastMarkersAmount, marker)));
+                    System.out.print(String.join("", Collections.nCopies(markersAmount - lastMarkersAmount, marker)));
                     lastMarkersAmount = markersAmount;
                 }
                 logger.LogGeneralMessege("%s IN PROGRESS (%d%%) - %s", event.getTest().getClass().getSimpleName(), percentage, event.getMsg());
@@ -118,11 +118,11 @@ public class Tester implements ApplicationListener<TestEvent> {
                 }
                 String padding = String.join("", Collections.nCopies(MARKER_TOTAL - lastMarkersAmount, marker));
 
-                System.err.println(padding + " | Tested Succeeded - " + event.getTest().getClass().getSimpleName());
+                System.out.println(padding + " | Tested Succeeded - " + event.getTest().getClass().getSimpleName());
                 logger.LogGeneralMessege("%s FINISHED successfully ", event.getTest().getClass().getSimpleName());
                 break;
             case FAIL:
-                System.err.println(marker + " | Tested Failed - " + event.getTest().getClass().getSimpleName());
+                System.out.println(marker + " | Tested Failed - " + event.getTest().getClass().getSimpleName());
                 logger.LogErrorMessege("%s FINISHED with errors ", event.getTest().getClass().getSimpleName());
                 break;
             default:

@@ -1,18 +1,19 @@
 package com.drone_tester.Tests;
 
 import com.drone_tester.Test;
+import com.drone_tester.TestEvent;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Test_Login extends Test {
 
     private int idx = 0;
-    private int total = 1;
+    private int total = 3;
 
     @Override
     public Status preTestCheck() {
         restClientHelper.setToken(login("tester1","tester1"));
-//        System.out.println(restClientHelper.getToken());
+        publish(new TestEvent(this, Status.IN_PROGRESS, "login successfully", ++idx, total));
         return Status.SUCCESS;
     }
 
@@ -20,6 +21,7 @@ public class Test_Login extends Test {
     public Status test() {
         try {
             loginSvcRemoteWrapper.loginKeepAlive();
+            publish(new TestEvent(this, Status.IN_PROGRESS, "keep alive succeeded", ++idx, total));
         }
         catch (Exception e) {
             return Status.FAIL;
@@ -29,7 +31,13 @@ public class Test_Login extends Test {
 
     @Override
     public Status postTestCleanup() {
-        logout();
+        try {
+            logout();
+            publish(new TestEvent(this, Status.SUCCESS, "test completed", ++idx, total));
+        }
+        catch (Exception e) {
+            return Status.FAIL;
+        }
         return Status.SUCCESS;
     }
 

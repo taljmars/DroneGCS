@@ -122,8 +122,6 @@ public class Test_MissionObjectCreation extends Test {
             sessionsSvcRemoteWrapper.publish();
             publish(new TestEvent(this, Status.IN_PROGRESS, "publish deletion", ++idx, total));
 
-            logout();
-
             publish(new TestEvent(this, Status.IN_PROGRESS, "test core finished", ++idx, total));
             return Status.SUCCESS;
         }
@@ -152,6 +150,8 @@ public class Test_MissionObjectCreation extends Test {
 
             Assert.isTrue(missionsManager.getAllMissions().isEmpty());
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify not modified mission exist", ++idx, total));
+
+            logout();
 
             publish(new TestEvent(this, Status.SUCCESS, "test completed", ++idx, total));
             return Status.SUCCESS;

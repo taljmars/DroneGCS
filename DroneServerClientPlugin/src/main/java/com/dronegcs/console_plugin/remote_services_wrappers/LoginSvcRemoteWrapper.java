@@ -89,11 +89,11 @@ public class LoginSvcRemoteWrapper {
     public void loginKeepAlive() throws Exception {
         if (!keepAliveEnable)
             return;
-        System.out.println("Tik!");
+        LOGGER.debug("Tik!");
         WebResource.Builder builder = restClientHelper.getWebResource("keepAlive");
         ClientResponse response = builder.post(ClientResponse.class);
         KeepAliveResponse resp =  resolveResponse(response, KeepAliveResponse.class);
-        System.out.println("Server Time: " + resp.getMessage() + " ," + resp.getServerDate() + " ," + resp.getReturnCode());
+        LOGGER.debug("Server Time: " + resp.getMessage() + " ," + resp.getServerDate() + " ," + resp.getReturnCode());
         //TODO: Get server time
     }
 
