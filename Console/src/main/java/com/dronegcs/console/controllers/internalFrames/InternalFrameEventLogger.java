@@ -2,7 +2,9 @@ package com.dronegcs.console.controllers.internalFrames;
 
 import com.auditdb.persistence.base_scheme.EventLogObject;
 import com.auditdb.persistence.scheme.AccessLog;
-import com.auditdb.persistence.scheme.ObjectModificationLog;
+import com.auditdb.persistence.scheme.ObjectCreationLog;
+import com.auditdb.persistence.scheme.ObjectDeletionLog;
+import com.auditdb.persistence.scheme.ObjectUpdateLog;
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
@@ -142,14 +144,44 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 			return eventLogEntry;
 		}
 
-		if (eventLogObject instanceof ObjectModificationLog) {
-			ObjectModificationLog logObject = (ObjectModificationLog) eventLogObject;
+		if (eventLogObject instanceof ObjectCreationLog) {
+			ObjectCreationLog logObject = (ObjectCreationLog) eventLogObject;
 			EventLogEntry eventLogEntry = new EventLogEntry();
 			eventLogEntry.setCode(logObject.getEventCode());
 			eventLogEntry.setDate(logObject.getEventTime());
-            eventLogEntry.setUserName(logObject.getUserName());
+			eventLogEntry.setUserName(logObject.getUserName());
 			eventLogEntry.setTopic(logObject.getClz().getSimpleName());
-			eventLogEntry.setSummary(logObject.getChangedFields() + "");
+			eventLogEntry.setSummary(logObject.getReferredObjType().getSimpleName() + " - " + logObject.getReferredObjId());
+			return eventLogEntry;
+		}
+
+		if (eventLogObject instanceof ObjectDeletionLog) {
+			ObjectDeletionLog logObject = (ObjectDeletionLog) eventLogObject;
+			EventLogEntry eventLogEntry = new EventLogEntry();
+			eventLogEntry.setCode(logObject.getEventCode());
+			eventLogEntry.setDate(logObject.getEventTime());
+			eventLogEntry.setUserName(logObject.getUserName());
+			eventLogEntry.setTopic(logObject.getClz().getSimpleName());
+			eventLogEntry.setSummary(logObject.getReferredObjType().getSimpleName() + " - " + logObject.getReferredObjId());
+			return eventLogEntry;
+		}
+
+		if (eventLogObject instanceof ObjectUpdateLog) {
+			ObjectUpdateLog logObject = (ObjectUpdateLog) eventLogObject;
+			EventLogEntry eventLogEntry = new EventLogEntry();
+			eventLogEntry.setCode(logObject.getEventCode());
+			eventLogEntry.setDate(logObject.getEventTime());
+			eventLogEntry.setUserName(logObject.getUserName());
+			eventLogEntry.setTopic(logObject.getClz().getSimpleName());
+			String summary = logObject.getReferredObjType().getSimpleName() + " - " + logObject.getReferredObjId() + " | ";
+			for (int i = 0 ; i < logObject.getChangedFields().size() ; i++) {
+				summary += String.format("{%s,%s->%s} ",
+						logObject.getChangedFields().get(i),
+						logObject.getChangedFromValues().get(i),
+						logObject.getChangedToValues().get(i)
+				);
+			}
+			eventLogEntry.setSummary(summary);
 			return eventLogEntry;
 		}
 

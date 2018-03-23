@@ -1,8 +1,7 @@
 package com.dronegcs.console_plugin.event_logger;
 
 import com.auditdb.persistence.base_scheme.EventLogObject;
-import com.auditdb.persistence.scheme.AccessLog;
-import com.auditdb.persistence.scheme.ObjectModificationLog;
+import com.auditdb.persistence.scheme.*;
 import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.wsSoap.QueryRequestRemote;
 import com.db.persistence.wsSoap.QueryResponseRemote;
@@ -35,8 +34,18 @@ public class EventLogManagerImpl implements EventLogManager {
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         req = new QueryRequestRemote();
-        req.setQuery("GetAllObjectModificationLog");
-        req.setClz(ObjectModificationLog.class.getCanonicalName());
+        req.setQuery("GetAllObjectCreationLog");
+        req.setClz(ObjectCreationLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
+        req.setQuery("GetAllObjectDeletionLog");
+        req.setClz(ObjectDeletionLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
+        req.setQuery("GetAllObjectUpdateLog");
+        req.setClz(ObjectUpdateLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
@@ -58,8 +67,20 @@ public class EventLogManagerImpl implements EventLogManager {
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         req = new QueryRequestRemote();
-        req.setQuery("GetAllObjectModificationLog_BetweenDates");
-        req.setClz(ObjectModificationLog.class.getCanonicalName());
+        req.setQuery("GetAllObjectCreationLog_BetweenDates");
+        req.setClz(ObjectCreationLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
+        req = new QueryRequestRemote();
+        req.setQuery("GetAllObjectDeletionLog_BetweenDates");
+        req.setClz(ObjectDeletionLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
+        req = new QueryRequestRemote();
+        req.setQuery("GetAllObjectUpdateLog_BetweenDates");
+        req.setClz(ObjectUpdateLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
