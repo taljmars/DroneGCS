@@ -1,10 +1,14 @@
 package com.drone_tester;
 
+import com.db.persistence.scheme.RegistrationRequest;
+import com.db.persistence.scheme.RegistrationResponse;
 import com.drone_tester.Tests.*;
+import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;
 import com.generic_tools.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -14,15 +18,17 @@ import java.util.List;
 @Component
 public class Tester implements ApplicationListener<TestEvent> {
 
+    @Autowired RegistrationSvcRemoteWrapper registrationSvcRemote;
+
     @Autowired Test_Login                   test_login;
-    @Autowired Test_SingleMissionSingleItem test_singleMissionSingleItem;
-    @Autowired Test_DiscardPublish          test_discardPublish;
-    @Autowired Test_MissionObjectCreation   test_missionObjectCreation;
-    @Autowired Test_PolylinePerimeters      test_polylinePerimeters;
-    @Autowired Test_CirclePerimeters        test_circlePerimeters;
+    @Autowired Test_UserRegistration        test_userRegistration;
     @Autowired Test_DummyObject             test_dummyObject;
     @Autowired Test_MultiUsers_Simple       test_multiUsers_simple;
-    @Autowired Test_UserRegistration        test_userRegistration;
+    @Autowired Test_DiscardPublish          test_discardPublish;
+    @Autowired Test_PolylinePerimeters      test_polylinePerimeters;
+    @Autowired Test_CirclePerimeters        test_circlePerimeters;
+    @Autowired Test_MissionObjectCreation   test_missionObjectCreation;
+    @Autowired Test_SingleMissionSingleItem test_singleMissionSingleItem;
 
     @Autowired Logger logger;
 
@@ -35,15 +41,15 @@ public class Tester implements ApplicationListener<TestEvent> {
     public List<Test> getTestList() {
         List<Test> lst = new ArrayList<>();
 
+        lst.add(test_userRegistration);
         lst.add(test_login);
         lst.add(test_dummyObject);
+        lst.add(test_multiUsers_simple);
+        lst.add(test_discardPublish);
         lst.add(test_circlePerimeters);
         lst.add(test_polylinePerimeters);
         lst.add(test_missionObjectCreation);
-        lst.add(test_discardPublish);
         lst.add(test_singleMissionSingleItem);
-        lst.add(test_multiUsers_simple);
-        lst.add(test_userRegistration);
 
         return lst;
     }

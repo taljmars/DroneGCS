@@ -18,7 +18,7 @@ public class RegistrationSvcRemoteWrapper {
     @Autowired
     private RestClientHelper restClientHelper;
 
-    public RegistrationResponse registerNewUser(RegistrationRequest registrationRequest, String pass) {
+    public RegistrationResponse registerNewUser(RegistrationRequest registrationRequest) {
         RegistrationResponse registrationResponse;
         try {
             WebResource.Builder builder = restClientHelper.getWebResourceNoAuth("registerNewUser");
