@@ -16,6 +16,7 @@ target
 logs
 conf
 CMpub
+ClientInstallation
 
 # Irrelevant logs - talma
 log.html
