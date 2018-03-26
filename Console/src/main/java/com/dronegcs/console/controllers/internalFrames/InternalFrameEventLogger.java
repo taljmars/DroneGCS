@@ -53,20 +53,17 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 	@NotNull @FXML private TableColumn<TableItemEntry,String> topic;
 	@NotNull @FXML private TableColumn<TableItemEntry,String> summary;
 	
-	@Autowired
-	private RuntimeValidator runtimeValidator;
-
-	@Autowired
-	private EventLogManager eventLogManager;
-
-	private Date lastPull = null;
-
-	private ObservableList<EventLogEntry> data;
+	@Autowired private RuntimeValidator runtimeValidator;
+	@Autowired private EventLogManager eventLogManager;
 
 	@Autowired @NotNull( message="Internal Error: Failed to get application context" )
 	private ApplicationContext applicationContext;
 
 	@NotNull @FXML private Pane root;
+
+	private Date lastPull = null;
+
+	private ObservableList<EventLogEntry> data;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
