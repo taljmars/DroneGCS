@@ -22,9 +22,6 @@ public class MissionCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MissionCrudSvcRemoteWrapper.class);
 
-//    @Autowired
-    private MissionCrudSvcRemoteWrapper missionCrudSvcRemote;
-
     @Autowired
     private RestClientHelper restClientHelper;
 

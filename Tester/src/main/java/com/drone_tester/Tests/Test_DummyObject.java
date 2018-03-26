@@ -1,22 +1,11 @@
 package com.drone_tester.Tests;
 
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
-import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.DummyBaseObject;
-import com.db.persistence.wsSoap.QueryResponseRemote;
 import com.drone_tester.Test;
 import com.drone_tester.TestEvent;
-import com.dronedb.persistence.scheme.Mission;
-import com.dronegcs.console_plugin.ClosingPair;
-import com.dronegcs.console_plugin.mission_editor.MissionEditor;
-import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
-import com.geo_tools.Coordinate;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.util.Collection;
-import java.util.List;
 
 @Component
 public class Test_DummyObject extends Test {

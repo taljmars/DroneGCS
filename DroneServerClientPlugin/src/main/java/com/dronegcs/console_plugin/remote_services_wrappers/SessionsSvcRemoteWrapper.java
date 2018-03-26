@@ -1,20 +1,12 @@
 package com.dronegcs.console_plugin.remote_services_wrappers;
 
-import com.db.persistence.wsSoap.SessionsSvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 @Component
 public class SessionsSvcRemoteWrapper {
-
-//    @Autowired
-    private SessionsSvcRemote sessionsSvcRemote;
 
     @Autowired
     private RestClientHelper restClientHelper;

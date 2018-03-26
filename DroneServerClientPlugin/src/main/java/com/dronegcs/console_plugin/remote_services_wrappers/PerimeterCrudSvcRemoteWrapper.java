@@ -22,9 +22,6 @@ public class PerimeterCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PerimeterCrudSvcRemoteWrapper.class);
 
-//    @Autowired
-    private PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemote;
-
     @Autowired
     private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
 

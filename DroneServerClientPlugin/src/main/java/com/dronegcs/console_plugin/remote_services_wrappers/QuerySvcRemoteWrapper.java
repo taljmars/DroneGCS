@@ -1,13 +1,10 @@
 package com.dronegcs.console_plugin.remote_services_wrappers;
 
 import com.db.persistence.scheme.BaseObject;
-import com.db.persistence.wsSoap.QueryRequestRemote;
-import com.db.persistence.wsSoap.QueryResponseRemote;
-import com.db.persistence.wsSoap.QuerySvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
+import com.db.persistence.scheme.QueryRequestRemote;
+import com.db.persistence.scheme.QueryResponseRemote;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +21,6 @@ import java.util.List;
 public class QuerySvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(QuerySvcRemoteWrapper.class);
-
-//    @Autowired
-    private QuerySvcRemote querySvcRemote;
 
     @Autowired
     private RestClientHelper restClientHelper;
@@ -134,7 +126,7 @@ public class QuerySvcRemoteWrapper {
             }
         }
         QueryResponseRemote queryResponseRemote = new QueryResponseRemote();
-        queryResponseRemote.setResultList(resultList);
+        queryResponseRemote.setResult(resultList);
         LOGGER.debug("Query response size: {}", queryResponseRemote.getResultList() == null ? 0 : queryResponseRemote.getResultList().size());
         return queryResponseRemote;
     }

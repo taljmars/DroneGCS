@@ -4,12 +4,9 @@ import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
 import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
-import com.db.persistence.wsSoap.ObjectCrudSvcRemote;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -17,14 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-
 @Component
 public class ObjectCrudSvcRemoteWrapper {
-
-//    @Autowired
-    private ObjectCrudSvcRemote objectCrudSvcRemote;
 
     @Autowired
     private RestClientHelper restClientHelper;
