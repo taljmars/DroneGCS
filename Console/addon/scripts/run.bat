@@ -2,4 +2,4 @@
 set LOGS_DIR=logs/
 set CONF_DIR=conf/
 
-java -Dloader.path=lib/ -Djava.library.path=./native -cp jars/* org.springframework.boot.loader.PropertiesLauncher %LOGS_DIR% %CONF_DIR% > %LOGS_DIR%/backlog.elg
+java -cp jars/* com.dronegcs.console.controllers.DroneLaunch %LOGS_DIR% %CONF_DIR% org.springframework.boot.loader.PropertiesLauncher -Dloader.path=lib/ -Djava.library.path=./native > %LOGS_DIR%/backlog.elg
