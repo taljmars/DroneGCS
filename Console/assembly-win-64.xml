@@ -73,6 +73,11 @@
             <destName>run.bat</destName>
         </file>
         <file>
+            <source>./src/../addon/scripts/run-tester.bat</source>
+            <outputDirectory>.</outputDirectory>
+            <destName>run-tester.bat</destName>
+        </file>
+        <file>
             <source>../ExtLib/OpenCV-3.1.0/Win/opencv-310.jar</source>
             <outputDirectory>lib</outputDirectory>
             <destName>opencv-310.jar</destName>

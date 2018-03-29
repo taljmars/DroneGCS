@@ -10,11 +10,13 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <module>Console</module>
         <module>ConsolePlugin</module>
         <module>DroneServerClientPlugin</module>
         <module>Tester</module>
         <module>NGXBridge</module>
+
+        <!--Important to be the last since it include the packager-->
+        <module>Console</module>
     </modules>
 
     <parent>

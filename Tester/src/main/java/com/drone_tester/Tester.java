@@ -1,14 +1,11 @@
 package com.drone_tester;
 
-import com.db.persistence.scheme.RegistrationRequest;
-import com.db.persistence.scheme.RegistrationResponse;
 import com.drone_tester.Tests.*;
 import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;
 import com.generic_tools.logger.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
