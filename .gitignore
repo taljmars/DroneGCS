@@ -23,6 +23,7 @@ log.html
 *.log
 *.elg
 *.csv
+*.csv#
 
 # Windows Installer files
 *.cab
