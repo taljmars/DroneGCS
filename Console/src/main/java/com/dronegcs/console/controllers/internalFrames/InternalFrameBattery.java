@@ -6,7 +6,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.mavlink.is.drone.variables.Battery;
 import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
+import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -70,8 +70,8 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 			throw new RuntimeException("Not a Singleton");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv");
-		csv.open(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
+		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv");
+		csv.addEntry(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
 	}
@@ -128,7 +128,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 
-				csv.close();
+				CSVFactory.closeFile(csv);
 			break;
 		}
 	}

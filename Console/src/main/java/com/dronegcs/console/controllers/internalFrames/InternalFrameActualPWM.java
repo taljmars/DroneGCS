@@ -5,7 +5,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
+import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -69,8 +69,8 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 			throw new RuntimeException("Not a Singleton");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.csv");
-		csv.open(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
+		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.csv");
+		csv.addEntry(Arrays.asList("Time", "E1", "E2", "E3", "E4"));
 		
 		drone.addDroneListener(this);
 	}
@@ -126,7 +126,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 
-				csv.close();
+				CSVFactory.closeFile(csv);
 			break;
 		}
 	}	

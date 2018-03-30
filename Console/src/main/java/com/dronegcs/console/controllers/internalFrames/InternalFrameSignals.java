@@ -5,7 +5,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
+import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -69,8 +69,8 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 			throw new RuntimeException("Not a Singleton");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "signals.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "signals.csv");
-		csv.open(Arrays.asList("Time", "distance", "signal", "noise", "rssi"));
+		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "signals.csv");
+		csv.addEntry(Arrays.asList("Time", "distance", "signal", "noise", "rssi"));
 		
 		drone.addDroneListener(this);
 	}
@@ -140,7 +140,7 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 
-				csv.close();
+				CSVFactory.closeFile(csv);
 			break;
 		}
 	}

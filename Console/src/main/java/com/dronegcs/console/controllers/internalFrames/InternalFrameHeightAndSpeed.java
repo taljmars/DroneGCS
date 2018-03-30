@@ -5,7 +5,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.internal.CSVImpl;
+import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -68,8 +68,8 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 			throw new RuntimeException("Not a Singleton");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.csv");
-		csv = new CSVImpl(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv");
-		csv.open(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
+		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv");
+		csv.addEntry(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
 		
 		drone.addDroneListener(this);
 	}
@@ -119,7 +119,7 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 
-				csv.close();
+				CSVFactory.closeFile(csv);
 			break;
 		}
 	}
