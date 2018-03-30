@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
+import java.util.*;
+
 import static com.db.persistence.scheme.LoginLogoutStatus.OK;
 
 public abstract class Test implements ApplicationEventPublisherAware {
@@ -27,6 +29,7 @@ public abstract class Test implements ApplicationEventPublisherAware {
     @Autowired protected RestClientHelper restClientHelper;
 
     private ApplicationEventPublisher publisher;
+    protected List<List<Object>> detailedResult;
 
     public ApplicationEventPublisher getPublisher() {
         return publisher;
@@ -80,5 +83,44 @@ public abstract class Test implements ApplicationEventPublisherAware {
             System.out.println("Failed to logout: " + resp.getMessage());
             throw new RuntimeException("Failed to logout");
         }
+    }
+
+    protected List<List<Object>> getDetailsTable() {
+        return detailedResult;
+    }
+
+    /************************************************/
+    /* **********  Duration capabilities ************/
+
+    private Map<Object,Long> clocksMap = new HashMap();
+    private Object defaultClock = new Object();
+
+    protected void startClock() {
+        startClock(defaultClock);
+    }
+
+    protected Long stopClock() {
+        return stopClock(defaultClock);
+    }
+
+    protected Long pickClock() {
+        return pickClock(defaultClock);
+    }
+
+    protected void startClock(Object obj) {
+        Long timestamp = new Date().getTime();
+        if (clocksMap.containsKey(obj))
+            clocksMap.replace(obj, timestamp);
+        else
+            clocksMap.put(obj, timestamp);
+    }
+
+    protected Long stopClock(Object obj) {
+        Long timestamp = new Date().getTime();
+        return timestamp - clocksMap.replace(obj, timestamp);
+    }
+
+    protected Long pickClock(Object obj) {
+        return new Date().getTime() - clocksMap.get(obj);
     }
 }

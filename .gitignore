@@ -22,6 +22,7 @@ ClientInstallation
 log.html
 *.log
 *.elg
+*.csv
 
 # Windows Installer files
 *.cab

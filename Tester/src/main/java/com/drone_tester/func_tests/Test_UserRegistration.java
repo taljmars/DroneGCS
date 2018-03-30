@@ -1,4 +1,4 @@
-package com.drone_tester.Tests;
+package com.drone_tester.func_tests;
 
 import com.db.persistence.scheme.RegistrationRequest;
 import com.db.persistence.scheme.RegistrationResponse;

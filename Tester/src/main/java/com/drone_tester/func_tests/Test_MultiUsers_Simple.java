@@ -1,4 +1,4 @@
-package com.drone_tester.Tests;
+package com.drone_tester.func_tests;
 
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
