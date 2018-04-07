@@ -16,7 +16,7 @@ public class Test_ReadUpdatePublish_Scale extends Test {
     private static final int OBJECTS_AMOUNT = 500;
 
     private int idx = 0;
-    private int total = 2 * OBJECTS_AMOUNT + 3;
+    private int total = 4 * OBJECTS_AMOUNT + 3;
 
     private DummyBaseObject baseObject;
 
@@ -27,7 +27,7 @@ public class Test_ReadUpdatePublish_Scale extends Test {
         restClientHelper.setToken(login("tester1", "tester1"));
         detailedResult = new ArrayList<>();
         detailedResult.add(Arrays.asList("","Details"));
-        detailedResult.add(Arrays.asList("", "Timestamp", "Existing objects", "Amount of object Added", "Time (MSec)", "Time (Sec)"));
+        detailedResult.add(Arrays.asList("", "Timestamp", "Existing objects", "Create(MSec)", "Update(MSec)","Read(MSec)", "ReadByClass(MSec)" ));
         startClock(this);
         return Status.SUCCESS;
     }
@@ -35,26 +35,35 @@ public class Test_ReadUpdatePublish_Scale extends Test {
     @Override
     public Status test() {
         try {
+            Long durationCreate = null, durationUpdate = null, durationRead = null, durationReadByClass = null;;
             int interval = 10;
             for (int i = 0 ; i < OBJECTS_AMOUNT ; i++) {
-                if (i != 0 && i % interval == 0)
-                    startClock();
+                if (i != 0 && i % interval == 0) startClock();
 
                 baseObject = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
                 baseObject.setName("tal" + i);
+                publish(new TestEvent(this, Status.IN_PROGRESS, "Create new Object", ++idx, total));
+                if (i != 0 && i % interval == 0) durationCreate = stopClock();
+
                 baseObject = objectCrudSvcRemoteWrapper.update(baseObject);
                 Assert.isTrue(baseObject.getName().equals("tal" + i));
                 publish(new TestEvent(this, Status.IN_PROGRESS, "update for the first time in private", ++idx, total));
+                if (i != 0 && i % interval == 0) durationUpdate = stopClock();
 
                 baseObject = objectCrudSvcRemoteWrapper.read(baseObject.getKeyId().getObjId());
                 Assert.isTrue(baseObject.getName().equals("tal" + i));
                 publish(new TestEvent(this, Status.IN_PROGRESS, "read object", ++idx, total));
+                if (i != 0 && i % interval == 0) durationRead = stopClock();
+
+                baseObject = objectCrudSvcRemoteWrapper.readByClass(baseObject.getKeyId().getObjId(), DummyBaseObject.class.getCanonicalName());
+                Assert.isTrue(baseObject.getName().equals("tal" + i));
+                publish(new TestEvent(this, Status.IN_PROGRESS, "read by class object", ++idx, total));
+                if (i != 0 && i % interval == 0) durationReadByClass = stopClock();
 
                 objIds.add(baseObject.getKeyId().getObjId());
 
                 if (i != 0 && i % interval == 0) {
-                    Long duration = stopClock();
-                    detailedResult.add(Arrays.asList("", pickClock(this),i-interval ,interval, duration, duration / 1000));
+                    detailedResult.add(Arrays.asList("",pickClock(this),i-interval,durationCreate,durationUpdate,durationRead,durationReadByClass));
                 }
             }
 

@@ -43,16 +43,16 @@ public class Tester implements ApplicationListener<TestEvent> {
     public List<Test> getTestsList() {
         List<Test> lst = new ArrayList<>();
 
-//        lst.add(test_userRegistration);
-//        lst.add(test_login);
-//        lst.add(test_dummyObject);
-//        lst.add(test_multiUsers_simple);
-//        lst.add(test_discardPublish);
-//        lst.add(test_circlePerimeters);
-//        lst.add(test_polylinePerimeters);
-//        lst.add(test_missionObjectCreation);
-//        lst.add(test_singleMissionSingleItem);
-
+        lst.add(test_userRegistration);
+        lst.add(test_login);
+        lst.add(test_dummyObject);
+        lst.add(test_multiUsers_simple);
+        lst.add(test_discardPublish);
+        lst.add(test_circlePerimeters);
+        lst.add(test_polylinePerimeters);
+        lst.add(test_missionObjectCreation);
+        lst.add(test_singleMissionSingleItem);
+//
         lst.add(test_readUpdatePublish_scale);
 
         return lst;
