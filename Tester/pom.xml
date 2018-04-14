@@ -51,13 +51,13 @@
         <dependency>
             <groupId>com.generic_tools</groupId>
             <artifactId>Logger</artifactId>
-            <version>RELEASE</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.generic_tools</groupId>
             <artifactId>Validations</artifactId>
-            <version>RELEASE</version>
+            <version>1.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
