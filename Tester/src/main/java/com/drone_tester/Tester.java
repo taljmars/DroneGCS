@@ -71,12 +71,12 @@ public class Tester implements ApplicationListener<TestEvent> {
 
     private boolean go() {
         csvReport  = CSVFactory.createNew("C:\\Users\\taljmars\\Workspace\\DroneGCS\\TestReport_" + new Date().getTime());
-        csvReport.addEntry(Arrays.asList("Test Report for " + new Date().toString()));
+        csvReport = csvReport.addEntry(Arrays.asList("Test Report for " + new Date().toString()));
 
         int testsAmount = getTestsList().size();
         logger.LogGeneralMessege("Running %d tests", testsAmount);
-        csvReport.addEntry(Arrays.asList("Running " + testsAmount + " tests"));
-        csvReport.addEmptyLine();
+        csvReport = csvReport.addEntry(Arrays.asList("Running " + testsAmount + " tests"));
+        csvReport = csvReport.addEmptyLine();
 
         int success = 0;
         Throwable throwable = null;
@@ -84,7 +84,7 @@ public class Tester implements ApplicationListener<TestEvent> {
         long beginTimestamp = 0, endTimestamp = 0;
 
         try {
-            csvReport.addEntry(Arrays.asList("Test Name", "Results", "Time (MSec)", "Time (Sec)", "Comments"));
+            csvReport = csvReport.addEntry(Arrays.asList("Test Name", "Results", "Time (MSec)", "Time (Sec)", "Comments"));
             for (Test test : getTestsList()) {
                 entry = new ArrayList();
                 entry.add(test.getClass().getSimpleName());
@@ -100,10 +100,10 @@ public class Tester implements ApplicationListener<TestEvent> {
                 entry.add("Passed");
                 entry.add(endTimestamp - beginTimestamp);
                 entry.add((endTimestamp - beginTimestamp) / 1000);
-                csvReport.addEntry(entry);
+                csvReport = csvReport.addEntry(entry);
                 List<List<Object>> restLists = test.getDetailsTable();
                 if (restLists != null && !restLists.isEmpty()) {
-                    csvReport.addEntries(restLists);
+                    csvReport = csvReport.addEntries(restLists);
                 }
 
                 success++;
@@ -120,7 +120,7 @@ public class Tester implements ApplicationListener<TestEvent> {
             entry.add(endTimestamp - beginTimestamp);
             entry.add((endTimestamp - beginTimestamp) / 1000);
             entry.add(throwable.getMessage());
-            csvReport.addEntry(entry);
+            csvReport = csvReport.addEntry(entry);
 
             logger.LogErrorMessege("Exceptions: %s", throwable);
             throwable.printStackTrace();

@@ -4,12 +4,15 @@ import com.db.persistence.scheme.LoginResponse;
 import com.db.persistence.scheme.RegistrationResponse;
 import javafx.application.Platform;
 import javafx.application.Preloader;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,9 +26,18 @@ import static com.db.persistence.scheme.LoginLogoutStatus.OK;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.LOGIN;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.SIGNUP;
 
-public class DroneLaunchPreloader extends Preloader {
+public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyEvent> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DroneLaunchPreloader.class);
+
+    @Override
+    public void handle(KeyEvent event) {
+        if (!event.getCode().equals(KeyCode.ENTER))
+            return;
+
+        // 'Enter' key was down
+        System.out.println("Enter");
+    }
 
     public interface LoginLoader {
         LoginResponse handleLogin(String userName, String password);
@@ -84,25 +96,32 @@ public class DroneLaunchPreloader extends Preloader {
 
     private void loadLoginScreen(PreloaderMode mode, String message) {
 
-
         BorderPane root = new BorderPane();
         VBox vBox = new VBox();
         root.setStyle(backgroundDefinitions);
+
+        Button loginBtn = new Button("Login");
+        Button registerBtn = new Button("Register User");
+        Button signingBtn = new Button("Register");
+        Button exitBtn = new Button("Exit");
+
         TextField userName = new TextField();
         userName.setAlignment(Pos.CENTER);
         userName.setMaxWidth(PAGE_WIDTH/2);
         TextField password = new TextField();
         password.setMaxWidth(PAGE_WIDTH/2);
         password.setAlignment(Pos.CENTER);
+        password.setOnKeyReleased(key -> {
+            if (!key.getCode().equals(KeyCode.ENTER))
+                return;
+
+            loginBtn.fire();
+        });
         TextField password2 = new TextField();
         password2.setMaxWidth(PAGE_WIDTH/2);
         password2.setAlignment(Pos.CENTER);
 
         status = new Label(message);
-        Button loginBtn = new Button("Login");
-        Button registerBtn = new Button("Register User");
-        Button signingBtn = new Button("Register");
-        Button exitBtn = new Button("Exit");
 
         loginBtn.setOnAction((actionEvent) -> {
             LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText());

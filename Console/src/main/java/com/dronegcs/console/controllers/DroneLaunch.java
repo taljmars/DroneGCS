@@ -125,7 +125,7 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		Scene scene = new Scene(root, WIDTH, HEIGHT);
 		//scene.getStylesheets().add("talma.css");
 		scene.setOnKeyPressed(keyBoardController);
-		mainStage.setResizable(false);
+//		mainStage.setResizable(false);
 		mainStage.setScene(scene);
 		mainStage.setMaximized(true);
 		mainStage.show();

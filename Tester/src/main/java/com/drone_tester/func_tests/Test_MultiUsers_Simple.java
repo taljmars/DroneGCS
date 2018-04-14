@@ -50,7 +50,6 @@ public class Test_MultiUsers_Simple extends Test {
             Assert.isTrue(baseObjectUser2.getName().equals("user2_bObj"));
             publish(new TestEvent(this, Status.IN_PROGRESS, "update for the first time in private", ++idx, total));
 
-            // TODO: make the query works and release this code part
             QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
             queryRequestRemote.setQuery("GetAllDummyBaseObject");
             queryRequestRemote.setClz(DummyBaseObject.class.getCanonicalName());
