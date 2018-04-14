@@ -44,6 +44,12 @@
 
         <dependency>
             <groupId>com.generic_tools</groupId>
+            <artifactId>Objects</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
             <artifactId>Logger</artifactId>
             <version>RELEASE</version>
         </dependency>
