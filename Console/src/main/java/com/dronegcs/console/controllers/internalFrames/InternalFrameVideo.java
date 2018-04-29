@@ -92,6 +92,10 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
     @NotNull
     @FXML
+    private Label backgroundLabel;
+
+    @NotNull
+    @FXML
     private Label redirectionLabel;
 
     @NotNull
@@ -150,10 +154,10 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     public void handleVideoMouseClick(MouseEvent mouseEvent) {
         if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mouseEvent.getClickCount() >= 2) {
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            double ratio = primaryScreenBounds.getHeight() / originalVideoHeight;
+            double ratio = (primaryScreenBounds.getHeight() - 50) / originalVideoHeight;
             double height = primaryScreenBounds.getHeight();
             double width = originalVideoWidth * ratio;
-            Parent droneEyeView = (Parent) guiAppConfig.loadInternalFrame("/views/DroneEyeView.fxml", width, height);
+            Parent droneEyeView = (Parent) guiAppConfig.loadInternalFrame("/com/dronegcs/console/views/DroneEyeView.fxml", width, height);
             loggerDisplayerSvc.logGeneral("add drone listening to drone eye view");
             drone.addDroneListener(externalFrameVideo);
             detector.addListener(externalFrameVideo);
@@ -212,9 +216,12 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
         Image img = frameProcessResult.getFinalImage();
         originalVideoWidth = img.getWidth();
         originalVideoHeight = img.getHeight();
-        imageViewer.setFitWidth(root.getPrefWidth());
+//        imageViewer.setFitWidth(root.getPrefWidth());
         imageViewer.setPreserveRatio(true);
         imageViewer.setImage(img);
+
+        if (backgroundLabel.isVisible())
+            backgroundLabel.setVisible(false);
     }
 
     @FXML

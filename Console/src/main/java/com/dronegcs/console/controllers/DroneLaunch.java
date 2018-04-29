@@ -8,8 +8,6 @@ import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
-import com.viewer_console.MapView;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;

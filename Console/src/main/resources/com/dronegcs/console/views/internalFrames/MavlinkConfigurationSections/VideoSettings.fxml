@@ -18,7 +18,7 @@
                 <Label text="Camera Device ID" />
                 <HBox >
                     <children>
-                        <TextField fx:id="txtDeviceId" text="0" />
+                        <TextField fx:id="txtDeviceId" text="1" />
                         <Button fx:id="btnUpdateDevice" text="Update" />
                     </children>
                 </HBox>

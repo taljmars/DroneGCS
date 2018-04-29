@@ -26,7 +26,7 @@
          <center>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" style="-fx-background-color: black; -fx-border-color: black;" text="No Image" textAlignment="CENTER" textFill="#f8f8f8" />
+                  <Label fx:id="backgroundLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" style="-fx-background-color: black; -fx-border-color: black;" text="No Image" textAlignment="CENTER" textFill="#f8f8f8" />
                   <ImageView fx:id="imageViewer" fitHeight="${root.prefHeight}" fitWidth="${root.prefWidth}" onMouseClicked="#handleVideoMouseClick" />
                </children>
             </AnchorPane>

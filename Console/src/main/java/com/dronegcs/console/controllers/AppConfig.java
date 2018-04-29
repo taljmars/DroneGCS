@@ -29,7 +29,6 @@ import java.net.URISyntaxException;
 public class AppConfig {
 
 	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(AppConfig.class);
-	public static final double FRAME_CONTAINER_REDUCE_PRECENTAGE = 0.17;
 	public static final String ENV_SYMBOL = "GCSMode";
 
 	private static final String STYLE_FILE = "/com/dronegcs/console/application.css";
