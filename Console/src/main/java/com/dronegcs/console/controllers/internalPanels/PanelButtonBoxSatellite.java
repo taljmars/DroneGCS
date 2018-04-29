@@ -62,7 +62,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@NotNull @FXML private ToggleButton btnStartPerimeter;
 	@NotNull @FXML private Button btnFollowBeaconShow;
 	@NotNull @FXML private ToggleButton btnFollowBeaconStart;
-	@NotNull @FXML private Button btnExit;
+//	@NotNull @FXML private Button btnExit;
 	
 	@NotNull @FXML private ComboBox<ApmModes> flightModesCombo;
 	@NotNull @FXML private Button btnSetMode;
@@ -403,16 +403,16 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		drone.getPerimeter().setEnforce(btnStartPerimeter.isSelected());
 	}
 	
-	@FXML
-	public void ButtonExitOnAction(ActionEvent actionEvent) {
-		try {
-			opGCSTerminationHandler.go();
-		} 
-		catch (InterruptedException ex) {
-			loggerDisplayerSvc.logError("Failed to terminate GCS");
-			ex.printStackTrace();
-		}
-	}
+//	@FXML
+//	public void ButtonExitOnAction(ActionEvent actionEvent) {
+//		try {
+//			opGCSTerminationHandler.go();
+//		}
+//		catch (InterruptedException ex) {
+//			loggerDisplayerSvc.logError("Failed to terminate GCS");
+//			ex.printStackTrace();
+//		}
+//	}
 	
 	@FXML
 	public void ButtonSetModeOnAction(ActionEvent actionEvent) {

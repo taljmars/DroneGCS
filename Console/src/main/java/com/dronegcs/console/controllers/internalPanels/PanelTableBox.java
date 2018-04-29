@@ -1,10 +1,12 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.internalPanels.internal.PerimeterTableProfile;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.MissionTableProfile;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -61,6 +63,16 @@ public class PanelTableBox extends Pane implements Initializable {
 
 		missionTableProfile.setBigTableView(this);
 		perimeterTableProfile.setBigTableView(this);
+
+		GUISettings._WIDTH.addListener(val -> {
+			this.setPrefWidth(((IntegerProperty) val).getValue() * 0.65);
+		});
+		GUISettings._HEIGHT.addListener(val -> {
+			this.setPrefWidth(((IntegerProperty) val).getValue() * 0.15);
+		});
+
+		this.setPrefWidth(GUISettings._WIDTH.get() * 0.65);
+		this.setPrefHeight(GUISettings._HEIGHT.get() * 0.15);
 	}
 
 

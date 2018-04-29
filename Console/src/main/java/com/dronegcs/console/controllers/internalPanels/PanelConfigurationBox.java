@@ -41,7 +41,6 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	private RuntimeValidator runtimeValidator;
 	
 	@NotNull @FXML private CheckBox cbActiveGeofencePerimeterAlertOnly;
-	@NotNull @FXML private ComboBox<Integer> cmbframeContainerCells;
 	@NotNull @FXML private Button btnUpdateDevice;
 	@NotNull @FXML private TextField txtDeviceId;
 	@NotNull @FXML private ComboBox<String> cmbMapIconFontSize;
@@ -62,7 +61,6 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 		cmbMapIconFontSize.setValue(MapViewerSettings.getMarkersFontSize());
 		
         cbActiveGeofencePerimeterAlertOnly.setOnAction( e -> drone.getPerimeter().setAlertOnly(cbActiveGeofencePerimeterAlertOnly.isSelected() ? true : false));
-        cmbframeContainerCells.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.SPLIT_FRAMECONTAINER, cmbframeContainerCells.getValue())));
         btnUpdateDevice.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
 		cmbMapIconFontSize.setOnAction( e -> {
 				MapViewerSettings.setMarkersFontSize(cmbMapIconFontSize.getValue());

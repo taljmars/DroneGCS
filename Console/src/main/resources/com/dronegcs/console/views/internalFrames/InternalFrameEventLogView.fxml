@@ -4,9 +4,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameEventLogger" >
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameEventLogger" opacity="0.7">
 	<children>
-		<TableView fx:id="table" prefHeight="175.0" prefWidth="1260.0">
+		<!--<TableView fx:id="table" prefHeight="${prefHeight}" prefWidth="1260.0">-->
+		<TableView fx:id="table" prefHeight="-Infinity" prefWidth="1260.0">
 			<columns>
 				<TableColumn fx:id="id" prefWidth="25.0" text="#" />
 				<TableColumn fx:id="icon" prefWidth="25.0" text="" />

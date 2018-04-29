@@ -5,7 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameBattery">
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameBattery" opacity="0.7">
 	<children>
 		<LineChart fx:id="lineChart" title="Battery">
 			<xAxis>

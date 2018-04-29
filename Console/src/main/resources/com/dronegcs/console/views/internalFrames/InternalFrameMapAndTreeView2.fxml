@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<Pane fx:id="root" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMap">
+    <children>
+        <StackPane fx:id="splitPane" prefHeight="1080.0" prefWidth="1920.0">
+            <children>
+
+                <Pane fx:id="right" />
+
+                <Pane fx:id="left" maxWidth="-Infinity" opacity="0.7" prefWidth="250.0" StackPane.alignment="CENTER_LEFT">
+                    <StackPane.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </StackPane.margin>
+                </Pane>
+
+            </children>
+        </StackPane>
+    </children>
+</Pane>

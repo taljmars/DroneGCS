@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.dronegcs.console.controllers.dashboard.DraggableNode;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.connection.ConnectionStatistics;

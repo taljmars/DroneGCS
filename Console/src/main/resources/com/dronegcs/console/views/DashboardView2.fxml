@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="dashboardView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.dashboard.Dashboard">
+
+    <children>
+
+        <fx:include fx:id="mapBoard" source="internalFrames/InternalFrameMapAndTreeView2.fxml" StackPane.alignment="CENTER" />
+
+        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" StackPane.alignment="TOP_CENTER">
+            <children>
+                <fx:include source="panels/PanelButtonBoxSatelliteView2.fxml" />
+            </children>
+            <StackPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </StackPane.margin>
+        </Pane>
+
+        <FlowPane alignment="CENTER_RIGHT" columnHalignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="604.0" prefWidth="60.0" prefWrapLength="0.0" StackPane.alignment="CENTER_RIGHT">
+            <children>
+                  <fx:include source="panels/PanelFrameBarSatelliteView2.fxml" />
+            </children>
+            <StackPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </StackPane.margin>
+        </FlowPane>
+
+        <Pane fx:id="bottomPanel" opacity="0.7" StackPane.alignment="BOTTOM_CENTER">
+            <children>
+            <TabPane fx:id="bottomPanelTab" side="RIGHT" tabClosingPolicy="UNAVAILABLE" tabMaxWidth="0.0">
+              <tabs>
+                <Tab text="Logs">
+                  <content>
+                    <AnchorPane>
+                        <children>
+                            <fx:include source="panels/internal/PanelLogBoxView2.fxml" />
+                        </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Table">
+                  <content>
+                    <AnchorPane>
+                        <children>
+                            <fx:include source="panels/internal/PanelTableView2.fxml" />
+                        </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+            </children>
+            <StackPane.margin>
+                <Insets bottom="0" top="0" />
+            </StackPane.margin>
+        </Pane>
+
+        <!--<StackPane fx:id="frameContainerWrapper" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="580.0" StackPane.alignment="CENTER_RIGHT" visible="false">-->
+            <!--<StackPane.margin>-->
+                <!--<Insets bottom="250.0" left="200.0" right="100.0" top="250.0" />-->
+            <!--</StackPane.margin>-->
+            <!--<children>-->
+                <!--<VBox fx:id="frameContainer" prefHeight="600.0" prefWidth="600.0" StackPane.alignment="TOP_CENTER" />-->
+            <!--</children>-->
+        <!--</StackPane>-->
+
+        <!--<AnchorPane fx:id="bigScreenContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="1720.0" visible="false" StackPane.alignment="CENTER">-->
+        <StackPane fx:id="bigScreenContainer" visible="false" StackPane.alignment="CENTER">
+            <!--<StackPane.margin>-->
+                <!--<Insets bottom="250.0" left="100.0" right="100.0" top="250.0" />-->
+            <!--</StackPane.margin>-->
+        </StackPane>
+
+        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.7" StackPane.alignment="TOP_RIGHT">
+            <children>
+                <fx:include source="panels/internal/PanelStatisticsView2.fxml" />
+            </children>
+            <StackPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </StackPane.margin>
+        </HBox>
+
+        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.7" StackPane.alignment="TOP_LEFT">
+            <children>
+                <fx:include source="panels/PanelTelemetrySatelliteView2.fxml" />
+            </children>
+            <StackPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </StackPane.margin>
+        </HBox>
+
+        <CheckBox fx:id="widgetDragging" alignment="CENTER" mnemonicParsing="false" opacity="0.7" selected="false" style="-fx-border-color: white;" text="Widgets Edit  " textAlignment="CENTER" StackPane.alignment="BOTTOM_LEFT">
+            <StackPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </StackPane.margin>
+        </CheckBox>
+
+    </children>
+</StackPane>

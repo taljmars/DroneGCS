@@ -62,8 +62,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	@NotNull @FXML private Label lblPitch;
 	@NotNull @FXML private Label lblRoll;
 	
-	@NotNull @FXML private TextField lblCriticalMsg;
-	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
@@ -78,7 +76,6 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		lblCriticalMsg.setEditable(false);
 		batteryBar.setProgress(0);
 		SetHeartBeat(true);
 
@@ -172,18 +169,11 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	}
 	
 	public void ClearNotification() {
-		lblCriticalMsg.setVisible(false);
 	}
 
+	//TODO: get rid of this
 	public void SetNotification(String notification) {
 		LOGGER.debug("Updating notification '{}'", notification);
-		lblCriticalMsg.setVisible(true);
-		if (lblCriticalMsg.getStyle().equals("-fx-control-inner-background: orange;"))
-			lblCriticalMsg.setStyle("-fx-control-inner-background: blue;");
-		else
-			lblCriticalMsg.setStyle("-fx-control-inner-background: orange;");
-		
-		lblCriticalMsg.setText(notification);
 	}
 	
 	@EventListener

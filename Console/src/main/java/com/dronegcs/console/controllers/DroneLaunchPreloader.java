@@ -7,16 +7,14 @@ import javafx.application.Preloader;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
@@ -29,6 +27,9 @@ import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMod
 public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyEvent> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DroneLaunchPreloader.class);
+
+    //Don't deliver this - only for development
+    private boolean WA_FOR_LOGIN = false;
 
     @Override
     public void handle(KeyEvent event) {
@@ -62,6 +63,8 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
 
     public void start(Stage primaryStage) throws Exception {
         this.preloaderStage = primaryStage;
+        GUISettings._WIDTH.set((int) Screen.getPrimary().getVisualBounds().getMaxX());
+        GUISettings._HEIGHT.set((int) Screen.getPrimary().getVisualBounds().getMaxY());
         BorderPane root = new BorderPane();
         VBox vBox = new VBox();
         root.setStyle(backgroundDefinitions);
@@ -105,10 +108,11 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         Button signingBtn = new Button("Register");
         Button exitBtn = new Button("Exit");
 
-        TextField userName = new TextField();
+        TextField userName = new TextField(WA_FOR_LOGIN ? "admin" : "");
         userName.setAlignment(Pos.CENTER);
         userName.setMaxWidth(PAGE_WIDTH/2);
-        TextField password = new TextField();
+        PasswordField password = new PasswordField();
+        password.setText(WA_FOR_LOGIN ? "admin" : "");
         password.setMaxWidth(PAGE_WIDTH/2);
         password.setAlignment(Pos.CENTER);
         password.setOnKeyReleased(key -> {
@@ -117,7 +121,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
 
             loginBtn.fire();
         });
-        TextField password2 = new TextField();
+        PasswordField password2 = new PasswordField();
         password2.setMaxWidth(PAGE_WIDTH/2);
         password2.setAlignment(Pos.CENTER);
 

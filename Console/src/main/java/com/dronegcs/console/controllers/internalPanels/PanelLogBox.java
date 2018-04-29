@@ -1,11 +1,13 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console_plugin.services.internal.logevents.LogAbstractDisplayerEvent;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.logger.Logger.Type;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
@@ -42,7 +44,9 @@ public class PanelLogBox extends Pane implements Initializable {
     @PostConstruct
     private void init() {
         if (called++ > 1)
-            throw new RuntimeException("Not a Singletone");
+            throw new RuntimeException("Not a Singleton");
+
+
     }
 
     @Override
@@ -50,6 +54,16 @@ public class PanelLogBox extends Pane implements Initializable {
         ValidatorResponse validatorResponse = runtimeValidator.validate(this);
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
+
+        GUISettings._WIDTH.addListener(val -> {
+            logTextBox.setPrefWidth(((IntegerProperty) val).getValue() * 0.65);
+        });
+        GUISettings._HEIGHT.addListener(val -> {
+            logTextBox.setPrefHeight(((IntegerProperty) val).getValue() * 0.15);
+        });
+
+        logTextBox.setPrefWidth(GUISettings._WIDTH.get() * 0.65);
+        logTextBox.setPrefHeight(GUISettings._HEIGHT.get() * 0.15);
     }
 
     private void addGeneralMessegeToDisplay(String cmd) {

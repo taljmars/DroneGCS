@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkConfiguration" >
-	<ScrollPane fx:id="sc1" fitToHeight="false" maxHeight="${prefHeight}">
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkConfiguration" opacity="0.7">
+	<ScrollPane fx:id="sc1" fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">
 		<content>
-			<VBox minHeight="${prefHeight}" prefWidth="${prefWidth}" spacing="30">
+			<VBox fx:id="vbox" minHeight="${sc1.prefHeight}" prefWidth="${sc1.prefWidth}" spacing="30">
 				<children>
 					<fx:include source="MavlinkConfigurationSections/Modes.fxml" />
 					<Separator maxHeight="10"/>
-                    <fx:include source="MavlinkConfigurationSections/RadioCalib.fxml" />
-                    <Separator maxHeight="10"/>
+					<fx:include source="MavlinkConfigurationSections/RadioCalib.fxml" />
+					<Separator maxHeight="10"/>
 					<fx:include source="MavlinkConfigurationSections/KeyBoardControllerTuning.fxml" />
+					<Separator maxHeight="10"/>
+					<fx:include source="MavlinkConfigurationSections/MapSettings.fxml" />
+					<Separator maxHeight="10"/>
+					<fx:include source="MavlinkConfigurationSections/VideoSettings.fxml" />
 					<Separator maxHeight="10"/>
 				</children>
 			</VBox>

@@ -80,7 +80,7 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 			throw new RuntimeException(validatorResponse.toString());
 
 		table.setPrefWidth(root.getPrefWidth());
-		table.setPrefHeight(root.getPrefHeight());
+//		table.setPrefHeight(root.getPrefHeight());
 
 		Callback<TableColumn<ParamsTableEntry, Double>, TableCell<ParamsTableEntry, Double>> cellFactory = new Callback<TableColumn<ParamsTableEntry, Double>, TableCell<ParamsTableEntry, Double>>() {
 			public TableCell<ParamsTableEntry, Double> call(TableColumn<ParamsTableEntry, Double> p) {

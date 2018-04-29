@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameVideo">
+<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameVideo">
    <children>
       <BorderPane>
          <top>
-            <HBox prefHeight="0.0" prefWidth="${prefWidth}" BorderPane.alignment="CENTER">
+            <HBox prefHeight="0.0" prefWidth="${root.prefWidth}" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="opCamera" mnemonicParsing="false" onAction="#handleOpCameraOnAction" text="Start Camera" />
                   <Label maxHeight="1.7976931348623157E308" text="  |  Select Tracker:  " />
@@ -26,7 +26,8 @@
          <center>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="imageViewer" onMouseClicked="#handleVideoMouseClick" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" style="-fx-background-color: black; -fx-border-color: black;" text="No Image" textAlignment="CENTER" textFill="#f8f8f8" />
+                  <ImageView fx:id="imageViewer" fitHeight="${root.prefHeight}" fitWidth="${root.prefWidth}" onMouseClicked="#handleVideoMouseClick" />
                </children>
             </AnchorPane>
          </center>

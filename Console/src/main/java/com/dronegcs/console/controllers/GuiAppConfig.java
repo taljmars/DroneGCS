@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers;
 
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -34,6 +35,8 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
 //    private KeyBoardController keyBoardController;
 
 
+    @Autowired
+    private OpGCSTerminationHandler opGCSTerminationHandler;
     
     private Stage stage;
 
@@ -41,24 +44,6 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
         this.stage = primaryStage;
     }
 
-//    public void showMainScreen() {
-//        Parent root = (Parent) load("/com/dronegcs/console/views/DashboardView.fxml");
-////        root.setStyle("-fx-background-color: whitesmoke;");
-//        root.getStylesheets().add(STYLE_FILE);
-//        Scene scene = new Scene(root, WIDTH, HEIGHT);
-//        //scene.getStylesheets().add("talma.css");
-//        scene.setOnKeyPressed(keyBoardController);
-//        stage.setResizable(false);
-//        stage.setScene(scene);
-//        stage.setMaximized(true);
-//        stage.show();
-//        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                applicationContext.close();
-//            }
-//        });
-//    }
 
     public Stage getRootStage() {
         return stage;
@@ -114,7 +99,14 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
 
     @Override
     public void handle(WindowEvent event) {
-        applicationContext.close();
+        if (event.getEventType() == WindowEvent.WINDOW_CLOSE_REQUEST) {
+            try {
+                opGCSTerminationHandler.go();
+                event.consume();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

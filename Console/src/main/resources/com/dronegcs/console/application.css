@@ -1,104 +1,106 @@
 #btnMapImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Map.png");
+	-fx-image: url("guiImages/Map.png");
 }
 #btnActualPWMImage {          
-	-fx-image: url("/com/dronegcs/console/guiImages/Motor.png");
+	-fx-image: url("guiImages/Motor.png");
 }
 #btnBatteryImage {          
-	-fx-image: url("/com/dronegcs/console/guiImages/Battery.png");
+	-fx-image: url("guiImages/Battery.png");
 }
 #btnSignalImage {          
-	-fx-image: url("/com/dronegcs/console/guiImages/Signal.png");
+	-fx-image: url("guiImages/Signal.png");
 }
 #btnHeightAndSpeedImage {          
-	-fx-image: url("/com/dronegcs/console/guiImages/Height.png");
+	-fx-image: url("guiImages/Height.png");
 }
 #btnCameraImage {          
-	-fx-image: url("/com/dronegcs/console/guiImages/Camera.png");
+	-fx-image: url("guiImages/Camera.png");
 }
 #btnMavlinkParamsImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/MavlinkParams.png");
+	-fx-image: url("guiImages/MavlinkParams.png");
 }
 #btnMavlinkConfigurationImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/MavlinkConfiguration.png");
+	-fx-image: url("guiImages/MavlinkConfiguration.png");
 }
 #btnEventLogImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Logs.png");
+	-fx-image: url("guiImages/Logs.png");
 }
 #btnSetModeImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/UpdateQuad.png");
+	-fx-image: url("guiImages/UpdateQuad.png");
 }
 #btnPublishImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Save.png");
+	-fx-image: url("guiImages/Save.png");
 }
 #btnPublishOffImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/SaveOff.png");
+	-fx-image: url("guiImages/SaveOff.png");
 }
 #btnDiscardImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Discard.png");
+	-fx-image: url("guiImages/Discard.png");
 }
 #btnDiscardOffImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/DiscardOff.png");
+	-fx-image: url("guiImages/DiscardOff.png");
 }
 
 
 #btnConnectImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Disconnected.png");
+	-fx-image: url("guiImages/Disconnected.png");
 }
 #btnSyncDroneImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Synchronize.png");
+	-fx-image: url("guiImages/Synchronize.png");
 }
 #btnControllerImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Remote.png");
+	-fx-image: url("guiImages/Remote.png");
 }
 #btnArmImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Arm.png");
+	-fx-image: url("guiImages/Arm.png");
 }
 #btnLandRTLImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Land.png");
+	-fx-image: url("guiImages/Land.png");
 }
 #btnTakeoffImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Takeoff.png");
+	-fx-image: url("guiImages/Takeoff.png");
 }
 #btnGCSShowImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/GCSPosition.png");
+	-fx-image: url("guiImages/GCSPosition.png");
 }
 #btnHoldPositionImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/HoldPosition.png");
+	-fx-image: url("guiImages/HoldPosition.png");
 }
 #btnStartMissionImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Mission2.png");
+	-fx-image: url("guiImages/Mission2.png");
 }
 #btnStartPerimeterImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/Perimeter.png");
+	-fx-image: url("guiImages/Perimeter.png");
 }
 #btnFollowBeaconStartImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/LockPosition.png");
+	-fx-image: url("guiImages/LockPosition.png");
 }
 #btnFollowBeaconShowImage {
-	-fx-image: url("/com/dronegcs/console/guiImages/BeaconOff.png");
+	-fx-image: url("guiImages/BeaconOff.png");
 }
 #btnExitImage {
 	-fx-image: url("/com/dronegcs/console/guiImages/Exit.png");
 }
 
-* {
+{
+
    backgroundColor: ghostwhite;
-   buttonColor: lightskyblue;
+   buttonColor: lightgray;
+   /*buttonColor: lightskyblue;*/
    buttonHoverColor: lightgray;
    buttonHoverTextColor: #1d1d1d;
    textColor: #1d1d1d;
 
-
-   /*
+    /*
     Dark background on blue button and white text
-
+    */
+    /*
     backgroundColor: #1d1d1d;
     buttonHoverColor: lightgray;
     buttonHoverTextColor: #1d1d1d;
     buttonColor: #2d579f;
     textColor: lightgray;
-   */
+    */
 
    -fx-text-fill: textColor;
 }
@@ -176,7 +178,7 @@
 }
 
 .tab-pane>*.tab-header-area>*.headers-region>*.tab { /* FX theme stylesheet */
-    -fx-background-color: backgroundColor;
+    -fx-background-color: buttonColor;
 }
 
 .tab-pane>*.tab-header-area>*.headers-region>*.tab:selected { /* FX theme stylesheet */

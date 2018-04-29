@@ -4,24 +4,28 @@ import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
+import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.dashboard.Dashboard;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
+import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
-import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapTreeObjects.Layer;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -33,6 +37,7 @@ import javafx.scene.layout.FlowPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -47,10 +52,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(PanelFrameBarSatellite.class);
     private static String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
 
-    @NotNull
-    @FXML
-    private Button btnMap;
-    private static String MAP_VIEW = "InternalFrameMapAndTreeView.fxml";
+//    @NotNull
+//    @FXML
+//    private Button btnMap;
+//    private static String MAP_VIEW = "InternalFrameMapAndTreeView.fxml";
 
     @NotNull
     @FXML
@@ -99,6 +104,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     @FXML
     private Button btnDiscard;
 
+//    @NotNull
+//    @FXML
+//    private Button btnExit;
+
     @Autowired
     @NotNull(message = "Internal Error: Failed to get dialog manager")
     private DialogManagerSvc dialogManagerSvc;
@@ -132,7 +141,18 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private EventPublisherSvc eventPublisherSvc;
 
     @Autowired
+    @NotNull(message = "Internal Error: Failed to get gcs termination handler")
+    private OpGCSTerminationHandler opGCSTerminationHandler;
+
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get logger")
+    private LoggerDisplayerSvc loggerDisplayerSvc;
+
+    @Autowired
     private RuntimeValidator runtimeValidator;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private boolean inPrivateSession = false;
 
@@ -164,7 +184,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     }
 
     private void updateFrameMapPath() {
-        btnMap.setUserData(INTERNAL_FRAME_PATH + MAP_VIEW);
+//        btnMap.setUserData(INTERNAL_FRAME_PATH + MAP_VIEW);
         btnActualPWM.setUserData(INTERNAL_FRAME_PATH + ACTUAL_PWM_VIEW);
         btnSignal.setUserData(INTERNAL_FRAME_PATH + SIGNALS_VIEW);
         btnHeightAndSpeed.setUserData(INTERNAL_FRAME_PATH + HEIGHT_SPEED_VIEW);
@@ -200,6 +220,24 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         content.putString((String) button.getUserData());
         db.setContent(content);
         event.consume();
+
+        // Make the framebar visible since we need it
+        Dashboard dashboard = applicationContext.getBean(Dashboard.class);
+    }
+
+    @FXML
+    public void ToolbarOnClickEvent(MouseEvent event) {
+        Button button = (Button) event.getSource();
+
+        if (event.getClickCount() == 1) {
+            Dashboard dashboard = applicationContext.getBean(Dashboard.class);
+        }
+
+        if (event.getClickCount() >= 2) {
+            String springInstansiation = (String) button.getUserData();
+            Dashboard dashboard = applicationContext.getBean(Dashboard.class);
+            dashboard.loadBigScreenContainter(springInstansiation);
+        }
     }
 
     @FXML

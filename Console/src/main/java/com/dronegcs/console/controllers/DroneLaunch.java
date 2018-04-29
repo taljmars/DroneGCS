@@ -8,8 +8,11 @@ import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
+import com.viewer_console.MapView;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,10 +30,8 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
     private final Logger LOGGER = LoggerFactory.getLogger(DroneLaunch.class);
 
 	protected static final String STYLE_FILE = "/com/dronegcs/console/application.css";
-	private static final int WIDTH = 800;
-	private static final int HEIGHT = 650;
 
-    @Autowired
+	@Autowired
     private GlobalStatusSvc globalStatus;
 
     @Autowired
@@ -87,6 +88,10 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 			guiAppConfig.setPrimaryStage(mainStage);
 //			guiAppConfig.showMainScreen();
 //			showMainScreen();
+
+			//Bind to window resizing
+			mainStage.widthProperty().addListener((obs, oldVal, newVal) -> GUISettings._WIDTH.set(((Double) newVal).intValue()));
+			mainStage.heightProperty().addListener((obs, oldVal, newVal) -> GUISettings._HEIGHT.set(((Double) newVal).intValue()));
 		}
 		catch (Throwable e) {
 			LOGGER.error("Terminating launch", e);
@@ -119,23 +124,24 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 	}
 
 	private void showMainScreen() {
-		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView.fxml");
+		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView2.fxml");
 //        root.setStyle("-fx-background-color: whitesmoke;");
 		root.getStylesheets().add(STYLE_FILE);
-		Scene scene = new Scene(root, WIDTH, HEIGHT);
+//		Scene scene = new Scene(root, WIDTH, HEIGHT);
+		Scene scene = new Scene(root);
 		//scene.getStylesheets().add("talma.css");
 		scene.setOnKeyPressed(keyBoardController);
 //		mainStage.setResizable(false);
 		mainStage.setScene(scene);
 		mainStage.setMaximized(true);
 		mainStage.show();
-//		mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//			@Override
-//			public void handle(WindowEvent event) {
-//				applicationContext.close();
-//			}
-//		});
+
 		mainStage.setOnCloseRequest(guiAppConfig);
+
+		mainStage.setX(0);
+		mainStage.setY(0);
+		mainStage.setWidth(Screen.getPrimary().getVisualBounds().getMaxX());
+		mainStage.setHeight(Screen.getPrimary().getVisualBounds().getMaxY());
 	}
 
     public static void main(String[] args) {

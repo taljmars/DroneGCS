@@ -23,21 +23,21 @@
          <top>
             <FlowPane prefHeight="30.0" prefWidth="622.0" BorderPane.alignment="CENTER">
 			  <children>
-                <fx:include source="/com/dronegcs/console/views/panels/PanelFrameBarSatelliteView.fxml" />
+                <fx:include source="panels/PanelFrameBarSatelliteView.fxml" />
               </children>
 			</FlowPane>
          </top>
          <right>
             <VBox prefHeight="376.0" prefWidth="300.0" BorderPane.alignment="CENTER">
-               <children>              
+               <children>
                   <AnchorPane>
 				    <children>
-                      <fx:include source="/com/dronegcs/console/views/panels/PanelButtonBoxSatelliteView.fxml" />
+                      <fx:include source="panels/PanelButtonBoxSatelliteView.fxml" />
 			        </children>
 				  </AnchorPane>
 				  <AnchorPane>
 				    <children>
-                      <fx:include source="/com/dronegcs/console/views/panels/PanelTelemetrySatelliteView.fxml" />
+                      <fx:include source="panels/PanelTelemetrySatelliteView.fxml" />
 			        </children>
 				  </AnchorPane>
                </children>
@@ -53,7 +53,7 @@
 								<content>
 									<AnchorPane>
 										<children>
-											<fx:include source="/com/dronegcs/console/views/panels/PanelToolBoxView.fxml" />
+											<fx:include source="panels/PanelToolBoxView.fxml" />
 										</children>
 									</AnchorPane>
 								</content>

@@ -11,7 +11,9 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +43,18 @@ public class InternalFrameMavlinkConfiguration extends Pane implements OnDroneLi
 	private RuntimeValidator runtimeValidator;
 	
 	@NotNull @FXML private Pane root;
+
+	@NotNull @FXML private ScrollPane sc1;
+
+	@NotNull @FXML private VBox vbox;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		sc1.setPrefHeight(root.getPrefHeight());
 	}
 	
 	private static int called;

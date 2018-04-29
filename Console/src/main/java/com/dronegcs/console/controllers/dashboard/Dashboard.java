@@ -1,12 +1,12 @@
 package com.dronegcs.console.controllers.dashboard;
 
+import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -18,23 +18,24 @@ import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ObservableList;
+import javafx.beans.property.IntegerProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -51,44 +52,51 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
     public static final String APP_TITLE = "Quad Ground Station";
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get drone")
+    @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get text publisher")
+    @Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
     private TextNotificationPublisherSvc textNotificationPublisherSvc;
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
+    @Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
     private LoggerDisplayerSvc loggerDisplayerSvc;
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get GCS terminator handler")
+    @Autowired @NotNull(message = "Internal Error: Failed to get GCS terminator handler")
     private OpGCSTerminationHandler opGCSTerminationHandler;
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get map frame")
+    @Autowired @NotNull(message = "Internal Error: Failed to get map frame")
     private InternalFrameMap internalFrameMap;
 
-    @Autowired
-    @NotNull(message = "Internal Error: Failed to get current frames amount")
+    @Autowired @NotNull(message = "Internal Error: Failed to get current frames amount")
     private EventPublisherSvc eventPublisherSvc;
 
-    @Autowired
+    @Autowired @NotNull(message = "Internal Error: Failed to get gui configuration")
     private GuiAppConfig guiAppConfig;
+
+    @Autowired @NotNull(message = "Internal Error: Failed to get draggable node configurator")
+    private DraggableNode draggableNode;
 
     @Autowired
     private RuntimeValidator runtimeValidator;
 
-    @FXML
-    private HBox frameContainer;
+    @FXML private StackPane dashboardView;
+
+    private static final double BOTTOM_PANEL_RATIO_H = 0.15;
+    private static final double BOTTOM_PANEL_RATIO_W = 0.65;
+    private static final double BOTTOM_PANEL_RATIO_BOTTOM_MARGIN_H = 0.08;
+    @FXML private Pane bottomPanel;
+    @FXML private TabPane bottomPanelTab;
+
     @FXML
     private ProgressBar progressBar;
 
-    private Stage viewManager;
+    private static final double BIG_SCREEN_CONTAINER_RATIO_H = 0.55;
+    private static final double BIG_SCREEN_CONTAINER_RATIO_W = 0.6;
+    @FXML private Pane bigScreenContainer;
 
-    private SimpleIntegerProperty maxFramesAmount;
+    @FXML private CheckBox widgetDragging;
+
+    private Stage viewManager;
 
     private static int called;
 
@@ -122,27 +130,53 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     }
 
     private void initializeGui() {
+        LOGGER.info("Initialize GUI");
         setViewManager(guiAppConfig.getRootStage());
-        maxFramesAmount = new SimpleIntegerProperty(2);
 
-        frameContainer.setOnDragOver((event) -> {
-                /* data is dragged over the target */
-		        /* accept it only if it is not dragged from the same node 
-		         * and if it has a string data */
-            if (event.getGestureSource() != frameContainer && event.getDragboard().hasString()) {
-		            /* allow for both copying and moving, whatever user chooses */
+        draggableNode.bind(widgetDragging.selectedProperty());
+        setDragPlane(dashboardView);
+
+        internalFrameMap.reloadData();
+
+        GUISettings._WIDTH.addListener(val -> {
+            int intVal = ((IntegerProperty) val).getValue();
+            double newBottomWidth = intVal * BOTTOM_PANEL_RATIO_W;
+            bottomPanel.setPrefWidth(newBottomWidth);
+            double padX = (intVal - newBottomWidth) / 2;
+            Insets currentInsets = StackPane.getMargin(bottomPanel);
+            Insets insets = new Insets(currentInsets.getTop(), padX, currentInsets.getBottom(), padX);
+            StackPane.setMargin(bottomPanel, insets);
+        });
+        GUISettings._HEIGHT.addListener(val -> {
+            int intVal = ((IntegerProperty) val).getValue();
+            double newBottomHeight = intVal * BOTTOM_PANEL_RATIO_H;
+            bottomPanel.setPrefHeight(newBottomHeight);
+            double padY = intVal * BOTTOM_PANEL_RATIO_BOTTOM_MARGIN_H;
+            Insets currentInsets = StackPane.getMargin(bottomPanel);
+            Insets insets = new Insets(intVal - newBottomHeight - padY, currentInsets.getRight(), padY, currentInsets.getLeft());
+            StackPane.setMargin(bottomPanel, insets);
+        });
+
+        GUISettings._WIDTH.addListener(val -> bottomPanelTab.setPrefWidth(((IntegerProperty) val).getValue() * BOTTOM_PANEL_RATIO_W));
+        GUISettings._HEIGHT.addListener(val -> bottomPanelTab.setPrefHeight(((IntegerProperty) val).getValue() * BOTTOM_PANEL_RATIO_H));
+    }
+
+    private void setDragPlane(Pane plane) {
+        plane.setOnDragOver((event) -> {
+            /* data is dragged over the target */
+            /* accept it only if it is not dragged from the same node
+             * and if it has a string data */
+            if (event.getGestureSource() != plane && event.getDragboard().hasString()) {
+                /* allow for both copying and moving, whatever user chooses */
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
 
             event.consume();
-            frameContainer.setStyle("-fx-border-color: red; -fx-border-width: 2; -fx-background-color: #C6C6C6; -fx-border-style: solid;");
         });
 
-        frameContainer.setOnDragExited((event) -> frameContainer.setStyle(""));
-
-        frameContainer.setOnDragDropped((event) -> {
-		        /* data dropped */
-		        /* if there is a string data on dragboard, read it and use it */
+        plane.setOnDragDropped((event) -> {
+            /* data dropped */
+            /* if there is a string data on dragboard, read it and use it */
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasString()) {
@@ -152,9 +186,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
             if (event.getGestureSource() instanceof Button) {
                 Button button = (Button) event.getGestureSource();
-                int index = GetFrameIndexInsideContainer(event.getScreenX());
-                handleFrameContainerRequest((String) button.getUserData(), index);
-		    		/* let the source know whether the string was successfully transferred and used */
+                handleFrameContainerRequest((String) button.getUserData());
+                /* let the source know whether the string was successfully transferred and used */
                 event.setDropCompleted(success);
             } else {
                 event.setDropCompleted(false);
@@ -162,24 +195,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
             event.consume();
         });
-        frameContainer.setOnDragEntered((event) -> event.consume());
 
-        internalFrameMap.reloadData();
-    }
-
-    private int GetFrameIndexInsideContainer(double intersectedPoint) {
-        if (maxFramesAmount.get() == 1)
-            return 0;
-
-        ObservableList<Node> children = frameContainer.getChildren();
-        if (children.isEmpty())
-            return 0;
-
-        double size = frameContainer.getWidth();
-        double positionRelativeToFrameContainerSize = intersectedPoint - frameContainer.getLayoutX();
-
-        int index = (int) Math.round((positionRelativeToFrameContainerSize / size) * (maxFramesAmount.get() - 1));
-        return index;
+        plane.setOnDragEntered((event) -> event.consume());
     }
 
     private void SetDistanceToWaypoint(double d) {
@@ -331,48 +348,31 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         }
     }
 
-    private void handleFrameContainerRequest(String springInstansiation, int index) {
+    private void handleFrameContainerRequest(String springInstansiation) {
         if (springInstansiation.isEmpty())
             return;
 
-        ObservableList<Node> children = frameContainer.getChildren();
-        //Node selectedPane = (Node) AppConfig.loader.loadInternalFrame(springInstansiation, frameContainer.getWidth() / maxFramesAmount.get(), frameContainer.getAltitude() - 25);
-        Node selectedPane = (Node) guiAppConfig.loadInternalFrame(springInstansiation, (frameContainer.getWidth() - 10) / maxFramesAmount.get(), frameContainer.getHeight() - 30);
+        Node selectedPane = guiAppConfig.loadInternalFrame(springInstansiation, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         selectedPane.setUserData(springInstansiation);
-        if (selectedPane != null) {
-            selectedPane.setUserData(springInstansiation);
-            Platform.runLater(() -> {
-                if (maxFramesAmount.get() == 1 || isFrameAlreadyOpen(children, selectedPane))
-                    children.clear();
-
-                if (children.size() != maxFramesAmount.get())
-                    children.add(selectedPane);
-                else {
-                    children.remove(index);
-                    children.add(index, selectedPane);
-                }
-            });
-        }
+        selectedPane = draggableNode.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        dashboardView.getChildren().add(selectedPane);
     }
 
-    private boolean isFrameAlreadyOpen(ObservableList<Node> lst, Node obj) {
-        for (Node node : lst) {
-            if (node.getUserData().equals(obj.getUserData()))
-                return true;
-        }
+    public void loadBigScreenContainter(String springInstansiation) {
+        Pane node = (Pane) guiAppConfig.loadInternalFrame(springInstansiation, GUISettings._WIDTH.get() * BIG_SCREEN_CONTAINER_RATIO_W, GUISettings._HEIGHT.get() * BIG_SCREEN_CONTAINER_RATIO_H);
+        bigScreenContainer.getChildren().clear();
+        bigScreenContainer.getChildren().addAll(node);
 
-        return false;
+        bigScreenContainer.setVisible(true);
+        bigScreenContainer.setOnMouseClicked(event -> {
+            if (event.isPopupTrigger())
+                bigScreenContainer.setVisible(false);
+        });
+
+        double leftrightPadding = (GUISettings._WIDTH.get() * (1 - BIG_SCREEN_CONTAINER_RATIO_W)) / 2;
+        double topbuttomPadding = (GUISettings._HEIGHT.get() * (1 - BIG_SCREEN_CONTAINER_RATIO_H)) / 2;
+        Insets insets = new Insets(topbuttomPadding, leftrightPadding, topbuttomPadding, leftrightPadding);
+        StackPane.setMargin(bigScreenContainer, insets);
     }
-
-    @SuppressWarnings("incomplete-switch")
-    @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
-        switch (command.getCommand()) {
-            case SPLIT_FRAMECONTAINER:
-                maxFramesAmount.set((Integer) command.getSource());
-                frameContainer.getChildren().clear();
-                break;
-        }
-    }
-
 }
