@@ -24,10 +24,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -88,7 +85,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @FXML private TabPane bottomPanelTab;
 
     @FXML
-    private ProgressBar progressBar;
+    private ProgressIndicator progressIndicator;
 
     private static final double BIG_SCREEN_CONTAINER_RATIO_H = 0.55;
     private static final double BIG_SCREEN_CONTAINER_RATIO_W = 0.6;
@@ -279,20 +276,20 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     private synchronized void initProgressBar() {
         LOGGER.info("Init progress bar");
-        progressBar.setVisible(true);
-        progressBar.setProgress(0);
+        progressIndicator.setVisible(true);
+        progressIndicator.setProgress(0);
     }
 
     private synchronized void setProgressBar(double val) {
-        progressBar.setProgress(val);
-        if (progressBar.getProgress() == 1.0) {
+        progressIndicator.setProgress(val);
+        if (progressIndicator.getProgress() == 1.0) {
             finishProgressBar();
         }
     }
 
     private synchronized void finishProgressBar() {
         LOGGER.info("Finish progress bar");
-        progressBar.setVisible(false);
+        progressIndicator.setVisible(false);
     }
 
     @Override

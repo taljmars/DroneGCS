@@ -45,6 +45,8 @@ public class PanelStatBox extends Pane implements Initializable, MavLinkConnecti
 	@NotNull @FXML public Label receivedBytesPerSecondVal;
 	@NotNull @FXML public Label transmittedBytesVal;
 	@NotNull @FXML public Label transmittedBytesPerSecondVal;
+	@NotNull @FXML public Label throughputBytesPerSecondVal;
+
 	//
 	private static int called = 0;
 	@PostConstruct
@@ -77,6 +79,7 @@ public class PanelStatBox extends Pane implements Initializable, MavLinkConnecti
 			receivedBytesPerSecondVal.setText(connectionStatistics.getReceivedBytesPerSecond() + "");
 			transmittedBytesVal.setText(connectionStatistics.getTransmittedBytes() + "");
 			transmittedBytesPerSecondVal.setText(connectionStatistics.getTransmittedBytesPerSecond() + "");
+			throughputBytesPerSecondVal.setText(connectionStatistics.getReceivedBytesPerSecond() + connectionStatistics.getTransmittedBytesPerSecond() + "");
 		});
 	}
 }
