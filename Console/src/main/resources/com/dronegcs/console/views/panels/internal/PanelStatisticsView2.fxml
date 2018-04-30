@@ -42,7 +42,7 @@
                 <Label fx:id="transmittedPacketsPerSecondVal" text="0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <Label text="Received Bytes" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <Label fx:id="receivedBytesVal" text="0000000" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                <Label fx:id="receivedBytesVal" text="0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
                 <Label text="Received BPS" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                 <Label fx:id="receivedBytesPerSecondVal" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                 <Label text="Transmitted Bytes" GridPane.columnIndex="2" GridPane.rowIndex="2" />

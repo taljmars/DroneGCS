@@ -64,28 +64,36 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||RC1_MIN||900||2100||1500||1||1||PWM_RC1_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
 ||RC1_MAX||900||2100||1500||1||1||PWM_RC1_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
 ||RC1_TRIM||900||2100||1200||1||1||PWM_RC1_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
+||RC1_DZ||0||200||30||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC2_MIN||900||2100||1500||1||1||PWM_RC2_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
 ||RC2_MAX||900||2100||1500||1||1||PWM_RC2_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
 ||RC2_TRIM||900||2100||1200||1||1||PWM_RC2_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
+||RC2_DZ||0||200||30||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC3_MIN||900||2100||1500||1||1||PWM_RC3_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit||
 ||RC3_MAX||900||2100||1500||1||1||PWM_RC3_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC3_TRIM||900||2100||1500||1||1||PWM_RC3_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC3_DZ||0||200||30||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC4_MIN||900||2100||1500||1||1||PWM_RC4_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC4_MAX||900||2100||1500||1||1||PWM_RC4_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC4_TRIM||900||2100||1200||1||1||PWM_RC4_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC4_DZ||0||200||40||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC5_MIN||900||2100||1500||1||1||PWM_CH5_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC5_MAX||900||2100||1500||1||1||PWM_CH5_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC5_MAX||900||2100||1500||1||1||PWM_CH5_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC5_TRIM||900||2100||1500||1||1||PWM_CH5_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC5_DZ||0||200||0||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC6_MIN||900||2100||1500||1||1||PWM_CH6_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC6_MAX||900||2100||1500||1||1||PWM_CH6_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC6_TRIM||900||2100||1500||1||1||PWM_CH6_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC6_DZ||0||200||0||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC7_MIN||900||2100||1500||1||1||PWM_CH7_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC7_MAX||900||2100||1500||1||1||PWM_CH7_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC7_TRIM||900||2100||1500||1||1||PWM_CH7_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC7_DZ||0||200||0||1||1||PWM dead zone in microseconds around trim or bottom||
 ||RC8_MIN||900||2100||1500||1||1||PWM_CH8_MIN - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC8_MAX||900||2100||1500||1||1||PWM_CH8_MAX - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
 ||RC8_TRIM||900||2100||1500||1||1||PWM_CH8_TRIM - Radio Settings - all radio settings represent the period of the pulse width modulated signal. Typically 1000 ms is the lower limit, 1500 is neutral, and 2000 is the upper limit ||
+||RC8_DZ||0||200||0||1||1||PWM dead zone in microseconds around trim or bottom||
 ||IMU_OFFSET_0||0||0||0|| || ||IMU_OFFSET_0 - IMU Calibration||
 ||IMU_OFFSET_1||0||0||0|| || ||IMU_OFFSET_1 - IMU Calibration||
 ||IMU_OFFSET_2||0||0||0|| || ||IMU_OFFSET_2 - IMU Calibration||
@@ -99,11 +107,11 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||CONFIG|| || ||1|| || ||CONFIG_OPTIONS||
 ||SWITCH_ENABLE||0||1||1||1||1||REVERS_SWITCH_ENABLE - 0 = Off, 1 = On, Enables/Disables physical reverse switches on APM board||
 ||FIRMWARE_VER|| || ||0|| || ||FIRMWARE_VER||
-||LOG_BITMASK||0||65535||334||1||1||LOG_BITMASK||
+||LOG_BITMASK||0||65535||334||1||1||Bitmap of what log types to enable in dataflash. This values is made up of the sum of each of the log types you want to be saved on dataflash||
 ||TRIM_ELEVON||900||2100||1500||1||1||TRIM_ELEVON||
 ||THR_FS_VALUE||850||1000||950||1||1||THROTTLE_FS_VALUE - If the throttle failsafe is enabled, THROTTLE_FS_VALUE sets the channel value below which the failsafe engages.  The default is 975ms, which is a very low throttle setting.  Most transmitters will let you trim the manual throttle position up so that you cannot engage the failsafe with a regular stick movement. Configure your receiver's failsafe setting for the throttle channel to the absolute minimum, and use the !MissionPlanner.demo program to check that you cannot reach that value with the throttle control.  Leave a margin of at least 50 microseconds between the lowest throttle setting and THROTTLE_FS_VALUE.||
 ||TRIM_ARSPD_CM||500||5000||1200||100||1||AIRSPEED_CRUISE_CM - The speed in metres per second to maintain during cruise.  The default is 10m/s, which is a conservative value suitable for relatively small, light aircraft.||
-||GND_TEMP||-10||50||28||1||1||GND_TEMP - Ground Temperature||
+||GND_TEMP||-10||50||28||1||1||Ground Temperature||
 ||AP_OFFSET|| || ||0|| || ||AP_OFFSET||
 ||TRIM_PITCH_CD|| || ||0|| || ||TRIM_PITCH_CD||
 ||ALT_HOLD_RTL||0||20000||10000||100||1||ALT_HOLD_HOME_CM - When the user performs a factory reset on the APM. Sets the flag for weather the current altitude or ALT_HOLD_HOME altitude should be used for Return To Launch. Also sets the value of USE_CURRENT_ALT in meters.  This is mainly intended to allow users to start using the APM without programming a mission first.||
@@ -116,7 +124,7 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||LIM_PITCH_MIN||-6000||0||-2500||100||1||PITCH_MIN_DEGREE - The maximum commanded pitch down angle.  Note that this value must be negative.  The default is -25 degrees.  Care should be taken not to set this value too large as it may result in overspeeding the aircraft.||
 ||GND_ALT_CM||0||500000||0||100||1||GND_ALT_CM||
 ||GND_ABS_PRESS|| || ||0|| || ||GND_ABS_PRESS||
-||COMPASS_DEC||-1.57075||1.57075||0||1|| ||COMPASS_DEC - Compass Declination in RADIANS||
+||COMPASS_DEC||-1.57075||1.57075||0||1|| ||Compass Declination in RADIANS||
 ||SR0_EXT_STAT||0||50||3||1||1||TELEMETRY_ENABLE Port 0 - Enable GPS_STATUS, CONTROL_STATUS, AUX_STATUS||
 ||SR0_EXTRA1||0||50||10||1||1||TELEMETRY_ENABLE Port 0 - Enable MSG_ATTITUDE||
 ||SR0_EXTRA2||0||50||3||1||1||TELEMETRY_ENABLE Port 0 - Enable MSG_VFR_HUD||
@@ -133,15 +141,15 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||SR3_RAW_CTRL||0||50||0||1||1||TELEMETRY_ENABLE Port 3 - Enable ATTITUDE_CONTROLLER_OUTPUT, POSITION_CONTROLLER_OUTPUT, NAV_CONTROLLER_OUTPUT||
 ||SR3_RAW_SENS||0||50||0||1||1||TELEMETRY_ENABLE Port 3 - Enable IMU_RAW, GPS_RAW, GPS_STATUS packets||
 ||SR3_RC_CHAN||0||50||0||1||1||TELEMETRY_ENABLE Port 3 - Enable RC_CHANNELS_SCALED, RC_CHANNELS_RAW, SERVO_OUTPUT_RAW||
-||MAG_ENABLE||0||1||0||1||1||MAG_ENABLE - 0 = Off, 1 = On, Magnetometer Enable||
-||ARSPD_ENABLE||0||1||0||1||1||AIRSPEED_ENABLE - 0 = Off, 1 = On, Airspeed Sensor Enable||
-||BATT_CAPACITY||0||10000||1760||1||1||BATTERY_MAH - Battery capacity in mAh||
-||BATT_MONITOR||0||4||0||1||1||BATTERY_MONITOR - The value should be set to 0 to disable battery monitoring, 1 to measure cell voltages for a 3 cell lipo, 2 to measure cell voltages for a 4 cell lipo, 3 to measure the total battery voltage (only) on input 1, or 4 to measure total battery voltage on input 1 and current on input 2. ||
-||FS_GCS_ENABL||0||1||0||1||1||FS_GCS_ENABLE - 0 = Off, 1 = On, If the GCS heartbeat is lost for 20 seconds, the plane will Return to Launch||
-||FS_LONG_ACTN||0||1||0||1||1||FS_LONG_ACTION - 0 = Off, 1 = On, If heartbeat is lost for 20 srconds, the plane will Return to Launch||
-||FS_SHORT_ACTN||0||1||0||1||1||FS_SHORT_ACTION - 0 = Off, 1 = On, If heartbeat is lost for 1.5 seconds, the plane will circle until heartbeat is found again or 20 seconds has passed||
-||SYSID_MYGCS||0||255||255||1||1||SYSID_MYGCS - The system ID of the GCS, Allows restricting radio overrides to only come from my ground station (255 - Mission Planner and DroidPlanner, 252 - AP Planner 2) ||
-||SYSID_THISMAV||1||255||1||1||1||SYSID_THISMAV - The system ID of the MAVlink vehicle ||
+||MAG_ENABLE||0||1||0||1||1||0 = Off, 1 = On, Magnetometer Enable||
+||ARSPD_ENABLE||0||1||0||1||1||0 = Off, 1 = On, Airspeed Sensor Enable||
+||BATT_CAPACITY||0||10000||1760||1||1||Battery capacity in mAh||
+||BATT_MONITOR||0||4||0||1||1||The value should be set to 0 to disable battery monitoring, 1 to measure cell voltages for a 3 cell lipo, 2 to measure cell voltages for a 4 cell lipo, 3 to measure the total battery voltage (only) on input 1, or 4 to measure total battery voltage on input 1 and current on input 2. ||
+||FS_GCS_ENABL||0||1||0||1||1||0 = Off, 1 = On, If the GCS heartbeat is lost for 20 seconds, the plane will Return to Launch||
+||FS_LONG_ACTN||0||1||0||1||1||0 = Off, 1 = On, If heartbeat is lost for 20 srconds, the plane will Return to Launch||
+||FS_SHORT_ACTN||0||1||0||1||1||0 = Off, 1 = On, If heartbeat is lost for 1.5 seconds, the plane will circle until heartbeat is found again or 20 seconds has passed||
+||SYSID_MYGCS||0||255||255||1||1||The system ID of the GCS, Allows restricting radio overrides to only come from my ground station (255 - Mission Planner and DroidPlanner, 252 - AP Planner 2)||
+||SYSID_THISMAV||1||255||1||1||1||The system ID of the MAVlink vehicle||
 ||AOA|| || ||0|| ||
 ||ACR_PIT_D|| || ||1|| || ||Description coming soon||
 ||ACR_PIT_I|| || ||1|| || ||Description coming soon||
@@ -212,7 +220,7 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||RC8_REV||0||1||1||1||1||RC_CHANNEL8_REVERSE - Channel Reversing (Future use on APM board 2.0) - Does not override dip switches||
 ||SYSID_SW_MREV|| || ||0|| || ||Eeprom format version number, This value is incremented when changes are made to the eeprom format (read only)||
 ||SYSID_SW_TYPE|| || ||0|| || ||Software type, This is used by the ground station to recognise the software type (eg ArduPlane vs ArduCopter). 0-ArduPlane, 4-AntennaTracker, 10-Copter, 20-Rover, 40-ArduSub||
-||THR_SLEWRATE||0||100||0||1||1||THROTTLE_SLEW_RATE - 0 = Disabled, otherwise it limits throttle movement rate.  Units are % per second.  This is a test feature and may go away.||
+||THR_SLEWRATE||0||100||0||1||1||0 = Disabled, otherwise it limits throttle movement rate.  Units are % per second.  This is a test feature and may go away.||
 ||FLTMODE1||0||20||1||1|| ||FLIGHT_MODE_1 - Mode switch setting 1 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
 ||FLTMODE2||0||20||1||1|| ||FLIGHT_MODE_2 - Mode switch setting 2 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
 ||FLTMODE3||0||20||1||1|| ||FLIGHT_MODE_3 - Mode switch setting 3 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
@@ -221,3 +229,11 @@ It includes both fixed wing (APM) and rotary wing (!ArduCopter) parameters. Some
 ||FLTMODE6||0||20||1||1|| ||FLIGHT_MODE_6 - Mode switch setting 6 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
 ||CH7_OPT||0||20||1||1|| ||CH7_OPT - Mode for channel 7 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
 ||CH8_OPT||0||20||1||1|| ||CH8_OPT - Mode for channel 8 - APM: 0 = Manual, 2 = Stabilize, 5 - Fly-By-Wire-A, 6 = Fly-By-Wire-B, 7 = Fly-By-Wire-C, 10 = Auto - Mission, 11 = RTL, 12 = Loiter, 13 = Take-off, 14 = Land, 15= Guided; ACM2: 0 = Stabilize, 1 = Acro, 2 = Alt Hold, 3 = Auto, 4 = Guided, 5 = Loiter, 6 = RTL||
+||ARMING_CHECK||0||8492||94||1||1||Checks prior to arming motor. 0-None, 1-All, 2-Barometer, 4-Compass, 8-GPS Lock, 16-INS(INertial Sensors - accels & gyros), 32-Parameters(unused), 64-RC Failsafe, 128-Board voltage, 256-Battery Level, 512-Airspeed, 1024-LoggingAvailable, 2048-Hardware safety switch, 4096-GPS configuration||
+||SERIAL0_BAUD||1||1500||115||1||1||The baud rate used on the USB console. For example, 57 - 57600, 115 - 115200||
+||SERIAL1_BAUD||1||1500||57||1||1||The baud rate used on the Telem1 port. For example, 57 - 57600, 115 - 115200||
+||TELEM_DELAY||0||30||0||1||1||The amount of time (in seconds) to delay radio telemetry to prevent an Xbee bricking on power up||
+||LAND_SPEED||30||200||50||1||1||The descent speed for the final stage of landing in cm/s (Increase by 10)||
+||RC_SPEED||50||500||490||1||1||RC output speed in Hz, This is the PWM refresh rate in Hz for QuadPlane quad motors (Increase by 10)||
+||MIS_TOTAL||0||32766||0||1||1||Total mission commands, The number of mission items that has been loaded by the ground station. Do not change this manually||
+||MIS_RESTART||0||1||0||1||1||Mission Restart when entering Auto mode, 0 - Resume Mission, 1 - Restart Mission||
