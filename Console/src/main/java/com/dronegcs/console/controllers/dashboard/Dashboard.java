@@ -70,8 +70,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @Autowired @NotNull(message = "Internal Error: Failed to get gui configuration")
     private GuiAppConfig guiAppConfig;
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get draggable node configurator")
-    private DraggableNode draggableNode;
+    @Autowired @NotNull(message = "Internal Error: Failed to get floatingNodeManager")
+    private FloatingNodeManager floatingNodeManager;
 
     @Autowired
     private RuntimeValidator runtimeValidator;
@@ -130,7 +130,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         LOGGER.info("Initialize GUI");
         setViewManager(guiAppConfig.getRootStage());
 
-        draggableNode.bind(widgetDragging.selectedProperty());
+        floatingNodeManager.bind(widgetDragging.selectedProperty());
         setDragPlane(dashboardView);
 
         internalFrameMap.reloadData();
@@ -352,7 +352,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         Node selectedPane = guiAppConfig.loadInternalFrame(springInstansiation, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         selectedPane.setUserData(springInstansiation);
-        selectedPane = draggableNode.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        selectedPane = floatingNodeManager.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         dashboardView.getChildren().add(selectedPane);
     }
 

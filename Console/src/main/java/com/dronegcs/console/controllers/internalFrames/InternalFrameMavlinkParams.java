@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.EditingCell;
+import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -22,6 +23,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
@@ -49,6 +51,10 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	@Autowired
 	@NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
+
+	@Autowired
+	@NotNull(message = "Internal Error: Failed to get floatingNodeManager")
+	private FloatingNodeManager floatingNodeManager;
 
 
 	@NotNull @FXML private TableView<ParamsTableEntry> table;
@@ -89,6 +95,12 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 				return editingCell;
 			}
 		};
+
+		table.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			if (event.isPopupTrigger() && floatingNodeManager.isEditing()) {
+				root.getParent().setVisible(false);
+			}
+		});
 
 		id.setCellValueFactory(new PropertyValueFactory<>("id"));
 		name.setCellValueFactory(new PropertyValueFactory<>("name"));

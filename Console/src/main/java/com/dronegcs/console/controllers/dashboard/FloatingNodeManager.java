@@ -11,7 +11,7 @@ import javafx.scene.layout.StackPane;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DraggableNode {
+public class FloatingNodeManager {
 
     private BooleanProperty dragModeActiveProperty = new SimpleBooleanProperty(this, "dragModeActivated", false);
 
@@ -70,7 +70,7 @@ public class DraggableNode {
         return pane;
     }
 
-    public boolean isDragActive() {
+    public boolean isEditing() {
         return dragModeActiveProperty != null && dragModeActiveProperty.get();
     }
 

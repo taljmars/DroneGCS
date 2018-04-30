@@ -3,6 +3,7 @@ package com.dronegcs.console.controllers.internalFrames;
 import com.auditdb.persistence.base_scheme.EventLogObject;
 import com.auditdb.persistence.scheme.*;
 import com.dronegcs.console.controllers.EditingCell;
+import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
 import com.dronegcs.console_plugin.event_logger.EventLogBundle;
@@ -20,6 +21,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
@@ -59,6 +61,9 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 	@Autowired @NotNull( message="Internal Error: Failed to get application context" )
 	private ApplicationContext applicationContext;
 
+	@Autowired @NotNull( message="Internal Error: Failed to get floatingNodeManager" )
+	private FloatingNodeManager floatingNodeManager;
+
 	@NotNull @FXML private Pane root;
 
 	private Date lastPull = null;
@@ -73,6 +78,12 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 
 		table.setPrefWidth(root.getPrefWidth());
 		table.setPrefHeight(root.getPrefHeight());
+
+		table.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			if (event.isPopupTrigger() && floatingNodeManager.isEditing()) {
+				root.getParent().setVisible(false);
+			}
+		});
 
 		Callback<TableColumn<EventLogEntry, Double>, TableCell<EventLogEntry, Double>> cellFactory = new Callback<TableColumn<EventLogEntry, Double>, TableCell<EventLogEntry, Double>>() {
 			public TableCell<EventLogEntry, Double> call(TableColumn<EventLogEntry, Double> p) {

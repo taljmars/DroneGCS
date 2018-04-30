@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.GUISettings;
-import com.dronegcs.console.controllers.dashboard.DraggableNode;
+import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.generic_tools.validations.RuntimeValidator;
@@ -28,7 +28,7 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 	private OperationalViewTree operationalViewTree;
 
 	@Autowired
-	private DraggableNode draggableNode;
+	private FloatingNodeManager draggableNode;
 
 	@Autowired
 	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
