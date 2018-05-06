@@ -133,7 +133,7 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 									loggerDisplayerSvc.logGeneral("Connection is not a live, reconnect before update");
 									return;
 								}
-								Parameter parameter = new Parameter(entry.getName(), value, entry.getType(), "Updated by GCS");
+								Parameter parameter = new Parameter(entry.getName(), value, entry.getType(), "dummy", "Updated by GCS");
 								drone.getParameters().sendParameter(parameter);
 								LOGGER.debug("Update Parameter: {}", parameter);
 								loggerDisplayerSvc.logGeneral("Update Parameter: " + parameter);

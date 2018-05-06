@@ -257,7 +257,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     @FXML
     public void updateModes(ActionEvent actionEvent) {
         Parameters params = drone.getParameters();
-        Parameter parameter = null;
+        Parameter parameter = null, existingParameter = null;
 
         if (!drone.isConnectionAlive() || params == null) {
             LOGGER.debug("Drone is not connected, cannot get flight modes");
@@ -265,27 +265,32 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         }
 
         for (Map.Entry<String, ComboBox> entry : comboBoxFltModeMap.entrySet()) {
-            parameter = new Parameter(entry.getKey(), ((ApmModes) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, "");
+            existingParameter = params.getParameter(entry.getKey());
+            parameter = new Parameter(entry.getKey(), ((ApmModes) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
             System.err.println("Send updated flt param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
         for (Map.Entry<String, ComboBox> entry : comboBoxCommandsMap.entrySet()) {
-            parameter = new Parameter(entry.getKey(), ((ApmCommands) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, "");
+            existingParameter = params.getParameter(entry.getKey());
+            parameter = new Parameter(entry.getKey(), ((ApmCommands) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
             System.err.println("Send updated cmd param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
         for (Map.Entry<String, ComboBox> entry : comboBoxTuningMap.entrySet()) {
-            parameter = new Parameter(entry.getKey(), ((ApmTuning) entry.getValue().getValue()).getNumber(), 9, "");
+            existingParameter = params.getParameter(entry.getKey());
+            parameter = new Parameter(entry.getKey(), ((ApmTuning) entry.getValue().getValue()).getNumber(), 9, existingParameter.getRange(), existingParameter.getDescription());
             System.err.println("Send updated tune param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
-        parameter = new Parameter(TUNE_HIGH, spChannel6Max.getValue(), MAV_PARAM_TYPE_INT16, "");
+        existingParameter = params.getParameter(TUNE_HIGH);
+        parameter = new Parameter(TUNE_HIGH, spChannel6Max.getValue(), MAV_PARAM_TYPE_INT16, existingParameter.getRange(), existingParameter.getDescription());
         drone.getParameters().sendParameter(parameter);
 
-        parameter = new Parameter(TUNE_LOW, spChannel6Min.getValue(), MAV_PARAM_TYPE_INT16, "");
+        existingParameter = params.getParameter(TUNE_LOW);
+        parameter = new Parameter(TUNE_LOW, spChannel6Min.getValue(), MAV_PARAM_TYPE_INT16, existingParameter.getRange(), existingParameter.getDescription());
         drone.getParameters().sendParameter(parameter);
 
         Integer simple = 0;
@@ -300,10 +305,13 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             if (checkBoxSuperSimpleModeList.get(i-1).isSelected())
                 superSimple |= ptr;
         }
-        parameter = new Parameter(SIMPLE_MODE, simple, MAV_PARAM_TYPE_INT8, "");
+
+        existingParameter = params.getParameter(SIMPLE_MODE);
+        parameter = new Parameter(SIMPLE_MODE, simple, MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
         drone.getParameters().sendParameter(parameter);
 
-        parameter = new Parameter(SUPER_SIMPLE_MODE, superSimple, MAV_PARAM_TYPE_INT8, "");
+        existingParameter = params.getParameter(SUPER_SIMPLE_MODE);
+        parameter = new Parameter(SUPER_SIMPLE_MODE, superSimple, MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
         drone.getParameters().sendParameter(parameter);
     }
 

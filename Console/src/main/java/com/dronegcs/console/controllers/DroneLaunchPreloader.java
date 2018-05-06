@@ -29,8 +29,8 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
     private final static Logger LOGGER = LoggerFactory.getLogger(DroneLaunchPreloader.class);
 
     //Don't deliver this - only for development
-    private boolean WA_FOR_LOGIN = false;
-//    private boolean WA_FOR_LOGIN = true;
+//    private boolean WA_FOR_LOGIN = false;
+    private boolean WA_FOR_LOGIN = true;
 
     @Override
     public void handle(KeyEvent event) {
