@@ -1,21 +1,17 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronedb.persistence.scheme.CirclePerimeter;
+import com.db.gui.persistence.scheme.LayersGroup;
+import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
-import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.dashboard.Dashboard;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerCircledPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
-import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
-import com.dronegcs.console.operations.OpGCSTerminationHandler;
+import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.EditedLayer;
 import com.dronegcs.console_plugin.ClosingPair;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
-import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
@@ -24,8 +20,8 @@ import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
-import com.gui.core.mapTreeObjects.Layer;
-import javafx.event.ActionEvent;
+import com.gui.core.layers.AbstractLayer;
+import com.gui.core.layers.LayerManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -40,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -49,13 +46,9 @@ import java.util.ResourceBundle;
 
 @Component
 public class PanelFrameBarSatellite extends FlowPane implements Initializable {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(PanelFrameBarSatellite.class);
     private static String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
-
-//    @NotNull
-//    @FXML
-//    private Button btnMap;
-//    private static String MAP_VIEW = "InternalFrameMapAndTreeView.fxml";
 
     @NotNull
     @FXML
@@ -97,16 +90,11 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private Button btnEventLog;
     private static String EVENTLOG_VIEW = "InternalFrameEventLogView.fxml";
 
-    @NotNull
-    @FXML
+    @NotNull @FXML
     private Button btnPublish;
-    @NotNull
-    @FXML
-    private Button btnDiscard;
 
-//    @NotNull
-//    @FXML
-//    private Button btnExit;
+    @NotNull @FXML
+    private Button btnDiscard;
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get dialog manager")
@@ -125,6 +113,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private PerimetersManager perimetersManager;
 
     @Autowired
+    @NotNull(message = "Internal Error: Failed to get layers manager")
+    private LayersGroupsManager layersGroupsManager;
+
+    @Autowired
     @NotNull(message = "Internal Error: Failed to get tree view")
     private OperationalViewTree operationalViewTree;
 
@@ -141,10 +133,6 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private EventPublisherSvc eventPublisherSvc;
 
     @Autowired
-    @NotNull(message = "Internal Error: Failed to get gcs termination handler")
-    private OpGCSTerminationHandler opGCSTerminationHandler;
-
-    @Autowired
     @NotNull(message = "Internal Error: Failed to get logger")
     private LoggerDisplayerSvc loggerDisplayerSvc;
 
@@ -154,14 +142,16 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private LayerManager layerManager;
+
     private boolean inPrivateSession = false;
 
     private static int called;
 
     @PostConstruct
     private void init() {
-        if (called++ > 1)
-            throw new RuntimeException("Not a Singleton");
+        Assert.isTrue(++called == 1, "Not a Singleton");
     }
 
     @Override
@@ -184,7 +174,6 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     }
 
     private void updateFrameMapPath() {
-//        btnMap.setUserData(INTERNAL_FRAME_PATH + MAP_VIEW);
         btnActualPWM.setUserData(INTERNAL_FRAME_PATH + ACTUAL_PWM_VIEW);
         btnSignal.setUserData(INTERNAL_FRAME_PATH + SIGNALS_VIEW);
         btnHeightAndSpeed.setUserData(INTERNAL_FRAME_PATH + HEIGHT_SPEED_VIEW);
@@ -250,38 +239,49 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         }
         sessionsSvcRemote.publish();
 
-        Collection<ClosingPair<Mission>> missions = missionsManager.closeAllMissionEditors(true);
-        missions.forEach((ClosingPair<Mission> missionClosingPair) -> {
-            Mission mission = missionClosingPair.getObject();
-            LOGGER.debug("publishing mission {} {} {} {} {}", mission, mission.getKeyId().getObjId(), mission.getName(), mission.getMissionItemsUids(), mission.getDefaultAlt());
-            Layer layer = operationalViewTree.getLayerByValue(mission);
-            LOGGER.debug("Found layer {}", layer);
-            if (layer != null) {
-                // Layer will not be exist in case of deletion
-                ((LayerMission) layer).setMission(mission);
-                ((LayerMission) layer).stopEditing();
-            }
-        });
+        LOGGER.debug("Start handling published layers");
 
-        try {
-            Collection<ClosingPair<Perimeter>> perimeters  = perimetersManager.closeAllPerimeterEditors(true);
-            perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
-                Perimeter perimeter = perimeterClosingPair.getObject();
-                LOGGER.debug("publishing perimeter {} {} {} ", perimeter, perimeter.getKeyId().getObjId(), perimeter.getName());
-                Layer layer = operationalViewTree.getLayerByValue(perimeter);
-                LOGGER.debug("Found layer " + layer);
-                if (layer != null) {
-                    // Layer will not be exist in case of deletion
-                    ((LayerPerimeter) layer).setPerimeter(perimeter);
-                    ((LayerPerimeter) layer).stopEditing();
-                }
-            });
-        } catch (PerimeterUpdateException e) {
-            LOGGER.error("Critical Error: Failed to publish action", e);
-        }
+        Collection<ClosingPair<Mission>> missions = missionsManager.closeAllMissionEditors(true);
+        LOGGER.debug("Handling published missions (amount of modified mission={}", missions.size());
+        handleClosingPair(missions);
+
+        Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.closeAllPerimeterEditors(true);
+        LOGGER.debug("Handling published perimeters (amount of modified perimeters={}", perimeters.size());
+        handleClosingPair(perimeters);
+
+        Collection<ClosingPair<LayersGroup>> layersGroups = layersGroupsManager.closeAllLayersGroupEditors(true);
+        LOGGER.debug("Handling published perimeters (amount of modified layers group={}", perimeters.size());
+        handleClosingPair(layersGroups);
 
         operationalViewTree.regenerateTree();
+        // TODO: find better solution than reload - it too aggressive
+        operationalViewTree.reloadData();
         eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
+    }
+
+    public <T extends BaseObject> void handleClosingPair(Collection<ClosingPair<T>> closingPairs) {
+        closingPairs.forEach((ClosingPair<T> closingPair) -> {
+            LOGGER.debug("Handling Object {} , isDeleted: {}", closingPair.getObject(), closingPair.isDeleted());
+            T layer = closingPair.getObject();
+
+            AbstractLayer guiLayer = layerManager.getLayerByValue(layer, (guiLayer1, l) -> {
+                BaseObject treeObj = (BaseObject) ((AbstractLayer) guiLayer1).getPayload();
+                BaseObject searchObject = (BaseObject) l;
+                if (treeObj.getKeyId().getObjId().equals(searchObject.getKeyId().getObjId()))
+                    return 0;
+                return -1;
+            });
+
+            if (guiLayer != null) {
+                LOGGER.debug("Found layer {}", layer);
+                // Layer will not be exist in case of deletion
+                ((EditedLayer) guiLayer).stopEditing();
+                guiLayer.setWasEdited(false);
+            }
+            else {
+                LOGGER.error("Failed to find layer {}", layer);
+            }
+        });
     }
 
     @FXML
@@ -293,65 +293,12 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             return;
         }
         sessionsSvcRemote.discard();
-        // Handle mission being editing
-        Collection<ClosingPair<Mission>> missions = missionsManager.closeAllMissionEditors(false);
-        LOGGER.debug("Cleaning mission: " + missions);
-        missions.forEach((ClosingPair<Mission> missionClosingPair) -> {
-            if (missionClosingPair.isDeleted()) {
-                // means we discarded a newly created layer
-                LOGGER.debug("Discard / found deleted mission");
-                operationalViewTree.removeItemByName(missionClosingPair.getObject().getName());
-            } else {
-                LOGGER.debug("Discard / reverting mission");
-                Layer layer = operationalViewTree.getLayerByValue(missionClosingPair.getObject());
-                if (layer == null) {
-                    // Means an existing layer was deleted
-                    LayerMission layerMission = new LayerMission(missionClosingPair.getObject(), operationalViewMap);
-                    layerMission.stopEditing();
-                    operationalViewTree.addLayer(layerMission);
-                }
-                else {
-                    // Means we are reverting and existing layer to it previous values
-                    ((LayerMission) layer).setMission(missionClosingPair.getObject());
-                    layer.setName(missionClosingPair.getObject().getName());
-                    ((LayerMission) layer).stopEditing();
-                }
-            }
-        });
 
-        // Handle perimeters being editing
-        try {
-            Collection<ClosingPair<Perimeter>> perimeters  = perimetersManager.closeAllPerimeterEditors(false);
-            LOGGER.debug("Cleaning perimeter: " + perimeters);
-            perimeters.forEach((ClosingPair<Perimeter> perimeterClosingPair) -> {
-                if (perimeterClosingPair.isDeleted()) {
-                    // means we discarded a newly created layer
-                    LOGGER.debug("Discard / found deleted perimeter");
-                    operationalViewTree.removeItemByName(perimeterClosingPair.getObject().getName());
-                } else {
-                    LOGGER.debug("Discard / reverting perimeter");
-                    Layer layer = operationalViewTree.getLayerByValue(perimeterClosingPair.getObject());
-                    if (layer == null) {
-                        // Means an existing layer was deleted
-                        LayerPerimeter layerPerimeter = null;
-                        if (perimeterClosingPair.getObject() instanceof PolygonPerimeter)
-                            layerPerimeter = new LayerPolygonPerimeter((PolygonPerimeter) perimeterClosingPair.getObject(), operationalViewMap);
-                        else
-                            layerPerimeter = new LayerCircledPerimeter((CirclePerimeter) perimeterClosingPair.getObject(), operationalViewMap);
-                        layerPerimeter.stopEditing();
-                        operationalViewTree.addLayer(layerPerimeter);
-                    }
-                    else {
-                        // Means we are reverting and existing layer to it previous values
-                        ((LayerPerimeter) layer).setPerimeter(perimeterClosingPair.getObject());
-                        layer.setName(perimeterClosingPair.getObject().getName());
-                        ((LayerPerimeter) layer).stopEditing();
-                    }
-                }
-            });
-        } catch (PerimeterUpdateException e) {
-            LOGGER.error("Critical error: failed to discard", e);
-        }
+        missionsManager.closeAllMissionEditors(false);
+        perimetersManager.closeAllPerimeterEditors(false);
+        layersGroupsManager.closeAllLayersGroupEditors(false);
+
+        operationalViewTree.reloadData();
 
         operationalViewTree.regenerateTree();
         eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));
@@ -359,10 +306,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     private void setImageButton(Button button, URL resource) {
         Image img = new Image(resource.toString());
-        ImageView iview = new ImageView(img);
-        iview.setFitHeight(40);
-        iview.setFitWidth(40);
-        button.setGraphic(iview);
+        ImageView iView = new ImageView(img);
+        iView.setFitHeight(40);
+        iView.setFitWidth(40);
+        button.setGraphic(iView);
     }
 
     @SuppressWarnings("incomplete-switch")

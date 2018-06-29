@@ -27,13 +27,18 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     private PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemote;
 
     @Override
+    public Class getManagedDBClass() {
+        return PolygonPerimeter.class;
+    }
+
+    @Override
     public PolygonPerimeter open(PolygonPerimeter perimeter) throws PerimeterUpdateException {
         return super.open(perimeter);
     }
 
     @Override
     public PolygonPerimeter open(String perimeterName) throws PerimeterUpdateException {
-        return super.open(perimeterName, PolygonPerimeter.class);
+        return super.open(perimeterName);
     }
 
     @Override
@@ -44,13 +49,12 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
             point.setLon(coordinate.getLon());
 
             // Update Item
-            Point res = (Point) objectCrudSvcRemote.update(point);
+            Point res = objectCrudSvcRemote.update(point);
             if (!perimeter.getPoints().contains(point.getKeyId().getObjId())) {
                 perimeter.getPoints().add(res.getKeyId().getObjId());
             }
-            // Update Mission
+            // Update perimeter
             perimeter = super.update(perimeter);
-//            perimeter = (PolygonPerimeter) objectCrudSvcRemote.update(perimeter);
             return res;
         }
         catch (ObjectInstanceRemoteException | DatabaseValidationRemoteException e) {
@@ -61,13 +65,7 @@ public class PolygonPerimeterEditorImpl extends PerimeterEditorImpl<PolygonPerim
     @Override
     public void removePoint(Point point) throws PerimeterUpdateException {
         perimeter.getPoints().remove(point.getKeyId().getObjId());
-//        try {
-//            perimeter = (PolygonPerimeter) objectCrudSvcRemote.update(perimeter);
-            perimeter = super.update(perimeter);
-//        }
-//        catch (ObjectInstanceRemoteException | DatabaseValidationRemoteException e) {
-//            throw new PerimeterUpdateException(e.getMessage());
-//        }
+        perimeter = super.update(perimeter);
     }
 
     @Override

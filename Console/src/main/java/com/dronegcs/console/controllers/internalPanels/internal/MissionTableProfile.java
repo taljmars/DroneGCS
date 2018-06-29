@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
+import com.db.gui.persistence.scheme.Layer;
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
@@ -88,6 +89,7 @@ public class MissionTableProfile extends TableProfile {
                 try {
                     // Updating DB
                     MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
+//                    MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
                     missionEditor.updateMissionItem((MissionItem) entry);
 
                     // Refresh view
@@ -198,6 +200,7 @@ public class MissionTableProfile extends TableProfile {
                             try {
                                 TableItemEntry entry = getTableView().getItems().get( getIndex() );
                                 MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
+//                                MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
                                 missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
                                 generateTable(true, layerMission);
                                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));

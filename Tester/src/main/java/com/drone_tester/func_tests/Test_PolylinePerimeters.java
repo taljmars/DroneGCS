@@ -42,7 +42,7 @@ public class Test_PolylinePerimeters extends Test {
             // Creating and discard mission
 
             PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor("talma1", PolygonPerimeter.class);
-            Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
+            Perimeter perimeter = perimeterEditor.getPerimeter();
             publish(new TestEvent(this, Status.IN_PROGRESS, "Creating perimeter", ++idx, total));
 
             perimeter.setName("talma1to2");
@@ -55,7 +55,7 @@ public class Test_PolylinePerimeters extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "Updating perimeter name once again", ++idx, total));
 
             perimeterEditor = perimetersManager.openPerimeterEditor(perimeter);
-            Assert.isTrue(perimeterEditor.getModifiedPerimeter().getName().equals(LAST_NAME));
+            Assert.isTrue(perimeterEditor.getPerimeter().getName().equals(LAST_NAME));
             publish(new TestEvent(this, Status.IN_PROGRESS, "Verify it is possible to fetch perimeter by name", ++idx, total));
 
             PolygonPerimeterEditor polygonPerimeterEditor = (PolygonPerimeterEditor) perimeterEditor;
@@ -64,7 +64,7 @@ public class Test_PolylinePerimeters extends Test {
             Point point = polygonPerimeterEditor.addPoint(new Coordinate(33.33, 33.33));
             publish(new TestEvent(this, Status.IN_PROGRESS, "Adding points to polyline perimeters", ++idx, total));
 
-            PolygonPerimeter polygonPerimeter = polygonPerimeterEditor.getModifiedPerimeter();
+            PolygonPerimeter polygonPerimeter = polygonPerimeterEditor.getPerimeter();
             Assert.isTrue(polygonPerimeter.getPoints().size() == 3);
             publish(new TestEvent(this, Status.IN_PROGRESS, "Validate points amount", ++idx, total));
 
@@ -123,7 +123,7 @@ public class Test_PolylinePerimeters extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "test core finished", ++idx, total));
             return Status.SUCCESS;
         }
-        catch (PerimeterUpdateException e) {
+        catch (Throwable e) {
             e.printStackTrace();
             return Status.FAIL;
         }

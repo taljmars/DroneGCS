@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -84,9 +85,7 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 	private static int called;
 	@PostConstruct
 	public void init() {
-
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 
 		keyBoardRcValues = keyBoardConfigurationParser.parse();
 

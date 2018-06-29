@@ -11,6 +11,7 @@ import com.dronegcs.console_plugin.services.internal.logevents.LogErrorDisplayer
 import com.dronegcs.console_plugin.services.internal.logevents.LogGeneralDisplayerEvent;
 import com.dronegcs.console_plugin.services.internal.logevents.LogIncomingDisplayerEvent;
 import com.dronegcs.console_plugin.services.internal.logevents.LogOutgoingDisplayerEvent;
+import org.springframework.util.Assert;
 
 /**
  * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.
@@ -30,8 +31,7 @@ public class LoggerDisplayerSvc {
 	 */
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 
 	/**

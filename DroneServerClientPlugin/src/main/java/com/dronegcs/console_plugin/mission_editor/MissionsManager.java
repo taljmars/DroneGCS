@@ -35,4 +35,6 @@ public interface MissionsManager {
     Mission cloneMission(Mission mission) throws MissionUpdateException;
 
     Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave);
+
+    int loadEditors();
 }

@@ -2,7 +2,6 @@ package com.dronegcs.console_plugin.perimeter_editor;
 
 import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
 import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
-import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Point;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
@@ -28,20 +27,25 @@ public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimet
     private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
 
     @Override
+    public Class getManagedDBClass() {
+        return CirclePerimeter.class;
+    }
+
+    @Override
     public CirclePerimeter open(CirclePerimeter perimeter) throws PerimeterUpdateException {
         return super.open(perimeter);
     }
 
     @Override
     public CirclePerimeter open(String perimeter) throws PerimeterUpdateException {
-        return super.open(perimeter, CirclePerimeter.class);
+        return super.open(perimeter);
     }
 
     @Override
     public void setRadius(double radius) throws PerimeterUpdateException {
         try {
             perimeter.setRadius(radius);
-            perimeter = (CirclePerimeter) objectCrudSvcRemote.update(perimeter);
+            perimeter = objectCrudSvcRemote.update(perimeter);
         } catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
             throw new PerimeterUpdateException("Failed to set radius");
         }

@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -107,8 +108,7 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 	private static int called;
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+        Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 
 	public void loadTable() {

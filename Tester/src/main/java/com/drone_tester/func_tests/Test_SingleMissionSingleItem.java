@@ -39,18 +39,18 @@ public class Test_SingleMissionSingleItem extends Test {
         try {
             MissionEditor missionEditor = missionsManager.openMissionEditor("talma");
             publish(new TestEvent(this, Status.IN_PROGRESS, "Creating mission", ++idx, total));
-            Mission mission = missionEditor.getModifiedMission();
+            Mission mission = missionEditor.getMission();
             mission.setDefaultAlt(100);
             missionEditor.update(mission);
             publish(new TestEvent(this, Status.IN_PROGRESS, "update default height", ++idx, total));
 
-            Assert.isTrue(missionEditor.getModifiedMission().getDefaultAlt() == 100);
+            Assert.isTrue(missionEditor.getMission().getDefaultAlt() == 100);
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify default height", ++idx, total));
 
             missionEditor.addWaypoint(new Coordinate(11.11, 22.22));
             publish(new TestEvent(this, Status.IN_PROGRESS, "update Waypoint", ++idx, total));
 
-            mission = missionEditor.getModifiedMission();
+            mission = missionEditor.getMission();
             Assert.isTrue(mission.getMissionItemsUids().size() == 1);
             publish(new TestEvent(this, Status.IN_PROGRESS, "verify waypoint", ++idx, total));
 

@@ -1,8 +1,13 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
+import com.db.gui.persistence.scheme.Layer;
+import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
+import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.*;
+import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -19,39 +24,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class LayerMission extends EditedLayer {
+public class LayerMission extends EditedLayerImpl implements EditedLayer {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(LayerMission.class);
-	
-	private Mission mission;
-	private ApplicationContext applicationContext;
+	private static Integer COUNTER = 0;
+
+    private Mission mission;
+
+	public LayerMission(LayeredViewMap viewMap) {
+		this("New Mission" + COUNTER++, viewMap);
+	}
 
 	public LayerMission(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
 		startEditing();
 	}
 
-	public LayerMission(LayerMission layerMission, LayeredViewMap viewMap) throws MissionUpdateException {
-		super(layerMission, viewMap);
-		LOGGER.debug("Before copy " + layerMission.getMission());
-		MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
-		mission = missionsManager.cloneMission(layerMission.getMission());
-		startEditing();
-		LOGGER.debug("After copy " + mission);
-	}
-
 	public LayerMission(Mission mission, LayeredViewMap layeredViewMap) {
 		this(mission.getName(), layeredViewMap);
 		this.mission = mission;
-	}
-
-	public LayerMission(Mission mission, LayeredViewMap layeredViewMap, boolean isEditing) {
-		super(mission.getName(), layeredViewMap);
-		this.mission = mission;
-		if (isEditing)
-			startEditing();
-		else
-			stopEditing();
 	}
 
 	public void setMission(Mission msn) {
@@ -61,7 +52,19 @@ public class LayerMission extends EditedLayer {
 	public Mission getMission() {
 		return mission;
 	}
-	
+
+	@Override
+	public void setPayload(Object payload) {
+		super.setPayload(payload);
+		try {
+			ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
+			this.mission = objectCrudSvcRemoteWrapper.readByClass(((Layer)payload).getObjectsUids().get(0), Mission.class.getCanonicalName());
+		}
+		catch (ObjectNotFoundRemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void regenerateMapObjects() {
 		removeAllMapObjects();
@@ -85,14 +88,6 @@ public class LayerMission extends EditedLayer {
 				addMapMarker(m);
 				points.add(m.getCoordinate());
 
-				//SPLINE_WAYPOINT:
-				//return new MavlinkSplineWaypoint(referenceItem);
-//				case CHANGE_SPEED:
-//					//return new MavlinkChangeSpeed(referenceItem);
-//				case CAMERA_TRIGGER:
-//					//return new MavlinkCameraTrigger(referenceItem);
-//				case EPM_GRIPPER:
-//					//return new MavlinkEpmGripper(referenceItem);
 			}
 			else if (item instanceof LoiterTurns) {
                 LoiterTurns wp = (LoiterTurns) item;
@@ -167,6 +162,11 @@ public class LayerMission extends EditedLayer {
 
 	public String toString2() {
 		return String.format("LayerMission: %s\nMission Name:%s ,Mission Items: %d",
-				getName(true), mission.getName(), mission.getMissionItemsUids().size());
+				getName(), mission.getName(), mission.getMissionItemsUids().size());
+	}
+
+	@Override
+	public String getCaption() {
+		return "Mission";
 	}
 }

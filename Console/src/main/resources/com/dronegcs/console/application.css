@@ -248,6 +248,10 @@
     -fx-background-color: backgroundColor;
 }
 
+.tree-cell:selected {
+    -fx-font-weight: bold ;
+}
+
 .accordion>*.titled-pane>*.title { /* FX theme stylesheet */
     -fx-background-color: buttonColor;
     -fx-border-color: buttonColor;

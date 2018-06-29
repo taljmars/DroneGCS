@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by taljmars on 3/25/17.
@@ -39,8 +38,14 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     @Override
     public Mission open(Mission mission) throws MissionUpdateException {
         LOGGER.debug("Setting new mission to mission editor");
-        this.mission = mission;
-        return this.mission;
+        try {
+            this.mission = mission;
+            return mission;
+        }
+        catch (Throwable e) {
+            LOGGER.debug("Failed to open mission editor", e);
+        }
+        return null;
     }
 
     @Override
@@ -66,8 +71,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         ClosingPair<Mission> missionClosingPair = null;
         Mission res = this.mission;
         if (!shouldSave) {
-            LOGGER.debug(String.format("Delete mission %s %s", res.getKeyId().getObjId(), res.getName()));
-//            objectCrudSvcRemote.delete(mission);
+            LOGGER.debug(String.format("Delete mission %s %s", this.mission.getKeyId().getObjId(), this.mission.getName()));
             try {
                 res = objectCrudSvcRemote.readByClass(mission.getKeyId().getObjId(), Mission.class.getCanonicalName());
                 LOGGER.debug("Found original mission " + res.getKeyId().getObjId() + " " + res.getName());
@@ -81,10 +85,8 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         else {
             missionClosingPair = new ClosingPair(res, false);
         }
-        //System.err.println(String.format("Before resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         this.mission = null;
         LOGGER.debug("DroneMission editor finished");
-        //System.err.println(String.format("After resetting %s %s", res.getKeyId().getObjId(), res.getName()));
         return missionClosingPair;
     }
 
@@ -256,7 +258,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
-    public Mission getModifiedMission() {
+    public Mission getMission() {
         return this.mission;
     }
 
@@ -265,7 +267,9 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         try {
             LOGGER.debug("Current mission named '{}' have '{}' items", this.mission.getName(), this.mission.getMissionItemsUids().size());
             LOGGER.debug("After update, mission will be named '{}' with '{}' items", mission.getName(), mission.getMissionItemsUids().size());
-            this.mission = (Mission) objectCrudSvcRemote.update(mission);
+            this.mission.setName(mission.getName());
+            this.mission = objectCrudSvcRemote.update(mission);
+
             LOGGER.debug("Updated mission name is '{}' with '{}' items", this.mission.getName(), this.mission.getMissionItemsUids().size());
             return this.mission;
         }
@@ -294,7 +298,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
         List<String> uuidList = mission.getMissionItemsUids();
         uuidList.forEach((String uuid) -> {
             try {
-                missionItemList.add((MissionItem) objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
+                missionItemList.add(objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
             }
             catch (ObjectNotFoundRemoteException e) {
                 LOGGER.error("Failed to get mission items", e);
@@ -315,6 +319,18 @@ public class MissionEditorImpl implements ClosableMissionEditor {
     }
 
     @Override
+    public Mission setMissionName(String name) throws MissionUpdateException {
+        try {
+            this.mission.setName(name);
+            this.mission = objectCrudSvcRemote.update(mission);
+            return this.mission;
+        }
+        catch (Exception e) {
+            throw new MissionUpdateException(e.getMessage());
+        }
+    }
+
+    @Override
     public <T extends MissionItem> T updateMissionItem(T missionItem) throws MissionUpdateException {
         // Update Item
         T res = null;
@@ -326,7 +342,7 @@ public class MissionEditorImpl implements ClosableMissionEditor {
                 LOGGER.debug("Mission items amount is now {} ", mission.getMissionItemsUids().size());
             }
             // Update Mission
-            mission = (Mission) objectCrudSvcRemote.update(mission);
+            mission = objectCrudSvcRemote.update(mission);
             return res;
         }
         catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {

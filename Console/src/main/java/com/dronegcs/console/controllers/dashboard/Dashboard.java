@@ -34,6 +34,7 @@ import javafx.stage.WindowEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -99,8 +100,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @PostConstruct
     private void init() {
-        if (called++ > 1)
-            throw new RuntimeException("Not a Singleton");
+        Assert.isTrue(++called == 1, "Not a Singleton");
 
         ValidatorResponse validatorResponse = runtimeValidator.validate(this);
         if (validatorResponse.isFailed())

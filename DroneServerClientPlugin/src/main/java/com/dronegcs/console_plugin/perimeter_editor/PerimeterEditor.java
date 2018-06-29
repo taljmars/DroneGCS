@@ -7,9 +7,13 @@ import com.dronedb.persistence.scheme.Perimeter;
  */
 public interface PerimeterEditor<T extends Perimeter> {
 
-    T getModifiedPerimeter();
+    Class<T> getManagedDBClass();
+
+    T getPerimeter();
 
     T update(T perimeter) throws PerimeterUpdateException;
 
     T delete() throws PerimeterUpdateException;
+
+    T setPerimeterName(String name);
 }

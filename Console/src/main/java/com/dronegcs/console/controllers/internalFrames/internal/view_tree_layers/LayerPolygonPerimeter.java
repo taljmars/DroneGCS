@@ -15,8 +15,6 @@ public class LayerPolygonPerimeter extends LayerPerimeter<PolygonPerimeter> {
 
 	private MapPolygon currentPolygon;
 
-	//private PolygonPerimeter polygonPerimeter;
-
 	public LayerPolygonPerimeter(String name, LayeredViewMap viewMap) {
 		super(name, viewMap);
 	}
@@ -26,20 +24,12 @@ public class LayerPolygonPerimeter extends LayerPerimeter<PolygonPerimeter> {
 		this.perimeter = polygonPerimeter;
 	}
 	
-	public LayerPolygonPerimeter(LayerPolygonPerimeter layerPerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
-		super(layerPerimeter, viewMap);
-		this.currentPolygon = (MapPolygon) layerPerimeter.currentPolygon.clone();
-	}
-
-	public LayerPolygonPerimeter(PolygonPerimeter perimeter, LayeredViewMap layeredViewMap, boolean isEditing) {
-		super(perimeter, layeredViewMap, isEditing);
-	}
-
 	public void addPolygon(MapPolygon poly) {
 		currentPolygon = poly;
 		regenerateMapObjects();
 	}
 
+	@Override
 	public void regenerateMapObjects() {
 		removeAllMapObjects();
 
@@ -48,6 +38,9 @@ public class LayerPolygonPerimeter extends LayerPerimeter<PolygonPerimeter> {
 
 		PerimetersManager perimetersManager = applicationContext.getBean(PerimetersManager.class);
 		List<Point> pointList = perimetersManager.getPoints(perimeter);
+
+		if (pointList.isEmpty())
+			return;
 
 		MapPolygon mapPolygon = new MapPolygonImpl();
 		for (Point p : pointList)

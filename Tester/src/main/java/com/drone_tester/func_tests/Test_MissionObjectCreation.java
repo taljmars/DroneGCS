@@ -42,7 +42,7 @@ public class Test_MissionObjectCreation extends Test {
             // Creating and discard mission
 
             MissionEditor missionEditor = missionsManager.openMissionEditor("talma1");
-            Mission mission = missionEditor.getModifiedMission();
+            Mission mission = missionEditor.getMission();
             mission.setDefaultAlt(150);
             mission = missionEditor.update(mission);
             publish(new TestEvent(this, Status.IN_PROGRESS, "Creating mission with unique default values", ++idx, total));

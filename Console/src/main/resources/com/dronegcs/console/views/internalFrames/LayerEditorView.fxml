@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:id="root"
+           fx:controller="com.gui.core.mapViewer.internal.LayerEditorView" visible="false">
+
+    <VBox>
+    <children>
+        <Button fx:id="btnEditDoneMode" text="Done" onMouseClicked="#layerEditorDone"></Button>
+    </children>
+    </VBox>
+
+</StackPane>

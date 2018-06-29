@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.Iterator;
@@ -37,9 +38,10 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
     public Mission convert(DroneMission droneMission, Mission mission) throws MissionCompilationException {
         try {
             LOGGER.debug("Converting Mavlink mission with {} items", droneMission.getItems().size());
-            missionEditor = missionsManager.getMissionEditor(mission);
+//            missionEditor = missionsManager.getMissionEditor(mission);
+            Assert.isTrue(1==2, "Must implement");
 
-            Mission modifiedMission = missionEditor.getModifiedMission();
+            Mission modifiedMission = missionEditor.getMission();
             modifiedMission.setDefaultAlt(droneMission.getDefaultAlt());
             modifiedMission = missionEditor.update(modifiedMission);
 
@@ -51,7 +53,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
                 droneMissionItem.accept(this);
             }
 
-            mission = modifiedMission = missionEditor.getModifiedMission();
+            mission = modifiedMission = missionEditor.getMission();
 
             LOGGER.debug("After conversion: Name{} Items {}", modifiedMission, modifiedMission.getMissionItemsUids().size());
             LOGGER.debug("Conversion done");

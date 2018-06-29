@@ -43,9 +43,11 @@ public interface MissionEditor {
 
     Mission update(Mission mission) throws MissionUpdateException;
 
-    Mission getModifiedMission();
+    Mission getMission();
 
     List<MissionItem> getMissionItems();
 
     Mission delete() throws MissionUpdateException;
+
+    Mission setMissionName(String name) throws MissionUpdateException;
 }

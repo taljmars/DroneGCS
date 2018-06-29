@@ -45,22 +45,31 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
     }
 
     @Override
-    public T getModifiedPerimeter() {
+    public T getPerimeter() {
         return this.perimeter;
     }
 
     protected T open(T perimeter) throws PerimeterUpdateException {
         LOGGER.debug("Setting new perimeter to perimeter editor");
-        this.perimeter = perimeter;
-        return this.perimeter;
+        try {
+            this.perimeter = perimeter;
+            return this.perimeter;
+        }
+        catch (Exception e) {
+            LOGGER.debug("Failed to open perimeter editor", e);
+        }
+        return null;
     }
 
-    protected T open(String perimeterName, Class<T> perimeterClass) throws PerimeterUpdateException {
+    protected T open(String perimeterName) throws PerimeterUpdateException {
         LOGGER.debug("Setting new perimeter to perimeter editor");
+        if (perimeterName == null || perimeterName.isEmpty()) {
+            throw new RuntimeException("Perimeter name cannot be empty");
+        }
         try {
-            this.perimeter = perimeterClass.cast(objectCrudSvcRemote.create(perimeterClass.getCanonicalName()));
+            this.perimeter = getManagedDBClass().cast(objectCrudSvcRemote.create(getManagedDBClass().getCanonicalName()));
             this.perimeter.setName(perimeterName);
-            this.perimeter = perimeterClass.cast(objectCrudSvcRemote.update(this.perimeter));
+            this.perimeter = getManagedDBClass().cast(objectCrudSvcRemote.update(this.perimeter));
             return this.perimeter;
         }
         catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
@@ -74,8 +83,6 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
         T res = this.perimeter;
         if (!shouldSave) {
             LOGGER.debug(String.format("Delete perimeter %s %s", res.getKeyId().getObjId(), res.getName()));
-            //objectCrudSvcRemote.delete(this.perimeter);
-            //res = this.originalPerimeter;
             try {
                 res = (T) objectCrudSvcRemote.readByClass(perimeter.getKeyId().getObjId(), perimeter.getClass().getCanonicalName());
                 LOGGER.debug("Found original perimeter " + res.getKeyId().getObjId() + " " + res.getName());
@@ -93,5 +100,18 @@ public abstract class PerimeterEditorImpl<T extends Perimeter> implements Perime
         this.perimeter = null;
         LOGGER.debug("Perimeter editor finished");
         return perimeterClosingPair;
+    }
+
+    @Override
+    public T setPerimeterName(String name) {
+        try {
+            this.perimeter.setName(name);
+            this.perimeter = objectCrudSvcRemote.update(perimeter);
+            return this.perimeter;
+        }
+        catch (Exception e) {
+            LOGGER.error("Failed to rename item", e);
+        }
+        return null;
     }
 }

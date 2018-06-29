@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
+import org.springframework.util.Assert;
 
 @Component
 public class OpArmQuad extends OperationHandler {
@@ -29,8 +30,7 @@ public class OpArmQuad extends OperationHandler {
 	static int called;
 	@PostConstruct
 	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@Override

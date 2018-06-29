@@ -18,10 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,22 +55,6 @@ public class PerimetersManagerImpl implements PerimetersManager {
         closablePerimeterEditorList = new ArrayList<>();
     }
 
-    @PostConstruct
-    @Profile(value = "!test")
-    public void init() {
-        return; // TODO: temporary
-//        List<BaseObject> perimetersList = getAllModifiedPerimeters();
-//        for (BaseObject item : perimetersList) {
-//            Perimeter perimeter = (Perimeter) item;
-//            try {
-//                LOGGER.debug("perimeter '" + perimeter.getName() + "' is in edit mode");
-//                openPerimeterEditor(perimeter);
-//            } catch (PerimeterUpdateException e) {
-//                LOGGER.error("Failed to initialize perimeter manager", e);
-//            }
-//        }
-    }
-
     @Override
     public <T extends PerimeterEditor> T openPerimeterEditor(String initialName, Class<? extends Perimeter> clz) throws PerimeterUpdateException {
         ClosablePerimeterEditor closablePerimeterEditor = perimeterEditorFactory.getEditor(clz);
@@ -88,27 +70,32 @@ public class PerimetersManagerImpl implements PerimetersManager {
     public <T extends PerimeterEditor> T openPerimeterEditor(Perimeter perimeter) throws PerimeterUpdateException {
         LOGGER.debug("Setting new perimeter to perimeter editor");
         ClosablePerimeterEditor perimeterEditor = findPerimeterEditorByPerimeter(perimeter);
-        if (perimeterEditor == null) {
-            LOGGER.debug("Editor not exist for perimeter " + perimeter.getName() + ", creating new one");
-            PerimeterEditorFactory perimeterEditorFactory = applicationContext.getBean(PerimeterEditorFactory.class);
-            perimeterEditor = perimeterEditorFactory.getEditor(perimeter.getClass());
-            perimeterEditor.open(perimeter);
-            closablePerimeterEditorList.add(perimeterEditor);
+        try {
+            if (perimeterEditor == null) {
+                LOGGER.debug("Editor not exist for perimeter " + perimeter.getName() + ", creating new one");
+                PerimeterEditorFactory perimeterEditorFactory = applicationContext.getBean(PerimeterEditorFactory.class);
+                perimeterEditor = perimeterEditorFactory.getEditor(perimeter.getClass());
+                perimeterEditor.open(perimeter);
+                closablePerimeterEditorList.add(perimeterEditor);
+            } else {
+                LOGGER.debug("Found existing perimeter editor");
+            }
         }
-        else {
-            LOGGER.debug("Found existing perimeter editor");
+        catch (Exception e) {
+            LOGGER.error("", e);
         }
         return (T) perimeterEditor;
     }
 
     @Override
-    public <P extends Perimeter> void delete(P perimeter) throws PerimeterUpdateException {
+    public void delete(Perimeter perimeter) throws PerimeterUpdateException {
         if (perimeter == null) {
             LOGGER.error("Received Empty perimeter, skip deletion");
             return;
         }
         try {
-            ClosablePerimeterEditor closablePerimeterEditor = openPerimeterEditor(perimeter);
+            ClosablePerimeterEditor closablePerimeterEditor;
+            closablePerimeterEditor = openPerimeterEditor(perimeter);
             closablePerimeterEditor.delete();
         } catch (PerimeterUpdateException e) {
             LOGGER.error("Failed to delete perimeter", e);
@@ -156,7 +143,7 @@ public class PerimetersManagerImpl implements PerimetersManager {
     }
 
     @Override
-    public <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave) throws PerimeterUpdateException {
+    public <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave) {
         Collection<ClosingPair<P>> closedPerimeters = new ArrayList<>();
         Iterator<ClosablePerimeterEditor> it = closablePerimeterEditorList.iterator();
         while (it.hasNext()) {
@@ -164,6 +151,47 @@ public class PerimetersManagerImpl implements PerimetersManager {
         }
         closablePerimeterEditorList.clear();
         return closedPerimeters;
+    }
+
+    @Override
+    public int loadEditors() {
+//        if (closablePerimeterEditorList.isEmpty())
+//            throw new RuntimeException("Perimeter still exist");
+
+        QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+        queryRequestRemote.setClz(PolygonPerimeter.class.getCanonicalName());
+        queryRequestRemote.setQuery("GetAllModifiedPolygonPerimeters");
+        QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+        List<BaseObject> modifiedList = queryResponseRemote.getResultList();
+        LOGGER.debug("There are currently {} modified PolygonPerimeter in total", modifiedList.size());
+        modifiedList.forEach(element -> {
+            try {
+                this.openPerimeterEditor((Perimeter) element);
+            }
+            catch (PerimeterUpdateException e) {
+                e.printStackTrace();
+            }
+        });
+
+        int modifiedElementAmount = modifiedList.size();
+
+        queryRequestRemote = new QueryRequestRemote();
+        queryRequestRemote.setClz(CirclePerimeter.class.getCanonicalName());
+        queryRequestRemote.setQuery("GetAllModifiedCirclePerimeters");
+        queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+        modifiedList = queryResponseRemote.getResultList();
+        LOGGER.debug("There are currently {} modified CirclePerimeter in total", modifiedList.size());
+        modifiedList.forEach(element -> {
+            try {
+                this.openPerimeterEditor((Perimeter) element);
+            }
+            catch (PerimeterUpdateException e) {
+                e.printStackTrace();
+            }
+        });
+
+        modifiedElementAmount += modifiedList.size();
+        return modifiedElementAmount;
     }
 
     @Override
@@ -247,7 +275,11 @@ public class PerimetersManagerImpl implements PerimetersManager {
 
     private <P extends Perimeter> ClosablePerimeterEditor findPerimeterEditorByPerimeter(P perimeter) {
         for (ClosablePerimeterEditor closablePerimeterEditor : closablePerimeterEditorList) {
-            if (perimeter.equals(closablePerimeterEditor.getModifiedPerimeter())) {
+            Perimeter cloPerimeter = closablePerimeterEditor.getPerimeter();
+            if (perimeter.getKeyId().getObjId().equals(cloPerimeter.getKeyId().getObjId()))
+                return closablePerimeterEditor;
+
+            if (perimeter.equals(cloPerimeter)) {
                 return closablePerimeterEditor;
             }
         }

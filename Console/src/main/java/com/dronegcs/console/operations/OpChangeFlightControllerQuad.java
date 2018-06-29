@@ -17,6 +17,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkRC;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.util.Assert;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
 @ComponentScan("gui.com.dronegcs.console_plugin.flightControllers")
@@ -47,8 +48,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 	static int called;
 	@PostConstruct
 	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@SuppressWarnings("incomplete-switch")

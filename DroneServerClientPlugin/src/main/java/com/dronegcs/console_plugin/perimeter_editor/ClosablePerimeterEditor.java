@@ -1,5 +1,6 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
+import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronegcs.console_plugin.ClosingPair;
 
@@ -8,9 +9,9 @@ import com.dronegcs.console_plugin.ClosingPair;
  */
 public interface ClosablePerimeterEditor<T extends Perimeter> extends PerimeterEditor<T> {
 
-    T open(T perimeter) throws PerimeterUpdateException;
+    T open(T perimeter) throws PerimeterUpdateException, ObjectNotFoundRemoteException;
 
     T open(String perimeter) throws PerimeterUpdateException;
 
-    ClosingPair<T> close(boolean shouldSave) throws PerimeterUpdateException ;
+    ClosingPair<T> close(boolean shouldSave);
 }

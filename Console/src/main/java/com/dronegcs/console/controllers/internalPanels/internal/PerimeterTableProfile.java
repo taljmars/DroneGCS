@@ -159,7 +159,8 @@ public class PerimeterTableProfile extends TableProfile {
                         btn.setOnAction( ( ActionEvent event ) -> {
                             try {
                                 TableItemEntry entry = getTableView().getItems().get( getIndex() );
-                                PolygonPerimeterEditor polygonPerimeterEditor = perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
+                                // TODO: fix
+                                PolygonPerimeterEditor polygonPerimeterEditor = null;//perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
                                 polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
                                 generateTable(true, layerPerimeter);
                                 eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
@@ -217,8 +218,7 @@ public class PerimeterTableProfile extends TableProfile {
                         panelTableBox.getLat(), panelTableBox.getLon(),
                         panelTableBox.getUp(), panelTableBox.getDown(), panelTableBox.getRemove());
 
-            List<Point> itemList = perimetersManager.getPoints(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
-
+            List<Point> itemList = perimetersManager.getPoints(layerPerimeter.getPerimeter());
             Iterator<Point> it = itemList.iterator();
 
             int i = 0;
@@ -236,7 +236,8 @@ public class PerimeterTableProfile extends TableProfile {
                         panelTableBox.getLat(), panelTableBox.getLon(), panelTableBox.getRadius());
 
             CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) layerPerimeter).getCirclePerimeter();
-            List<Point> points = perimetersManager.getPoints(circlePerimeter);
+            // TODO: fix
+            List<Point> points = null;//perimetersManager.getPoints(circlePerimeter);
             if (points == null || points.isEmpty()) {
                 LOGGER.debug("No points exist for this perimeter");
                 return;

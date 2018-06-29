@@ -23,15 +23,6 @@ public class LayerCircledPerimeter extends LayerPerimeter<CirclePerimeter> {
 		super(circlePerimeter.getName(), viewMap);
 		this.perimeter = circlePerimeter;
 	}
-	
-	public LayerCircledPerimeter(LayerCircledPerimeter layerCirclePerimeter, LayeredViewMap viewMap) throws PerimeterUpdateException {
-		super(layerCirclePerimeter, viewMap);
-		this.currentMarker = layerCirclePerimeter.currentMarker.clone();
-	}
-
-	public LayerCircledPerimeter(CirclePerimeter perimeter, LayeredViewMap layeredViewMap, boolean isEditing) {
-		super(perimeter, layeredViewMap, isEditing);
-	}
 
 	@Override
 	public boolean isContained(Coordinate coord) {
@@ -56,8 +47,7 @@ public class LayerCircledPerimeter extends LayerPerimeter<CirclePerimeter> {
 		return currentMarker;
 	}
 
-	/////
-
+	@Override
 	public void regenerateMapObjects() {
 		removeAllMapObjects();
 
@@ -72,7 +62,7 @@ public class LayerCircledPerimeter extends LayerPerimeter<CirclePerimeter> {
 		}
 		Point point = pointList.get(0);
 
-		MapMarkerCircle mapPolygon = new MapMarkerCircle(getName(true), point.getLat(), point.getLon(), perimeter.getRadius());
+		MapMarkerCircle mapPolygon = new MapMarkerCircle(getName(), point.getLat(), point.getLon(), perimeter.getRadius());
 		currentMarker = mapPolygon;
 		addMapMarker(currentMarker);
 	}

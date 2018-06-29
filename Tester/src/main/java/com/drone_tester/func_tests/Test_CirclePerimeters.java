@@ -1,5 +1,6 @@
 package com.drone_tester.func_tests;
 
+import com.db.gui.persistence.scheme.Layer;
 import com.db.persistence.scheme.BaseObject;
 import com.drone_tester.Test;
 import com.drone_tester.TestEvent;
@@ -13,6 +14,7 @@ import com.geo_tools.Coordinate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -42,7 +44,7 @@ public class Test_CirclePerimeters extends Test {
             // Creating and discard mission
 
             PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor("talma1", CirclePerimeter.class);
-            Perimeter perimeter = perimeterEditor.getModifiedPerimeter();
+            Perimeter perimeter = perimeterEditor.getPerimeter();
             publish(new TestEvent(this, Status.IN_PROGRESS, "Creating perimeter", ++idx, total));
 
             perimeter.setName("talma1to2");
@@ -55,7 +57,7 @@ public class Test_CirclePerimeters extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "Updating perimeter name once again", ++idx, total));
 
             perimeterEditor = perimetersManager.openPerimeterEditor(perimeter);
-            Assert.isTrue(perimeterEditor.getModifiedPerimeter().getName().equals(LAST_NAME));
+            Assert.isTrue(perimeterEditor.getPerimeter().getName().equals(LAST_NAME));
             publish(new TestEvent(this, Status.IN_PROGRESS, "Verify it is possible to fetch perimeter by name", ++idx, total));
 
             CirclePerimeterEditor circlePerimeterEditor = (CirclePerimeterEditor) perimeterEditor;
@@ -63,7 +65,7 @@ public class Test_CirclePerimeters extends Test {
             circlePerimeterEditor.setRadius(20);
             publish(new TestEvent(this, Status.IN_PROGRESS, "setting center and radius to circle perimeters", ++idx, total));
 
-            CirclePerimeter circlePerimeter = circlePerimeterEditor.getModifiedPerimeter();
+            CirclePerimeter circlePerimeter = circlePerimeterEditor.getPerimeter();
             Assert.isTrue(circlePerimeter.getRadius() == 20);
             publish(new TestEvent(this, Status.IN_PROGRESS, "Validate radius", ++idx, total));
 
@@ -113,7 +115,7 @@ public class Test_CirclePerimeters extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "test core finished", ++idx, total));
             return Status.SUCCESS;
         }
-        catch (PerimeterUpdateException e) {
+        catch (Throwable e) {
             e.printStackTrace();
             return Status.FAIL;
         }

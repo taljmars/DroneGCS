@@ -33,5 +33,7 @@ public interface PerimetersManager {
 
     <P extends Perimeter> P clonePerimeter(P perimeter) throws PerimeterUpdateException;
 
-    <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave) throws PerimeterUpdateException;
+    <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave);
+
+    int loadEditors();
 }

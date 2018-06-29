@@ -6,6 +6,7 @@ import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
+import com.gui.core.mapViewer.internal.LayerEditorView;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import javax.validation.Validator;
 import java.net.URISyntaxException;
 
 @Import({GuiAppConfig.class, InternalFrameMap.class , OpGCSTerminationHandler.class,
-		ConsolePluginConfig.class})
+		ConsolePluginConfig.class, LayerEditorView.class})
 //@SpringBootApplication(scanBasePackages = "com.dronegcs.console")
 @Configuration
 @ComponentScan(value = {

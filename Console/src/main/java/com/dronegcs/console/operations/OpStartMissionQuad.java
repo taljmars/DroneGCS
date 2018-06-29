@@ -12,6 +12,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.util.Assert;
 
 @Component
 public class OpStartMissionQuad extends OperationHandler {
@@ -32,8 +33,7 @@ public class OpStartMissionQuad extends OperationHandler {
 	private static int called;
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@Override

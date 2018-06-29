@@ -6,15 +6,16 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewM
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
-import com.gui.core.mapTree.CheckBoxViewTree;
 import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -57,8 +58,7 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 	private static int called;
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 		splitPane.setPrefWidth(root.getPrefWidth());
 		splitPane.setPrefHeight(root.getPrefHeight());
 
-		CheckBoxViewTree tree = operationalViewTree.getTree();
+		TreeView tree = operationalViewTree.getTree();
 		operationalViewMap.setMapBounds(0, 0, (int) splitPane.getPrefWidth(), (int) splitPane.getPrefHeight());
 
 

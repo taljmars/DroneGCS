@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -51,8 +52,7 @@ public class PanelTableBox extends Pane implements Initializable {
 	private static int called;
 	@PostConstruct
 	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 
 	@Override

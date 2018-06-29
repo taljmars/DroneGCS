@@ -4,7 +4,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewT
 import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
-import com.gui.core.mapViewer.MapViewerSettings;
+import com.gui.core.mapViewer.internal.MapViewerSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -36,8 +37,7 @@ public class MapSettings extends Pane implements Initializable {
     private static int called = 0;
     @PostConstruct
     private void init() {
-        if (called++ > 1)
-            throw new RuntimeException("Not a Singleton");
+        Assert.isTrue(++called == 1, "Not a Singleton");
     }
 
     @Override

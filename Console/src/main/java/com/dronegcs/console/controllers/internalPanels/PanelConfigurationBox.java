@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
-import com.gui.core.mapViewer.MapViewerSettings;
+import com.gui.core.mapViewer.internal.MapViewerSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -24,6 +24,7 @@ import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.util.Assert;
 
 @Component
 public class PanelConfigurationBox extends Pane implements Initializable {
@@ -48,8 +49,7 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 	private static int called = 0;
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@Override 

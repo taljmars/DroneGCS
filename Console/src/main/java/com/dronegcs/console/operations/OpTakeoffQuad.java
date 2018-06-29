@@ -17,6 +17,7 @@ import com.dronegcs.console_plugin.validations.QuadIsArmed;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.util.Assert;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
 @ComponentScan("gui.com.dronegcs.console_plugin.services")
@@ -45,8 +46,7 @@ public class OpTakeoffQuad extends OperationHandler {
 	static int called;
 	@PostConstruct
 	public void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singletone");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 	
 	@Override

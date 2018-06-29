@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.FileAppender">
+        <file>${LOGS.DIR}/testerGCS.log</file>
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} [%thread{10}] %level [%logger{10}:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} [%thread{10}] %level [%logger{10}:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<logger name="com.dronegcs" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
+    <!--<logger name="com.generic_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
+    <!--<logger name="com.geo_tools" level="TRACE" additivity="false"> <appender-ref ref="FILE-AUDIT" /> </logger>-->
+
+    <root level="DEBUG">
+        <appender-ref ref="FILE-AUDIT"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

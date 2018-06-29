@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -65,8 +66,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 	private static int called;
 	@PostConstruct
 	private void init() throws URISyntaxException {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 		
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "actualPWM.csv");
 		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "actualPWM.csv");

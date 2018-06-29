@@ -16,12 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
@@ -46,25 +47,12 @@ public class MissionsManagerImpl implements MissionsManager {
 		closableMissionEditorList = new ArrayList<>();
 	}
 
-	@PostConstruct
-	@Profile(value = "!test")
-	public void init() {
-		return; // TODO: temporary
-//		List<BaseObject> missionList = getAllModifiedMissions();
-//		for (BaseObject item : missionList) {
-//			Mission mission = (Mission) item;
-//			try {
-//				LOGGER.debug("Mission '" + mission.getName() + "' is in edit mode");
-//				openMissionEditor(mission);
-//			} catch (MissionUpdateException e) {
-//				LOGGER.error("Failed to initialize mission manager", e);
-//			}
-//		}
-	}
-
 	@Override
 	public MissionEditor openMissionEditor(String initialName) throws MissionUpdateException {
 		LOGGER.debug("Setting new mission to mission editor");
+		if (initialName == null || initialName.isEmpty()) {
+			throw new RuntimeException("Mission name cannot be empty");
+		}
 		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 		missionEditor.open(initialName);
 		closableMissionEditorList.add(missionEditor);
@@ -108,7 +96,7 @@ public class MissionsManagerImpl implements MissionsManager {
 		try {
 			ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
 			if (closableMissionEditor == null)
-				return (Mission) objectCrudSvcRemote.update(mission);
+				return objectCrudSvcRemote.update(mission);
 
 			return closableMissionEditor.update(mission);
 		}
@@ -150,6 +138,29 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	@Override
+	public int loadEditors() {
+//		if (closableMissionEditorList.isEmpty())
+//			throw new RuntimeException("Mission still exist");
+
+		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+		queryRequestRemote.setClz(Mission.class.getCanonicalName());
+		queryRequestRemote.setQuery("GetAllModifiedMissions");
+		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+		List<BaseObject> modifiedMissionList = queryResponseRemote.getResultList();
+		LOGGER.debug("There are currently {} modified mission in total", modifiedMissionList.size());
+		modifiedMissionList.forEach(element -> {
+			try {
+				this.openMissionEditor((Mission) element);
+			}
+			catch (MissionUpdateException e) {
+				e.printStackTrace();
+			}
+		});
+
+		return modifiedMissionList.size();
+	}
+
+	@Override
 	public <T extends MissionEditor> T getMissionEditor(Mission mission) {
 		return (T) findMissionEditorByMission(mission);
 	}
@@ -159,7 +170,7 @@ public class MissionsManagerImpl implements MissionsManager {
 		Mission leadMission = mission;
 		ClosableMissionEditor closableMissionEditor = findMissionEditorByMission(mission);
 		if (closableMissionEditor != null)
-			leadMission = closableMissionEditor.getModifiedMission();
+			leadMission = closableMissionEditor.getMission();
 
 		List<MissionItem> missionItemList = new ArrayList<>();
 		List<String> uuidList = leadMission.getMissionItemsUids();
@@ -199,7 +210,7 @@ public class MissionsManagerImpl implements MissionsManager {
 
 	private ClosableMissionEditor findMissionEditorByMission(Mission mission) {
 		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
-			Mission cloMission = closableMissionEditor.getModifiedMission();
+			Mission cloMission = closableMissionEditor.getMission();
 			if (mission.getKeyId().getObjId().equals(cloMission.getKeyId().getObjId()))
 				return closableMissionEditor;
 

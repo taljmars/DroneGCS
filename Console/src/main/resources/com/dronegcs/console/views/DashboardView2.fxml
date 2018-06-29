@@ -17,6 +17,8 @@
 
         <fx:include fx:id="mapBoard" source="internalFrames/InternalFrameMapAndTreeView2.fxml" StackPane.alignment="CENTER" />
 
+        <fx:include maxHeight="100.0" maxWidth="100.0" prefHeight="100.0" prefWidth="100.0" source="internalFrames/LayerEditorView.fxml" />
+
         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" StackPane.alignment="TOP_CENTER">
             <children>
                 <fx:include source="panels/PanelButtonBoxSatelliteView2.fxml" />
@@ -104,7 +106,7 @@
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </StackPane.margin>
         </CheckBox>
-      <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity" opacity="0.7" prefHeight="50.0" prefWidth="50.0" progress="0.0" StackPane.alignment="BOTTOM_RIGHT" visible="false">
+      <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity" opacity="0.7" prefHeight="50.0" prefWidth="50.0" progress="0.0" visible="false" StackPane.alignment="BOTTOM_RIGHT">
          <StackPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </StackPane.margin>

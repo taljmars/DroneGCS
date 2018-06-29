@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.generic_tools.validations.ValidatorResponse;
+import org.springframework.util.Assert;
 
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
@@ -68,8 +69,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	private static int called;
 	@PostConstruct
 	private void init() {
-		if (called++ > 1)
-			throw new RuntimeException("Not a Singleton");
+		Assert.isTrue(++called == 1, "Not a Singleton");
 		
 		drone.addDroneListener(this);
 	}
