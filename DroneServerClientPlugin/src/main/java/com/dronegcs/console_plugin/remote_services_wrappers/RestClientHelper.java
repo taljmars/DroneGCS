@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 public interface RestClientHelper {
 
-    void setHashedUsernamePassword(String encoding);
-
     <T extends Object> T resolveResponse(ClientResponse response, Class<T> clz) throws Exception;
 
     void setToken(String token);
@@ -28,4 +26,5 @@ public interface RestClientHelper {
 
     Pair<Class,? extends Exception> getErrorAndMessageFromJson(JSONObject jsonObject) throws Exception;
 
+    void setUsernamePassword(String userName, String pass);
 }

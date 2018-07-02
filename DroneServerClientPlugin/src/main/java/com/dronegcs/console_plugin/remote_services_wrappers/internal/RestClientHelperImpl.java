@@ -24,8 +24,6 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 
 @Component
 public class RestClientHelperImpl implements RestClientHelper {
@@ -37,7 +35,8 @@ public class RestClientHelperImpl implements RestClientHelper {
 
     private Client client;
     private String token;
-    private String hashedUsernamePassword;
+    private String userName;
+    private String password;
 
     @PostConstruct
     public void init() {
@@ -45,13 +44,6 @@ public class RestClientHelperImpl implements RestClientHelper {
         config.getClasses().add(JacksonJsonProvider.class);
         client = Client.create(config);
     }
-
-//    public WebResource.Builder getWebResource(String path) {
-//        WebResource.Builder builder = getWebResource(path, null, null);
-//        return build(builder);
-//    }
-
-//    public WebResource.Builder getWebResource(String path, String s, Object... objs) {
 
     @Override
     public WebResource.Builder getWebResourceNoAuth(String path, Object... objs) {
@@ -79,22 +71,10 @@ public class RestClientHelperImpl implements RestClientHelper {
         else {
             builder = webResource.getRequestBuilder();
         }
-//        UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
-//        if (s != null && !s.isEmpty() && objs != null)
-//            uriBuilder.queryParam(s, objs);
-//        System.out.println("Address: " + uriBuilder.build());
-//        LOGGER.debug("Address: " + uriBuilder.build());
-//        WebResource.Builder builder = client.resource(uriBuilder.build()).getRequestBuilder();
+
         builder.type(MediaType.APPLICATION_JSON_TYPE);
         return build(builder, auth);
     }
-
-//    public WebResource.Builder getWebResource(String path, MultivaluedMap queries) {
-//        UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
-//        WebResource.Builder builder = client.resource(uriBuilder.build()).queryParams(queries).getRequestBuilder();
-//        builder.type(MediaType.APPLICATION_JSON_TYPE);
-//        return build(builder);
-//    }
 
     private WebResource.Builder build(WebResource.Builder builder, boolean auth) {
         builder
@@ -102,9 +82,16 @@ public class RestClientHelperImpl implements RestClientHelper {
                 .header(ACCEPT, "application/json");
 
         if (auth) {
-            builder.header(AUTHORIZATION, "Basic " + hashedUsernamePassword);
-            builder.header("token", getToken());
+            if (getToken() == null) {
+//            builder.header(AUTHORIZATION, "Basic " + hashedUsernamePassword);
+                builder.header("X-Auth-Username", userName);
+                builder.header("X-Auth-Password", password);
+            }
+            else {
+                builder.header("X-Auth-Token", getToken());
+            }
         }
+//        System.out.println("Header: " + AUTHORIZATION + " Basic " + hashedUsernamePassword + " token" + getToken());
         return builder;
     }
 
@@ -188,11 +175,8 @@ public class RestClientHelperImpl implements RestClientHelper {
     }
 
     @Override
-    public void setHashedUsernamePassword(String hashedUsernamePassword) {
-        this.hashedUsernamePassword = hashedUsernamePassword;
-    }
-
-    public String getHashedUsernamePassword() {
-        return hashedUsernamePassword;
+    public void setUsernamePassword(String userName, String pass) {
+        this.userName = userName;
+        this.password = pass;
     }
 }

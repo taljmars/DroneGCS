@@ -29,9 +29,8 @@ public class LoginSvcRemoteWrapper {
     public LoginResponse login(LoginRequest loginRestRequest, String pass) {
         LoginResponse loginResponse;
         try {
-            String loginTuple = loginRestRequest.getUserName() + ":" + pass;
-            String encoding = new String(Base64.encodeBase64(loginTuple.getBytes()));
-            restClientHelper.setHashedUsernamePassword(encoding);
+            restClientHelper.setUsernamePassword(loginRestRequest.getUserName(), pass);
+            restClientHelper.setToken(null);
             WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("login");
             ObjectMapper mapper = new ObjectMapper();
 
@@ -72,7 +71,7 @@ public class LoginSvcRemoteWrapper {
         }
     }
 
-    @Scheduled(fixedRate=30 * 1000)
+    @Scheduled(fixedRate=3000 * 1000)
     public void loginKeepAlive() throws Exception {
         if (!keepAliveEnable)
             return;
