@@ -52,8 +52,8 @@ public class Tester implements ApplicationListener<TestEvent> {
         lst.add(test_polylinePerimeters);
         lst.add(test_missionObjectCreation);
         lst.add(test_singleMissionSingleItem);
-//
-//        lst.add(test_readUpdatePublish_scale);
+
+        lst.add(test_readUpdatePublish_scale);
 
         return lst;
     }
@@ -91,10 +91,26 @@ public class Tester implements ApplicationListener<TestEvent> {
                 beginTimestamp = new Date().getTime();
 
                 test.publish(new TestEvent(test, Test.Status.BEGIN, test.getClass().getSimpleName(), 0, 0));
-                if (test.preTestCheck().equals(Test.Status.FAIL) ||
-                        test.test().equals(Test.Status.FAIL) ||
-                        test.postTestCleanup().equals(Test.Status.FAIL))
+                Test.Status testRes = test.preTestCheck();
+                if (testRes.equals(Test.Status.FAIL)) {
+                    entry.add("Failure: Pretest stage - " + testRes);
+                    System.err.println("Failure: Pretest stage - " + testRes);
                     break;
+                }
+
+                testRes = test.test();
+                if (testRes.equals(Test.Status.FAIL)) {
+                    entry.add("Failure: Test stage - " + testRes);
+                    System.err.println("Failure: Test stage - " + testRes);
+                    break;
+                }
+
+                testRes = test.postTestCleanup();
+                if (testRes.equals(Test.Status.FAIL)) {
+                    entry.add("Failure: PostTest stage - " + testRes);
+                    System.err.println("Failure: PostTest stage - " + testRes);
+                    break;
+                }
 
                 endTimestamp = new Date().getTime();
                 entry.add("Passed");

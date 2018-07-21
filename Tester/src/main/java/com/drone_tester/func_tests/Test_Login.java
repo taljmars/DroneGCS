@@ -24,6 +24,7 @@ public class Test_Login extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "keep alive succeeded", ++idx, total));
         }
         catch (Exception e) {
+            e.printStackTrace();
             return Status.FAIL;
         }
         return Status.SUCCESS;
