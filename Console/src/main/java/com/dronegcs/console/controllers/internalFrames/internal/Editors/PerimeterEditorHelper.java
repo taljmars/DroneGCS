@@ -12,7 +12,6 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewT
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console_plugin.perimeter_editor.*;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -26,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -51,7 +51,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 	private DialogManagerSvc dialogManagerSvc;
 
 	@Autowired
-	private EventPublisherSvc eventPublisherSvc;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	private PerimetersManager perimetersManager;
@@ -211,7 +211,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 				// Updating GUI layer
 				modifiedLayerPerimeterOriginal.setPayload(layer);
 				modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
 				modifiedLayerPerimeterOriginal.regenerateMapObjects();
 			}
 			catch (Throwable e) {
@@ -233,7 +233,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 				((CirclePerimeterEditor) perimeterEditor).setCenter(layerViewMap.getPosition(point));
 				((CirclePerimeterEditor) perimeterEditor).setRadius(Integer.parseInt(value));
 				modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
 				modifiedLayerPerimeterOriginal.regenerateMapObjects();
 			}
 			catch (PerimeterUpdateException e) {
@@ -252,7 +252,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 		modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
 		modifiedLayerPerimeterOriginal.setName(perimeterEditor.getPerimeter().getName());
 		perimeterEditor = null;
-		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifiedLayerPerimeterOriginal));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifiedLayerPerimeterOriginal));
 
 		setModifiedLayerPerimeterOriginal(null);
 		setBuildMode(false);

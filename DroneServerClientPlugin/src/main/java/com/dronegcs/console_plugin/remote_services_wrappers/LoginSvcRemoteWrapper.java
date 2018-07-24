@@ -1,14 +1,17 @@
 package com.dronegcs.console_plugin.remote_services_wrappers;
 
-import com.db.persistence.scheme.*;
+import com.db.persistence.scheme.KeepAliveResponse;
+import com.db.persistence.scheme.LoginRequest;
+import com.db.persistence.scheme.LoginResponse;
+import com.db.persistence.scheme.LogoutResponse;
+import com.dronegcs.console_plugin.plugin_event.ClientPluginEvent;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +26,9 @@ public class LoginSvcRemoteWrapper {
 
     @Autowired
     private RestClientHelper restClientHelper;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private boolean keepAliveEnable = false;
 
@@ -71,16 +77,24 @@ public class LoginSvcRemoteWrapper {
         }
     }
 
-    @Scheduled(fixedRate=3000 * 1000)
-    public void loginKeepAlive() throws Exception {
-        if (!keepAliveEnable)
-            return;
-        LOGGER.debug("Tik!");
-        WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("keepAlive");
-        ClientResponse response = builder.post(ClientResponse.class);
-        KeepAliveResponse resp =  restClientHelper.resolveResponse(response, KeepAliveResponse.class);
-        LOGGER.debug("Server Time: " + resp.getMessage() + " ," + resp.getServerDate() + " ," + resp.getReturnCode());
-        //TODO: Get server time
+    @Scheduled(fixedRate=30 * 1000) // 30 Seconds
+    public void loginKeepAlive() {
+        try {
+            if (!keepAliveEnable)
+                return;
+            LOGGER.debug("Tik!");
+            WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("keepAlive");
+            ClientResponse response = builder.post(ClientResponse.class);
+            KeepAliveResponse resp = restClientHelper.resolveResponse(response, KeepAliveResponse.class);
+            LOGGER.debug("Server Time: " + resp.getMessage() + " ," + resp.getServerDate() + " ," + resp.getReturnCode());
+            //TODO: Get server time
+            applicationEventPublisher.publishEvent(ClientPluginEvent.generate(ClientPluginEvent.TYPE.SERVER_CLOCK).add(resp.getServerDate()));
+        }
+        catch (Exception e) {
+            LOGGER.error("Keep alive failed, terminating communication channel", e);
+            keepAliveEnable = false;
+            applicationEventPublisher.publishEvent(ClientPluginEvent.generate(ClientPluginEvent.TYPE.SERVER_LOST));
+        }
     }
 
 }

@@ -9,7 +9,6 @@ import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
@@ -27,6 +26,7 @@ import javafx.util.converter.DoubleStringConverter;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,7 @@ public class PerimeterTableProfile extends TableProfile {
     private LayerPerimeter layerPerimeter;
 
     @Autowired
-    private EventPublisherSvc eventPublisherSvc;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired @NotNull(message = "Internal Error: Failed to get perimeter manager")
     private PerimetersManager perimetersManager;
@@ -96,7 +96,7 @@ public class PerimeterTableProfile extends TableProfile {
             CirclePerimeter perimeter = (CirclePerimeter) entry.getReferredItem();
             perimeter.setRadius(t.getNewValue());
             generateTable(true, this.layerPerimeter);
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
+            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
         });
 
         panelTableBox.getUp().setCellFactory(param -> {
@@ -114,7 +114,7 @@ public class PerimeterTableProfile extends TableProfile {
                             polygonPerimeter.getPoints().remove(getIndex());
                             polygonPerimeter.getPoints().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -138,7 +138,7 @@ public class PerimeterTableProfile extends TableProfile {
                             polygonPerimeter.getPoints().remove(getIndex());
                             polygonPerimeter.getPoints().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -163,7 +163,7 @@ public class PerimeterTableProfile extends TableProfile {
                                 PolygonPerimeterEditor polygonPerimeterEditor = null;//perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
                                 polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
                                 generateTable(true, layerPerimeter);
-                                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
+                                applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
                             }
                             catch (PerimeterUpdateException e) {
                                 logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());

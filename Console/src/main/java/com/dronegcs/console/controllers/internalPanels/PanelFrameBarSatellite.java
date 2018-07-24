@@ -14,7 +14,6 @@ import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -130,7 +130,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get event publisher")
-    private EventPublisherSvc eventPublisherSvc;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get logger")
@@ -169,7 +169,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
         if (operationalViewTree.hasPrivateSession()) {
             LOGGER.debug("Private session was found");
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
         }
     }
 
@@ -256,7 +256,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         operationalViewTree.regenerateTree();
         // TODO: find better solution than reload - it too aggressive
         operationalViewTree.reloadData();
-        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
+        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
     }
 
     public <T extends BaseObject> void handleClosingPair(Collection<ClosingPair<T>> closingPairs) {
@@ -301,7 +301,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         operationalViewTree.reloadData();
 
         operationalViewTree.regenerateTree();
-        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));
+        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));
     }
 
     private void setImageButton(Button button, URL resource) {

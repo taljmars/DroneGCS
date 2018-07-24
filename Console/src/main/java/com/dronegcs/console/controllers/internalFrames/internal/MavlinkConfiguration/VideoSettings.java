@@ -1,6 +1,5 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -10,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -23,7 +23,7 @@ public class VideoSettings extends Pane implements Initializable {
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get GUI event publisher")
-    protected EventPublisherSvc eventPublisherSvc;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     private RuntimeValidator runtimeValidator;
@@ -43,6 +43,6 @@ public class VideoSettings extends Pane implements Initializable {
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-        btnUpdateDevice.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
+        btnUpdateDevice.setOnAction( e -> applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
     }
 }

@@ -1,13 +1,12 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronegcs.console.operations.*;
 import com.dronegcs.console.DialogManagerSvc;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console.flightControllers.FlightController;
+import com.dronegcs.console.operations.*;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
-import com.dronegcs.console.flightControllers.FlightController;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -73,10 +72,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
-	
-	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
-	private EventPublisherSvc eventPublisherSvc;
-	
+
 	@Autowired @NotNull(message = "Internal Error: Failed to get quad armer")
 	private OpArmQuad opArmQuad;
 	

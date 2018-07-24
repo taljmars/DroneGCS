@@ -27,7 +27,6 @@ import com.dronegcs.console.controllers.internalFrames.internal.Editors.MissionE
 import com.dronegcs.console.controllers.internalFrames.internal.Editors.PerimeterEditorHelper;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console.flightControllers.KeyBoardController;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -63,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -95,7 +95,7 @@ OnDroneListener, EventHandler<ActionEvent> {
     private DialogManagerSvc dialogManagerSvc;
 
     @Autowired @NotNull( message = "Internal Error: Failed to get event publisher service" )
-    protected EventPublisherSvc eventPublisherSvc;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired @NotNull(message = "Internal Error: Failed to get application context")
     public ApplicationContext applicationContext;
@@ -514,7 +514,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (drawingEditorMode.isBuildMode())
             drawingEditorMode.saveEditor();
 
-        eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
+        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
     }
 
     @Override
@@ -556,18 +556,18 @@ OnDroneListener, EventHandler<ActionEvent> {
                     LOGGER.debug("Working on DroneMission Layer");
                     LayerMission modifiedLayerMissionOriginal = missionEditorMode.startEditing((LayerMission) layer);
                     setEditedLayer(modifiedLayerMissionOriginal);
-                    eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
+                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
                 }
                 else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
                     LOGGER.debug("Working on Perimeter Layer");
                     LayerPerimeter modifiedLayerPerimeterOriginal = perimeterEditorMode.startEditing((LayerPerimeter) layer);
                     setEditedLayer(modifiedLayerPerimeterOriginal);
-                    eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifiedLayerPerimeterOriginal));
+                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifiedLayerPerimeterOriginal));
                 }
                 else if (layer instanceof LayerDraw) {
                     LOGGER.debug("Working on Drawing Layer");
                     setEditedLayer(layer);
-                    eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DRAW_EDITING_STARTED, layer));
+                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DRAW_EDITING_STARTED, layer));
                 }
                 else {
                     LOGGER.debug("Unrecognized Layer");

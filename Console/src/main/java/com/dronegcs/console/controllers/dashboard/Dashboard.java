@@ -1,10 +1,11 @@
 package com.dronegcs.console.controllers.dashboard;
 
+import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
 import com.dronegcs.console.operations.OpGCSTerminationHandler;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
+import com.dronegcs.console_plugin.plugin_event.ClientPluginEvent;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -24,7 +25,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -33,6 +37,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -53,6 +59,12 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
 
+    @Autowired
+    private DialogManagerSvc dialogManagerSvc;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
     private TextNotificationPublisherSvc textNotificationPublisherSvc;
 
@@ -64,9 +76,6 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Autowired @NotNull(message = "Internal Error: Failed to get map frame")
     private InternalFrameMap internalFrameMap;
-
-    @Autowired @NotNull(message = "Internal Error: Failed to get current frames amount")
-    private EventPublisherSvc eventPublisherSvc;
 
     @Autowired @NotNull(message = "Internal Error: Failed to get gui configuration")
     private GuiAppConfig guiAppConfig;
@@ -371,5 +380,23 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         double topbuttomPadding = (GUISettings._HEIGHT.get() * (1 - BIG_SCREEN_CONTAINER_RATIO_H)) / 2;
         Insets insets = new Insets(topbuttomPadding, leftrightPadding, topbuttomPadding, leftrightPadding);
         StackPane.setMargin(bigScreenContainer, insets);
+    }
+
+    @SuppressWarnings("incomplete-switch")
+    @EventListener
+    public void onApplicationEvent(ClientPluginEvent event) {
+        switch (event.getType()) {
+            case SERVER_LOST:
+                Platform.runLater(() -> {
+                    loggerDisplayerSvc.logError("Connectivity lost to server");
+                    dialogManagerSvc.showAlertMessageDialog("Connectivity Lost to server, restart the application " +
+                        "once connectivity restored");
+                    opGCSTerminationHandler.terminateNow();
+                });
+                break;
+            case SERVER_CLOCK:
+                LOGGER.debug("Current server time: " + event.getPayload().get(0));
+                break;
+        }
     }
 }

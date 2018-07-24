@@ -2,7 +2,6 @@ package com.dronegcs.console.operations;
 
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.logger.Logger;
@@ -10,6 +9,7 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -22,7 +22,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmQuad.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
-	protected EventPublisherSvc eventPublisherSvc;
+	protected ApplicationEventPublisher applicationEventPublisher;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private Logger logger;
@@ -56,18 +56,22 @@ public class OpGCSTerminationHandler extends OperationHandler {
 
 			loginSvcRemote.logout();
 
-    		logger.LogGeneralMessege("");
-    		logger.LogGeneralMessege("Summary:");
-    		logger.LogGeneralMessege("--------");
-    		logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
-    		logger.LogGeneralMessege("Max Height: " + drone.getAltitude().getMaxAltitude() + "m");
-    		logger.LogGeneralMessege("Max Speed: " + drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond() + "m/s (" + ((int) (drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond()*3.6)) + "km/h)");
-    		logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
-    		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EXIT, this));
-			logger.close();
-			System.exit(0);
+			terminateNow();
     	}
 		
 		return false;
+	}
+
+	public void terminateNow() {
+		logger.LogGeneralMessege("");
+		logger.LogGeneralMessege("Summary:");
+		logger.LogGeneralMessege("--------");
+		logger.LogGeneralMessege("Traveled distance: " + drone.getGps().getDistanceTraveled() + "m");
+		logger.LogGeneralMessege("Max Height: " + drone.getAltitude().getMaxAltitude() + "m");
+		logger.LogGeneralMessege("Max Speed: " + drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond() + "m/s (" + ((int) (drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond()*3.6)) + "km/h)");
+		logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EXIT, this));
+		logger.close();
+		System.exit(0);
 	}
 }

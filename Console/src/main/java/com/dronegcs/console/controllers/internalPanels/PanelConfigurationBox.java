@@ -11,8 +11,8 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewT
 import com.gui.core.mapViewer.internal.MapViewerSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
 public class PanelConfigurationBox extends Pane implements Initializable {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
-	protected EventPublisherSvc eventPublisherSvc;
+	protected ApplicationEventPublisher applicationEventPublisher;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -61,7 +61,7 @@ public class PanelConfigurationBox extends Pane implements Initializable {
 		cmbMapIconFontSize.setValue(MapViewerSettings.getMarkersFontSize());
 		
         cbActiveGeofencePerimeterAlertOnly.setOnAction( e -> drone.getPerimeter().setAlertOnly(cbActiveGeofencePerimeterAlertOnly.isSelected() ? true : false));
-        btnUpdateDevice.setOnAction( e -> eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
+        btnUpdateDevice.setOnAction( e -> applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
 		cmbMapIconFontSize.setOnAction( e -> {
 				MapViewerSettings.setMarkersFontSize(cmbMapIconFontSize.getValue());
 				OperationalViewTree operationalViewTree = applicationContext.getBean(OperationalViewTree.class);

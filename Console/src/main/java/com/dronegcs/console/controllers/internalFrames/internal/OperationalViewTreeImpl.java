@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -53,7 +54,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
 	@Autowired
 	@NotNull(message = "Internal Error: Missing event publisher")
-	protected EventPublisherSvc eventPublisherSvc;
+	protected ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	@NotNull(message = "Internal Error: Failed to get text publisher")
@@ -165,7 +166,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		markEditedItems(getRoot().getValue());
 
 		if (editorsAmount > 0) {
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
 		}
 	}
 
@@ -234,7 +235,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 	public void updateTreeItemName(String fromText, TreeItem<AbstractLayer> treeItem) {
 		LOGGER.debug("Named changed from '" + fromText + "' to '" + treeItem.getValue().getName() + "'");
 		helpers.get(treeItem.getValue().getClass()).renameItem((EditedLayer) treeItem.getValue());
-		eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, treeItem.getValue()));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, treeItem.getValue()));
 	}
 
 	@Override
@@ -268,7 +269,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 				((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
 				modifiedItem = treeItem;
 				refresh();
-				eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
 			}
 		});
 		
@@ -286,18 +287,18 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		if (layer instanceof LayerMission) {
 			if (missionsManager.getMissionEditor(((LayerMission) layer).getMission()) == null)
 //			if (missionsManager.getMissionEditor((Layer) layer.getPayload()) == null)
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
 			else
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
 		}
 		if (layer instanceof LayerPerimeter) {
 			if (perimetersManager.getPerimeterEditor(((LayerPerimeter) layer).getPerimeter()) == null)
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED, layer));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED, layer));
 			else
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, layer));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, layer));
 		}
 //		else
-//			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+//			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
 	}
 
 	@Override
@@ -547,7 +548,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		super.addTreeItemAction(newItem, parentOfNewItem);
 		((LayerManagerDbWrapper) layerManager).create(newItem.getValue());
 
-		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
 	}
 
 	@Override
@@ -567,7 +568,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		((CheckBoxTreeItem) item).selectedProperty().setValue(true);
 		modifiedItem = item;
 		refresh();
-		eventPublisherSvc.publish(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
 	}
 
 	@Override
@@ -576,7 +577,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			helpers.get(treeItem.getValue().getClass()).removeItem((EditedLayer) treeItem.getValue());
 			((LayerManagerDbWrapper) layerManager).delete(treeItem.getValue());
 			super.removeTreeItemAction(treeItem);
-			eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
 		}
 		catch (Throwable e) {
 			loggerDisplayerSvc.logError(e.getMessage());

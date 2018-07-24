@@ -2,7 +2,6 @@ package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.droneEye.DroneEye;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -40,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -71,7 +71,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get event publisher")
-    private EventPublisherSvc eventPublisherSvc;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get global status")
@@ -129,7 +129,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
             LOGGER.warn("Failed to initialize detector", e);
             LOGGER.warn("Flight detector and camera will not be accessible");
             loggerDisplayerSvc.logError("Failed to initialize detector: " + e.getMessage());
-            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
+            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
         }
 
         myself = this;

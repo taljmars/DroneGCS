@@ -1,6 +1,5 @@
 package com.dronegcs.console.controllers.internalPanels;
 
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.mavlink.is.connection.ConnectionStatistics;
 import com.dronegcs.mavlink.is.connection.MavLinkConnectionStatisticsListener;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -9,7 +8,7 @@ import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,10 +21,7 @@ import java.util.ResourceBundle;
 
 @Component
 public class PanelStatBox extends Pane implements Initializable, MavLinkConnectionStatisticsListener {
-	
-	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
-	protected EventPublisherSvc eventPublisherSvc;
-	
+
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	

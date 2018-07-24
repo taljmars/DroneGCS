@@ -7,7 +7,6 @@ import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.logger.Logger;
@@ -25,6 +24,7 @@ import javafx.util.converter.IntegerStringConverter;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,7 @@ public class MissionTableProfile extends TableProfile {
     private LayerMission layerMission;
 
     @Autowired
-    private EventPublisherSvc eventPublisherSvc;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired @NotNull(message = "Internal Error: Failed to get mission manager")
     private MissionsManager missionsManager;
@@ -94,7 +94,7 @@ public class MissionTableProfile extends TableProfile {
 
                     // Refresh view
                     generateTable(true, layerMission);
-                    eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                     return true;
                 }
                 catch (MissionUpdateException e) {
@@ -154,7 +154,7 @@ public class MissionTableProfile extends TableProfile {
                             mission.getMissionItemsUids().remove(getIndex());
                             mission.getMissionItemsUids().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -178,7 +178,7 @@ public class MissionTableProfile extends TableProfile {
                             mission.getMissionItemsUids().remove(getIndex());
                             mission.getMissionItemsUids().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
-                            eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -203,7 +203,7 @@ public class MissionTableProfile extends TableProfile {
 //                                MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
                                 missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
                                 generateTable(true, layerMission);
-                                eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                                applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                             }
                             catch (MissionUpdateException e) {
                                 logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());

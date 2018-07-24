@@ -15,7 +15,6 @@ import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.EventPublisherSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
@@ -32,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -54,7 +54,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 	private DialogManagerSvc dialogManagerSvc;
 
 	@Autowired
-	private EventPublisherSvc eventPublisherSvc;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	private MissionsManager missionsManager;
@@ -225,7 +225,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			try {
 				missionEditor.addWaypoint(layerViewMap.getPosition(point));
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -245,7 +245,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 				int turns = Integer.parseInt((String) val);
 				missionEditor.addLoiterTurns(layerViewMap.getPosition(point), turns);
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -265,7 +265,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 				int time = Integer.parseInt((String) val);
 				missionEditor.addLoiterTime(layerViewMap.getPosition(point), time);
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -278,7 +278,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			try {
 				missionEditor.addLoiterUnlimited(layerViewMap.getPosition(point));
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -291,7 +291,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			try {
 				missionEditor.addLandPoint(layerViewMap.getPosition(point));
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -304,7 +304,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			try{
 				missionEditor.addRegionOfInterest(layerViewMap.getPosition(point));
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -317,7 +317,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			try {
 				missionEditor.addReturnToLaunch();
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -337,7 +337,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 				double altitude = Double.parseDouble((String) val);
 				missionEditor.addTakeOff(altitude);
 				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 				modifiedLayerMissionOriginal.regenerateMapObjects();
 			}
 			catch (MissionUpdateException e) {
@@ -354,7 +354,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 		modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
 		modifiedLayerMissionOriginal.setName(missionEditor.getMission().getName());
 		missionEditor = null;
-		eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifiedLayerMissionOriginal));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifiedLayerMissionOriginal));
 
 		setModifiedLayerMissionOriginal(null);
 		setBuildMode(false);
@@ -413,7 +413,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			missionEditor = missionsManager.openMissionEditor(((LayerMission) layer).getMission());
 			Mission mission = missionEditor.getMission();
 			modifiedLayerMissionOriginal.setName(mission.getName());
-//						eventPublisherSvc.publish(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
+//						applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
 			return modifiedLayerMissionOriginal;
 		}
 		catch (MissionUpdateException e) {
