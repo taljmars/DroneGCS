@@ -3,7 +3,6 @@ package com.drone_tester;
 import com.db.persistence.scheme.LoginRequest;
 import com.db.persistence.scheme.LoginResponse;
 import com.db.persistence.scheme.LogoutResponse;
-import com.db.persistence.scheme.Token;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.*;
