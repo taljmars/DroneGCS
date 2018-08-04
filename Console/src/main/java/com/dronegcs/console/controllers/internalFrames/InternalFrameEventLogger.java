@@ -37,6 +37,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -103,6 +104,8 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 		summary.setCellValueFactory(new PropertyValueFactory<>("summary"));
 
 		loadTable();
+		if (data != null && data.size() != 0)
+            table.setItems(data);
 	}
 
 	private static int called;
@@ -111,21 +114,41 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
         Assert.isTrue(++called == 1, "Not a Singleton");
 	}
 
+	private Date lastDate = null;
+	private int idx = 0;
 	public void loadTable() {
 		if (table == null) {
 			LOGGER.debug("Table wasn't initialize yet");
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1); // to get previous year add -1
+			lastDate = cal.getTime();
+			LOGGER.debug("Setting first timestamp to " + lastDate);
 			return;
 		}
 
-		EventLogBundle eventLogBundle = eventLogManager.getAllEventLogs();
+//		EventLogBundle eventLogBundle = eventLogManager.getAllEventLogs();
+		Date tmpDate = new Date();
+		EventLogBundle eventLogBundle = eventLogManager.getAllEventLogsBetween(lastDate, tmpDate);
+//		lastDate = tmpDate;
 		eventLogBundle = eventLogBundle.sortByEventDate();
 		if (eventLogBundle.getLogs().size() > 0) {
-			int i = 0;
-			data = FXCollections.observableArrayList();
+
+			if (data == null) {
+				data = FXCollections.observableArrayList();
+				idx = 0;
+			}
+			EventLogObject lastLogObject = null;
 			for (EventLogObject eventLogObject : eventLogBundle.getLogs()) {
 				EventLogEntry entry = buildEntry(eventLogObject);
-				entry.setId(i++);
+				entry.setId(idx++);
 				data.add(entry);
+				lastLogObject = eventLogObject;
+			}
+			if (lastLogObject != null) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(lastLogObject.getEventTime());
+				cal.add(Calendar.SECOND, 1);
+				lastDate = cal.getTime();
 			}
 			table.setItems(data);
 		}

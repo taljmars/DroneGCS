@@ -53,7 +53,7 @@ public class Tester implements ApplicationListener<TestEvent> {
         lst.add(test_missionObjectCreation);
         lst.add(test_singleMissionSingleItem);
 
-        lst.add(test_readUpdatePublish_scale);
+//        lst.add(test_readUpdatePublish_scale);
 
         return lst;
     }

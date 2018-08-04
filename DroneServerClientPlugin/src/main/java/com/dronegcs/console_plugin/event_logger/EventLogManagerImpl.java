@@ -9,9 +9,8 @@ import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrappe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Component
 public class EventLogManagerImpl implements EventLogManager {
@@ -65,25 +64,33 @@ public class EventLogManagerImpl implements EventLogManager {
         QueryRequestRemote req;
         QueryResponseRemote resp;
 
+        Map<String, String> boundaries = new HashMap<>();
+        boundaries.put("START_DATE", new Timestamp(startDate.getTime()).toString());
+        boundaries.put("END_DATE", new Timestamp(endDate.getTime()).toString());
+
         req = new QueryRequestRemote();
+        req.getParameters().putAll(boundaries);
         req.setQuery("GetAllAccessLog_BetweenDates");
         req.setClz(AccessLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         req = new QueryRequestRemote();
+        req.getParameters().putAll(boundaries);
         req.setQuery("GetAllObjectCreationLog_BetweenDates");
         req.setClz(ObjectCreationLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         req = new QueryRequestRemote();
+        req.getParameters().putAll(boundaries);
         req.setQuery("GetAllObjectDeletionLog_BetweenDates");
         req.setClz(ObjectDeletionLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         req = new QueryRequestRemote();
+        req.getParameters().putAll(boundaries);
         req.setQuery("GetAllObjectUpdateLog_BetweenDates");
         req.setClz(ObjectUpdateLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
