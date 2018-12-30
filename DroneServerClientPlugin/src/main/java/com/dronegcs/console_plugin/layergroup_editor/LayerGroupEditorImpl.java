@@ -78,7 +78,7 @@ public class LayerGroupEditorImpl implements ClosableLayersGroupEditor {
         else {
             layersGroupClosingPair = new ClosingPair(res, false);
         }
-        this.layersGroup= null;
+        this.layersGroup = null;
         LOGGER.debug("LayersGroup editor finished");
         return layersGroupClosingPair;
     }

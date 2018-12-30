@@ -31,7 +31,7 @@ public class Test_MultiUsers_Simple extends Test {
     @Override
     public Status test() {
         try {
-            user1Token = login("tester1", "tester1");
+            user1Token = login(tester1, tester1);
             restClientHelper.setToken(user1Token);
 
             baseObjectUser1 = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
@@ -41,7 +41,7 @@ public class Test_MultiUsers_Simple extends Test {
             publish(new TestEvent(this, Status.IN_PROGRESS, "update for the first time in private", ++idx, total));
             logout();
 
-            user2Token = login("tester2", "tester2");
+            user2Token = login(tester2, tester2);
             restClientHelper.setToken(user2Token);
 
             baseObjectUser2 = objectCrudSvcRemoteWrapper.create(DummyBaseObject.class.getCanonicalName());
@@ -76,7 +76,7 @@ public class Test_MultiUsers_Simple extends Test {
     public Status postTestCleanup() {
         try {
 
-            user1Token = login("tester1", "tester1");
+            user1Token = login(tester1, tester1);
             restClientHelper.setToken(user1Token);
 
             Assert.isTrue(baseObjectUser1 != null, "Object is null");
@@ -101,7 +101,7 @@ public class Test_MultiUsers_Simple extends Test {
             }
             logout();
 
-            user2Token = login("tester2", "tester2");
+            user2Token = login(tester2, tester2);
             restClientHelper.setToken(user2Token);
 
             baseObjectUser2 = objectCrudSvcRemoteWrapper.read(baseObjectUser2.getKeyId().getObjId());

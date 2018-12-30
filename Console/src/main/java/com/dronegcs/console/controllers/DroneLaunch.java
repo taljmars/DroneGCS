@@ -98,12 +98,12 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
     }
 
     @Override
-    public LoginResponse handleLogin(String userName, String password) {
+    public LoginResponse handleLogin(String userName, String password, String server, int port) {
 		LoginRequest loginRestRequest = new LoginRequest();
 		loginRestRequest.setUserName(userName);
 		loginRestRequest.setApplicationName("DroneGCS GUI");
 		loginRestRequest.setTimeout(100);
-		LoginResponse loginRestResponse = loginSvcRemoteWrapper.login(loginRestRequest, password);
+		LoginResponse loginRestResponse = loginSvcRemoteWrapper.login(loginRestRequest, password, server, port);
         if (loginRestResponse.getReturnCode().equals(LoginLogoutStatus.OK)){
 			restClientHelper.setToken(loginRestResponse.getToken());
             showMainScreen();
@@ -114,11 +114,11 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 	}
 
 	@Override
-	public RegistrationResponse handleRegisterNewUser(String userName, String password) {
+	public RegistrationResponse handleRegisterNewUser(String userName, String password, String serverIp, int serverPort) {
 		RegistrationRequest registrationRequest = new RegistrationRequest();
 		registrationRequest.setUserName(userName);
 		registrationRequest.setPassword(password);
-		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest);
+		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest, serverIp, serverPort);
 	}
 
 	private void showMainScreen() {

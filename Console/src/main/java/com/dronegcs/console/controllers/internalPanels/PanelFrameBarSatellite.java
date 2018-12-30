@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.db.gui.persistence.scheme.Layer;
 import com.db.gui.persistence.scheme.LayersGroup;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
@@ -10,6 +11,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewM
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.EditedLayer;
 import com.dronegcs.console_plugin.ClosingPair;
+import com.dronegcs.console_plugin.draw_editor.DrawManager;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
@@ -103,6 +105,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     @Autowired
     @NotNull(message = "Internal Error: Failed to get session service")
     private SessionsSvcRemoteWrapper sessionsSvcRemote;
+
+    @Autowired
+    @NotNull(message = "Internal Error: Failed to get draw manager")
+    private DrawManager drawManager;
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get mission manager")
@@ -241,20 +247,24 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
         LOGGER.debug("Start handling published layers");
 
+        Collection<ClosingPair<Layer>> draws = drawManager.closeAllDrawLayersEditors(true);
+        LOGGER.debug("Handling published draws (amount of modified draws={})", draws.size());
+        handleClosingPair(draws);
+
         Collection<ClosingPair<Mission>> missions = missionsManager.closeAllMissionEditors(true);
-        LOGGER.debug("Handling published missions (amount of modified mission={}", missions.size());
+        LOGGER.debug("Handling published missions (amount of modified mission={})", missions.size());
         handleClosingPair(missions);
 
         Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.closeAllPerimeterEditors(true);
-        LOGGER.debug("Handling published perimeters (amount of modified perimeters={}", perimeters.size());
+        LOGGER.debug("Handling published perimeters (amount of modified perimeters={})", perimeters.size());
         handleClosingPair(perimeters);
 
         Collection<ClosingPair<LayersGroup>> layersGroups = layersGroupsManager.closeAllLayersGroupEditors(true);
-        LOGGER.debug("Handling published perimeters (amount of modified layers group={}", perimeters.size());
+        LOGGER.debug("Handling published perimeters (amount of modified layers group={})", perimeters.size());
         handleClosingPair(layersGroups);
 
         operationalViewTree.regenerateTree();
-        // TODO: find better solution than reload - it too aggressive
+        // TODO: find better solution than reload - it too aggressive - also fix the icons
         operationalViewTree.reloadData();
         applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
     }
@@ -294,6 +304,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         }
         sessionsSvcRemote.discard();
 
+        drawManager.closeAllDrawLayersEditors(false);
         missionsManager.closeAllMissionEditors(false);
         perimetersManager.closeAllPerimeterEditors(false);
         layersGroupsManager.closeAllLayersGroupEditors(false);

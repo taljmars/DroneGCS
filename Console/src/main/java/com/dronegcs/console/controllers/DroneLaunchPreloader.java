@@ -42,8 +42,8 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
     }
 
     public interface LoginLoader {
-        LoginResponse handleLogin(String userName, String password);
-        RegistrationResponse handleRegisterNewUser(String userName, String password);
+        LoginResponse handleLogin(String userName, String password, String server, int port);
+        RegistrationResponse handleRegisterNewUser(String userName, String password, String server, int port);
     }
 
     private final static int PAGE_WIDTH = 600;
@@ -109,6 +109,9 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         Button signingBtn = new Button("Register");
         Button exitBtn = new Button("Exit");
 
+        TextField serverIp = new TextField(WA_FOR_LOGIN ? "localhost" : "18.220.242.169");
+        TextField serverPort = new TextField("8080");
+
         TextField userName = new TextField(WA_FOR_LOGIN ? "admin" : "");
         userName.setAlignment(Pos.CENTER);
         userName.setMaxWidth(PAGE_WIDTH/2);
@@ -129,7 +132,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         status = new Label(message);
 
         loginBtn.setOnAction((actionEvent) -> {
-            LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText());
+            LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText(), serverIp.getText(), Integer.parseInt(serverPort.getText()));
             Integer loginStatus = loginRestResponse.getReturnCode();
             if (loginStatus.equals(OK)) {
                 preloaderStage.hide();
@@ -150,7 +153,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
                 return;
             }
 
-            RegistrationResponse registrationResponse = loginLoader.handleRegisterNewUser(userName.getText(), password.getText());
+            RegistrationResponse registrationResponse = loginLoader.handleRegisterNewUser(userName.getText(), password.getText(), serverIp.getText(), Integer.parseInt(serverPort.getText()));
             Integer signingStatus = registrationResponse.getReturnCode();
             if (signingStatus.equals(OK)) {
                 preloaderStage.hide();
@@ -164,16 +167,28 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         exitBtn.setOnAction((actionEvent) -> System.exit(0));
 
         HBox hBox = new HBox();
+
+        HBox serverBox = new HBox();
+        serverIp.setAlignment(Pos.CENTER);
+        serverIp.setMaxWidth(PAGE_WIDTH/2 - 10);
+        serverPort.setAlignment(Pos.CENTER);
+        serverPort.setMaxWidth(PAGE_WIDTH/4 - 10);
+
         switch (mode) {
             case LOGIN:
                 hBox.getChildren().addAll(loginBtn, registerBtn, exitBtn);
-                vBox.getChildren().addAll(label, userName, password, hBox, status);
+                serverBox.getChildren().addAll(serverIp, serverPort);
+                vBox.getChildren().addAll(label, userName, password, serverBox, hBox, status);
                 break;
             case SIGNUP:
                 hBox.getChildren().addAll(signingBtn, exitBtn);
-                vBox.getChildren().addAll(label, userName, password, password2, hBox, status);
+                serverBox.getChildren().addAll(serverIp, serverPort);
+                vBox.getChildren().addAll(label, userName, password, password2, serverBox, hBox, status, serverIp, serverPort);
                 break;
         }
+
+        serverBox.setSpacing(10);
+        serverBox.setAlignment(Pos.CENTER);
 
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.CENTER);

@@ -16,6 +16,12 @@ import static com.db.persistence.scheme.LoginLogoutStatus.OK;
 
 public abstract class Test implements ApplicationEventPublisherAware {
 
+    public static String server = "localhost";
+    //public static String server = "18.220.242.169";
+    public static int port = 8080;
+    public static String tester1 = "tester1";
+    public static String tester2 = "tester2";
+
     @Autowired protected ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
     @Autowired protected MissionCrudSvcRemoteWrapper missionCrudSvcRemoteWrapper;
     @Autowired protected SessionsSvcRemoteWrapper sessionsSvcRemoteWrapper;
@@ -67,7 +73,7 @@ public abstract class Test implements ApplicationEventPublisherAware {
         req.setUserName(userName);
         req.setApplicationName("GUI Tester");
         req.setTimeout(400);
-        LoginResponse resp = loginSvcRemoteWrapper.login(req, pass);
+        LoginResponse resp = loginSvcRemoteWrapper.login(req, pass, server, port);
         if (!resp.getReturnCode().equals(OK)) {
             //TODO: have better messaging
             System.err.println("Failed to login: " + resp.getMessage());

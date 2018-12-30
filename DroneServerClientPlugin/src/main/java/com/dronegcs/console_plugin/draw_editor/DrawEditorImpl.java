@@ -5,9 +5,7 @@ import com.db.gui.persistence.scheme.Shape;
 import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
 import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
-import com.dronedb.persistence.scheme.Mission;
 import com.dronegcs.console_plugin.ClosingPair;
-import com.dronegcs.console_plugin.remote_services_wrappers.MissionCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import org.slf4j.Logger;
@@ -32,9 +30,6 @@ public class DrawEditorImpl implements ClosableDrawEditor {
     @Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
     private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get mission object crud")
-    private MissionCrudSvcRemoteWrapper missionCrudSvcRemote;
-
     private Layer layer;
 
     @Override
@@ -58,7 +53,7 @@ public class DrawEditorImpl implements ClosableDrawEditor {
         }
         catch (DatabaseValidationRemoteException e) {
             throw new DrawUpdateException(e.getMessage());
-        }
+    }
     }
 
     @Override

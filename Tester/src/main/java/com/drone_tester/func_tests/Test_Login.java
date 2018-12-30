@@ -12,7 +12,7 @@ public class Test_Login extends Test {
 
     @Override
     public Status preTestCheck() {
-        restClientHelper.setToken(login("tester1","tester1"));
+        restClientHelper.setToken(login(tester1,tester1));
         publish(new TestEvent(this, Status.IN_PROGRESS, "login successfully", ++idx, total));
         return Status.SUCCESS;
     }

@@ -14,6 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+
 @Component
 public class ObjectCrudSvcRemoteWrapper {
 
@@ -65,7 +69,8 @@ public class ObjectCrudSvcRemoteWrapper {
             WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("update");
             ObjectMapper mapper = new ObjectMapper();
 
-            ClientResponse response = builder.post(ClientResponse.class, mapper.writeValueAsString(obj));
+            String objString = mapper.writeValueAsString(obj);
+            ClientResponse response = builder.post(ClientResponse.class, objString);
             ClientResponse.Status status = response.getClientResponseStatus();
             if (!response.hasEntity())
                 throw new DatabaseValidationRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
@@ -187,7 +192,8 @@ public class ObjectCrudSvcRemoteWrapper {
             WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("delete");
             ObjectMapper objectMapper = new ObjectMapper();
 
-            ClientResponse response = builder.post(ClientResponse.class, objectMapper.writeValueAsString(obj));
+            String objString = objectMapper.writeValueAsString(obj);
+            ClientResponse response = builder.post(ClientResponse.class, objString);
             ClientResponse.Status status = response.getClientResponseStatus();
             if (!response.hasEntity())
                 throw new ObjectNotFoundRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());

@@ -23,7 +23,7 @@ public class Test_MissionObjectCreation extends Test {
 
     @Override
     public Status preTestCheck() {
-        restClientHelper.setToken(login("tester1", "tester1"));
+        restClientHelper.setToken(login(tester1, tester1));
 //        System.out.println(restClientHelper.getToken());
 
         Assert.isTrue(missionsManager.getAllMissions().isEmpty());

@@ -17,7 +17,7 @@ public class Test_DummyObject extends Test {
 
     @Override
     public Status preTestCheck() {
-        restClientHelper.setToken(login("tester1", "tester1"));
+        restClientHelper.setToken(login(tester1, tester1));
 //        System.out.println(restClientHelper.getToken());
         return Status.SUCCESS;
     }

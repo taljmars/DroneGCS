@@ -30,13 +30,15 @@ public class RestClientHelperImpl implements RestClientHelper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RestClientHelperImpl.class);
 
-    private static final String SERVER_URL = "http://localhost:8080/";
+//    private static final String SERVER_URL = "http://localhost:8080/";
 //    private static final String SERVER_URL = "http://localhost:8081/ServerCore-1.5.8.RELEASE/";
 
     private Client client;
     private String token;
     private String userName;
     private String password;
+    private int port;
+    private String ip;
 
     @PostConstruct
     public void init() {
@@ -56,7 +58,7 @@ public class RestClientHelperImpl implements RestClientHelper {
     }
 
     public WebResource.Builder getWebResource(boolean auth, String path, Object... objs) {
-        UriBuilder uriBuilder  = UriBuilder.fromUri(SERVER_URL + path);
+        UriBuilder uriBuilder  = UriBuilder.fromUri("http://" + ip + ":" + port + "/" + path);
         WebResource webResource = client.resource(uriBuilder.build());
         WebResource.Builder builder;
         if (objs.length % 2 != 0) {
@@ -178,5 +180,15 @@ public class RestClientHelperImpl implements RestClientHelper {
     public void setUsernamePassword(String userName, String pass) {
         this.userName = userName;
         this.password = pass;
+    }
+
+    @Override
+    public void setServerPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void setServerIp(String server) {
+        this.ip = server;
     }
 }

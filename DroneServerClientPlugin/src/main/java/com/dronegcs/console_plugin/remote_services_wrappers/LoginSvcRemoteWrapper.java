@@ -32,9 +32,11 @@ public class LoginSvcRemoteWrapper {
 
     private boolean keepAliveEnable = false;
 
-    public LoginResponse login(LoginRequest loginRestRequest, String pass) {
+    public LoginResponse login(LoginRequest loginRestRequest, String pass, String server, int port) {
         LoginResponse loginResponse;
         try {
+            restClientHelper.setServerIp(server);
+            restClientHelper.setServerPort(port);
             restClientHelper.setUsernamePassword(loginRestRequest.getUserName(), pass);
             restClientHelper.setToken(null);
             WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("login");

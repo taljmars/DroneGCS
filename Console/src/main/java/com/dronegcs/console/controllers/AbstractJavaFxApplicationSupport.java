@@ -30,5 +30,5 @@ public abstract class AbstractJavaFxApplicationSupport extends Application {
         LauncherImpl.launchApplication(appClass, DroneLaunchPreloader.class, args);
     }
 
-    public abstract LoginResponse handleLogin(String userName, String password);
+    public abstract LoginResponse handleLogin(String userName, String password, String server, int port);
 }

@@ -18,9 +18,11 @@ public class RegistrationSvcRemoteWrapper {
     @Autowired
     private RestClientHelper restClientHelper;
 
-    public RegistrationResponse registerNewUser(RegistrationRequest registrationRequest) {
+    public RegistrationResponse registerNewUser(RegistrationRequest registrationRequest, String server, int port) {
         RegistrationResponse registrationResponse;
         try {
+            restClientHelper.setServerIp(server);
+            restClientHelper.setServerPort(port);
             WebResource.Builder builder = restClientHelper.getWebResourceNoAuth("registerNewUser");
             ObjectMapper mapper = new ObjectMapper();
             LOGGER.debug("Request to be send: {} " + mapper.writeValueAsString(registrationRequest));

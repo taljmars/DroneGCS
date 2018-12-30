@@ -24,17 +24,17 @@ public class Test_UserRegistration extends Test {
             RegistrationRequest registrationRequest = new RegistrationRequest();
             registrationRequest.setUserName("tester50");
             registrationRequest.setPassword("1234");
-            RegistrationResponse registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest);
+            RegistrationResponse registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest, server, port);
             Assert.isTrue(registrationResponse.getReturnCode().equals(0));
             publish(new TestEvent(this, Status.IN_PROGRESS, "User registered succeeded", ++idx, total));
 
-            registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest);
+            registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest, server, port);
             Assert.isTrue(!registrationResponse.getReturnCode().equals(0));
             publish(new TestEvent(this, Status.IN_PROGRESS, "User try to register over existing user failed as expected", ++idx, total));
 
             registrationRequest.setUserName("tester51");
             registrationRequest.setPassword("1234");
-            registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest);
+            registrationResponse = registrationSvcRemoteWrapper.registerNewUser(registrationRequest, server, port);
             Assert.isTrue(registrationResponse.getReturnCode().equals(0));
             publish(new TestEvent(this, Status.IN_PROGRESS, "User registered succeeded", ++idx, total));
         }

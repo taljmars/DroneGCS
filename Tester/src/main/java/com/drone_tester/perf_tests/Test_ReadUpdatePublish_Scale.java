@@ -24,7 +24,7 @@ public class Test_ReadUpdatePublish_Scale extends Test {
 
     @Override
     public Status preTestCheck() {
-        restClientHelper.setToken(login("tester1", "tester1"));
+        restClientHelper.setToken(login(tester1, tester1));
         detailedResult = new ArrayList<>();
         detailedResult.add(Arrays.asList("","Details"));
         detailedResult.add(Arrays.asList("", "Timestamp", "Existing objects", "Create(MSec)", "Update(MSec)","Read(MSec)", "ReadByClass(MSec)" ));

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 /**
  * Created by taljmars on 7/10/2017.
  */
-@Import({MavlinkSpringConfig.class, DroneServerClientPluginConfig.class})
+@Import({MavlinkSpringConfig.class})
 @Configuration
 public class ConsolePluginConfig {
 }

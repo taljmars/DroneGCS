@@ -27,4 +27,8 @@ public interface RestClientHelper {
     Pair<Class,? extends Exception> getErrorAndMessageFromJson(JSONObject jsonObject) throws Exception;
 
     void setUsernamePassword(String userName, String pass);
+
+    void setServerPort(int port);
+
+    void setServerIp(String server);
 }

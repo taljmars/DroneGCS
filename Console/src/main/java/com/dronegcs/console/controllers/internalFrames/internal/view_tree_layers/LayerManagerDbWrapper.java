@@ -92,6 +92,7 @@ public class LayerManagerDbWrapper extends LayerManager {
 
             LOGGER.debug("Template was generated for user - publish it for constant use");
             sessionsSvcRemoteWrapper.publish();
+            LOGGER.debug("First publish (during boot - finished)");
         }
         catch (ObjectInstanceRemoteException e) {
             LOGGER.error("Failed to create root instance", e);
