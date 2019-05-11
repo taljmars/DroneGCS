@@ -19,10 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DrawManagerImpl implements DrawManager {
@@ -41,10 +38,10 @@ public class DrawManagerImpl implements DrawManager {
 	@Autowired @NotNull(message = "Internal Error: Failed to get layers object crud")
 	private LayersCrudSvcRemoteWrapper layerCrudSvcRemote;
 
-	private List<ClosableDrawEditor> closableDrawLayerEditorList;
+	private Map<String, ClosableDrawEditor> closableDrawLayerEditorList;
 
 	public DrawManagerImpl() {
-		closableDrawLayerEditorList = new ArrayList<>();
+		closableDrawLayerEditorList = new HashMap<>();
 	}
 
 	@Override
@@ -55,7 +52,7 @@ public class DrawManagerImpl implements DrawManager {
 		}
 		ClosableDrawEditor drawLayerEditor = applicationContext.getBean(ClosableDrawEditor.class);
 		drawLayerEditor.open(initialName);
-		closableDrawLayerEditorList.add(drawLayerEditor);
+		closableDrawLayerEditorList.put(drawLayerEditor.getModifiedLayer().getKeyId().getObjId(), drawLayerEditor);
 		return drawLayerEditor;
 	}
 
@@ -67,7 +64,7 @@ public class DrawManagerImpl implements DrawManager {
 			LOGGER.debug("Editor not exist for layer " + layer.getName() + ", creating new one");
 			drawLayerEditor = applicationContext.getBean(ClosableDrawEditor.class);
 			drawLayerEditor.open(layer);
-			closableDrawLayerEditorList.add(drawLayerEditor);
+			closableDrawLayerEditorList.put(layer.getKeyId().getObjId(), drawLayerEditor);
 		}
 		else {
 			LOGGER.debug("Found existing drawLayer editor");
@@ -93,6 +90,8 @@ public class DrawManagerImpl implements DrawManager {
 
 	@Override
 	public Layer update(Layer layer) throws DrawUpdateException {
+		assert true;
+		assert false;
 		try {
 			ClosableDrawEditor closableDrawLayerEditor = findDrawLayerEditorByLayer(layer);
 			if (closableDrawLayerEditor == null)
@@ -122,18 +121,19 @@ public class DrawManagerImpl implements DrawManager {
 			return null;
 		}
 		ClosingPair<Layer> drawLayerClosingPair = ((ClosableDrawEditor) drawLayerEditor).close(shouldSave);
-		closableDrawLayerEditorList.remove(drawLayerEditor);
+		closableDrawLayerEditorList.remove(drawLayerEditor.getModifiedLayer().getKeyId().getObjId());
 		return drawLayerClosingPair;
 	}
 
 	@Override
 	public Collection<ClosingPair<Layer>> closeAllDrawLayersEditors(boolean shouldSave) {
 		Collection<ClosingPair<Layer>> closedDrawLayer = new ArrayList<>();
-		Iterator<ClosableDrawEditor> it = closableDrawLayerEditorList.iterator();
+		Iterator<ClosableDrawEditor> it = closableDrawLayerEditorList.values().iterator();
 		while (it.hasNext()) {
 			closedDrawLayer.add(it.next().close(shouldSave));
 		}
 		closableDrawLayerEditorList.clear();
+		System.out.println("Draws editors should be empty: " + closableDrawLayerEditorList.size());
 		return closedDrawLayer;
 	}
 
@@ -141,6 +141,11 @@ public class DrawManagerImpl implements DrawManager {
 	public List<BaseObject> getLayerItems(Layer layer) {
 		List<String> itemUids = layer.getObjectsUids();
 		List<BaseObject> objects = new ArrayList<>();
+		ClosableDrawEditor c = closableDrawLayerEditorList.get(layer.getKeyId().getObjId());
+		if (c != null) {
+			objects.addAll(c.getLayerItems());
+			return objects;
+		}
 		for (String uid : itemUids) {
 			try {
 				objects.add(objectCrudSvcRemote.read(uid));
@@ -155,7 +160,7 @@ public class DrawManagerImpl implements DrawManager {
 	@Override
 	public int loadEditors() {
 		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(com.db.gui.persistence.scheme.Layer.class.getCanonicalName());
+		queryRequestRemote.setClz(Layer.class.getCanonicalName());
 		queryRequestRemote.setQuery("GetAllModifiedLayers");
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
 		List<BaseObject> modifiedLayersGroupList = queryResponseRemote.getResultList();
@@ -241,23 +246,24 @@ public class DrawManagerImpl implements DrawManager {
 	}
 
 	private ClosableDrawEditor findDrawLayerEditorByLayer(Layer layer) {
-		for (ClosableDrawEditor closableDrawLayerEditor : closableDrawLayerEditorList) {
-			Layer closedLayer = closableDrawLayerEditor.getModifiedLayer();
-			if (layer.getKeyId().getObjId().equals(closedLayer.getKeyId().getObjId()))
-				return closableDrawLayerEditor;
-
-			if (layer.equals(closedLayer)) {
-				return closableDrawLayerEditor;
-			}
-		}
-		return null;
+		return closableDrawLayerEditorList.get(layer.getKeyId().getObjId());
+//		for (ClosableDrawEditor closableDrawLayerEditor : closableDrawLayerEditorList.values()) {
+//			Layer closedLayer = closableDrawLayerEditor.getModifiedLayer();
+//			if (layer.getKeyId().getObjId().equals(closedLayer.getKeyId().getObjId()))
+//				return closableDrawLayerEditor;
+//
+//			if (layer.equals(closedLayer)) {
+//				return closableDrawLayerEditor;
+//			}
+//		}
+//		return null;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Draw Layers Manager Status:\n");
-		for (ClosableDrawEditor closableLayersEditor : closableDrawLayerEditorList) {
+		for (ClosableDrawEditor closableLayersEditor : closableDrawLayerEditorList.values()) {
 			builder.append(closableLayersEditor);
 		}
 		return builder.toString();

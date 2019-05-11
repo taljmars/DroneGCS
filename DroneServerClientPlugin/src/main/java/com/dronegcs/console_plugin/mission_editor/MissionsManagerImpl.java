@@ -19,10 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class MissionsManagerImpl implements MissionsManager {
@@ -41,21 +38,21 @@ public class MissionsManagerImpl implements MissionsManager {
 	@Autowired @NotNull(message = "Internal Error: Failed to get mission object crud")
 	private MissionCrudSvcRemoteWrapper missionCrudSvcRemote;
 
-	private List<ClosableMissionEditor> closableMissionEditorList;
+	private Map<String, ClosableMissionEditor> closableMissionEditorList;
 
 	public MissionsManagerImpl() {
-		closableMissionEditorList = new ArrayList<>();
+		closableMissionEditorList = new HashMap<>();
 	}
 
 	@Override
 	public MissionEditor openMissionEditor(String initialName) throws MissionUpdateException {
-		LOGGER.debug("Setting new mission to mission editor");
+		LOGGER.debug("Open editor using mission editor");
 		if (initialName == null || initialName.isEmpty()) {
 			throw new RuntimeException("Mission name cannot be empty");
 		}
 		ClosableMissionEditor missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 		missionEditor.open(initialName);
-		closableMissionEditorList.add(missionEditor);
+		closableMissionEditorList.put(missionEditor.getMission().getKeyId().getObjId(), missionEditor);
 		return missionEditor;
 	}
 
@@ -67,7 +64,7 @@ public class MissionsManagerImpl implements MissionsManager {
 			LOGGER.debug("Editor not exist for mission " + mission.getName() + ", creating new one");
 			missionEditor = applicationContext.getBean(ClosableMissionEditor.class);
 			missionEditor.open(mission);
-			closableMissionEditorList.add(missionEditor);
+			closableMissionEditorList.put(mission.getKeyId().getObjId(), missionEditor);
 		}
 		else {
 			LOGGER.debug("Found existing mission editor");
@@ -122,14 +119,14 @@ public class MissionsManagerImpl implements MissionsManager {
 			return null;
 		}
 		ClosingPair<Mission> missionClosingPair = ((ClosableMissionEditor) missionEditor).close(shouldSave);
-		closableMissionEditorList.remove(missionEditor);
+		closableMissionEditorList.remove(missionEditor.getMission().getKeyId().getObjId());
 		return missionClosingPair;
 	}
 
 	@Override
 	public Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave) {
 		Collection<ClosingPair<Mission>> closedMissions = new ArrayList<>();
-		Iterator<ClosableMissionEditor> it = closableMissionEditorList.iterator();
+		Iterator<ClosableMissionEditor> it = closableMissionEditorList.values().iterator();
 		while (it.hasNext()) {
 			closedMissions.add(it.next().close(shouldSave));
 		}
@@ -174,6 +171,11 @@ public class MissionsManagerImpl implements MissionsManager {
 
 		List<MissionItem> missionItemList = new ArrayList<>();
 		List<String> uuidList = leadMission.getMissionItemsUids();
+		ClosableMissionEditor c = closableMissionEditorList.get(leadMission.getKeyId().getObjId());
+		if (c != null) {
+			missionItemList.addAll(c.getMissionItems());
+			return missionItemList;
+		}
 		for (String uuid : uuidList) {
 			try {
 				missionItemList.add(objectCrudSvcRemote.readByClass(uuid, MissionItem.class.getCanonicalName()));
@@ -209,23 +211,24 @@ public class MissionsManagerImpl implements MissionsManager {
 	}
 
 	private ClosableMissionEditor findMissionEditorByMission(Mission mission) {
-		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
-			Mission cloMission = closableMissionEditor.getMission();
-			if (mission.getKeyId().getObjId().equals(cloMission.getKeyId().getObjId()))
-				return closableMissionEditor;
-
-			if (mission.equals(cloMission)) {
-				return closableMissionEditor;
-			}
-		}
-		return null;
+		return closableMissionEditorList.get(mission.getKeyId().getObjId());
+//		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
+//			Mission cloMission = closableMissionEditor.getMission();
+//			if (mission.getKeyId().getObjId().equals(cloMission.getKeyId().getObjId()))
+//				return closableMissionEditor;
+//
+//			if (mission.equals(cloMission)) {
+//				return closableMissionEditor;
+//			}
+//		}
+//		return null;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Missions Manager Status:\n");
-		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList) {
+		for (ClosableMissionEditor closableMissionEditor : closableMissionEditorList.values()) {
 			builder.append(closableMissionEditor);
 		}
 		return builder.toString();

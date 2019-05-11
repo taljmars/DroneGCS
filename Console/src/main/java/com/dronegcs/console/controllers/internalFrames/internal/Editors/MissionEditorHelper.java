@@ -82,9 +82,13 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 	public MissionEditorHelper(@Autowired LayerManagerDbWrapper layerManagerDbWrapper) {
 
 		layerManagerDbWrapper.registerDbLayerFromGuiLayerLoader(LayerMission.class, ((guiLayer, dbLayer) -> {
+			LOGGER.debug("Populating DB layer from GUI layer named '{}'", guiLayer.getName());
+			LOGGER.debug("Open missing editor by name");
 			MissionEditor missionEditor = missionManager.openMissionEditor(guiLayer.getName());
 			((Layer) dbLayer).setObjectsUids(Arrays.asList(missionEditor.getMission().getKeyId().getObjId()));
-			return objectCrudSvcRemoteWrapper.update(dbLayer);
+			LOGGER.debug("Updating new dblayer with brand new mission");
+//			return objectCrudSvcRemoteWrapper.update(dbLayer);
+			return dbLayer;
 		}));
 
 		// Sync the helper to react to layer manager loading of gui layer from db layer
@@ -132,7 +136,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			return popup;
 
 		AbstractLayer layer = (AbstractLayer) treeItem.getValue();
-		if ( ! (layer instanceof LayerMission)) {
+		if (!isBuildMode && ( ! (layer instanceof LayerMission))) {
 			if (layer instanceof LayerGroupEditable) {
 				MenuItem menuItemAddLayer = new MenuItem("Add Mission Layer");
 				popup.getItems().add(menuItemAddLayer);

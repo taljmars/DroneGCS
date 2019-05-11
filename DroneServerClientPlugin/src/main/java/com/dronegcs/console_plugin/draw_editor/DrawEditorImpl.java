@@ -15,8 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by taljmars on 3/25/17.
@@ -32,6 +31,9 @@ public class DrawEditorImpl implements ClosableDrawEditor {
 
     private Layer layer;
 
+    private Map<String, Shape> objectInLayer = new HashMap<>();
+    private boolean markDeleted = false;
+
     @Override
     public Layer open(Layer layer) throws DrawUpdateException {
         LOGGER.debug("Setting new layer to layer editor");
@@ -45,15 +47,31 @@ public class DrawEditorImpl implements ClosableDrawEditor {
         try {
             this.layer = objectCrudSvcRemote.create(Layer.class.getCanonicalName());
             this.layer.setName(layerName);
-            this.layer = objectCrudSvcRemote.update(this.layer);
+//            this.layer = objectCrudSvcRemote.update(this.layer);
             return this.layer;
         }
         catch (ObjectInstanceRemoteException e) {
             throw new DrawUpdateException(e.getMessage());
         }
-        catch (DatabaseValidationRemoteException e) {
-            throw new DrawUpdateException(e.getMessage());
+//        catch (DatabaseValidationRemoteException e) {
+//            throw new DrawUpdateException(e.getMessage());
+//        }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        System.out.println("In equals");
+        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        DrawEditorImpl that = (DrawEditorImpl) o;
+        Layer that = (Layer) o;
+        return Objects.equals(layer.getKeyId().getObjId(), that.getKeyId().getObjId());
+    }
+
+    @Override
+    public int hashCode() {
+        System.out.println("In Hashcode");
+        return Objects.hash(layer.getKeyId().getObjId());
     }
 
     @Override
@@ -64,6 +82,8 @@ public class DrawEditorImpl implements ClosableDrawEditor {
         if (!shouldSave) {
             LOGGER.debug(String.format("Delete layer %s %s", res.getKeyId().getObjId(), res.getName()));
 //            objectCrudSvcRemote.delete(mission);
+            objectInLayer.clear();
+            markDeleted = false;
             try {
                 res = objectCrudSvcRemote.readByClass(layer.getKeyId().getObjId(), Layer.class.getCanonicalName());
                 LOGGER.debug("Found original layer " + res.getKeyId().getObjId() + " " + res.getName());
@@ -75,6 +95,27 @@ public class DrawEditorImpl implements ClosableDrawEditor {
             }
         }
         else {
+            try {
+                if (markDeleted) {
+                    res = objectCrudSvcRemote.delete(this.layer);
+                }
+                else {
+                    this.layer.getObjectsUids().forEach(uid -> {
+                        try {
+                            objectCrudSvcRemote.update(objectInLayer.get(uid));
+                        } catch (DatabaseValidationRemoteException e) {
+                            e.printStackTrace();
+                        } catch (ObjectInstanceRemoteException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    objectInLayer.clear();
+                    res = objectCrudSvcRemote.update(this.layer);
+                }
+            }
+            catch (DatabaseValidationRemoteException | ObjectNotFoundRemoteException | ObjectInstanceRemoteException e) {
+                e.printStackTrace();
+            }
             layerClosingPair = new ClosingPair(res, false);
         }
         //System.err.println(String.format("Before resetting %s %s", res.getKeyId().getObjId(), res.getName()));
@@ -87,7 +128,9 @@ public class DrawEditorImpl implements ClosableDrawEditor {
     @Override
     public Shape createMarker() throws DrawUpdateException {
         try {
-            return (Shape) objectCrudSvcRemote.create(Shape.class.getCanonicalName());
+            Shape marker = (Shape) objectCrudSvcRemote.create(Shape.class.getCanonicalName());
+            objectInLayer.put(marker.getKeyId().getObjId(), marker);
+            return marker;
         } catch (ObjectInstanceRemoteException e) {
             throw new DrawUpdateException(e.getMessage());
         }
@@ -114,7 +157,8 @@ public class DrawEditorImpl implements ClosableDrawEditor {
         try {
             LOGGER.debug("Current layer named '{}' have '{}' items", this.layer.getName(), this.layer.getObjectsUids().size());
             LOGGER.debug("After update, layer will be named '{}' with '{}' items", layer.getName(), layer.getObjectsUids().size());
-            this.layer = (Layer) objectCrudSvcRemote.update(layer);
+//            this.layer = (Layer) objectCrudSvcRemote.update(layer);
+            this.layer = layer;
             LOGGER.debug("Updated layer name is '{}' with '{}' items", this.layer.getName(), this.layer.getObjectsUids().size());
             return this.layer;
         }
@@ -127,14 +171,14 @@ public class DrawEditorImpl implements ClosableDrawEditor {
     @Override
     public <T extends Shape> void removeItem(T item) throws DrawUpdateException {
         layer.getObjectsUids().remove(item.getKeyId().getObjId());
-        try {
-            layer = objectCrudSvcRemote.update(layer);
-        }
-        catch (DatabaseValidationRemoteException e) {
-            throw new DrawUpdateException(e.getMessage());
-        } catch (ObjectInstanceRemoteException e) {
-            throw new DrawUpdateException(e.getMessage());
-        }
+//        try {
+//            layer = objectCrudSvcRemote.update(layer);
+//        }
+//        catch (DatabaseValidationRemoteException e) {
+//            throw new DrawUpdateException(e.getMessage());
+//        } catch (ObjectInstanceRemoteException e) {
+//            throw new DrawUpdateException(e.getMessage());
+//        }
     }
 
     @Override
@@ -143,7 +187,11 @@ public class DrawEditorImpl implements ClosableDrawEditor {
         List<String> uuidList = layer.getObjectsUids();
         uuidList.forEach((String uuid) -> {
             try {
-                layerItemsList.add((Shape) objectCrudSvcRemote.readByClass(uuid, Shape.class.getCanonicalName()));
+                Shape shape = objectInLayer.get(uuid);
+                if (shape == null)
+                    shape = (Shape) objectCrudSvcRemote.readByClass(uuid, Shape.class.getCanonicalName());
+
+                layerItemsList.add(shape);
             }
             catch (ObjectNotFoundRemoteException e) {
                 LOGGER.error("Failed to get layer items", e);
@@ -154,20 +202,21 @@ public class DrawEditorImpl implements ClosableDrawEditor {
 
     @Override
     public Layer delete() throws DrawUpdateException {
-        try {
-            this.layer = objectCrudSvcRemote.delete(layer);
+//        try {
+//            this.layer = objectCrudSvcRemote.delete(layer);
+            this.markDeleted = true;
             return this.layer;
-        }
-        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException | ObjectNotFoundRemoteException e) {
-            throw new DrawUpdateException(e.getMessage());
-        }
+//        }
+//        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException | ObjectNotFoundRemoteException e) {
+//            throw new DrawUpdateException(e.getMessage());
+//        }
     }
 
     @Override
     public Layer setDrawLayerName(String name) throws DrawUpdateException {
         try {
             this.layer.setName(name);
-            this.layer = objectCrudSvcRemote.update(layer);
+//            this.layer = objectCrudSvcRemote.update(layer);
             return this.layer;
         }
         catch (Exception e) {
@@ -180,20 +229,25 @@ public class DrawEditorImpl implements ClosableDrawEditor {
     public <T extends Shape> T updateItem(T item) throws DrawUpdateException {
         // Update Item
         T res = null;
-        try {
-            res = (T) objectCrudSvcRemote.update(item);
+//        try {
+//            res = (T) objectCrudSvcRemote.update(item);
+        res = item;
             if (!layer.getObjectsUids().contains(res.getKeyId().getObjId())) {
                 LOGGER.debug("LayerItem {} is not part of the layer, adding it", res.getKeyId().getObjId());
                 layer.getObjectsUids().add(res.getKeyId().getObjId());
                 LOGGER.debug("Layer items amount is now {} ", layer.getObjectsUids().size());
+                objectInLayer.replace(item.getKeyId().getObjId(), item);
+            }
+            else {
+                objectInLayer.put(item.getKeyId().getObjId(), item);
             }
             // Update Mission
-            layer = (Layer) objectCrudSvcRemote.update(layer);
+//            layer = (Layer) objectCrudSvcRemote.update(layer);
             return res;
-        }
-        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
-            throw new DrawUpdateException(e.getMessage());
-        }
+//        }
+//        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
+//            throw new DrawUpdateException(e.getMessage());
+//        }
     }
 
     @Override

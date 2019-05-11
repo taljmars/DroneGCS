@@ -273,40 +273,51 @@ public class LayerManagerDbWrapper extends LayerManager {
         try {
             BaseLayer dbLayer;
             if (layer instanceof LayerGroupEditable) {
+                LOGGER.debug("Create group layer");
                 dbLayer = objectCrudSvc.create(LayersGroup.class.getCanonicalName().toString());
                 dbLayer.setName(layer.getName());
                 List<String> uuid = new ArrayList<>();
                 for (AbstractLayer l : ((LayerGroupEditable) layer).getChildren()) {
+                    LOGGER.debug("Add child UUID to parent");
                     uuid.add(guiUUID_dataBaseUUID_Map.get(l.getUuid().toString()));
                 }
                 ((LayersGroup) dbLayer).setLayersUids(uuid);
+                LOGGER.debug("Updating layer with children");
                 dbLayer = objectCrudSvc.update(dbLayer);
                 layer.setPayload(dbLayer);
             }
             else {
+                LOGGER.debug("Not a group layer, creating simple layer");
                 dbLayer = objectCrudSvc.create(Layer.class.getCanonicalName().toString());
                 dbLayer.setName(layer.getName());
                 dbLayer = objectCrudSvc.update(dbLayer);
-
+                LOGGER.debug("Layer object was successfully created");
+                LOGGER.debug("Loading dbLayerLoader for layer '{}'", layer.getClass());
                 dbLayer = dbLayerLoaderMap.get(layer.getClass()).load(layer, dbLayer);
+                LOGGER.debug("Setting GUI Layer with new DB Layer as payload");
                 layer.setPayload(dbLayer);
             }
 
+            LOGGER.debug("Load map objects");
             layer.loadMapObjects();
 
-
             // Update pointers
+            LOGGER.debug("Updating map table, databaseUUID -> LayerGroup");
             dataBaseUUID_layerGroups_Map.put(dbLayer.getKeyId().getObjId(), layer);
+            LOGGER.debug("Updating map table, guiUUID -> databaseUUID");
             guiUUID_dataBaseUUID_Map.put(layer.getUuid().toString(), dbLayer.getKeyId().getObjId());
 
             // Updating parent
+            LOGGER.debug("Get parent layer");
             BaseLayer parent = objectCrudSvc.read(guiUUID_dataBaseUUID_Map.get(layer.getParent().getUuid().toString()));
 //            if (parent instanceof LayersGroupRoot) {
 //                ((LayersGroupRoot) parent).getLayersUids().add(dbLayer.getKeyId().getObjId());
 //            }
             if (parent instanceof LayersGroup) {
+                LOGGER.debug("Add layer UUID to it parent");
                 ((LayersGroup) parent).getLayersUids().add(dbLayer.getKeyId().getObjId());
             }
+            LOGGER.debug("Updating parent");
             objectCrudSvc.update(parent);
         }
         catch (Throwable e) {

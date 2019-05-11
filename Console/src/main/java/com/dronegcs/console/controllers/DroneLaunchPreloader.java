@@ -4,6 +4,8 @@ import com.db.persistence.scheme.LoginResponse;
 import com.db.persistence.scheme.RegistrationResponse;
 import javafx.application.Platform;
 import javafx.application.Preloader;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -109,8 +111,15 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         Button signingBtn = new Button("Register");
         Button exitBtn = new Button("Exit");
 
-        TextField serverIp = new TextField(WA_FOR_LOGIN ? "localhost" : "18.220.242.169");
-        TextField serverPort = new TextField("8080");
+        ObservableList<String> options =
+                FXCollections.observableArrayList(
+                        "localhost",
+                        "drone-server.us-east-2.elasticbeanstalk.com"
+                );
+        final ComboBox serverIp = new ComboBox(options);
+        serverIp.setValue(options.get(WA_FOR_LOGIN ? 0 : 1));
+//        TextField serverIp = new TextField(WA_FOR_LOGIN ? "localhost" : "");
+        TextField serverPort = new TextField("9024");
 
         TextField userName = new TextField(WA_FOR_LOGIN ? "admin" : "");
         userName.setAlignment(Pos.CENTER);
@@ -132,7 +141,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         status = new Label(message);
 
         loginBtn.setOnAction((actionEvent) -> {
-            LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText(), serverIp.getText(), Integer.parseInt(serverPort.getText()));
+            LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText(), serverIp.getValue().toString(), Integer.parseInt(serverPort.getText()));
             Integer loginStatus = loginRestResponse.getReturnCode();
             if (loginStatus.equals(OK)) {
                 preloaderStage.hide();
@@ -153,7 +162,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
                 return;
             }
 
-            RegistrationResponse registrationResponse = loginLoader.handleRegisterNewUser(userName.getText(), password.getText(), serverIp.getText(), Integer.parseInt(serverPort.getText()));
+            RegistrationResponse registrationResponse = loginLoader.handleRegisterNewUser(userName.getText(), password.getText(), serverIp.getValue().toString(), Integer.parseInt(serverPort.getText()));
             Integer signingStatus = registrationResponse.getReturnCode();
             if (signingStatus.equals(OK)) {
                 preloaderStage.hide();
@@ -169,7 +178,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         HBox hBox = new HBox();
 
         HBox serverBox = new HBox();
-        serverIp.setAlignment(Pos.CENTER);
+//        serverIp.setAlignment(Pos.CENTER);
         serverIp.setMaxWidth(PAGE_WIDTH/2 - 10);
         serverPort.setAlignment(Pos.CENTER);
         serverPort.setMaxWidth(PAGE_WIDTH/4 - 10);
