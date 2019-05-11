@@ -152,8 +152,9 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			return popup;
 		}
 
-		Mission mission = ((LayerMission) layer).getMission();
-		boolean hasMission = mission != null;
+//		if (layer instanceof LayerMission) {
+//		Mission mission = ((LayerMission) layer).getMission();
+//		boolean hasMission = mission != null;
 
 		MenuItem menuItemUploadMission = new MenuItem("Upload DroneMission");
 		menuItemUploadMission.setOnAction(e -> {

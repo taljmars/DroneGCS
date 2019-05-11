@@ -18,7 +18,7 @@ Holds the external libraries needed to be add to Eclipse/IntelIJ (Or other) IDE 
 You may also use startModule.sh script to fetch relevant libraries. the script will recognize your OS type and
 update the relevant files automatically.
 In case your purpose is to develop over this code, remember one important thing.
-"Clean" action of maven will also remove this libraries, therefor you will have to run the script again.
+"Clean" action of maven will also remove this libraries, therefor you will have to run the script again.  
 This is a temporary problem that will be solved later.
 #### ExRunnable
 Holds all the files needed to run the GCS application, it is a compilation results.
