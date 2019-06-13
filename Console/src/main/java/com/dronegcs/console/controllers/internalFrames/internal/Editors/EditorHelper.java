@@ -27,7 +27,5 @@ public interface EditorHelper<T extends EditedLayer> {
 
 	void renameItem(T value);
 
-	int reloadEditors();
-
 	<P extends AbstractLayer> boolean isEdited(P abstractLayer);
 }

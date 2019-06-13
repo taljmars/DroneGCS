@@ -1,5 +1,7 @@
 package com.dronegcs.console_plugin.layergroup_editor;
 
+import com.db.gui.persistence.scheme.BaseLayer;
+import com.db.gui.persistence.scheme.Layer;
 import com.db.gui.persistence.scheme.LayersGroup;
 
 /**
@@ -7,11 +9,13 @@ import com.db.gui.persistence.scheme.LayersGroup;
  */
 public interface LayersGroupEditor {
 
-    LayersGroup update(LayersGroup layerGroup) throws LayersGroupUpdateException;
-
     LayersGroup getLayersGroup();
 
-    LayersGroup delete() throws LayersGroupUpdateException;
+    LayersGroup setLayersGroupName(String name);
 
-    LayersGroup setLayersGroupName(String name) throws LayersGroupUpdateException;
+    Layer addSubLayer(String name);
+
+    LayersGroup addSubGroupLayer(String name);
+
+    void deleteLayer();
 }

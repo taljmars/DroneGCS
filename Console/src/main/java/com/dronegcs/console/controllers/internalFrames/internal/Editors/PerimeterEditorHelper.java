@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.Editors;
 
+import com.db.gui.persistence.scheme.BaseLayer;
 import com.db.gui.persistence.scheme.Layer;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
@@ -10,7 +11,11 @@ import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
-import com.dronegcs.console_plugin.perimeter_editor.*;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
+import com.dronegcs.console_plugin.perimeter_editor.CirclePerimeterEditor;
+import com.dronegcs.console_plugin.perimeter_editor.PerimeterEditor;
+import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
+import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
@@ -42,9 +47,6 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 	private Drone drone;
 
 	@Autowired
-	private ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
-
-	@Autowired
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	@Autowired
@@ -55,6 +57,9 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 
 	@Autowired
 	private PerimetersManager perimetersManager;
+
+	@Autowired
+	public LayersGroupsManager layerGroupManager;
 
 	@Autowired
 	private OperationalViewTree operationalViewTree;
@@ -72,28 +77,27 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 
 	public PerimeterEditorHelper(@Autowired LayerManagerDbWrapper layerManagerDbWrapper) {
 
-		layerManagerDbWrapper.registerDbLayerFromGuiLayerLoader(LayerPolygonPerimeter.class, ((guiLayer, dbLayer) -> {
+		layerManagerDbWrapper.registerEventHandlerOnGuiLayerChanges(LayerPolygonPerimeter.class, ((guiLayer, dbLayer) -> {
 			PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor(guiLayer.getName(), PolygonPerimeter.class);
 			((Layer) dbLayer).setObjectsUids(Arrays.asList(perimeterEditor.getPerimeter().getKeyId().getObjId()));
-			dbLayer = objectCrudSvcRemoteWrapper.update(dbLayer);
 			return dbLayer;
 		}));
 
-		layerManagerDbWrapper.registerDbLayerFromGuiLayerLoader(LayerCircledPerimeter.class, ((guiLayer, dbLayer) -> {
+		layerManagerDbWrapper.registerEventHandlerOnGuiLayerChanges(LayerCircledPerimeter.class, ((guiLayer, dbLayer) -> {
 			PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor(guiLayer.getName(), CirclePerimeter.class);
 			((Layer) dbLayer).setObjectsUids(Arrays.asList(perimeterEditor.getPerimeter().getKeyId().getObjId()));
-			dbLayer = objectCrudSvcRemoteWrapper.update(dbLayer);
 			return dbLayer;
 		}));
 
 
 		// Sync the helper to react to layer manager loading of gui layer from db layer
-		layerManagerDbWrapper.registerGuiLayerFromDbLayerLoader(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
+		layerManagerDbWrapper.registerEventHandlerOnDbLayerChanges(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
 			@Override
 			public boolean isRelevant(BaseObject layer) throws ObjectNotFoundRemoteException {
 				if (((Layer) layer).getObjectsUids().isEmpty())
 					return false;
 
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
 				String coreObjId = ((Layer) layer).getObjectsUids().iterator().next();
 				BaseObject coreObj = objectCrudSvcRemoteWrapper.read(coreObjId);
 				if (coreObj instanceof CirclePerimeter)
@@ -107,9 +111,24 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 
 			@Override
 			public AbstractLayer load(BaseObject layer) throws ObjectNotFoundRemoteException {
-				LayerPerimeter layerGui = null;
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
 				String coreObjId = ((Layer) layer).getObjectsUids().iterator().next();
 				BaseObject coreObj = objectCrudSvcRemoteWrapper.read(coreObjId);
+				perimetersManager.load(coreObj);
+				if (coreObj instanceof CirclePerimeter) {
+					String key = ((CirclePerimeter) coreObj).getCenter();
+					com.dronedb.persistence.scheme.Point point = objectCrudSvcRemoteWrapper.read(key);
+					perimetersManager.load(point);
+				}
+				else if (coreObj instanceof PolygonPerimeter) {
+					for (String child : ((PolygonPerimeter) coreObj).getPoints()) {
+						com.dronedb.persistence.scheme.Point point = objectCrudSvcRemoteWrapper.read(child);
+						perimetersManager.load(point);
+					}
+				}
+				layerGroupManager.load((BaseLayer) layer);
+
+				LayerPerimeter layerGui = null;
 				if (coreObj instanceof CirclePerimeter) {
 					layerGui = new LayerCircledPerimeter(((Layer) layer).getName(), applicationContext.getBean(LayeredViewMap.class));
 				}
@@ -220,25 +239,20 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 		});
 
 		menuItemCirclePerimeterSetCenter.setOnAction( arg -> {
-			try {
-				String value = dialogManagerSvc.showInputDialog("Choose perimeter radius","",null, null, "50");
-				if (value == null || value.isEmpty()) {
-					LOGGER.debug("Irrelevant dialog result, result = \"{}\"", value);
-					return;
-				}
-				if (!value.matches("[0-9]*")) {
-					LOGGER.error("Value '{}' is illegal, must be numeric", value);
-					return;
-				}
-				((CirclePerimeterEditor) perimeterEditor).setCenter(layerViewMap.getPosition(point));
-				((CirclePerimeterEditor) perimeterEditor).setRadius(Integer.parseInt(value));
-				modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
-				modifiedLayerPerimeterOriginal.regenerateMapObjects();
+			String value = dialogManagerSvc.showInputDialog("Choose perimeter radius","",null, null, "50");
+			if (value == null || value.isEmpty()) {
+				LOGGER.debug("Irrelevant dialog result, result = \"{}\"", value);
+				return;
 			}
-			catch (PerimeterUpdateException e) {
-				LOGGER.error("Failed to update circle perimeter", e);
+			if (!value.matches("[0-9]*")) {
+				LOGGER.error("Value '{}' is illegal, must be numeric", value);
+				return;
 			}
+			((CirclePerimeterEditor) perimeterEditor).setCenter(layerViewMap.getPosition(point));
+			((CirclePerimeterEditor) perimeterEditor).setRadius(Integer.parseInt(value));
+			modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
+			modifiedLayerPerimeterOriginal.regenerateMapObjects();
 		});
 
 		popup.getItems().add(menuItemPerimeterAddPoint);
@@ -269,72 +283,56 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 
 	@Override
 	public LayerPerimeter startEditing(LayerPerimeter layer) {
-		try {
-			LOGGER.debug("Working on Perimeter Layer");
-			modifiedLayerPerimeterOriginal = (LayerPerimeter) layer;
-			modifiedLayerPerimeterOriginal.setWasEdited(true);
-			setBuildMode(true);
-			perimeterEditor = perimetersManager.openPerimeterEditor(modifiedLayerPerimeterOriginal.getPerimeter());
-			Perimeter perimeter = perimeterEditor.getPerimeter();
-			modifiedLayerPerimeterOriginal.setPerimeter(perimeter);
+		LOGGER.debug("Working on Perimeter Layer");
+		modifiedLayerPerimeterOriginal = (LayerPerimeter) layer;
+		modifiedLayerPerimeterOriginal.setWasEdited(true);
+		setBuildMode(true);
+		perimeterEditor = perimetersManager.openPerimeterEditor(modifiedLayerPerimeterOriginal.getPerimeter());
+		Perimeter perimeter = perimeterEditor.getPerimeter();
+		modifiedLayerPerimeterOriginal.setPerimeter(perimeter);
 
-			return modifiedLayerPerimeterOriginal;
-		}
-		catch (PerimeterUpdateException e) {
-			loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-			dialogManagerSvc.showErrorMessageDialog("Failed to update item.\n" + e.getMessage(), e);
-			return null;
-		}
+		return modifiedLayerPerimeterOriginal;
 	}
 
 	@Override
 	public void removeItem(LayerPerimeter value) {
-		try {
-				LOGGER.info("Found perimeter to remove");
-				Layer layer = (Layer) value.getPayload();
-				Perimeter perimeter = objectCrudSvcRemoteWrapper.read(layer.getObjectsUids().get(0));
-				perimetersManager.delete(perimeter);
-				objectCrudSvcRemoteWrapper.delete(layer);
-		}
-		catch (Exception | PerimeterUpdateException e) {
-			LOGGER.error("Failed to remove item", e);
-		}
+		LOGGER.info("Found perimeter to remove");
+		Layer layer = (Layer) value.getPayload();
+		Perimeter perimeter = perimetersManager.getPerimeter(layer.getObjectsUids().get(0));
+		PerimeterEditor editor = perimetersManager.openPerimeterEditor(perimeter);
+		editor.delete();
+
+		layerGroupManager.removeItem(layer);
 	}
 
 	@Override
 	public void renameItem(LayerPerimeter value) {
 		try {
 			Layer layerDb = (Layer) value.getPayload();
+
+			String objId = layerDb.getKeyId().getObjId();
+
+			layerDb = (Layer) layerGroupManager.getLayerItem(objId);
 			layerDb.setName(value.getName());
-			layerDb = objectCrudSvcRemoteWrapper.update(layerDb);
+			layerGroupManager.updateItem(layerDb);
 
-			String perimeterUid = layerDb.getObjectsUids().get(0);
-			Perimeter perimeter = objectCrudSvcRemoteWrapper.read(perimeterUid);
+			String missionUid = layerDb.getObjectsUids().get(0);
 
+			Perimeter perimeter = perimetersManager.getPerimeter(missionUid);
 			PerimeterEditor perimeterEditor = perimetersManager.openPerimeterEditor(perimeter);
 			perimeterEditor.setPerimeterName(value.getName());
 
 			value.setPayload(layerDb);
 		}
-		catch (PerimeterUpdateException | Exception e) {
+		catch (Exception e) {
 			LOGGER.error("Failed to rename item", e);
 		}
-
-	}
-
-	@Override
-	public int reloadEditors() {
-		LOGGER.debug("Reload Editors for {}", this.getClass().getCanonicalName());
-		LOGGER.debug("Close all current editors");
-		perimetersManager.closeAllPerimeterEditors(false);
-		LOGGER.debug("Load editors from scratch");
-		return perimetersManager.loadEditors();
 	}
 
 	@Override
 	public boolean isEdited(AbstractLayer abstractLayer) {
 		Perimeter perimeter = ((LayerPerimeter<Perimeter>) abstractLayer).getPerimeter();
-		if (perimetersManager.getPerimeterEditor(perimeter) != null) {
+		if (perimetersManager.isDirty(perimeter)) {
 			LOGGER.debug("Modified perimeter was found: {}", perimeter);
 			return true;
 		}

@@ -122,7 +122,7 @@ public class QuerySvcRemoteWrapper {
         if (jsonObject.has("resultList")) {
             JSONArray jsonArray = jsonObject.getJSONArray("resultList");
             for (int i = 0; i < jsonArray.length() ; i++) {
-                resultList.add(restClientHelper.resolve((JSONObject) jsonArray.get(i)));
+                resultList.add(RestClientHelper.resolve((JSONObject) jsonArray.get(i)));
             }
         }
         QueryResponseRemote queryResponseRemote = new QueryResponseRemote();

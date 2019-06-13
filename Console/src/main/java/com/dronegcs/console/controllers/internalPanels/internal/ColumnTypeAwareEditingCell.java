@@ -3,6 +3,7 @@ package com.dronegcs.console.controllers.internalPanels.internal;
 import com.dronegcs.console.controllers.EditingCell;
 import javafx.util.StringConverter;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -77,6 +78,7 @@ public class ColumnTypeAwareEditingCell<TE extends ReferredTableEntry,T> extends
 
     @Override
     public void updateItem( T item, boolean empty ) {
+        assert item != null;
         super.updateItem( item, empty );
         if ( !empty && getIndex() >= 0 ) {
             TE entry = getTableView().getItems().get( getIndex() );

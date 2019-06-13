@@ -11,21 +11,21 @@ import java.util.List;
  */
 public interface DrawEditor {
 
-    Shape createMarker() throws DrawUpdateException;
+    Shape createMarker();
 
-    Shape addMarker(Coordinate position) throws DrawUpdateException;
+    Shape addMarker(Coordinate position);
 
-    <T extends Shape> void removeItem(T item) throws DrawUpdateException;
+    <T extends Shape> void removeItem(T item);
 
-    <T extends Shape> T updateItem(T item) throws DrawUpdateException;
+    <T extends Shape> T updateItem(T item);
 
-    Layer update(Layer layer) throws DrawUpdateException;
+    Layer update(Layer layer) ;
 
     Layer getModifiedLayer();
 
     <T extends Shape> List<T> getLayerItems();
 
-    Layer delete() throws DrawUpdateException;
+    void deleteLayer();
 
-    Layer setDrawLayerName(String name) throws DrawUpdateException;
+    Layer setDrawLayerName(String name);
 }

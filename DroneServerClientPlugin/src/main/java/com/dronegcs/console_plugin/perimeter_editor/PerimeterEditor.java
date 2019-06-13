@@ -11,9 +11,9 @@ public interface PerimeterEditor<T extends Perimeter> {
 
     T getPerimeter();
 
-    T update(T perimeter) throws PerimeterUpdateException;
+    T update(T perimeter);
 
-    T delete() throws PerimeterUpdateException;
+    void delete();
 
     T setPerimeterName(String name);
 }

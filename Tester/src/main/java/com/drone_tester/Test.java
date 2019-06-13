@@ -23,7 +23,7 @@ public abstract class Test implements ApplicationEventPublisherAware {
     public static String tester2 = "tester2";
 
     @Autowired protected ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
-    @Autowired protected MissionCrudSvcRemoteWrapper missionCrudSvcRemoteWrapper;
+//    @Autowired protected MissionCrudSvcRemoteWrapper missionCrudSvcRemoteWrapper;
     @Autowired protected SessionsSvcRemoteWrapper sessionsSvcRemoteWrapper;
     @Autowired protected QuerySvcRemoteWrapper querySvcRemoteWrapper;
     @Autowired protected PerimeterCrudSvcRemoteWrapper perimeterCrudSvcRemoteWrapper;

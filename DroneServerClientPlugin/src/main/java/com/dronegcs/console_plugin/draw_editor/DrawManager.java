@@ -14,29 +14,25 @@ import java.util.List;
  */
 public interface DrawManager {
 
-    <T extends DrawEditor> T openDrawLayerEditor(String layerName) throws DrawUpdateException;
+    <T extends DrawEditor> T openDrawLayerEditor(String layerName);
 
-    <T extends DrawEditor> T openDrawLayerEditor(Layer layer) throws DrawUpdateException;
+    <T extends DrawEditor> T openDrawLayerEditor(Layer layer);
 
-    <T extends DrawEditor> T getDrawLayerEditor(Layer layer);
-
-    <T extends DrawEditor> ClosingPair<Layer> closeDrawLayerEditor(T drawLayerEditor, boolean shouldSave);
+    Collection<ClosingPair<Layer>> flushAllItems(boolean isPublish);
 
     List<BaseObject> getAllDrawLayers();
 
     List<BaseObject> getAllModifiedDrawLayers();
 
-    void delete(Layer drawLayer);
-
-    Layer update(Layer layer) throws DrawUpdateException;
-
-    List<Shape> getDrawLayerItems(Layer layer);
-
-    Layer cloneDrawLayer(Layer layer) throws DrawUpdateException;
-
-    Collection<ClosingPair<Layer>> closeAllDrawLayersEditors(boolean shouldSave);
+    Shape getLayerItems(String drawItemUid);
 
     List<BaseObject> getLayerItems(Layer layer);
 
-    int loadEditors();
+    void updateItem(BaseObject object);
+
+    void removeItem(BaseObject object);
+
+    boolean isDirty(BaseObject item);
+
+    void load(BaseObject item);
 }

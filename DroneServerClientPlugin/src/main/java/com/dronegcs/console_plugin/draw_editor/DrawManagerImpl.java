@@ -12,6 +12,7 @@ import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.remote_services_wrappers.LayersCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
+import com.gui.core.layers.LayerGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class DrawManagerImpl implements DrawManager {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DrawManagerImpl.class);
 
+	private Map<String, BaseObject> dbItems;
+	private Map<String, BaseObject> dirtyDeleted;
+	private Map<String, BaseObject> dirtyItems;
+
 	@Autowired @NotNull(message = "Internal Error: Failed to get application context")
 	private ApplicationContext applicationContext;
 
@@ -38,110 +43,45 @@ public class DrawManagerImpl implements DrawManager {
 	@Autowired @NotNull(message = "Internal Error: Failed to get layers object crud")
 	private LayersCrudSvcRemoteWrapper layerCrudSvcRemote;
 
-	private Map<String, ClosableDrawEditor> closableDrawLayerEditorList;
-
 	public DrawManagerImpl() {
-		closableDrawLayerEditorList = new HashMap<>();
+		dbItems = new HashMap<>();
+		dirtyDeleted = new HashMap<>();
+		dirtyItems = new HashMap<>();
 	}
 
 	@Override
-	public DrawEditor openDrawLayerEditor(String initialName) throws DrawUpdateException {
+	public DrawEditor openDrawLayerEditor(String initialName) {
 		LOGGER.debug("Setting new layer to drawLayer editor");
 		if (initialName == null || initialName.isEmpty()) {
 			throw new RuntimeException("Layer name cannot be empty");
 		}
 		ClosableDrawEditor drawLayerEditor = applicationContext.getBean(ClosableDrawEditor.class);
 		drawLayerEditor.open(initialName);
-		closableDrawLayerEditorList.put(drawLayerEditor.getModifiedLayer().getKeyId().getObjId(), drawLayerEditor);
 		return drawLayerEditor;
 	}
 
 	@Override
-	public DrawEditor openDrawLayerEditor(Layer layer) throws DrawUpdateException {
-		LOGGER.debug("Setting new layer to drawLayer editor");
-		ClosableDrawEditor drawLayerEditor = findDrawLayerEditorByLayer(layer);
-		if (drawLayerEditor == null) {
-			LOGGER.debug("Editor not exist for layer " + layer.getName() + ", creating new one");
-			drawLayerEditor = applicationContext.getBean(ClosableDrawEditor.class);
-			drawLayerEditor.open(layer);
-			closableDrawLayerEditorList.put(layer.getKeyId().getObjId(), drawLayerEditor);
-		}
-		else {
-			LOGGER.debug("Found existing drawLayer editor");
-		}
+	public DrawEditor openDrawLayerEditor(Layer layer) {
+		assert layer != null;
+		LOGGER.debug("Editor not exist for layer " + layer.getName() + ", creating new one");
+		ClosableDrawEditor drawLayerEditor = applicationContext.getBean(ClosableDrawEditor.class);
+		drawLayerEditor.open(layer);
 		return drawLayerEditor;
 	}
 
-	@Override
-	public void delete(Layer layer) {
-		if (layer == null) {
-			LOGGER.error("Received Empty layer, skip deletion");
-			return;
-		}
-
-		try {
-			ClosableDrawEditor closableDrawLayerEditor = (ClosableDrawEditor) openDrawLayerEditor(layer);
-			closableDrawLayerEditor.delete();
-		}
-		catch (DrawUpdateException e) {
-			LOGGER.error("Failed to delete draw layer", e);
-		}
-	}
-
-	@Override
-	public Layer update(Layer layer) throws DrawUpdateException {
-		assert true;
-		assert false;
-		try {
-			ClosableDrawEditor closableDrawLayerEditor = findDrawLayerEditorByLayer(layer);
-			if (closableDrawLayerEditor == null)
-				return (Layer) objectCrudSvcRemote.update(layer);
-
-			return closableDrawLayerEditor.update(layer);
-		}
-		catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
-			throw new DrawUpdateException(e.getMessage());
-		}
-	}
-
-	@Override
-	public Layer cloneDrawLayer(Layer layer) throws DrawUpdateException {
-		try {
-			return layerCrudSvcRemote.cloneLayer(layer);
-		}
-		catch (ObjectNotFoundRemoteException | DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
-			throw new DrawUpdateException(e.getMessage());
-		}
-	}
-
-	@Override
-	public <T extends DrawEditor> ClosingPair closeDrawLayerEditor(T drawLayerEditor, boolean shouldSave) {
-		LOGGER.debug("closing draw layer editor");
-		if (!(drawLayerEditor instanceof ClosableDrawEditor)) {
-			return null;
-		}
-		ClosingPair<Layer> drawLayerClosingPair = ((ClosableDrawEditor) drawLayerEditor).close(shouldSave);
-		closableDrawLayerEditorList.remove(drawLayerEditor.getModifiedLayer().getKeyId().getObjId());
-		return drawLayerClosingPair;
-	}
-
-	@Override
-	public Collection<ClosingPair<Layer>> closeAllDrawLayersEditors(boolean shouldSave) {
-		Collection<ClosingPair<Layer>> closedDrawLayer = new ArrayList<>();
-		Iterator<ClosableDrawEditor> it = closableDrawLayerEditorList.values().iterator();
-		while (it.hasNext()) {
-			closedDrawLayer.add(it.next().close(shouldSave));
-		}
-		closableDrawLayerEditorList.clear();
-		System.out.println("Draws editors should be empty: " + closableDrawLayerEditorList.size());
-		return closedDrawLayer;
-	}
+    @Override
+    public Shape getLayerItems(String drawItemUid) {
+        Shape res = (Shape) dirtyItems.get(drawItemUid);
+        if (res == null)
+            res = (Shape) dbItems.get(drawItemUid);
+        return res;
+    }
 
 	@Override
 	public List<BaseObject> getLayerItems(Layer layer) {
-		List<String> itemUids = layer.getObjectsUids();
 		List<BaseObject> objects = new ArrayList<>();
-		ClosableDrawEditor c = closableDrawLayerEditorList.get(layer.getKeyId().getObjId());
+		List<String> itemUids = layer.getObjectsUids();
+		DrawEditor c = openDrawLayerEditor(layer);
 		if (c != null) {
 			objects.addAll(c.getLayerItems());
 			return objects;
@@ -157,71 +97,41 @@ public class DrawManagerImpl implements DrawManager {
 		return objects;
 	}
 
-	@Override
-	public int loadEditors() {
-		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(Layer.class.getCanonicalName());
-		queryRequestRemote.setQuery("GetAllModifiedLayers");
-		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-		List<BaseObject> modifiedLayersGroupList = queryResponseRemote.getResultList();
-		LOGGER.debug("There are currently {} modified layers in total", modifiedLayersGroupList.size());
-		modifiedLayersGroupList.forEach(element -> {
-			try {
-				Layer layer = (Layer) element;
-				if (layer.getObjectsUids().isEmpty()) {
-					this.openDrawLayerEditor(layer);
-					return;
-				}
-
-				String objid = layer.getObjectsUids().get(0);
-				BaseObject firstObjectOfLayer = objectCrudSvcRemote.read(objid);
-				if (firstObjectOfLayer instanceof Shape) {
-					this.openDrawLayerEditor(layer);
-					return;
-				}
-
-				return;
-			}
-			catch (DrawUpdateException e) {
-				e.printStackTrace();
-			}
-			catch (ObjectNotFoundRemoteException e) {
-				e.printStackTrace();
-			}
-		});
-
-		return modifiedLayersGroupList.size();
-	}
-
-	@Override
-	public <T extends DrawEditor> T getDrawLayerEditor(Layer layer) {
-		if (layer == null) {
-			LOGGER.error("Layer is null");
-			throw new RuntimeException("Layer is null");
-		}
-		return (T) findDrawLayerEditorByLayer(layer);
-	}
-
-	@Override
-	public List<Shape> getDrawLayerItems(Layer layer) {
-		Layer leadDrawLayer = layer;
-		ClosableDrawEditor closableDrawLayerEditor = findDrawLayerEditorByLayer(layer);
-		if (closableDrawLayerEditor != null)
-			leadDrawLayer = closableDrawLayerEditor.getModifiedLayer();
-
-		List<Shape> itemList = new ArrayList<>();
-		List<String> uuidList = leadDrawLayer.getObjectsUids();
-		for (String uuid : uuidList) {
-			try {
-				itemList.add(objectCrudSvcRemote.readByClass(uuid, Shape.class.getCanonicalName()));
-			}
-			catch (ObjectNotFoundRemoteException e) {
-				LOGGER.error("Failed to get layer item", e);
-			}
+    @Override
+    public Collection<ClosingPair<Layer>> flushAllItems(boolean isPublish) {
+        List<ClosingPair<Layer>> res = new ArrayList<>();
+        if (!isPublish){
+        	dbItems.clear();
+        	dirtyDeleted.clear();
+        	dirtyItems.clear();
+        	return res;
 		}
 
-		return itemList;
-	}
+        try {
+            for (BaseObject a : this.dirtyItems.values()) {
+                BaseObject updatedObj = objectCrudSvcRemote.update(a);
+                if (updatedObj instanceof  Layer) {
+                    LOGGER.debug("Adding to Publish-update list: {}", updatedObj);
+                    res.add(new ClosingPair<>((Layer) updatedObj, false));
+                }
+                dbItems.put(updatedObj.getKeyId().getObjId(), updatedObj);
+            }
+            this.dirtyItems.clear();
+            for (BaseObject deletedObj : this.dirtyDeleted.values()) {
+                objectCrudSvcRemote.delete(deletedObj);
+                if (deletedObj instanceof  Layer) {
+                    LOGGER.debug("Adding to Publish-delete list: {}", deletedObj);
+                    res.add(new ClosingPair<>((Layer) deletedObj, false));
+                }
+                dbItems.remove(deletedObj.getKeyId().getObjId());
+            }
+            this.dirtyDeleted.clear();
+        }
+        catch (Exception e ) {
+            System.out.println(e.getMessage());
+        }
+        return res;
+    }
 
 	@Override
 	public List<BaseObject> getAllDrawLayers() {
@@ -231,41 +141,60 @@ public class DrawManagerImpl implements DrawManager {
 		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
 		List<BaseObject> layersList = queryResponseRemote.getResultList();
 		LOGGER.debug("There are currently {} layers in total", layersList.size());
+        for (BaseObject a : layersList) {
+            dbItems.put(a.getKeyId().getObjId(), a);
+        }
 		return layersList;
 	}
 
 	@Override
 	public List<BaseObject> getAllModifiedDrawLayers() {
-		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-		queryRequestRemote.setClz(Layer.class.getCanonicalName());
-		queryRequestRemote.setQuery("GetAllModifiedLayers");
-		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-		List<BaseObject> layersList = queryResponseRemote.getResultList();
-		LOGGER.debug("There are currently {} modified layers in total", layersList.size());
+//		QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+//		queryRequestRemote.setClz(Layer.class.getCanonicalName());
+//		queryRequestRemote.setQuery("GetAllModifiedLayers");
+//		QueryResponseRemote queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+//		List<BaseObject> layersList = queryResponseRemote.getResultList();
+//		LOGGER.debug("There are currently {} modified layers in total", layersList.size());
+
+        List<BaseObject> layersList = new ArrayList<>();
+        for (BaseObject a : dirtyItems.values()) {
+            if (a instanceof Layer)
+                layersList.add(a);
+        }
 		return layersList;
 	}
 
-	private ClosableDrawEditor findDrawLayerEditorByLayer(Layer layer) {
-		return closableDrawLayerEditorList.get(layer.getKeyId().getObjId());
-//		for (ClosableDrawEditor closableDrawLayerEditor : closableDrawLayerEditorList.values()) {
-//			Layer closedLayer = closableDrawLayerEditor.getModifiedLayer();
-//			if (layer.getKeyId().getObjId().equals(closedLayer.getKeyId().getObjId()))
-//				return closableDrawLayerEditor;
-//
-//			if (layer.equals(closedLayer)) {
-//				return closableDrawLayerEditor;
-//			}
-//		}
-//		return null;
+    @Override
+    public void updateItem(BaseObject object) {
+        dirtyItems.put(object.getKeyId().getObjId(), object);
+    }
+
+    @Override
+    public void removeItem(BaseObject object) {
+        String key = object.getKeyId().getObjId();
+        dirtyItems.remove(key);
+        dbItems.remove(key);
+        dirtyDeleted.put(key, object);
+    }
+
+    @Override
+    public boolean isDirty(BaseObject item) {
+        String key = item.getKeyId().getObjId();
+        return dirtyItems.containsKey(key) || dirtyDeleted.containsKey(key);
+    }
+
+	@Override
+	public void load(BaseObject item) {
+		dbItems.put(item.getKeyId().getObjId(), item);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Draw Layers Manager Status:\n");
-		for (ClosableDrawEditor closableLayersEditor : closableDrawLayerEditorList.values()) {
-			builder.append(closableLayersEditor);
-		}
+//		for (ClosableDrawEditor closableLayersEditor : closableDrawLayerEditorList.values()) {
+//			builder.append(closableLayersEditor);
+//		}
 		return builder.toString();
 	}
 }

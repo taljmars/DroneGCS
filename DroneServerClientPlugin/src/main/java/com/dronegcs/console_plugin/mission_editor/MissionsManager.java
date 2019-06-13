@@ -1,6 +1,5 @@
 package com.dronegcs.console_plugin.mission_editor;
 
-
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.MissionItem;
@@ -14,27 +13,26 @@ import java.util.List;
  */
 public interface MissionsManager {
 
-    <T extends MissionEditor> T openMissionEditor(String missionName) throws MissionUpdateException;
+    <T extends MissionEditor> T openMissionEditor(String missionName);
 
-    <T extends MissionEditor> T openMissionEditor(Mission mission) throws MissionUpdateException;
-
-    <T extends MissionEditor> T getMissionEditor(Mission mission);
-
-    <T extends MissionEditor> ClosingPair<Mission> closeMissionEditor(T missionEditor, boolean shouldSave);
+    <T extends MissionEditor> T openMissionEditor(Mission mission);
 
     List<BaseObject> getAllMissions();
 
     List<BaseObject> getAllModifiedMissions();
 
-    void delete(Mission mission);
+    void removeItem(BaseObject object);
 
-    Mission update(Mission mission) throws MissionUpdateException;
+    void updateItem(BaseObject object);
 
+    Mission getMission(String missionUid);
+
+    MissionItem getMissionItem(String missionItemUid);
     List<MissionItem> getMissionItems(Mission mission);
 
-    Mission cloneMission(Mission mission) throws MissionUpdateException;
+    Collection<ClosingPair<BaseObject>> flushAllItems(boolean isPublish);
 
-    Collection<ClosingPair<Mission>> closeAllMissionEditors(boolean shouldSave);
+    boolean isDirty(BaseObject item);
 
-    int loadEditors();
+    void load(BaseObject item);
 }

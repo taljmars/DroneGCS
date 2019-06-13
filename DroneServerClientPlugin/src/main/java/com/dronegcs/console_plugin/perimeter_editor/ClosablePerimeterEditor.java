@@ -9,9 +9,8 @@ import com.dronegcs.console_plugin.ClosingPair;
  */
 public interface ClosablePerimeterEditor<T extends Perimeter> extends PerimeterEditor<T> {
 
-    T open(T perimeter) throws PerimeterUpdateException, ObjectNotFoundRemoteException;
+    T open(T perimeter);
 
-    T open(String perimeter) throws PerimeterUpdateException;
+    T open(String perimeter);
 
-    ClosingPair<T> close(boolean shouldSave);
 }

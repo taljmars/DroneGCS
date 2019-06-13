@@ -1,18 +1,17 @@
 package com.dronegcs.console_plugin.layergroup_editor;
 
+import com.db.gui.persistence.scheme.BaseLayer;
+import com.db.gui.persistence.scheme.Layer;
 import com.db.gui.persistence.scheme.LayersGroup;
-import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
-import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
-import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
-import com.dronegcs.console_plugin.ClosingPair;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by taljmars on 3/25/17.
@@ -23,64 +22,28 @@ public class LayerGroupEditorImpl implements ClosableLayersGroupEditor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(LayerGroupEditorImpl.class);
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
-    private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
+    @Autowired
+    private LayersGroupsManager layersGroupManager;
 
     private LayersGroup layersGroup;
 
     @Override
     public LayersGroup open(LayersGroup layersGroup) {
         LOGGER.debug("Setting new layer group to layers group editor");
-        try {
-            this.layersGroup = layersGroup;
-            return layersGroup;
-        }
-        catch (Throwable e) {
-            LOGGER.debug("Failed to open layer group editor", e);
-        }
-        return null;
+        this.layersGroup = layersGroup;
+        layersGroupManager.updateItem(this.layersGroup);
+        return layersGroup;
     }
 
     @Override
-    public LayersGroup open(String layersGroupName) throws LayersGroupUpdateException {
+    public LayersGroup open(String layersGroupName) {// throws LayersGroupUpdateException {
         LOGGER.debug("Setting new LayersGroup to LayersGroup editor");
-        try {
-            this.layersGroup = objectCrudSvcRemote.create(LayersGroup.class.getCanonicalName());
-            this.layersGroup.setName(layersGroupName);
-            this.layersGroup = objectCrudSvcRemote.update(this.layersGroup);
-            return this.layersGroup;
-        }
-        catch (ObjectInstanceRemoteException e) {
-            throw new LayersGroupUpdateException(e.getMessage());
-        }
-        catch (DatabaseValidationRemoteException e) {
-            throw new LayersGroupUpdateException(e.getMessage());
-        }
-    }
-
-    @Override
-    public ClosingPair<LayersGroup> close(boolean shouldSave) {
-        LOGGER.debug("Close, should save:" + shouldSave);
-        ClosingPair<LayersGroup> layersGroupClosingPair = null;
-        LayersGroup res = this.layersGroup;
-        if (!shouldSave) {
-            LOGGER.debug(String.format("Delete layer group %s %s", this.layersGroup.getKeyId().getObjId(), this.layersGroup.getName()));
-            try {
-                res = objectCrudSvcRemote.readByClass(layersGroup.getKeyId().getObjId(), LayersGroup.class.getCanonicalName());
-                LOGGER.debug("Found original layersGroup" + res.getKeyId().getObjId() + " " + res.getName());
-                layersGroupClosingPair = new ClosingPair(res, false);
-            }
-            catch (ObjectNotFoundRemoteException e) {
-                LOGGER.error("LayersGroup doesn't exist");
-                layersGroupClosingPair = new ClosingPair(this.layersGroup, true);
-            }
-        }
-        else {
-            layersGroupClosingPair = new ClosingPair(res, false);
-        }
-        this.layersGroup = null;
-        LOGGER.debug("LayersGroup editor finished");
-        return layersGroupClosingPair;
+        this.layersGroup = new LayersGroup();
+        this.layersGroup.getKeyId().setObjId("DUMMY" + UUID.randomUUID().toString());
+        this.layersGroup.setName(layersGroupName);
+        this.layersGroup.setLayersUids(new ArrayList<>());
+        layersGroupManager.updateItem(this.layersGroup);
+        return this.layersGroup;
     }
 
     @Override
@@ -89,43 +52,49 @@ public class LayerGroupEditorImpl implements ClosableLayersGroupEditor {
     }
 
     @Override
-    public LayersGroup update(LayersGroup layersGroup) throws LayersGroupUpdateException {
-        try {
-            LOGGER.debug("Current LayersGroup named '{}'", this.layersGroup.getName());
-            LOGGER.debug("After update, LayersGroup will be named '{}'", layersGroup.getName());
-            this.layersGroup.setName(layersGroup.getName());
-            this.layersGroup = objectCrudSvcRemote.update(layersGroup);
-
-            LOGGER.debug("Updated LayersGroup name is '{}'", this.layersGroup.getName());
-            return this.layersGroup;
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new LayersGroupUpdateException(e.getMessage());
-        }
+    public LayersGroup setLayersGroupName(String name){
+        this.layersGroup.setName(name);
+        return this.layersGroup;
     }
 
     @Override
-    public LayersGroup delete() throws LayersGroupUpdateException {
-        try {
-            this.layersGroup = objectCrudSvcRemote.delete(layersGroup);
-            return this.layersGroup;
-        }
-        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException | ObjectNotFoundRemoteException e) {
-            throw new LayersGroupUpdateException(e.getMessage());
-        }
+    public Layer addSubLayer(String name) {
+        Layer dbLayer = new Layer();
+        String key = "DUMMY_" + UUID.randomUUID();
+        dbLayer.getKeyId().setObjId(key);
+        dbLayer.setName(name);
+        List<String> layers = new ArrayList<>();
+        layers.addAll(this.layersGroup.getLayersUids());
+        layers.add(key);
+        this.layersGroup.setLayersUids(layers);
+        layersGroupManager.updateItem(dbLayer);
+        return dbLayer;
     }
 
     @Override
-    public LayersGroup setLayersGroupName(String name) throws LayersGroupUpdateException {
-        try {
-            this.layersGroup.setName(name);
-            this.layersGroup = objectCrudSvcRemote.update(layersGroup);
-            return this.layersGroup;
+    public LayersGroup addSubGroupLayer(String name) {
+        LayersGroupEditor editor = layersGroupManager.openLayersGroupEditor(name);
+        List<String> layers = new ArrayList<>();
+        layers.addAll(this.layersGroup.getLayersUids());
+        layers.add(editor.getLayersGroup().getKeyId().getObjId());
+        this.layersGroup.setLayersUids(layers);
+        return editor.getLayersGroup();
+    }
+
+    @Override
+    public void deleteLayer() {
+        String key = layersGroup.getKeyId().getObjId();
+        for (String child : this.layersGroup.getLayersUids()) {
+            BaseLayer obj = layersGroupManager.getLayerItem(child);
+            if (obj instanceof LayersGroup) {
+                LayersGroupEditor editor = layersGroupManager.openLayersGroupEditor((LayersGroup) obj);
+                editor.deleteLayer();
+            }
+            else {
+                layersGroupManager.removeItem(obj);
+            }
         }
-        catch (Exception e) {
-            throw new LayersGroupUpdateException(e.getMessage());
-        }
+        layersGroupManager.removeItem(layersGroup);
     }
 
     @Override

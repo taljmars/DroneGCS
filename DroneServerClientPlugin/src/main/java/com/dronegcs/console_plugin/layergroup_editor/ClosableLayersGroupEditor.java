@@ -8,9 +8,7 @@ import com.dronegcs.console_plugin.ClosingPair;
  */
 public interface ClosableLayersGroupEditor extends LayersGroupEditor {
 
-    LayersGroup open(LayersGroup layersGroup) throws LayersGroupUpdateException;
+    LayersGroup open(LayersGroup layersGroup);
 
-    LayersGroup open(String missionName) throws LayersGroupUpdateException;
-
-    ClosingPair<LayersGroup> close(boolean shouldSave);
+    LayersGroup open(String missionName);
 }

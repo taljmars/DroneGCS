@@ -1,11 +1,9 @@
 package com.dronegcs.console.controllers.internalPanels.internal;
 
-import com.db.gui.persistence.scheme.Layer;
 import com.dronedb.persistence.scheme.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
-import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -86,22 +84,7 @@ public class MissionTableProfile extends TableProfile {
         ColumnTypeAwareEditingCell.PostCommit postAction = new ColumnTypeAwareEditingCell.PostCommit() {
             @Override
             public boolean call(Object entry) {
-                try {
-                    // Updating DB
-                    MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
-//                    MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
-                    missionEditor.updateMissionItem((MissionItem) entry);
-
-                    // Refresh view
-                    generateTable(true, layerMission);
-                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
-                    return true;
-                }
-                catch (MissionUpdateException e) {
-                    logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());
-
-                    return false;
-                }
+                throw new RuntimeException("function line should be handled");
             }
         };
 
@@ -197,17 +180,11 @@ public class MissionTableProfile extends TableProfile {
                     setText( null );
                     if ( !empty ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
-                            try {
-                                TableItemEntry entry = getTableView().getItems().get( getIndex() );
-                                MissionEditor missionEditor = missionsManager.getMissionEditor(layerMission.getMission());
-//                                MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
-                                missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
-                                generateTable(true, layerMission);
-                                applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
-                            }
-                            catch (MissionUpdateException e) {
-                                logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());
-                            }
+                            TableItemEntry entry = getTableView().getItems().get( getIndex() );
+                            MissionEditor missionEditor = missionsManager.openMissionEditor(layerMission.getMission());
+                            missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
+                            generateTable(true, layerMission);
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -221,7 +198,6 @@ public class MissionTableProfile extends TableProfile {
 
     @Override
     @SuppressWarnings("unchecked")
-    //public void generateMissionTable(boolean editmode) {
     public void generateTable(boolean editMode, Object contentPayload) {
 
         setLayerMission((LayerMission) contentPayload);
@@ -352,7 +328,7 @@ public class MissionTableProfile extends TableProfile {
                         break;
                 case MISSION_EDITING_FINISHED:
                     load();
-                    generateTable(false, null);
+                    generateTable(false, command.getSource());
                     break;
                 case MISSION_VIEW_ONLY_STARTED:
                     load();

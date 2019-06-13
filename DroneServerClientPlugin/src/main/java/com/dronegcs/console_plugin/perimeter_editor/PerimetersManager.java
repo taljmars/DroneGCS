@@ -13,27 +13,28 @@ import java.util.List;
  */
 public interface PerimetersManager {
 
-    <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz) throws PerimeterUpdateException;
+    <T extends PerimeterEditor> T openPerimeterEditor(String name, Class<? extends Perimeter> clz);
 
-    <T extends PerimeterEditor> T openPerimeterEditor(Perimeter perimeter) throws PerimeterUpdateException;
-
-    <T extends PerimeterEditor, P extends Perimeter> T getPerimeterEditor(P perimeter);
-
-    <T extends PerimeterEditor, P extends Perimeter> ClosingPair<P> closePerimeterEditor(T perimeterEditor, boolean shouldSave) throws PerimeterUpdateException;
+    <T extends PerimeterEditor> T openPerimeterEditor(Perimeter perimeter);
 
     List<BaseObject> getAllPerimeters();
 
-    <P extends Perimeter> void delete(P perimeter) throws PerimeterUpdateException;
-
-    <P extends Perimeter> P update(P perimeter) throws PerimeterUpdateException;
-
     List<BaseObject> getAllModifiedPerimeters();
+
+    boolean isDirty(BaseObject item);
+
+    Collection<ClosingPair<Perimeter>> flushAllItems(boolean isPublish);
 
     <P extends Perimeter> List<Point> getPoints(P perimeter);
 
-    <P extends Perimeter> P clonePerimeter(P perimeter) throws PerimeterUpdateException;
+    void removeItem(BaseObject point);
 
-    <P extends Perimeter> Collection<ClosingPair<P>> closeAllPerimeterEditors(boolean shouldSave);
+    Perimeter getPerimeter(String missionUid);
 
-    int loadEditors();
+    void updateItem(BaseObject item);
+
+    Point getPointItem(String child);
+
+    void load(BaseObject item);
+
 }

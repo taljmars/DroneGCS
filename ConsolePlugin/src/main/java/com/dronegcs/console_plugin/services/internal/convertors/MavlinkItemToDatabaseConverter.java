@@ -59,7 +59,7 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
             LOGGER.debug("Conversion done");
             return mission;
         }
-        catch (MavlinkConvertionException | MissionUpdateException e) {
+        catch (MavlinkConvertionException e) {
             LOGGER.error("Failed to convert mission", e);
             throw new MissionCompilationException(e.getMessage());
         }
@@ -67,50 +67,34 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
 
     @Override
     public void visit(MavlinkLand mavlinkLand) throws MavlinkConvertionException {
-        try{
-            LOGGER.debug("Converting Mavlink Land to DB Land");
-            Land land = missionEditor.createLandPoint();
+        LOGGER.debug("Converting Mavlink Land to DB Land");
+        Land land = missionEditor.createLandPoint();
 
-            land.setAltitude(mavlinkLand.getAltitude());
-            land.setLat(mavlinkLand.getCoordinate().getLat());
-            land.setLon(mavlinkLand.getCoordinate().getLon());
-            LOGGER.debug("Mavlink Land:\n{}\nWas converted to:\n{}", mavlinkLand, land);
-            missionEditor.updateMissionItem(land);
-
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        land.setAltitude(mavlinkLand.getAltitude());
+        land.setLat(mavlinkLand.getCoordinate().getLat());
+        land.setLon(mavlinkLand.getCoordinate().getLon());
+        LOGGER.debug("Mavlink Land:\n{}\nWas converted to:\n{}", mavlinkLand, land);
+        missionEditor.updateMissionItem(land);
     }
 
     @Override
     public void visit(MavlinkReturnToHome mavlinkReturnToHome) throws MavlinkConvertionException {
-        try{
-            LOGGER.debug("Converting Mavlink ReturnToLunch to DB ReturnToLunch");
-            ReturnToHome returnToHome = missionEditor.createReturnToLaunch();
+        LOGGER.debug("Converting Mavlink ReturnToLunch to DB ReturnToLunch");
+        ReturnToHome returnToHome = missionEditor.createReturnToLaunch();
 
-            returnToHome.setAltitude(mavlinkReturnToHome.getHeight());
-            LOGGER.debug("Mavlink MavlinkReturnToHome:\n{}\nWas converted to:\n{}", mavlinkReturnToHome, returnToHome);
-            missionEditor.updateMissionItem(returnToHome);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        returnToHome.setAltitude(mavlinkReturnToHome.getHeight());
+        LOGGER.debug("Mavlink MavlinkReturnToHome:\n{}\nWas converted to:\n{}", mavlinkReturnToHome, returnToHome);
+        missionEditor.updateMissionItem(returnToHome);
     }
 
     @Override
     public void visit(MavlinkTakeoff mavlinkTakeoff) throws MavlinkConvertionException {
-        try {
-            LOGGER.debug("Converting Mavlink Takeoff to DB Takeoff");
-            Takeoff takeoff = missionEditor.createTakeOff();
+        LOGGER.debug("Converting Mavlink Takeoff to DB Takeoff");
+        Takeoff takeoff = missionEditor.createTakeOff();
 
-            takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
-            LOGGER.debug("Mavlink MavlinkTakeoff:\n{}\nWas converted to:\n{}", mavlinkTakeoff, takeoff);
-            missionEditor.updateMissionItem(takeoff);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        takeoff.setFinishedAlt(mavlinkTakeoff.getFinishedAlt());
+        LOGGER.debug("Mavlink MavlinkTakeoff:\n{}\nWas converted to:\n{}", mavlinkTakeoff, takeoff);
+        missionEditor.updateMissionItem(takeoff);
     }
 
     @Override
@@ -136,20 +120,15 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
 
     @Override
     public void visit(MavlinkRegionOfInterest mavlinkRegionOfInterest) throws MavlinkConvertionException {
-        try{
-            LOGGER.debug("Converting Mavlink RegionOfInterest to DB ROI");
-            RegionOfInterest regionOfInterest = missionEditor.createRegionOfInterest();
+        LOGGER.debug("Converting Mavlink RegionOfInterest to DB ROI");
+        RegionOfInterest regionOfInterest = missionEditor.createRegionOfInterest();
 
-            regionOfInterest.setAltitude(mavlinkRegionOfInterest.getAltitude());
-            regionOfInterest.setLat(mavlinkRegionOfInterest.getCoordinate().getLat());
-            regionOfInterest.setLon(mavlinkRegionOfInterest.getCoordinate().getLon());
+        regionOfInterest.setAltitude(mavlinkRegionOfInterest.getAltitude());
+        regionOfInterest.setLat(mavlinkRegionOfInterest.getCoordinate().getLat());
+        regionOfInterest.setLon(mavlinkRegionOfInterest.getCoordinate().getLon());
 
-            LOGGER.debug("Mavlink MavlinkROI:\n{}\nWas converted to:\n{}", mavlinkRegionOfInterest, regionOfInterest);
-            missionEditor.updateMissionItem(regionOfInterest);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        LOGGER.debug("Mavlink MavlinkROI:\n{}\nWas converted to:\n{}", mavlinkRegionOfInterest, regionOfInterest);
+        missionEditor.updateMissionItem(regionOfInterest);
     }
 
     @Override
@@ -187,94 +166,69 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
 
     @Override
     public void visit(MavlinkSplineWaypoint mavlinkSplineWaypoint) throws MavlinkConvertionException {
-        try{
-            LOGGER.debug("Converting Mavlink SplineWaypoint to DB SplineWaypoint");
-            SplineWaypoint splineWaypoint = missionEditor.createSplineWaypoint();
+        LOGGER.debug("Converting Mavlink SplineWaypoint to DB SplineWaypoint");
+        SplineWaypoint splineWaypoint = missionEditor.createSplineWaypoint();
 
-            splineWaypoint.setDelay(mavlinkSplineWaypoint.getDelay());
-            splineWaypoint.setLat(mavlinkSplineWaypoint.getCoordinate().getLat());
-            splineWaypoint.setLon(mavlinkSplineWaypoint.getCoordinate().getLon());
-            LOGGER.debug("Mavlink MavlinkSplineWaypoint:\n{}\nWas converted to:\n{}", mavlinkSplineWaypoint, splineWaypoint);
-            missionEditor.updateMissionItem(splineWaypoint);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        splineWaypoint.setDelay(mavlinkSplineWaypoint.getDelay());
+        splineWaypoint.setLat(mavlinkSplineWaypoint.getCoordinate().getLat());
+        splineWaypoint.setLon(mavlinkSplineWaypoint.getCoordinate().getLon());
+        LOGGER.debug("Mavlink MavlinkSplineWaypoint:\n{}\nWas converted to:\n{}", mavlinkSplineWaypoint, splineWaypoint);
+        missionEditor.updateMissionItem(splineWaypoint);
     }
 
     @Override
     public void visit(MavlinkWaypoint mavlinkWaypoint) throws MavlinkConvertionException {
-        try {
-            LOGGER.debug("Converting Mavlink Waypoint to DB Waypoint");
-            Waypoint waypoint = missionEditor.createWaypoint();
+        LOGGER.debug("Converting Mavlink Waypoint to DB Waypoint");
+        Waypoint waypoint = missionEditor.createWaypoint();
 
-            waypoint.setDelay(mavlinkWaypoint.getDelay());
-            waypoint.setAcceptanceRadius(mavlinkWaypoint.getAcceptanceRadius());
-            waypoint.setOrbitalRadius(mavlinkWaypoint.getOrbitalRadius());
-            waypoint.setOrbitCCW(mavlinkWaypoint.isOrbitCCW());
-            waypoint.setYawAngle(mavlinkWaypoint.getYawAngle());
-            waypoint.setLat(mavlinkWaypoint.getCoordinate().getLat());
-            waypoint.setLon(mavlinkWaypoint.getCoordinate().getLon());
-            waypoint.setAltitude(mavlinkWaypoint.getAltitude());
-            LOGGER.debug("Mavlink MavlinkWaypoint:\n{}\nWas converted to:\n{}", mavlinkWaypoint, waypoint);
-            missionEditor.updateMissionItem(waypoint);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        waypoint.setDelay(mavlinkWaypoint.getDelay());
+        waypoint.setAcceptanceRadius(mavlinkWaypoint.getAcceptanceRadius());
+        waypoint.setOrbitalRadius(mavlinkWaypoint.getOrbitalRadius());
+        waypoint.setOrbitCCW(mavlinkWaypoint.isOrbitCCW());
+        waypoint.setYawAngle(mavlinkWaypoint.getYawAngle());
+        waypoint.setLat(mavlinkWaypoint.getCoordinate().getLat());
+        waypoint.setLon(mavlinkWaypoint.getCoordinate().getLon());
+        waypoint.setAltitude(mavlinkWaypoint.getAltitude());
+        LOGGER.debug("Mavlink MavlinkWaypoint:\n{}\nWas converted to:\n{}", mavlinkWaypoint, waypoint);
+        missionEditor.updateMissionItem(waypoint);
     }
 
     @Override
     public void visit(MavlinkLoiterTurns mavlinkLoiterTurns) throws MavlinkConvertionException {
-        try {
-            LOGGER.debug("Converting Mavlink LoiterTurns to DB LoiterTurns");
-            LoiterTurns loiterTurns = missionEditor.createLoiterTurns();
+        LOGGER.debug("Converting Mavlink LoiterTurns to DB LoiterTurns");
+        LoiterTurns loiterTurns = missionEditor.createLoiterTurns();
 
-            loiterTurns.setAltitude(mavlinkLoiterTurns.getAltitude());
-            loiterTurns.setTurns(mavlinkLoiterTurns.getTurns());
-            loiterTurns.setLat(mavlinkLoiterTurns.getCoordinate().getLat());
-            loiterTurns.setLon(mavlinkLoiterTurns.getCoordinate().getLon());
-            LOGGER.debug("Mavlink MavlinkLoiterTurns:\n{}\nWas converted to:\n{}", mavlinkLoiterTurns, loiterTurns);
-            missionEditor.updateMissionItem(loiterTurns);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        loiterTurns.setAltitude(mavlinkLoiterTurns.getAltitude());
+        loiterTurns.setTurns(mavlinkLoiterTurns.getTurns());
+        loiterTurns.setLat(mavlinkLoiterTurns.getCoordinate().getLat());
+        loiterTurns.setLon(mavlinkLoiterTurns.getCoordinate().getLon());
+        LOGGER.debug("Mavlink MavlinkLoiterTurns:\n{}\nWas converted to:\n{}", mavlinkLoiterTurns, loiterTurns);
+        missionEditor.updateMissionItem(loiterTurns);
     }
 
     @Override
     public void visit(MavlinkLoiterUnlimited mavlinkLoiterUnlimited) throws MavlinkConvertionException {
-        try {
-            LOGGER.debug("Converting Mavlink LoiterUnlimited to DB Loiter Unlimited");
-            LoiterUnlimited loiterUnlimited = missionEditor.createLoiterUnlimited();
+        LOGGER.debug("Converting Mavlink LoiterUnlimited to DB Loiter Unlimited");
+        LoiterUnlimited loiterUnlimited = missionEditor.createLoiterUnlimited();
 
-            loiterUnlimited.setAltitude(mavlinkLoiterUnlimited.getAltitude());
-            loiterUnlimited.setLat(mavlinkLoiterUnlimited.getCoordinate().getLat());
-            loiterUnlimited.setLon(mavlinkLoiterUnlimited.getCoordinate().getLon());
-            LOGGER.debug("Mavlink MavlinkLoiterUnlimited:\n{}\nWas converted to:\n{}", mavlinkLoiterUnlimited, loiterUnlimited);
-            missionEditor.updateMissionItem(loiterUnlimited);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        loiterUnlimited.setAltitude(mavlinkLoiterUnlimited.getAltitude());
+        loiterUnlimited.setLat(mavlinkLoiterUnlimited.getCoordinate().getLat());
+        loiterUnlimited.setLon(mavlinkLoiterUnlimited.getCoordinate().getLon());
+        LOGGER.debug("Mavlink MavlinkLoiterUnlimited:\n{}\nWas converted to:\n{}", mavlinkLoiterUnlimited, loiterUnlimited);
+        missionEditor.updateMissionItem(loiterUnlimited);
     }
 
     @Override
     public void visit(MavlinkLoiterTime mavlinkLoiterTime) throws MavlinkConvertionException {
-        try {
-            LOGGER.debug("Converting Mavlink LoiterTime to DB LoiterTime");
-            LoiterTime loiterTime = missionEditor.createLoiterTime();
+        LOGGER.debug("Converting Mavlink LoiterTime to DB LoiterTime");
+        LoiterTime loiterTime = missionEditor.createLoiterTime();
 
-            loiterTime.setAltitude(mavlinkLoiterTime.getAltitude());
-            LOGGER.error("TAL {} {} ", loiterTime.getAltitude(), mavlinkLoiterTime.getAltitude());
-            loiterTime.setSeconds(mavlinkLoiterTime.getSeconds());
-            loiterTime.setLat(mavlinkLoiterTime.getCoordinate().getLat());
-            loiterTime.setLon(mavlinkLoiterTime.getCoordinate().getLon());
-            LOGGER.debug("Mavlink MavlinkLoiterTime:\n{}\nWas converted to:\n{}", mavlinkLoiterTime, loiterTime);
-            missionEditor.updateMissionItem(loiterTime);
-        }
-        catch (MissionUpdateException e) {
-            throw new MavlinkConvertionException(e.getMessage());
-        }
+        loiterTime.setAltitude(mavlinkLoiterTime.getAltitude());
+        LOGGER.error("TAL {} {} ", loiterTime.getAltitude(), mavlinkLoiterTime.getAltitude());
+        loiterTime.setSeconds(mavlinkLoiterTime.getSeconds());
+        loiterTime.setLat(mavlinkLoiterTime.getCoordinate().getLat());
+        loiterTime.setLon(mavlinkLoiterTime.getCoordinate().getLon());
+        LOGGER.debug("Mavlink MavlinkLoiterTime:\n{}\nWas converted to:\n{}", mavlinkLoiterTime, loiterTime);
+        missionEditor.updateMissionItem(loiterTime);
     }
 }

@@ -3,7 +3,6 @@ package com.dronegcs.console.controllers.internalPanels;
 import com.db.gui.persistence.scheme.Layer;
 import com.db.gui.persistence.scheme.LayersGroup;
 import com.db.persistence.scheme.BaseObject;
-import com.dronedb.persistence.scheme.Mission;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.dashboard.Dashboard;
@@ -243,25 +242,29 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             dialogManagerSvc.showAlertMessageDialog("Editor is currently open, must be closed first");
             return;
         }
-        sessionsSvcRemote.publish();
 
         LOGGER.debug("Start handling published layers");
 
-        Collection<ClosingPair<Layer>> draws = drawManager.closeAllDrawLayersEditors(true);
+        Collection<ClosingPair<Layer>> draws = drawManager.flushAllItems(true);
         LOGGER.debug("Handling published draws (amount of modified draws={})", draws.size());
         handleClosingPair(draws);
 
-        Collection<ClosingPair<Mission>> missions = missionsManager.closeAllMissionEditors(true);
-        LOGGER.debug("Handling published missions (amount of modified mission={})", missions.size());
-        handleClosingPair(missions);
+        Collection<ClosingPair<BaseObject>> missionItems = missionsManager.flushAllItems(true);
+        LOGGER.debug("Handling published missions (amount of modified mission items={})", missionItems.size());
+        handleClosingPair(missionItems);
 
-        Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.closeAllPerimeterEditors(true);
+        Collection<ClosingPair<Perimeter>> perimeters = perimetersManager.flushAllItems(true);
         LOGGER.debug("Handling published perimeters (amount of modified perimeters={})", perimeters.size());
         handleClosingPair(perimeters);
 
-        Collection<ClosingPair<LayersGroup>> layersGroups = layersGroupsManager.closeAllLayersGroupEditors(true);
-        LOGGER.debug("Handling published perimeters (amount of modified layers group={})", perimeters.size());
+        Collection<ClosingPair<LayersGroup>> layersGroups = layersGroupsManager.flushAllItems(true);
+        LOGGER.debug("Handling published layer groups (amount of modified layers group={})", layersGroups.size());
         handleClosingPair(layersGroups);
+
+        sessionsSvcRemote.publish();
+
+        int objectsAmount = draws.size() + missionItems.size() + layersGroups.size() + perimeters.size();
+        loggerDisplayerSvc.logGeneral(String.format("%d objects saved successfully", objectsAmount));
 
         operationalViewTree.regenerateTree();
         // TODO: find better solution than reload - it too aggressive - also fix the icons
@@ -272,9 +275,9 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     public <T extends BaseObject> void handleClosingPair(Collection<ClosingPair<T>> closingPairs) {
         closingPairs.forEach((ClosingPair<T> closingPair) -> {
             LOGGER.debug("Handling Object {} , isDeleted: {}", closingPair.getObject(), closingPair.isDeleted());
-            T layer = closingPair.getObject();
+            T object = closingPair.getObject();
 
-            AbstractLayer guiLayer = layerManager.getLayerByValue(layer, (guiLayer1, l) -> {
+            AbstractLayer guiLayer = layerManager.getLayerByValue(object, (guiLayer1, l) -> {
                 BaseObject treeObj = (BaseObject) ((AbstractLayer) guiLayer1).getPayload();
                 BaseObject searchObject = (BaseObject) l;
                 if (treeObj.getKeyId().getObjId().equals(searchObject.getKeyId().getObjId()))
@@ -283,13 +286,13 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             });
 
             if (guiLayer != null) {
-                LOGGER.debug("Found layer {}", layer);
+                LOGGER.debug("Found layer {}", object);
                 // Layer will not be exist in case of deletion
                 ((EditedLayer) guiLayer).stopEditing();
                 guiLayer.setWasEdited(false);
             }
             else {
-                LOGGER.error("Failed to find layer {}", layer);
+                LOGGER.error("Failed to find layer {}", object);
             }
         });
     }
@@ -304,10 +307,10 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         }
         sessionsSvcRemote.discard();
 
-        drawManager.closeAllDrawLayersEditors(false);
-        missionsManager.closeAllMissionEditors(false);
-        perimetersManager.closeAllPerimeterEditors(false);
-        layersGroupsManager.closeAllLayersGroupEditors(false);
+        drawManager.flushAllItems(false);
+        missionsManager.flushAllItems(false);
+        perimetersManager.flushAllItems(false);
+        layersGroupsManager.flushAllItems(false);
 
         operationalViewTree.reloadData();
 

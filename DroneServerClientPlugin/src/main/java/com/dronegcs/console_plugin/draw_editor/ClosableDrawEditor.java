@@ -8,9 +8,7 @@ import com.dronegcs.console_plugin.ClosingPair;
  */
 public interface ClosableDrawEditor extends DrawEditor {
 
-    Layer open(Layer layer) throws DrawUpdateException;
+    Layer open(Layer layer);
 
-    Layer open(String layerName) throws DrawUpdateException;
-
-    ClosingPair<Layer> close(boolean shouldSave);
+    Layer open(String layerName);
 }

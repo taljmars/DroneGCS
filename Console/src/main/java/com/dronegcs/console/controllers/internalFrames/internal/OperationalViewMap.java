@@ -550,7 +550,7 @@ OnDroneListener, EventHandler<ActionEvent> {
     public void onApplicationEvent(QuadGuiEvent command) {
         switch (command.getCommand()) {
             case EDITMODE_EXISTING_LAYER_START:
-                EditModeOn();
+//                EditModeOn();
                 AbstractLayer layer = (AbstractLayer) command.getSource();
                 if (layer instanceof LayerMission) {
                     LOGGER.debug("Working on DroneMission Layer");

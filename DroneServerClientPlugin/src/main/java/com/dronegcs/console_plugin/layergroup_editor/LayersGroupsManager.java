@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.layergroup_editor;
 
 
+import com.db.gui.persistence.scheme.BaseLayer;
 import com.db.gui.persistence.scheme.LayersGroup;
 import com.db.persistence.scheme.BaseObject;
 import com.dronegcs.console_plugin.ClosingPair;
@@ -13,25 +14,26 @@ import java.util.List;
  */
 public interface LayersGroupsManager {
 
-    <T extends LayersGroupEditor> T openLayersGroupEditor(String layersGroupName) throws LayersGroupUpdateException;
+    <T extends LayersGroupEditor> T openLayersGroupEditor(String layersGroupName);
 
-    <T extends LayersGroupEditor> T openLayersGroupEditor(LayersGroup layersGroup) throws LayersGroupUpdateException;
+    <T extends LayersGroupEditor> T openLayersGroupEditor(LayersGroup layersGroup);
 
-    <T extends LayersGroupEditor> T getLayersGroupEditor(LayersGroup layersGroup);
+    List<BaseObject> getAllLayers();
 
-    <T extends LayersGroupEditor> ClosingPair<LayersGroup> closeLayersGroupEditor(T layersGroupEditor, boolean shouldSave);
+    void refreshAllLayers();
 
     List<BaseObject> getAllLayersGroup();
 
     List<BaseObject> getAllModifiedLayersGroup();
 
-    void delete(LayersGroup layersGroup);
+    Collection<ClosingPair<LayersGroup>> flushAllItems(boolean shouldSave);
 
-    LayersGroup update(LayersGroup layersGroup) throws LayersGroupUpdateException;
+    BaseLayer getLayerItem(String uuid);
 
-    LayersGroup cloneLayersGroup(LayersGroup layersGroup) throws LayersGroupUpdateException;
+    void removeItem(BaseLayer obj);
 
-    Collection<ClosingPair<LayersGroup>> closeAllLayersGroupEditors(boolean shouldSave);
+    void updateItem(BaseLayer layer);
 
-    int reloadEditors();
+    void load(BaseLayer layer);
+
 }

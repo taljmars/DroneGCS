@@ -11,9 +11,10 @@ import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.QueryRequestRemote;
 import com.db.persistence.scheme.QueryResponseRemote;
 import com.dronegcs.console_plugin.draw_editor.DrawUpdateException;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupEditor;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
 import com.gui.core.layers.AbstractLayer;
@@ -38,11 +39,13 @@ public class LayerManagerDbWrapper extends LayerManager {
 
     private LayerGroupEditable rootTemplate;
 
+    TreeMap<UUID, AbstractLayer> tree;
+
     @Autowired
     private QuerySvcRemoteWrapper querySvcRemote;
 
     @Autowired
-    private ObjectCrudSvcRemoteWrapper objectCrudSvc;
+    private LayersGroupsManager layersGroupManager;
 
     @Autowired
     private SessionsSvcRemoteWrapper sessionsSvcRemoteWrapper;
@@ -56,26 +59,30 @@ public class LayerManagerDbWrapper extends LayerManager {
 
     @PostConstruct
     private void init() {
+        tree = new TreeMap<>();
         dataBaseUUID_layerGroups_Map = new HashMap<>();
         rootTemplate = new LayerGroupEditable("Layers");
         rootTemplate.addChildren(new LayerGroupEditable("Missions"));
         rootTemplate.addChildren(new LayerGroupEditable("Perimeters"));
         rootTemplate.addChildren(new LayerGroupEditable("General"));
 
+        tree.put(rootTemplate.getUuid(), rootTemplate);
         guiUUID_dataBaseUUID_Map = new HashMap<>();
 
     }
 
     private void sync() {
         LOGGER.debug("Syncing Layers");
+        layersGroupManager.refreshAllLayers();;
         List<BaseObject> allLayers = getAllLayers();
         if (allLayers.isEmpty()) {
             LOGGER.debug("There are no layers exist for this user");
             loadTemplate();
+            allLayers = getAllLayers();
         }
 
-        allLayers = getAllLayers();
-        List<BaseObject> allModifiedLayers = getAllModifiedLayers();
+//        List<BaseObject> allModifiedLayers = getAllModifiedLayers();
+        List<BaseObject> allModifiedLayers = new ArrayList<>();
         loadExistingData(allLayers, allModifiedLayers);
 
         synced = true;
@@ -85,17 +92,17 @@ public class LayerManagerDbWrapper extends LayerManager {
         try {
             LOGGER.debug("Loading Template");
             LOGGER.debug("Creating Layer group named '" + rootTemplate.getName() + "' from template");
-            LayersGroup rootLayersGroupDB = objectCrudSvc.create(LayersGroup.class.getCanonicalName());
-            rootLayersGroupDB.setRoot(true);
-            rootLayersGroupDB.setName(rootTemplate.getName());
-            loadTemplate(rootTemplate, rootLayersGroupDB);
+            LayersGroupEditor layerEditor = layersGroupManager.openLayersGroupEditor(rootTemplate.getName());
+            layerEditor.getLayersGroup().setRoot(true);
+            loadTemplate(rootTemplate, layerEditor.getLayersGroup());
+
+            layersGroupManager.flushAllItems(true);
 
             LOGGER.debug("Template was generated for user - publish it for constant use");
             sessionsSvcRemoteWrapper.publish();
             LOGGER.debug("First publish (during boot - finished)");
         }
-        catch (ObjectInstanceRemoteException e) {
-            LOGGER.error("Failed to create root instance", e);
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -110,13 +117,14 @@ public class LayerManagerDbWrapper extends LayerManager {
                 }
                 LayerGroupEditable layerGroupGui = (LayerGroupEditable) layer;
 
-                LOGGER.debug("Creating Layer group named '" + layerGroupGui.getName() + "' from template");
-                BaseLayer layersGroupDb = objectCrudSvc.create(LayersGroup.class.getCanonicalName());
-                layersGroupDb.setName(layerGroupGui.getName());
-                layersGroupDb = loadTemplate((LayerGroupEditable) layer, layersGroupDb);
+                LayersGroupEditor layerEditor = layersGroupManager.openLayersGroupEditor(layerGroupGui.getName());
 
-                layersGroupDb = objectCrudSvc.update(layersGroupDb);
-                children.add(layersGroupDb.getKeyId().getObjId());
+                LOGGER.debug("Creating Layer group named '" + layerGroupGui.getName() + "' from template");
+
+                BaseLayer layersGroupDbChild = layerEditor.getLayersGroup();
+                layersGroupDbChild = loadTemplate((LayerGroupEditable) layer, layersGroupDbChild);
+
+                children.add(layersGroupDbChild.getKeyId().getObjId());
             }
             if (layersGroupDB instanceof LayersGroup)
                 ((LayersGroup) layersGroupDB).setLayersUids(children);
@@ -125,11 +133,10 @@ public class LayerManagerDbWrapper extends LayerManager {
                 System.exit(-3);
             }
 
-            layersGroupDB = objectCrudSvc.update(layersGroupDB);
             layersGroupGui.setPayload(layersGroupDB);
             return layersGroupDB;
         }
-        catch (ObjectInstanceRemoteException | DatabaseValidationRemoteException e) {
+        catch (Exception e) {
             LOGGER.error("Failed to create instance", e);
             System.exit(-1);
         }
@@ -211,23 +218,24 @@ public class LayerManagerDbWrapper extends LayerManager {
     }
 
     private List<BaseObject> getAllLayers() {
-        List<BaseObject> layersGroupList = new ArrayList();
-        QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
-        QueryResponseRemote queryResponseRemote;
-
-        queryRequestRemote.setClz(com.db.gui.persistence.scheme.LayersGroup.class.getCanonicalName());
-        queryRequestRemote.setQuery("GetAllLayersGroup");
-        queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        layersGroupList.addAll(queryResponseRemote.getResultList());
-        LOGGER.debug("There are currently {} layers Group in total", layersGroupList .size());
-
-        queryRequestRemote.setClz(com.db.gui.persistence.scheme.Layer.class.getCanonicalName());
-        queryRequestRemote.setQuery("GetAllLayers");
-        queryResponseRemote = querySvcRemote.query(queryRequestRemote);
-        layersGroupList.addAll(queryResponseRemote.getResultList());
-        LOGGER.debug("There are currently {} layers Group in total", layersGroupList .size());
-
-        return layersGroupList;
+        return layersGroupManager.getAllLayers();
+//        List<BaseObject> layersGroupList = new ArrayList();
+//        QueryRequestRemote queryRequestRemote = new QueryRequestRemote();
+//        QueryResponseRemote queryResponseRemote;
+//
+//        queryRequestRemote.setClz(com.db.gui.persistence.scheme.LayersGroup.class.getCanonicalName());
+//        queryRequestRemote.setQuery("GetAllLayersGroup");
+//        queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+//        layersGroupList.addAll(queryResponseRemote.getResultList());
+//        LOGGER.debug("There are currently {} layers Group in total", layersGroupList .size());
+//
+//        queryRequestRemote.setClz(com.db.gui.persistence.scheme.Layer.class.getCanonicalName());
+//        queryRequestRemote.setQuery("GetAllLayers");
+//        queryResponseRemote = querySvcRemote.query(queryRequestRemote);
+//        layersGroupList.addAll(queryResponseRemote.getResultList());
+//        LOGGER.debug("There are currently {} layers Group in total", layersGroupList .size());
+//
+//        return layersGroupList;
     }
 
     public List<BaseObject> getAllModifiedLayers() {
@@ -271,26 +279,24 @@ public class LayerManagerDbWrapper extends LayerManager {
     public void create(AbstractLayer layer) {
         LOGGER.debug("Adding Layer to the database: " + layer.toString());
         try {
+            String parentDBUid = guiUUID_dataBaseUUID_Map.get(layer.getParent().getUuid().toString());
+            LayersGroup parent = (LayersGroup) layersGroupManager.getLayerItem(parentDBUid);
+            LOGGER.debug("Parent found '{}': {}", parent.getName(), parent);
+
             BaseLayer dbLayer;
             if (layer instanceof LayerGroupEditable) {
                 LOGGER.debug("Create group layer");
-                dbLayer = objectCrudSvc.create(LayersGroup.class.getCanonicalName().toString());
-                dbLayer.setName(layer.getName());
-                List<String> uuid = new ArrayList<>();
-                for (AbstractLayer l : ((LayerGroupEditable) layer).getChildren()) {
-                    LOGGER.debug("Add child UUID to parent");
-                    uuid.add(guiUUID_dataBaseUUID_Map.get(l.getUuid().toString()));
-                }
-                ((LayersGroup) dbLayer).setLayersUids(uuid);
+                LayersGroupEditor editor = layersGroupManager.openLayersGroupEditor(parent);
+                dbLayer = editor.addSubGroupLayer(layer.getName());
                 LOGGER.debug("Updating layer with children");
-                dbLayer = objectCrudSvc.update(dbLayer);
                 layer.setPayload(dbLayer);
             }
             else {
                 LOGGER.debug("Not a group layer, creating simple layer");
-                dbLayer = objectCrudSvc.create(Layer.class.getCanonicalName().toString());
-                dbLayer.setName(layer.getName());
-                dbLayer = objectCrudSvc.update(dbLayer);
+
+                LayersGroupEditor editor = layersGroupManager.openLayersGroupEditor(parent);
+                dbLayer = editor.addSubLayer(layer.getName());
+
                 LOGGER.debug("Layer object was successfully created");
                 LOGGER.debug("Loading dbLayerLoader for layer '{}'", layer.getClass());
                 dbLayer = dbLayerLoaderMap.get(layer.getClass()).load(layer, dbLayer);
@@ -306,49 +312,29 @@ public class LayerManagerDbWrapper extends LayerManager {
             dataBaseUUID_layerGroups_Map.put(dbLayer.getKeyId().getObjId(), layer);
             LOGGER.debug("Updating map table, guiUUID -> databaseUUID");
             guiUUID_dataBaseUUID_Map.put(layer.getUuid().toString(), dbLayer.getKeyId().getObjId());
-
-            // Updating parent
-            LOGGER.debug("Get parent layer");
-            BaseLayer parent = objectCrudSvc.read(guiUUID_dataBaseUUID_Map.get(layer.getParent().getUuid().toString()));
-//            if (parent instanceof LayersGroupRoot) {
-//                ((LayersGroupRoot) parent).getLayersUids().add(dbLayer.getKeyId().getObjId());
-//            }
-            if (parent instanceof LayersGroup) {
-                LOGGER.debug("Add layer UUID to it parent");
-                ((LayersGroup) parent).getLayersUids().add(dbLayer.getKeyId().getObjId());
-            }
-            LOGGER.debug("Updating parent");
-            objectCrudSvc.update(parent);
         }
-        catch (Throwable e) {
+        catch (MissionUpdateException | ObjectNotFoundRemoteException | DatabaseValidationRemoteException
+                | ObjectInstanceRemoteException | PerimeterUpdateException | DrawUpdateException e) {
             LOGGER.error("Failed to create layer", e);
         }
     }
 
     public void delete(AbstractLayer layer) {
-        try {
-            LOGGER.debug("Removing Layer: " + layer);
+        LOGGER.debug("Removing Layer: " + layer);
 
-            // Updating pointers
-            String dataBaseUUID = guiUUID_dataBaseUUID_Map.remove(layer.getUuid().toString());
-            dataBaseUUID_layerGroups_Map.remove(dataBaseUUID);
+        // Updating pointers
+        String dataBaseUUID = guiUUID_dataBaseUUID_Map.remove(layer.getUuid().toString());
+        dataBaseUUID_layerGroups_Map.remove(dataBaseUUID);
 
-            BaseLayer deletionCandidate = objectCrudSvc.read(dataBaseUUID);
 
-            // Updating parents
-            BaseLayer parent = objectCrudSvc.read(guiUUID_dataBaseUUID_Map.get(layer.getParent().getUuid().toString()));
-//            if (parent instanceof LayersGroupRoot) {
-//                ((LayersGroupRoot) parent).getLayersUids().remove(deletionCandidate.getKeyId().getObjId());
-//            }
-            if (parent instanceof LayersGroup) {
-                ((LayersGroup) parent).getLayersUids().remove(deletionCandidate.getKeyId().getObjId());
-            }
-            objectCrudSvc.update(parent);
+        // Updating parents
+        String parentGuiId = layer.getParent().getUuid().toString();
+        String parentDataBaseUUID = guiUUID_dataBaseUUID_Map.get(parentGuiId);
 
-            objectCrudSvc.delete(deletionCandidate);
-        }
-        catch (Exception e) {
-            LOGGER.error("Failed to delete layer", e);
+        BaseLayer parent = layersGroupManager.getLayerItem(parentDataBaseUUID);
+        if (parent instanceof LayersGroup) {
+            ((LayersGroup) parent).getLayersUids().remove(dataBaseUUID);
+            layersGroupManager.updateItem(parent);
         }
     }
 
@@ -363,7 +349,7 @@ public class LayerManagerDbWrapper extends LayerManager {
         BaseLayer load(AbstractLayer guiLayer, BaseLayer dbLayer) throws ObjectNotFoundRemoteException, MissionUpdateException, DatabaseValidationRemoteException, ObjectInstanceRemoteException, PerimeterUpdateException, DrawUpdateException;
     }
 
-    public void registerGuiLayerFromDbLayerLoader(Class<? extends BaseLayer> layerClass, GuiLayer_From_DatabaseLayer_Loader guiLayerLoader2) {
+    public void registerEventHandlerOnDbLayerChanges(Class<? extends BaseLayer> layerClass, GuiLayer_From_DatabaseLayer_Loader guiLayerLoader2) {
         if (guiLayerLoaderMap == null)
             guiLayerLoaderMap = new HashMap<>();
 
@@ -373,7 +359,7 @@ public class LayerManagerDbWrapper extends LayerManager {
         guiLayerLoaderMap.get(layerClass).add(guiLayerLoader2);
     }
 
-    public void registerDbLayerFromGuiLayerLoader(Class<? extends AbstractLayer> layerClass, DatabaseLayer_From_GuiLayer_Loader guiLayerLoader3) {
+    public void registerEventHandlerOnGuiLayerChanges(Class<? extends AbstractLayer> layerClass, DatabaseLayer_From_GuiLayer_Loader guiLayerLoader3) {
         if (dbLayerLoaderMap == null)
             dbLayerLoaderMap = new HashMap<>();
 

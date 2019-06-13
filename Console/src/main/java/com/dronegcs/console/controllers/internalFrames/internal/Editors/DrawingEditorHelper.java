@@ -1,6 +1,8 @@
 package com.dronegcs.console.controllers.internalFrames.internal.Editors;
 
+import com.db.gui.persistence.scheme.BaseLayer;
 import com.db.gui.persistence.scheme.Layer;
+import com.db.gui.persistence.scheme.Shape;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.CirclePerimeter;
@@ -13,7 +15,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerManagerDbWrapper;
 import com.dronegcs.console_plugin.draw_editor.DrawEditor;
 import com.dronegcs.console_plugin.draw_editor.DrawManager;
-import com.dronegcs.console_plugin.draw_editor.DrawUpdateException;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.gui.core.layers.AbstractLayer;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -44,25 +46,26 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 	private DrawEditor drawEditor;
 
 	@Autowired
+	public LayersGroupsManager layerGroupManager;
+
+	@Autowired
 	private DrawManager drawManager;
 
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Autowired
-	private ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
-
 	public DrawingEditorHelper(@Autowired LayerManagerDbWrapper layerManagerDbWrapper) {
 
-		layerManagerDbWrapper.registerDbLayerFromGuiLayerLoader(LayerDraw.class, (guiLayer, dbLayer) -> {
+		layerManagerDbWrapper.registerEventHandlerOnGuiLayerChanges(LayerDraw.class, (guiLayer, dbLayer) -> {
 			DrawEditor drawEditor = drawManager.openDrawLayerEditor((Layer) dbLayer);
 			return drawEditor.getModifiedLayer();
 		});
 
 		// Sync the helper to react to layer manager loading of gui layer from db layer
-		layerManagerDbWrapper.registerGuiLayerFromDbLayerLoader(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
+		layerManagerDbWrapper.registerEventHandlerOnDbLayerChanges(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
 			@Override
 			public boolean isRelevant(BaseObject layer) throws ObjectNotFoundRemoteException {
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
 				if (((Layer) layer).getObjectsUids().isEmpty())
 					return true;
 				String coreObjId = ((Layer) layer).getObjectsUids().iterator().next();
@@ -77,6 +80,15 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 
 			@Override
 			public AbstractLayer load(BaseObject layer) throws ObjectNotFoundRemoteException {
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
+				Layer coreObj = (Layer) layer;
+				drawManager.load(layer);
+				for (String child : coreObj.getObjectsUids()) {
+					Shape item = objectCrudSvcRemoteWrapper.read(child);
+					drawManager.load(item);
+				}
+
+				layerGroupManager.load((BaseLayer) layer);
 				LayerDraw layerGui = new LayerDraw(((Layer) layer).getName(), applicationContext.getBean(LayeredViewMap.class));
 				layerGui.setApplicationContext(applicationContext);
 				layerGui.setPayload(layer);
@@ -173,16 +185,11 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 			iView.setFitWidth(40);
 
 			menuItemAddMarker.setOnAction(arg -> {
-				try {
-					drawEditor.addMarker(layerViewMap.getPosition(point));
-					modifiedLayer.setPayload(drawEditor.getModifiedLayer());
-					modifiedLayer.loadMapObjects();
-					modifiedLayer.addMapMarker(new MapMarkerDot("12" , layerViewMap.getPosition(point)));
-					modifiedLayer.regenerateMapObjects();
-				}
-				catch (DrawUpdateException e) {
-					e.printStackTrace();
-				}
+				drawEditor.addMarker(layerViewMap.getPosition(point));
+				modifiedLayer.setPayload(drawEditor.getModifiedLayer());
+				modifiedLayer.loadMapObjects();
+				modifiedLayer.addMapMarker(new MapMarkerDot("12" , layerViewMap.getPosition(point)));
+				modifiedLayer.regenerateMapObjects();
 			});
 			menuItemAddMarkerImage.setOnAction(arg -> {
 				modifiedLayer.addMapMarker(new MapMarkerDot(iView, 45.0, layerViewMap.getPosition(point)));
@@ -215,17 +222,12 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 	}
 
 	private void setModifiedLayer(LayerDraw layerDraw) {
-		try {
-			this.drawEditor = drawManager.getDrawLayerEditor((Layer) layerDraw.getPayload());
-			if (this.drawEditor == null) {
-				LOGGER.debug("Open new layer editor");
-				this.drawEditor = drawManager.openDrawLayerEditor((Layer) layerDraw.getPayload());
-			}
-			this.modifiedLayer = layerDraw;
-		}
-		catch (DrawUpdateException e) {
-			LOGGER.error("Failed to open layer", e);
-		}
+		this.drawEditor = drawManager.openDrawLayerEditor((Layer) layerDraw.getPayload());
+//		if (this.drawEditor == null) {
+//			LOGGER.debug("Open new layer editor");
+//			this.drawEditor = drawManager.openDrawLayerEditor((Layer) layerDraw.getPayload());
+//		}
+		this.modifiedLayer = layerDraw;
 	}
 
 	private void unsetModifiedLayer() {
@@ -236,22 +238,24 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 	@Override
 	public LayerDraw startEditing(LayerDraw layer) {
 		LOGGER.debug("Working on Drawing Layer");
-		layer.setWasEdited(true);
-		setModifiedLayer((LayerDraw) layer);
+		modifiedLayer = layer;
+		modifiedLayer.setWasEdited(true);
 		setBuildMode(true);
-		return layer;
+		drawEditor = drawManager.openDrawLayerEditor((Layer) layer.getPayload());
+		Layer drawLayer = drawEditor.getModifiedLayer();
+		modifiedLayer.setName(drawLayer.getName());
+		return modifiedLayer;
 	}
 
 	@Override
 	public void removeItem(LayerDraw value) {
-		try {
-			LOGGER.info("Found drawing layer to remove");
-			Layer layer = (Layer) value.getPayload();
-			drawManager.delete(layer);
-		}
-		catch (Exception e) {
-			LOGGER.error("Failed to remove item", e);
-		}
+		LOGGER.info("Found drawing layer to remove");
+		Layer layer = (Layer) value.getPayload();
+
+		DrawEditor editor = drawManager.openDrawLayerEditor(layer);
+		editor.deleteLayer();
+
+		layerGroupManager.removeItem(layer);
 	}
 
 	@Override
@@ -269,19 +273,10 @@ public class DrawingEditorHelper implements EditorHelper<LayerDraw> {
 	}
 
 	@Override
-	public int reloadEditors() {
-		LOGGER.debug("Reload Editors for {}", this.getClass().getCanonicalName());
-		LOGGER.debug("Close all current editors");
-		drawManager.closeAllDrawLayersEditors(false);
-		LOGGER.debug("Load editors from scratch");
-		return drawManager.loadEditors();
-	}
-
-	@Override
 	public boolean isEdited(AbstractLayer abstractLayer) {
 		Layer layer = (Layer) abstractLayer.getPayload();
 
-		if (drawManager.getDrawLayerEditor(layer) != null) {
+		if (drawManager.isDirty(layer)) {
 			LOGGER.debug("Modified draw layer was found: {}", layer);
 			return true;
 		}

@@ -12,7 +12,7 @@
     <modules>
         <module>ConsolePlugin</module>
         <module>DroneServerClientPlugin</module>
-        <module>Tester</module>
+        <!--<module>Tester</module>-->
         <module>NGXBridge</module>
 
         <!--Important to be the last since it include the packager-->
@@ -55,6 +55,7 @@
 
         <!--Spring-->
         <spring-ver>4.3.3.RELEASE</spring-ver>
+        <!--<spring-ver>5.1.3.RELEASE</spring-ver>-->
 
         <!--Logging-->
         <!--<slf4jVersion>1.7.16</slf4jVersion>-->
@@ -154,6 +155,36 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
+
+        <!--web-sockets-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <!--<version>4.2.4.RELEASE</version>-->
+            <version>${spring-ver}</version>
+            <!--<version>5.1.3.RELEASE</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <!--<version>4.2.4.RELEASE</version>-->
+            <version>${spring-ver}</version>
+            <!--<version>5.1.3.RELEASE</version>-->
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>

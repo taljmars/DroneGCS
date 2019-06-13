@@ -12,6 +12,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,7 @@ public class ObjectCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectCrudSvcRemoteWrapper.class);
 
+    @CachePut("dbobjects")
     public <T extends BaseObject> T create(String clz) throws ObjectInstanceRemoteException {
         try {
 //            MultivaluedMap formData = new MultivaluedMapImpl();
@@ -43,7 +47,7 @@ public class ObjectCrudSvcRemoteWrapper {
                 case UNAUTHORIZED:
                     throw new RuntimeException("Unauthorized access, " + status.getReasonPhrase());
                 default:
-                    Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                    Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                     Class cls = pair.getFirst();
 
                     if (cls.equals(ObjectInstanceRemoteException.class))
@@ -53,7 +57,6 @@ public class ObjectCrudSvcRemoteWrapper {
             }
 
             T baseObject = response.getEntity((Class<T>) Class.forName(clz));
-//            T baseObject = objectCrudSvcRemote.create(clz);
             return baseObject;
         }
         catch (Exception e) {
@@ -62,6 +65,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
+    @CachePut("dbobjects")
     public <T extends BaseObject> T update(T obj) throws DatabaseValidationRemoteException, ObjectInstanceRemoteException {
         T baseObject = null;
         try {
@@ -76,7 +80,7 @@ public class ObjectCrudSvcRemoteWrapper {
                 throw new DatabaseValidationRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                 Class cls = pair.getFirst();
 
                 if (cls.equals(DatabaseValidationRemoteException.class))
@@ -88,7 +92,6 @@ public class ObjectCrudSvcRemoteWrapper {
             }
 
             baseObject = response.getEntity((Class<T>) obj.getClass());
-//            baseObject = objectCrudSvcRemote.update(obj);
             return baseObject;
         }
         catch (Exception e) {
@@ -97,6 +100,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
+    @Cacheable("dbobjects")
     public <T extends BaseObject> T read(String objId) throws ObjectNotFoundRemoteException {
         try {
 //            MultivaluedMap multivaluedMap = new MultivaluedMapImpl();
@@ -121,7 +125,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))
@@ -131,7 +135,6 @@ public class ObjectCrudSvcRemoteWrapper {
             }
 
             T baseObject = objectMapper.readValue(jsonString, (Class<T>) cls);
-//            T baseObject = objectCrudSvcRemote.read(objId);
             return baseObject;
         }
         catch (Exception e) {
@@ -140,6 +143,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
+    @Cacheable("dbobjects")
     public <T extends BaseObject> T readByClass(String objId, String canonicalName) throws ObjectNotFoundRemoteException {
         try {
 //            MultivaluedMap formData = new MultivaluedMapImpl();
@@ -167,7 +171,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))
@@ -177,7 +181,6 @@ public class ObjectCrudSvcRemoteWrapper {
             }
 
             T baseObject = objectMapper.readValue(jsonString, (Class<T>) cls);
-//            T baseObject = objectCrudSvcRemote.readByClass(objId, (Class<T>) Class.forName(canonicalName));
             return baseObject;
         }
         catch (Exception e) {
@@ -186,6 +189,7 @@ public class ObjectCrudSvcRemoteWrapper {
         }
     }
 
+    @CacheEvict("dbobjects")
     public <T extends BaseObject> T delete(T obj) throws ObjectInstanceRemoteException, DatabaseValidationRemoteException, ObjectNotFoundRemoteException {
         try {
 //            WebResource.Builder builder = restClientHelper.getWebResource("delete", "token", restClientHelper.getToken());
@@ -205,7 +209,7 @@ public class ObjectCrudSvcRemoteWrapper {
             Class cls = Class.forName(actualClass);
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessageFromJson(jsonObject);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessageFromJson(jsonObject);
                 cls = pair.getFirst();
 
                 if (cls.equals(ObjectNotFoundRemoteException.class))
@@ -221,7 +225,6 @@ public class ObjectCrudSvcRemoteWrapper {
 //            ObjectMapper objectMapper = new ObjectMapper();
 
             T baseObject = objectMapper.readValue(jsonString, (Class<T>) cls);
-//            T baseObject = objectCrudSvcRemote.delete(obj);
             return baseObject;
         }
         catch (ClassNotFoundException e) {

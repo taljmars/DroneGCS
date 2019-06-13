@@ -11,7 +11,6 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerManagerDbWrapper;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupEditor;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.gui.core.layers.AbstractLayer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -36,17 +35,12 @@ public class LayerTreeEditorHelper implements EditorHelper<EditedLayer> {
 	@Autowired
 	private LayersGroupsManager layersGroupsManager;
 
-	@Autowired
-	private ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
-
 	private LayerTreeEditorHelper(@Autowired LayerManagerDbWrapper layerManagerDbWrapper) {
 		LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader loader = new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
 			@Override
 			public boolean isRelevant(BaseObject layer) throws ObjectNotFoundRemoteException {
 				if (layer instanceof LayersGroup)
 					return true;
-//				if (layer instanceof LayersGroupRoot)
-//					return true;
 				return false;
 			}
 
@@ -59,8 +53,7 @@ public class LayerTreeEditorHelper implements EditorHelper<EditedLayer> {
 		};
 
 		// Sync the helper to react to layer manager loading of gui layer from db layer
-		layerManagerDbWrapper.registerGuiLayerFromDbLayerLoader(LayersGroup.class, loader);
-//		layerManagerDbWrapper.registerGuiLayerFromDbLayerLoader(LayersGroupRoot.class, loader);
+		layerManagerDbWrapper.registerEventHandlerOnDbLayerChanges(LayersGroup.class, loader);
 	}
 
 	@Override
@@ -140,14 +133,10 @@ public class LayerTreeEditorHelper implements EditorHelper<EditedLayer> {
 
 	@Override
 	public void removeItem(EditedLayer value) {
-		try {
-			LOGGER.info("Found layer to remove");
-			BaseLayer layer = (BaseLayer) value.getPayload();
-			objectCrudSvcRemoteWrapper.delete(layer);
-		}
-		catch (Exception e) {
-			LOGGER.error("Failed to remove item", e);
-		}
+		LOGGER.info("Found layer to remove {}", value.getName());
+		BaseLayer layer = (BaseLayer) value.getPayload();
+		LayersGroupEditor editor = layersGroupsManager.openLayersGroupEditor((LayersGroup) layer);
+		editor.deleteLayer();
 	}
 
 	@Override
@@ -167,21 +156,12 @@ public class LayerTreeEditorHelper implements EditorHelper<EditedLayer> {
 	}
 
 	@Override
-	public int reloadEditors() {
-		LOGGER.debug("Reload Editors for {}", this.getClass().getCanonicalName());
-		LOGGER.debug("Close all current editors");
-		layersGroupsManager.closeAllLayersGroupEditors(false);
-		LOGGER.debug("Load editors from scratch");
-		return layersGroupsManager.reloadEditors();
-	}
-
-	@Override
 	public boolean isEdited(AbstractLayer abstractLayer) {
 		LayersGroup layersGroup = (LayersGroup) abstractLayer.getPayload();
-		if (layersGroupsManager.getLayersGroupEditor(layersGroup) != null) {
-			LOGGER.debug("Modified layer group was found: {}", layersGroup);
-			return true;
-		}
+//		if (layersGroupsManager.getLayersGroupEditor(layersGroup) != null) {
+//			LOGGER.debug("Modified layer group was found: {}", layersGroup);
+//			return true;
+//		}
 		return false;
 	}
 }

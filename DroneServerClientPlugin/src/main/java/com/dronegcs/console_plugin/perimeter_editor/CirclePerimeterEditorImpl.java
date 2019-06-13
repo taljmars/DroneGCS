@@ -1,18 +1,14 @@
 package com.dronegcs.console_plugin.perimeter_editor;
 
-import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
-import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Point;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 /**
  * Created by taljmars on 3/26/17.
@@ -23,47 +19,60 @@ public class CirclePerimeterEditorImpl extends PerimeterEditorImpl<CirclePerimet
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CirclePerimeterEditorImpl.class);
 
-    @Autowired @NotNull(message = "Internal Error: Failed to get drone object crud")
-    private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
-
     @Override
     public Class getManagedDBClass() {
         return CirclePerimeter.class;
     }
 
     @Override
-    public CirclePerimeter open(CirclePerimeter perimeter) throws PerimeterUpdateException {
+    public CirclePerimeter open(CirclePerimeter perimeter) {
         return super.open(perimeter);
     }
 
     @Override
-    public CirclePerimeter open(String perimeter) throws PerimeterUpdateException {
-        return super.open(perimeter);
+    public CirclePerimeter open(String perimeterName) {
+        CirclePerimeter perimeter = super.open(perimeterName);
+        perimeter.setCenter("");
+        perimeter.setRadius(0.0);
+        return perimeter;
     }
 
     @Override
-    public void setRadius(double radius) throws PerimeterUpdateException {
-        try {
-            perimeter.setRadius(radius);
-            perimeter = objectCrudSvcRemote.update(perimeter);
-        } catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException  e) {
-            throw new PerimeterUpdateException("Failed to set radius");
-        }
+    public void setRadius(double radius) {
+        perimeter.setRadius(radius);
     }
 
     @Override
-    public Point setCenter(Coordinate position) throws PerimeterUpdateException{
+    public Point setCenter(Coordinate position){
         try {
-            Point center = objectCrudSvcRemote.create(Point.class.getCanonicalName());
+            Point center = new Point();
             center.setLat(position.getLat());
             center.setLon(position.getLon());
-            center = objectCrudSvcRemote.update(center);
+            center.getKeyId().setObjId("DUMMY" + UUID.randomUUID().toString());
             perimeter.setCenter(center.getKeyId().getObjId());
-            perimeter = objectCrudSvcRemote.update(perimeter);
+
+            perimetersManager.updateItem(center);
+            perimetersManager.updateItem(perimeter);
             return center;
         }
-        catch (DatabaseValidationRemoteException | ObjectInstanceRemoteException e) {
-            throw new PerimeterUpdateException("Failed to update circled perimeter central coordinates, " + e);
+        catch (Exception e) {
+
         }
+        return null;
+    }
+
+    @Override
+    public Point getCenter() {
+        String uuid = perimeter.getCenter();
+        Point mItem = perimetersManager.getPointItem(uuid);
+        return mItem;
+    }
+
+    @Override
+    public void delete() {
+        Point obj = perimetersManager.getPointItem(this.perimeter.getCenter());
+        perimetersManager.removeItem(obj);
+
+        perimetersManager.removeItem(perimeter);
     }
 }

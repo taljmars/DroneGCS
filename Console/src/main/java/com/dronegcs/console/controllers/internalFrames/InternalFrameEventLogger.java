@@ -117,20 +117,20 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 	private Date lastDate = null;
 	private int idx = 0;
 	public void loadTable() {
+		EventLogBundle eventLogBundle;
 		if (table == null) {
 			LOGGER.debug("Table wasn't initialize yet");
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -1); // to get previous year add -1
 			lastDate = cal.getTime();
 			LOGGER.debug("Setting first timestamp to " + lastDate);
-			return;
+			Date tmpDate = new Date();
+			eventLogBundle = eventLogManager.getAllEventLogsBetween(lastDate, tmpDate);
+			eventLogBundle = eventLogBundle.sortByEventDate();
 		}
-
-//		EventLogBundle eventLogBundle = eventLogManager.getAllEventLogs();
-		Date tmpDate = new Date();
-		EventLogBundle eventLogBundle = eventLogManager.getAllEventLogsBetween(lastDate, tmpDate);
-//		lastDate = tmpDate;
-		eventLogBundle = eventLogBundle.sortByEventDate();
+		else {
+			eventLogBundle = eventLogManager.getLastEvents();
+		}
 		if (eventLogBundle.getLogs().size() > 0) {
 
 			if (data == null) {
@@ -242,7 +242,8 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 		}
 	}
 
-	@Scheduled(fixedRate = 10 * 1000)
+	static final int SEC = 1000;
+	@Scheduled(fixedRate = 2 * SEC)
 	public void tik() {
 		LOGGER.debug("Refresh Log");
 		Platform.runLater(() -> loadTable());

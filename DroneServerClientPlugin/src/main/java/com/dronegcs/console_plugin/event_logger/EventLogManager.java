@@ -7,4 +7,6 @@ public interface EventLogManager {
     EventLogBundle getAllEventLogs();
 
     EventLogBundle getAllEventLogsBetween(Date startDate, Date endDate);
+
+    EventLogBundle getLastEvents();
 }

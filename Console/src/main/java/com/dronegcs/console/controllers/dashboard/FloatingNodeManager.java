@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FloatingNodeManager {
 
-    private BooleanProperty dragModeActiveProperty = new SimpleBooleanProperty(this, "dragModeActivated", false);
+    private BooleanProperty dragModeActiveProperty = new SimpleBooleanProperty(this, "dragModeActivated", true);
 
     protected Pane makeDraggable(Pane parent, final Node node, double width, double height) {
         final DragContext dragContext = new DragContext();

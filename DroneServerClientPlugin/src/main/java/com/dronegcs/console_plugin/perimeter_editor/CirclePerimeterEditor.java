@@ -9,7 +9,9 @@ import com.geo_tools.Coordinate;
  */
 public interface CirclePerimeterEditor extends PerimeterEditor<CirclePerimeter> {
 
-    void setRadius(double radius) throws PerimeterUpdateException;
+    void setRadius(double radius);
 
-    Point setCenter(Coordinate position) throws PerimeterUpdateException;
+    Point setCenter(Coordinate position);
+
+    Point getCenter();
 }

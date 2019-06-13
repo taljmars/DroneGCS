@@ -1,17 +1,13 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import com.db.gui.persistence.scheme.Layer;
-import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.CirclePerimeter;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
-import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
-import com.gui.core.layers.AbstractLayer;
-import com.gui.core.mapViewer.LayeredViewMap;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
+import com.gui.core.mapViewer.LayeredViewMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -49,13 +45,8 @@ public abstract class LayerPerimeter<T extends Perimeter> extends EditedLayerImp
 	@Override
 	public void setPayload(Object payload) {
 		super.setPayload(payload);
-		try {
-			ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
-			this.perimeter = objectCrudSvcRemoteWrapper.read(((Layer)payload).getObjectsUids().get(0));
-		}
-		catch (ObjectNotFoundRemoteException e) {
-			e.printStackTrace();
-		}
+		PerimetersManager perimetersManager = applicationContext.getBean(PerimetersManager.class);
+		this.perimeter = (T) perimetersManager.getPerimeter(((Layer)payload).getObjectsUids().get(0));
 	}
 
     public static LayerPerimeter generateNew(BaseObject perimeter, LayeredViewMap layeredViewMap) {

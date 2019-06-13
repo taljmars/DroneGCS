@@ -5,7 +5,6 @@ import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.Point;
-import com.dronegcs.console_plugin.remote_services_wrappers.internal.RestClientHelperImpl;
 import com.generic_tools.Pair.Pair;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -15,15 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
 public class PerimeterCrudSvcRemoteWrapper {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PerimeterCrudSvcRemoteWrapper.class);
-
-    @Autowired
-    private ObjectCrudSvcRemoteWrapper objectCrudSvcRemote;
 
     @Autowired
     private RestClientHelper restClientHelper;
@@ -39,7 +33,7 @@ public class PerimeterCrudSvcRemoteWrapper {
                 throw new ObjectInstanceRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                 Class cls = pair.getFirst();
 
                 if (cls.equals(ObjectInstanceRemoteException.class))
@@ -73,7 +67,7 @@ public class PerimeterCrudSvcRemoteWrapper {
                 throw new ObjectInstanceRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                 Class cls = pair.getFirst();
 
                 if (cls.equals(ObjectInstanceRemoteException.class))

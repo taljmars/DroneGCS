@@ -8,9 +8,8 @@ import com.dronegcs.console_plugin.ClosingPair;
  */
 public interface ClosableMissionEditor extends MissionEditor {
 
-    Mission open(Mission mission) throws MissionUpdateException;
+    Mission open(Mission mission);
 
-    Mission open(String missionName) throws MissionUpdateException;
+    Mission open(String missionName);
 
-    ClosingPair<Mission> close(boolean shouldSave);
 }

@@ -7,8 +7,13 @@ import com.db.persistence.scheme.QueryRequestRemote;
 import com.db.persistence.scheme.QueryResponseRemote;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -17,6 +22,19 @@ public class EventLogManagerImpl implements EventLogManager {
 
     @Autowired
     private QuerySvcRemoteWrapper querySvcRemote;
+
+    @Autowired
+    private LoggingStreamingHandler loggingStringHandler;
+
+    @PostConstruct
+    public void init(){
+        WebSocketClient client = new StandardWebSocketClient();
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        stompClient.connect("ws://localhost:9024/events", loggingStringHandler);
+    }
 
     @Override
     public EventLogBundle getAllEventLogs() {
@@ -96,6 +114,12 @@ public class EventLogManagerImpl implements EventLogManager {
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
+        req.setQuery("GetAllRegistrationLog");
+        req.getParameters().putAll(boundaries);
+        req.setClz(RegistrationLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
         return eventLogBundle;
     }
 
@@ -106,5 +130,10 @@ public class EventLogManagerImpl implements EventLogManager {
                 logs.add((EventLogObject) baseObject);
         }
         return logs;
+    }
+
+    @Override
+    public EventLogBundle getLastEvents() {
+        return loggingStringHandler.popEventLogBundle();
     }
 }

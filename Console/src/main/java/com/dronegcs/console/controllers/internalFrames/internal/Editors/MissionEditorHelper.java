@@ -5,15 +5,16 @@ import com.db.gui.persistence.scheme.Layer;
 import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Mission;
+import com.dronedb.persistence.scheme.MissionItem;
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerGroupEditable;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerManagerDbWrapper;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerMission;
+import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
-import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
-import com.dronegcs.console_plugin.mission_editor.MissionsManager;
+import com.dronegcs.console_plugin.mission_editor.MissionsManagerImpl;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
@@ -48,6 +49,9 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 	private Drone drone;
 
 	@Autowired
+	public LayersGroupsManager layerGroupManagerImpl;
+
+	@Autowired
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 
 	@Autowired
@@ -57,7 +61,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
-	private MissionsManager missionsManager;
+	private MissionsManagerImpl missionsManager;
 
 	@Autowired
 	private MissionCompilerSvc missionCompilerSvc;
@@ -69,35 +73,29 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Autowired
-	private ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
-
-	@Autowired
-	private MissionsManager missionManager;
-
 	private MissionEditor missionEditor;
 	private LayerMission modifiedLayerMissionOriginal = null;
 	private boolean isBuildMode = false;
 
 	public MissionEditorHelper(@Autowired LayerManagerDbWrapper layerManagerDbWrapper) {
 
-		layerManagerDbWrapper.registerDbLayerFromGuiLayerLoader(LayerMission.class, ((guiLayer, dbLayer) -> {
-			LOGGER.debug("Populating DB layer from GUI layer named '{}'", guiLayer.getName());
+		layerManagerDbWrapper.registerEventHandlerOnGuiLayerChanges(LayerMission.class, ((guiMissionLayer, dbMissionLayer) -> {
+			LOGGER.debug("Populating DB layer from GUI layer named '{}'", guiMissionLayer.getName());
 			LOGGER.debug("Open missing editor by name");
-			MissionEditor missionEditor = missionManager.openMissionEditor(guiLayer.getName());
-			((Layer) dbLayer).setObjectsUids(Arrays.asList(missionEditor.getMission().getKeyId().getObjId()));
+			MissionEditor missionEditor = missionsManager.openMissionEditor(guiMissionLayer.getName());
+			((Layer) dbMissionLayer).setObjectsUids(Arrays.asList(missionEditor.getMission().getKeyId().getObjId()));
 			LOGGER.debug("Updating new dblayer with brand new mission");
-//			return objectCrudSvcRemoteWrapper.update(dbLayer);
-			return dbLayer;
+			return dbMissionLayer;
 		}));
 
 		// Sync the helper to react to layer manager loading of gui layer from db layer
-		layerManagerDbWrapper.registerGuiLayerFromDbLayerLoader(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
+		layerManagerDbWrapper.registerEventHandlerOnDbLayerChanges(Layer.class, new LayerManagerDbWrapper.GuiLayer_From_DatabaseLayer_Loader() {
 			@Override
 			public boolean isRelevant(BaseObject layer) throws ObjectNotFoundRemoteException {
 				if (((Layer) layer).getObjectsUids().isEmpty())
 					return false;
 
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
 				String coreObjId = ((Layer) layer).getObjectsUids().iterator().next();
 				BaseObject coreObj = objectCrudSvcRemoteWrapper.read(coreObjId);
 				if (coreObj instanceof Mission)
@@ -108,6 +106,16 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 
 			@Override
 			public AbstractLayer load(BaseObject layer) throws ObjectNotFoundRemoteException {
+				ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
+				String coreObjId = ((Layer) layer).getObjectsUids().iterator().next();
+				Mission mission = objectCrudSvcRemoteWrapper.read(coreObjId);
+				missionsManager.load(mission);
+				for (String child : mission.getMissionItemsUids()) {
+					MissionItem missionItem = objectCrudSvcRemoteWrapper.read(child);
+					missionsManager.load(missionItem);
+				}
+				layerGroupManagerImpl.load((BaseLayer) layer);
+
 				LayerMission layerGui = new LayerMission(((BaseLayer) layer).getName(), applicationContext.getBean(LayeredViewMap.class));
 				layerGui.setApplicationContext(applicationContext);
 				layerGui.setPayload(layer);
@@ -151,10 +159,6 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			}
 			return popup;
 		}
-
-//		if (layer instanceof LayerMission) {
-//		Mission mission = ((LayerMission) layer).getMission();
-//		boolean hasMission = mission != null;
 
 		MenuItem menuItemUploadMission = new MenuItem("Upload DroneMission");
 		menuItemUploadMission.setOnAction(e -> {
@@ -220,135 +224,87 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 		popup.getItems().add(menuItemSyncMission);
 
 		menuItemSyncMission.setOnAction( arg -> {
-					LOGGER.debug(getClass().getName() + " Start Sync DroneMission");
-					drone.getWaypointManager().getWaypoints();
-					loggerDisplayerSvc.logOutgoing("Send Sync Request");
-				}
+				LOGGER.debug(getClass().getName() + " Start Sync DroneMission");
+				drone.getWaypointManager().getWaypoints();
+				loggerDisplayerSvc.logOutgoing("Send Sync Request");
+			}
 		);
 
 		menuItemMissionAddWayPoint.setOnAction( arg -> {
-			try {
-				missionEditor.addWaypoint(layerViewMap.getPosition(point));
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
-			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Waypoint point wasn't added.\n" + e.getMessage(), e);
-			}
+			missionEditor.addWaypoint(layerViewMap.getPosition(point));
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddLoiterTurns.setOnAction( arg -> {
-			try {
-				String val = dialogManagerSvc.showInputDialog("Choose turns", "",null, null, "3");
-				if (val == null) {
-					loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTurns canceled");
-					dialogManagerSvc.showAlertMessageDialog("Turns amount must be defined");
-					return;
-				}
-				int turns = Integer.parseInt((String) val);
-				missionEditor.addLoiterTurns(layerViewMap.getPosition(point), turns);
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
+			String val = dialogManagerSvc.showInputDialog("Choose turns", "",null, null, "3");
+			if (val == null) {
+				loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTurns canceled");
+				dialogManagerSvc.showAlertMessageDialog("Turns amount must be defined");
+				return;
 			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Loiter turns point wasn't added.\n" + e.getMessage(), e);
-			}
+			int turns = Integer.parseInt((String) val);
+			missionEditor.addLoiterTurns(layerViewMap.getPosition(point), turns);
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddLoiterTime.setOnAction( arg -> {
-			try {
-				String val = dialogManagerSvc.showInputDialog("Set loiter time frame (seconds)", "",null, null, "5");
-				if (val == null) {
-					loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTime canceled");
-					dialogManagerSvc.showAlertMessageDialog("Loitering time frame is a must");
-					return;
-				}
-				int time = Integer.parseInt((String) val);
-				missionEditor.addLoiterTime(layerViewMap.getPosition(point), time);
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
+			String val = dialogManagerSvc.showInputDialog("Set loiter time frame (seconds)", "",null, null, "5");
+			if (val == null) {
+				loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkLoiterTime canceled");
+				dialogManagerSvc.showAlertMessageDialog("Loitering time frame is a must");
+				return;
 			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Loiter point wasn't added.\n" + e.getMessage(), e);
-			}
+			int time = Integer.parseInt((String) val);
+			missionEditor.addLoiterTime(layerViewMap.getPosition(point), time);
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddLoiterUnlimited.setOnAction( arg -> {
-			try {
-				missionEditor.addLoiterUnlimited(layerViewMap.getPosition(point));
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
-			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Loiter unlimited point wasn't added.\n" + e.getMessage(), e);
-			}
+			missionEditor.addLoiterUnlimited(layerViewMap.getPosition(point));
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionSetLandPoint.setOnAction( arg -> {
-			try {
-				missionEditor.addLandPoint(layerViewMap.getPosition(point));
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
-			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Land point wasn't added.\n" + e.getMessage(), e);
-			}
+			missionEditor.addLandPoint(layerViewMap.getPosition(point));
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddROI.setOnAction( arg -> {
-			try{
-				missionEditor.addRegionOfInterest(layerViewMap.getPosition(point));
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
-			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("ROI point wasn't added.\n" + e.getMessage(), e);
-			}
+			missionEditor.addRegionOfInterest(layerViewMap.getPosition(point));
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionSetRTL.setOnAction( arg -> {
-			try {
-				missionEditor.addReturnToLaunch();
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
-			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("RTL point wasn't added.\n" + e.getMessage(), e);
-			}
+			missionEditor.addReturnToLaunch();
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionSetTakeOff.setOnAction( arg -> {
-			try {
-				String val = dialogManagerSvc.showInputDialog("Choose altitude", "",null, null, "5");
-				if (val == null) {
-					loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkTakeoff canceled");
-					dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff must be defined with height");
-					return;
-				}
-				double altitude = Double.parseDouble((String) val);
-				missionEditor.addTakeOff(altitude);
-				modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
-				modifiedLayerMissionOriginal.regenerateMapObjects();
+			String val = dialogManagerSvc.showInputDialog("Choose altitude", "",null, null, "5");
+			if (val == null) {
+				loggerDisplayerSvc.logGeneral(getClass().getName() + " MavlinkTakeoff canceled");
+				dialogManagerSvc.showAlertMessageDialog("MavlinkTakeoff must be defined with height");
+				return;
 			}
-			catch (MissionUpdateException e) {
-				loggerDisplayerSvc.logError("Critical Error: failed to update item in database: " + e.getMessage());
-				dialogManagerSvc.showErrorMessageDialog("Takeoff point wasn't added.\n" + e.getMessage(), e);
-			}
+			double altitude = Double.parseDouble((String) val);
+			missionEditor.addTakeOff(altitude);
+			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		return popup;
@@ -367,29 +323,30 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 
 	@Override
 	public void removeItem(LayerMission value) {
-		try {
-			LOGGER.info("Found mission to remove");
-			Layer layer = (Layer) value.getPayload();
-			Mission mission = objectCrudSvcRemoteWrapper.readByClass(layer.getObjectsUids().get(0), Mission.class.getCanonicalName());
-			missionsManager.delete(mission);
-			objectCrudSvcRemoteWrapper.delete(layer);
-		}
-		catch (Exception e) {
-			LOGGER.error("Failed to remove item", e);
-		}
+		LOGGER.info("Found mission to remove");
+		Layer layer = (Layer) value.getPayload();
+		Mission mission = missionsManager.getMission(layer.getObjectsUids().get(0));
+		MissionEditor editor = missionsManager.openMissionEditor(mission);
+		editor.deleteMission();
+
+		layerGroupManagerImpl.removeItem(layer);
 	}
 
 	@Override
 	public void renameItem(LayerMission value) {
 		try {
 			Layer layerDb = (Layer) value.getPayload();
+
+			String objId = layerDb.getKeyId().getObjId();
+
+			layerDb = (Layer) layerGroupManagerImpl.getLayerItem(objId);
 			layerDb.setName(value.getName());
-			layerDb = objectCrudSvcRemoteWrapper.update(layerDb);
+			layerGroupManagerImpl.updateItem(layerDb);
 
 			String missionUid = layerDb.getObjectsUids().get(0);
-			Mission mission = objectCrudSvcRemoteWrapper.readByClass(missionUid, Mission.class.getCanonicalName());
 
-			MissionEditor missionEditor = missionManager.openMissionEditor(mission);
+			Mission mission = missionsManager.getMission(missionUid);
+			MissionEditor missionEditor = missionsManager.openMissionEditor(mission);
 			missionEditor.setMissionName(value.getName());
 
 			value.setPayload(layerDb);
@@ -410,37 +367,20 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 
 	@Override
 	public LayerMission startEditing(LayerMission layer) {
-		try {
-			LOGGER.debug("Working on DroneMission Layer");
-			modifiedLayerMissionOriginal = (LayerMission) layer;
-			modifiedLayerMissionOriginal.setWasEdited(true);
-			setBuildMode(true);
-			missionEditor = missionsManager.openMissionEditor(((LayerMission) layer).getMission());
-			Mission mission = missionEditor.getMission();
-			modifiedLayerMissionOriginal.setName(mission.getName());
-//						applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
-			return modifiedLayerMissionOriginal;
-		}
-		catch (MissionUpdateException e) {
-			loggerDisplayerSvc.logError("Critical Error: failed to update item in database, error: " + e.getMessage());
-			dialogManagerSvc.showErrorMessageDialog("Failed to update item.\n" + e.getMessage(), e);
-			return null;
-		}
-	}
-
-	@Override
-	public int reloadEditors() {
-		LOGGER.debug("Reload Editors for {}", this.getClass().getCanonicalName());
-		LOGGER.debug("Close all current editors");
-		missionManager.closeAllMissionEditors(false);
-		LOGGER.debug("Load editors from scratch");
-		return missionManager.loadEditors();
+		LOGGER.debug("Working on DroneMission Layer");
+		modifiedLayerMissionOriginal = (LayerMission) layer;
+		modifiedLayerMissionOriginal.setWasEdited(true);
+		setBuildMode(true);
+		missionEditor = missionsManager.openMissionEditor(((LayerMission) layer).getMission());
+		Mission mission = missionEditor.getMission();
+		modifiedLayerMissionOriginal.setName(mission.getName());
+		return modifiedLayerMissionOriginal;
 	}
 
 	@Override
 	public boolean isEdited(AbstractLayer abstractLayer) {
 		Mission mission = ((LayerMission) abstractLayer).getMission();
-		if (missionManager.getMissionEditor(mission) != null) {
+		if (missionsManager.isDirty(mission)) {
 			LOGGER.debug("Modified mission was found: {}", mission);
 			return true;
 		}

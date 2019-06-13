@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
+import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED;
 
 @Component
 public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypointManagerListener, OperationalViewTree {
@@ -148,8 +149,10 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
 		LOGGER.info("Reload tree");
 		CheckBoxTreeItem<AbstractLayer> rootItem = loadTree(rootLayer);
+		LOGGER.info("Setting root");
 		setRoot(rootItem);
 
+		LOGGER.info("Restore View setting");
 		restoreViewSettings(currentRootItem, rootItem);
 
 		LOGGER.info("Reload Editors");
@@ -157,17 +160,19 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 	}
 
 	private void markEditedItems() {
-		int editorsAmount = 0;
-		for (EditorHelper helper : new HashSet<>(helpers.values())) {
-			LOGGER.debug("Regenerating editors for {}", helper.getClass().getCanonicalName());
-			editorsAmount += helper.reloadEditors();
-		}
-		LOGGER.debug("Start marking tree item as edited");
-		markEditedItems(getRoot().getValue());
-
-		if (editorsAmount > 0) {
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
-		}
+//		int editorsAmount = 0;
+//		for (EditorHelper helper : new HashSet<>(helpers.values())) {
+//			LOGGER.debug("Regenerating editors for {}", helper.getClass().getCanonicalName());
+//			editorsAmount += helper.reloadEditors();
+//		}
+//		if (editorsAmount > 0) {
+//			LOGGER.debug("Start marking tree item as edited");
+//			markEditedItems(getRoot().getValue());
+//		}
+//
+//		if (editorsAmount > 0) {
+//			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+//		}
 	}
 
 	private void markEditedItems(AbstractLayer abstractLayer) {
@@ -235,7 +240,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 	public void updateTreeItemName(String fromText, TreeItem<AbstractLayer> treeItem) {
 		LOGGER.debug("Named changed from '" + fromText + "' to '" + treeItem.getValue().getName() + "'");
 		helpers.get(treeItem.getValue().getClass()).renameItem((EditedLayer) treeItem.getValue());
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, treeItem.getValue()));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED, treeItem.getValue()));
 	}
 
 	@Override
@@ -283,22 +288,27 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			LOGGER.debug("Ignore this message - it a bug in the GUI I/S were event is raised once replacing the root");
 			return;
 		}
+		QuadGuiEvent.QUAD_GUI_COMMAND eventType = null;
 		AbstractLayer layer = node.getValue();
 		if (layer instanceof LayerMission) {
-			if (missionsManager.getMissionEditor(((LayerMission) layer).getMission()) == null)
-//			if (missionsManager.getMissionEditor((Layer) layer.getPayload()) == null)
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED, layer));
+			if (modifiedItem != null && modifiedItem.getValue() == layer)
+				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED;
 			else
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, layer));
+				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED;
 		}
 		if (layer instanceof LayerPerimeter) {
-			if (perimetersManager.getPerimeterEditor(((LayerPerimeter) layer).getPerimeter()) == null)
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED, layer));
+			if (modifiedItem != null && modifiedItem.getValue() == layer)
+				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED;
 			else
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, layer));
+				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED;
 		}
-//		else
-//			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+		else {
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_FINISHED, layer));
+		}
+
+		if (eventType != null)
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(eventType, layer));
 	}
 
 	@Override
@@ -319,7 +329,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		}
 		else {
 			// Means we are not aware of any uploaded droneMission
-			//addLayer(finalLayer);
+			//addSubLayer(finalLayer);
 			finalLayer.regenerateMapObjects();
 			loggerDisplayerSvc.logGeneral("A new layer was created for current droneMission");
 		}
@@ -397,10 +407,10 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 					else {
 						LOGGER.debug("Found layer with the same mission named '{}'", layerMission.getName());
 						LOGGER.debug("Clearing autogenerated mission");
-						MissionEditor missionEditor = missionsManager.getMissionEditor(mission);
-//						MissionEditor missionEditor = missionsManager.getMissionEditor((Layer) layerMission.getPayload());
-						missionEditor.delete();
-						loggerDisplayerSvc.logGeneral("Mission already exist in the DB");
+//						MissionEditor missionEditor = missionsManager.getMissionEditor(mission);
+//						missionEditor.delete();
+//						loggerDisplayerSvc.logGeneral("Mission already exist in the DB");
+						throw new RuntimeException("Uper 3 lines should be handled");
 					}
 
 					uploadedLayerMission = (LayerMission) switchCurrentLayer(uploadedLayerMission, layerMission);
@@ -408,7 +418,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 					loggerDisplayerSvc.logGeneral("DroneMission was updated in droneMission tree");
 					textNotificationPublisherSvc.publish("DroneMission successfully downloaded");
 				}
-				catch (MissionCompilationException | MissionComparatorException | MissionUpdateException e) {
+				catch (MissionCompilationException | MissionComparatorException  e) {
 					dialogManagerSvc.showErrorMessageDialog("Failed to decompile mission", e);
 					return;
 				}
@@ -450,14 +460,14 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		Platform.runLater(() -> {
 			switch (command.getCommand()) {
 				case MISSION_EDITING_FINISHED: {
-					LayerMission layerMission = (LayerMission) command.getSource();
-					if (layerMission.getMission() == null) {
-						//Means we were left without a mission, we need to clear the item
-						removeLayer(layerMission);
-					} else {
-						String missionName = layerMission.getMission().getName();
-						layerMission.setName(missionName);
-					}
+//					LayerMission layerMission = (LayerMission) command.getSource();
+//					if (layerMission.getMission() == null) {
+////						Means we were left without a mission, we need to clear the item
+//						removeLayer(layerMission);
+//					} else {
+//						String missionName = layerMission.getMission().getName();
+//						layerMission.setName(missionName);
+//					}
 					modifiedItem = null;
 					refresh();
 					break;
@@ -488,7 +498,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 //				}
 //				case NEW_MISSION_EDITING_STARTED: {
 //					LayerMission layerMission = (LayerMission) command.getSource();
-//					addLayer(layerMission, missionsGroup);
+//					addSubLayer(layerMission, missionsGroup);
 //					refresh();
 //					break;
 //				}
@@ -500,7 +510,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 				}
 //				case NEW_PERIMETER_EDITING_STARTED: {
 //					LayerPerimeter layerPerimeter = (LayerPerimeter) command.getSource();
-//					addLayer(layerPerimeter, perimetersGroup);
+//					addSubLayer(layerPerimeter, perimetersGroup);
 //					refresh();
 //					break;
 //				}
@@ -548,7 +558,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		super.addTreeItemAction(newItem, parentOfNewItem);
 		((LayerManagerDbWrapper) layerManager).create(newItem.getValue());
 
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+		applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
 	}
 
 	@Override
@@ -577,7 +587,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			helpers.get(treeItem.getValue().getClass()).removeItem((EditedLayer) treeItem.getValue());
 			((LayerManagerDbWrapper) layerManager).delete(treeItem.getValue());
 			super.removeTreeItemAction(treeItem);
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+			applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
 		}
 		catch (Throwable e) {
 			loggerDisplayerSvc.logError(e.getMessage());

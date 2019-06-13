@@ -157,17 +157,12 @@ public class PerimeterTableProfile extends TableProfile {
                     setText( null );
                     if ( !empty ) {
                         btn.setOnAction( ( ActionEvent event ) -> {
-                            try {
-                                TableItemEntry entry = getTableView().getItems().get( getIndex() );
-                                // TODO: fix
-                                PolygonPerimeterEditor polygonPerimeterEditor = null;//perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
-                                polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
-                                generateTable(true, layerPerimeter);
-                                applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
-                            }
-                            catch (PerimeterUpdateException e) {
-                                logger.LogErrorMessege("Failed to change database, error: " + e.getMessage());
-                            }
+                            TableItemEntry entry = getTableView().getItems().get( getIndex() );
+                            // TODO: fix
+                            PolygonPerimeterEditor polygonPerimeterEditor = null;//perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
+                            polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
+                            generateTable(true, layerPerimeter);
+                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -237,13 +232,13 @@ public class PerimeterTableProfile extends TableProfile {
 
             CirclePerimeter circlePerimeter = ((LayerCircledPerimeter) layerPerimeter).getCirclePerimeter();
             // TODO: fix
-            List<Point> points = null;//perimetersManager.getPoints(circlePerimeter);
-            if (points == null || points.isEmpty()) {
-                LOGGER.debug("No points exist for this perimeter");
-                return;
+            List<Point> points = perimetersManager.getPoints(circlePerimeter);
+            if (points.isEmpty() == false) {
+                entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), 0, circlePerimeter);
+                data.add(entry);
             }
-            entry = new TableItemEntry(0, CirclePerimeter.class.getSimpleName(), points.get(0).getLat(), points.get(0).getLon(), 0.0, 0.0, circlePerimeter.getRadius(), 0, circlePerimeter);
-            data.add(entry);
+            else
+                LOGGER.debug("No points exist for this perimeter");
         }
 
         panelTableBox.getTable().setItems(data);
@@ -274,7 +269,7 @@ public class PerimeterTableProfile extends TableProfile {
                         break;
                 case PERIMETER_EDITING_FINISHED:
                     load();
-                    generateTable(false, null);
+                    generateTable(false, command.getSource());
                     break;
                 case PERIMETER_VIEW_ONLY_STARTED:
                     load();

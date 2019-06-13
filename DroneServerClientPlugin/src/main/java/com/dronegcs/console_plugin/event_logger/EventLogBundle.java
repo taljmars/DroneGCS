@@ -14,6 +14,10 @@ public class EventLogBundle {
         this.logs = new ArrayList<>();
     }
 
+    public EventLogBundle append(EventLogObject obj) {
+        this.logs.add(obj);
+        return this;
+    }
     public EventLogBundle append(List<EventLogObject> lst) {
         this.logs.addAll(lst);
         return this;
@@ -28,4 +32,5 @@ public class EventLogBundle {
     public List<? extends EventLogObject> getLogs() {
         return logs;
     }
+
 }

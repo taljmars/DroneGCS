@@ -1,13 +1,8 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
 import com.db.gui.persistence.scheme.Layer;
-import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
-import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.*;
-import com.dronegcs.console_plugin.mission_editor.MissionEditor;
-import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
-import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -56,13 +51,8 @@ public class LayerMission extends EditedLayerImpl implements EditedLayer {
 	@Override
 	public void setPayload(Object payload) {
 		super.setPayload(payload);
-		try {
-			ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper = applicationContext.getBean(ObjectCrudSvcRemoteWrapper.class);
-			this.mission = objectCrudSvcRemoteWrapper.readByClass(((Layer)payload).getObjectsUids().get(0), Mission.class.getCanonicalName());
-		}
-		catch (ObjectNotFoundRemoteException e) {
-			e.printStackTrace();
-		}
+        MissionsManager missionsManager = applicationContext.getBean(MissionsManager.class);
+        this.mission = missionsManager.getMission(((Layer)payload).getObjectsUids().get(0));
 	}
 
 	@Override

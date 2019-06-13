@@ -33,7 +33,7 @@ public class LayersCrudSvcRemoteWrapper {
                 throw new ObjectInstanceRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                 Class cls = pair.getFirst();
 
                 if (cls.equals(ObjectInstanceRemoteException.class))
@@ -65,7 +65,7 @@ public class LayersCrudSvcRemoteWrapper {
                 throw new ObjectInstanceRemoteException(status.getReasonPhrase() + ", status:" + status.getStatusCode());
 
             if (status != ClientResponse.Status.OK) {
-                Pair<Class, ? extends Exception> pair = restClientHelper.getErrorAndMessage(response);
+                Pair<Class, ? extends Exception> pair = RestClientHelper.getErrorAndMessage(response);
                 Class cls = pair.getFirst();
 
                 if (cls.equals(ObjectInstanceRemoteException.class))
