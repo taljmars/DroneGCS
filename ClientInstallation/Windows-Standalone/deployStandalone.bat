@@ -18,10 +18,10 @@ call deployServer.bat
 call deployConsole.bat
 
 echo cd ServerCore > runDroneGCS.bat
-echo start /b run.bat >> runDroneGCS.bat
+echo start /b install.bat >> runDroneGCS.bat
 echo cd .. >> runDroneGCS.bat
 echo cd DroneConsole >> runDroneGCS.bat
-echo start /b run.bat >> runDroneGCS.bat
+echo start /b install.bat >> runDroneGCS.bat
 echo cd .. >> runDroneGCS.bat
 
 echo Done  
