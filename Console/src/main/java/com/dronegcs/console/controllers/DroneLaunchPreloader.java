@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.db.persistence.scheme.LoginLogoutStatus.OK;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.LOGIN;
+import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.OFFLINE;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.SIGNUP;
 
 public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyEvent> {
@@ -97,6 +98,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
 
     public enum PreloaderMode {
         LOGIN,
+        OFFLINE,
         SIGNUP
     }
 
@@ -109,6 +111,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         Button loginBtn = new Button("Login");
         Button registerBtn = new Button("Register User");
         Button signingBtn = new Button("Register");
+        Button offlineModeBtn = new Button("Offline Mode");
         Button exitBtn = new Button("Exit");
 
         ObservableList<String> options =
@@ -156,6 +159,11 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
             loadLoginScreen(SIGNUP, "");
         });
 
+        offlineModeBtn.setOnAction((actionEvent) -> {
+            preloaderStage.hide();
+            loadLoginScreen(OFFLINE, "");
+        });
+
         signingBtn.setOnAction((actionEvent) -> {
             if (!password.getText().equals(password2.getText())) {
                 status.setText("Password must be identical !");
@@ -185,7 +193,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
 
         switch (mode) {
             case LOGIN:
-                hBox.getChildren().addAll(loginBtn, registerBtn, exitBtn);
+                hBox.getChildren().addAll(loginBtn, registerBtn, offlineModeBtn, exitBtn);
                 serverBox.getChildren().addAll(serverIp, serverPort);
                 vBox.getChildren().addAll(label, userName, password, serverBox, hBox, status);
                 break;
@@ -193,6 +201,11 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
                 hBox.getChildren().addAll(signingBtn, exitBtn);
                 serverBox.getChildren().addAll(serverIp, serverPort);
                 vBox.getChildren().addAll(label, userName, password, password2, serverBox, hBox, status, serverIp, serverPort);
+                break;
+            case OFFLINE:
+                hBox.getChildren().addAll(offlineModeBtn, exitBtn);
+                serverBox.getChildren().addAll(serverIp, serverPort);
+                vBox.getChildren().addAll(label, userName, password, serverBox, hBox, status);
                 break;
         }
 

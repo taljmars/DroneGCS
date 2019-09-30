@@ -30,6 +30,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -362,6 +363,13 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         selectedPane.setUserData(springInstansiation);
         selectedPane = floatingNodeManager.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        Button b = new Button();
+        b.setText("X");
+        b.setCancelButton(true);
+        ((Pane) selectedPane).getChildren().add(b);
+        b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            b.getParent().setVisible(false);
+        });
         dashboardView.getChildren().add(selectedPane);
     }
 
