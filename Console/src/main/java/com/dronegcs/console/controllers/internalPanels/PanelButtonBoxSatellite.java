@@ -136,9 +136,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	public void ButtonConnectOnAction(ActionEvent actionEvent) {
     	try {
 			if (connected) {
-				loggerDisplayerSvc.logGeneral("Close Connection");
-				drone.getMavClient().disconnect();
-				return;
+				Platform.runLater(() -> {
+					loggerDisplayerSvc.logGeneral("Close Connection");
+					drone.getMavClient().disconnect();
+				});
 			}
 
 			Platform.runLater(() -> {
@@ -488,7 +489,9 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					flightModesCombo.setValue(drone.getState().getMode());
 					return;
 				case CONNECTED:
-					loggerDisplayerSvc.logGeneral("Connected");
+					loggerDisplayerSvc.logGeneral("End-Point Connected");
+//					return;
+//				case HEARTBEAT_FIRST:
 					connected = true;
 					btnConnect.setText("Disconnect");
 					SetImageButton(btnConnect, this.getClass().getResource("/com/dronegcs/console/guiImages/Connected.png"), "Disconnect");

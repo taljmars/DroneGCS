@@ -82,7 +82,15 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 		layerManagerDbWrapper.registerEventHandlerOnGuiLayerChanges(LayerMission.class, ((guiMissionLayer, dbMissionLayer) -> {
 			LOGGER.debug("Populating DB layer from GUI layer named '{}'", guiMissionLayer.getName());
 			LOGGER.debug("Open missing editor by name");
-			MissionEditor missionEditor = missionsManager.openMissionEditor(guiMissionLayer.getName());
+			MissionEditor missionEditor = null;
+			Mission currentMission = ((LayerMission) guiMissionLayer).getMission();
+			if (currentMission != null) {
+				// When syncing mission with drone we will have a gui layer and a mission without anything in the database
+				missionEditor = missionsManager.openMissionEditor(currentMission);
+			}
+			else {
+				missionEditor = missionsManager.openMissionEditor(guiMissionLayer.getName());
+			}
 			((Layer) dbMissionLayer).setObjectsUids(Arrays.asList(missionEditor.getMission().getKeyId().getObjId()));
 			LOGGER.debug("Updating new dblayer with brand new mission");
 			return dbMissionLayer;
