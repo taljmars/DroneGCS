@@ -36,10 +36,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
 import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED;
@@ -538,17 +536,27 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 	public LayerMission getLayerMissionWithSimilarPropertiesToMission(Mission missionFromDrone) throws MissionComparatorException {
 		LOGGER.debug("Searching for '{}'", missionFromDrone.getName());
 		DownloadedMissionComparator downloadedMissionComparator = applicationContext.getBean(DownloadedMissionComparator.class);
-		AbstractLayer foundLayer = null;
-		// TODO: Critical - should search all over the tree
-		for (AbstractLayer layer : ((LayerGroupEditable)getRoot().getValue()).getChildren()) {
-			LayerMission layerMission = (LayerMission) layer;
-			Mission mission = layerMission.getMission();
-			LOGGER.debug("Checking equals to '{}", mission.getName());
-			if (downloadedMissionComparator.isEqual(mission, missionFromDrone)) {
-				LOGGER.debug("Found identical mission named '{}'", mission.getName());
-				return layerMission;
+		Queue<AbstractLayer> treeItemsToSearch = new ConcurrentLinkedQueue<>();
+		treeItemsToSearch.add(getRoot().getValue());
+		while (!treeItemsToSearch.isEmpty()) {
+			AbstractLayer layer = treeItemsToSearch.poll();
+			if (layer instanceof LayerGroupEditable) {
+				treeItemsToSearch.addAll(((LayerGroupEditable) layer).getChildren());
+				continue;
+			}
+
+			// An actual layer
+			if (layer instanceof LayerMission) {
+				LayerMission layerMission = (LayerMission) layer;
+				Mission mission = layerMission.getMission();
+				LOGGER.debug("Checking equals to '{}'", mission.getName());
+				if (downloadedMissionComparator.isEqual(mission, missionFromDrone)) {
+					LOGGER.debug("Found identical mission named '{}'", mission.getName());
+					return layerMission;
+				}
 			}
 		}
+
 		LOGGER.debug("Layer with mission '{}' wasn't found", missionFromDrone.getName());
 		return null;
 	}

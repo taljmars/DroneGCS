@@ -5,6 +5,7 @@ import com.db.gui.persistence.scheme.LayersGroup;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console.controllers.dashboard.Dashboard;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
@@ -148,6 +149,9 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
     private ApplicationContext applicationContext;
 
     @Autowired
+    private ActiveUserProfile activeUserProfile;
+
+    @Autowired
     private LayerManager layerManager;
 
     private boolean inPrivateSession = false;
@@ -243,6 +247,12 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             return;
         }
 
+        if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE) {
+            LOGGER.debug("Offline mode, publish skipped");
+            loggerDisplayerSvc.logGeneral("Offline mode, publish skipped");
+            return;
+        }
+
         LOGGER.debug("Start handling published layers");
 
         Collection<ClosingPair<Layer>> draws = drawManager.flushAllItems(true);
@@ -305,6 +315,13 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             dialogManagerSvc.showAlertMessageDialog("Editor is currently open, must be closed first");
             return;
         }
+
+        if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE) {
+            LOGGER.debug("Offline mode, discard skipped");
+            loggerDisplayerSvc.logGeneral("Offline mode, discard skipped");
+            return;
+        }
+
         sessionsSvcRemote.discard();
 
         drawManager.flushAllItems(false);

@@ -30,6 +30,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 	protected static final String STYLE_FILE = "/com/dronegcs/console/application.css";
 
 	@Autowired
+	private ActiveUserProfile activeUserProfile;
+
+	@Autowired
     private GlobalStatusSvc globalStatus;
 
     @Autowired
@@ -106,6 +109,8 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		LoginResponse loginRestResponse = loginSvcRemoteWrapper.login(loginRestRequest, password, server, port);
         if (loginRestResponse.getReturnCode().equals(LoginLogoutStatus.OK)){
 			restClientHelper.setToken(loginRestResponse.getToken());
+			activeUserProfile.setMode(ActiveUserProfile.Mode.ONLINE);
+			activeUserProfile.setUsername(userName);
             showMainScreen();
             return loginRestResponse;
         }
@@ -121,7 +126,14 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		return registrationSvcRemoteWrapper.registerNewUser(registrationRequest, serverIp, serverPort);
 	}
 
-	private void showMainScreen() {
+    @Override
+    public void handleOffline() {
+        restClientHelper.setToken(null);
+		activeUserProfile.setMode(ActiveUserProfile.Mode.OFFLINE);
+        showMainScreen();
+    }
+
+    private void showMainScreen() {
 		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView2.fxml");
 //        root.setStyle("-fx-background-color: whitesmoke;");
 		root.getStylesheets().add(STYLE_FILE);

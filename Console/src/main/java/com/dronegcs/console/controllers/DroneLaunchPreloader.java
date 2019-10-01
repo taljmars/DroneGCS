@@ -47,6 +47,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
     public interface LoginLoader {
         LoginResponse handleLogin(String userName, String password, String server, int port);
         RegistrationResponse handleRegisterNewUser(String userName, String password, String server, int port);
+        void handleOffline();
     }
 
     private final static int PAGE_WIDTH = 600;
@@ -160,8 +161,8 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         });
 
         offlineModeBtn.setOnAction((actionEvent) -> {
+            loginLoader.handleOffline();
             preloaderStage.hide();
-            loadLoginScreen(OFFLINE, "");
         });
 
         signingBtn.setOnAction((actionEvent) -> {

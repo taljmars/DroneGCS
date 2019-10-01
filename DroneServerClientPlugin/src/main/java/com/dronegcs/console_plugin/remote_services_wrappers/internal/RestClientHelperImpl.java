@@ -37,18 +37,25 @@ public class RestClientHelperImpl implements RestClientHelper {
 
     @PostConstruct
     public void init() {
+        token = null;
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJsonProvider.class);
         client = Client.create(config);
     }
 
     @Override
-    public WebResource.Builder getWebResourceNoAuth(String path, Object... objs) {
+    public WebResource.Builder getWebResourceNoAuth(String path, Object... objs) throws InactiveRestClient{
+        if (getToken() == null)
+            throw new InactiveRestClient("Token not initialized");
+
         return getWebResource(false, path, objs);
     }
 
     @Override
-    public WebResource.Builder getWebResourceWithAuth(String path, Object... objs) {
+    public WebResource.Builder getWebResourceWithAuth(String path, Object... objs) throws InactiveRestClient{
+        if (getToken() == null)
+            throw new InactiveRestClient("Token not initialized");
+
         return getWebResource(true, path, objs);
     }
 

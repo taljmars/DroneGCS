@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -35,11 +36,13 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
 
     private MissionEditor missionEditor;
 
-    public Mission convert(DroneMission droneMission, Mission mission) throws MissionCompilationException {
+    public MissionEditor convert(DroneMission droneMission, MissionEditor missionEditor) throws MissionCompilationException {
         try {
             LOGGER.debug("Converting Mavlink mission with {} items", droneMission.getItems().size());
+            this.missionEditor = missionEditor;
 //            missionEditor = missionsManager.getMissionEditor(mission);
-            Assert.isTrue(1==2, "Must implement");
+//            Assert.isTrue(1==2, "Must implement");
+//            missionEditor = missionsManager.openMissionEditor("OnBoardMission" + (new Date()).getTime());
 
             Mission modifiedMission = missionEditor.getMission();
             modifiedMission.setDefaultAlt(droneMission.getDefaultAlt());
@@ -53,15 +56,18 @@ public class MavlinkItemToDatabaseConverter implements ConvertMavlinkVisitor
                 droneMissionItem.accept(this);
             }
 
-            mission = modifiedMission = missionEditor.getMission();
+            modifiedMission = missionEditor.getMission();
 
             LOGGER.debug("After conversion: Name{} Items {}", modifiedMission, modifiedMission.getMissionItemsUids().size());
             LOGGER.debug("Conversion done");
-            return mission;
+            return missionEditor;
         }
         catch (MavlinkConvertionException e) {
             LOGGER.error("Failed to convert mission", e);
             throw new MissionCompilationException(e.getMessage());
+        }
+        finally {
+            this.missionEditor = null;
         }
     }
 

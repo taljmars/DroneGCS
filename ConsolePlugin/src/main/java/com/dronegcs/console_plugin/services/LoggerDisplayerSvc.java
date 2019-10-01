@@ -2,15 +2,11 @@ package com.dronegcs.console_plugin.services;
 
 import javax.annotation.PostConstruct;
 
+import com.dronegcs.console_plugin.services.internal.logevents.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import com.dronegcs.console_plugin.services.internal.logevents.LogAbstractDisplayerEvent;
-import com.dronegcs.console_plugin.services.internal.logevents.LogErrorDisplayerEvent;
-import com.dronegcs.console_plugin.services.internal.logevents.LogGeneralDisplayerEvent;
-import com.dronegcs.console_plugin.services.internal.logevents.LogIncomingDisplayerEvent;
-import com.dronegcs.console_plugin.services.internal.logevents.LogOutgoingDisplayerEvent;
 import org.springframework.util.Assert;
 
 /**
@@ -44,6 +40,15 @@ public class LoggerDisplayerSvc {
 	}
 
 	/**
+	 * public warning message event
+	 *
+	 * @param message
+	 */
+	public void logWarning(String message) {
+		publish(new LogWarningDisplayerEvent(message));
+	}
+
+	/**
 	 * public error message event
 	 * 
 	 * @param message
@@ -51,7 +56,16 @@ public class LoggerDisplayerSvc {
 	public void logError(String message) {
 		publish(new LogErrorDisplayerEvent(message));		
 	}
-	
+
+	/**
+	 * public success message event
+	 *
+	 * @param message
+	 */
+	public void logSuccess(String message) {
+		publish(new LogSuccessDisplayerEvent(message));
+	}
+
 	/**
 	 * public general message event
 	 * 

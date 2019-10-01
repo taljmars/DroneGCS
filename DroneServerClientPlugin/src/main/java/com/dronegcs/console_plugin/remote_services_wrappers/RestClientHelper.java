@@ -14,6 +14,18 @@ import java.io.IOException;
 
 public interface RestClientHelper {
 
+    class InactiveRestClient extends Exception {
+
+        public InactiveRestClient(String error_message) {
+            super(error_message);
+        }
+
+        public InactiveRestClient() {
+            super("Rest Client wasn't initialized");
+        }
+
+    }
+
     final static Logger LOGGER = LoggerFactory.getLogger(RestClientHelper.class);
 
     <T extends Object> T resolveResponse(ClientResponse response, Class<T> clz) throws Exception;
@@ -22,9 +34,9 @@ public interface RestClientHelper {
 
     String getToken();
 
-    WebResource.Builder getWebResourceWithAuth(String apiPath, Object... param);
+    WebResource.Builder getWebResourceWithAuth(String apiPath, Object... param) throws InactiveRestClient;
 
-    WebResource.Builder getWebResourceNoAuth(String apiPath, Object... param);
+    WebResource.Builder getWebResourceNoAuth(String apiPath, Object... param) throws InactiveRestClient;
 
     static Pair<Class, ? extends Exception> getErrorAndMessage(ClientResponse response) throws Exception {
         String jsonString = response.getEntity(String.class);

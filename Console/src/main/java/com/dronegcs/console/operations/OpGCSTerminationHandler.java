@@ -1,6 +1,7 @@
 package com.dronegcs.console.operations;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -35,7 +36,10 @@ public class OpGCSTerminationHandler extends OperationHandler {
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get loginSvcRemote")
 	private LoginSvcRemoteWrapper loginSvcRemote;
-	
+
+	@Autowired
+	private ActiveUserProfile activeUserProfile;
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
@@ -54,7 +58,13 @@ public class OpGCSTerminationHandler extends OperationHandler {
 		if (DialogManagerSvc.YES_OPTION == dialogManagerSvc.showConfirmDialog("Are you sure you wand to exit?", "")) {
 			LOGGER.debug("Bye Bye");
 
-			loginSvcRemote.logout();
+			try {
+				if (activeUserProfile.getMode() == ActiveUserProfile.Mode.ONLINE)
+					loginSvcRemote.logout();
+			}
+			catch (Exception e) {
+				LOGGER.error("Failed to logout from server", e);
+			}
 
 			terminateNow();
     	}

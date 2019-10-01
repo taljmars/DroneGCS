@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.dashboard;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
@@ -86,6 +87,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Autowired
     private RuntimeValidator runtimeValidator;
+
+    @Autowired
+    private ActiveUserProfile activeUserProfile;
 
     @FXML private StackPane dashboardView;
 
@@ -259,7 +263,11 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP());
                 return;
             case MODE:
-                Platform.runLater(() -> viewManager.setTitle(APP_TITLE + " (" + drone.getState().getMode().getName() + ")"));
+                String prefix = "";
+                if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
+                    prefix = "[OFFLINE] ";
+                String finalPrefix = prefix;
+                Platform.runLater(() -> viewManager.setTitle(finalPrefix + APP_TITLE + " (" + drone.getState().getMode().getName() + ")"));
                 return;
             case TEXT_MESSEGE:
                 loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
@@ -339,7 +347,10 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     public void setViewManager(Stage stage) {
         this.viewManager = stage;
-        viewManager.setTitle(APP_TITLE);
+        String prefix = "";
+        if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
+            prefix = "[OFFLINE] ";
+        viewManager.setTitle(prefix + APP_TITLE);
         viewManager.setOnCloseRequest(this);
     }
 
@@ -366,6 +377,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         Button b = new Button();
         b.setText("X");
         b.setCancelButton(true);
+        b.setLayoutX(-10);
+        b.setLayoutY(-10);
         ((Pane) selectedPane).getChildren().add(b);
         b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             b.getParent().setVisible(false);
@@ -388,6 +401,14 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         double topbuttomPadding = (GUISettings._HEIGHT.get() * (1 - BIG_SCREEN_CONTAINER_RATIO_H)) / 2;
         Insets insets = new Insets(topbuttomPadding, leftrightPadding, topbuttomPadding, leftrightPadding);
         StackPane.setMargin(bigScreenContainer, insets);
+
+        Button b = new Button();
+        b.setText("X");
+        b.setCancelButton(true);
+        bigScreenContainer.getChildren().add(b);
+        b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            b.getParent().setVisible(false);
+        });
     }
 
     @SuppressWarnings("incomplete-switch")

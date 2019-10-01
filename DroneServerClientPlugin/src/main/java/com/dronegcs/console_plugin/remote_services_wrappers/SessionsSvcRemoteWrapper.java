@@ -18,7 +18,14 @@ public class SessionsSvcRemoteWrapper {
 
     public void publish() {
         LOGGER.debug("PUBLISH Start");
-        WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("publish");
+        WebResource.Builder builder = null;
+        try {
+            builder = restClientHelper.getWebResourceWithAuth("publish");
+        }
+        catch (RestClientHelper.InactiveRestClient inactiveRestClient) {
+            LOGGER.debug("PUBLISH Canceled");
+            return;
+        }
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 
@@ -30,7 +37,14 @@ public class SessionsSvcRemoteWrapper {
 
     public void discard() {
         LOGGER.debug("DISCARD Start");
-        WebResource.Builder builder = restClientHelper.getWebResourceWithAuth("discard");
+        WebResource.Builder builder = null;
+        try {
+            builder = restClientHelper.getWebResourceWithAuth("discard");
+        }
+        catch (RestClientHelper.InactiveRestClient inactiveRestClient) {
+            LOGGER.debug("DISCARD Canceled");
+            return;
+        }
         ClientResponse response = builder.post(ClientResponse.class);
         ClientResponse.Status status = response.getClientResponseStatus();
 

@@ -10,6 +10,7 @@ import com.db.persistence.remote_exception.ObjectNotFoundRemoteException;
 import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.QueryRequestRemote;
 import com.db.persistence.scheme.QueryResponseRemote;
+import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console_plugin.draw_editor.DrawUpdateException;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupEditor;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
@@ -45,6 +46,9 @@ public class LayerManagerDbWrapper extends LayerManager {
     private QuerySvcRemoteWrapper querySvcRemote;
 
     @Autowired
+    private ActiveUserProfile activeUserProfile;
+
+    @Autowired
     private LayersGroupsManager layersGroupManager;
 
     @Autowired
@@ -73,7 +77,10 @@ public class LayerManagerDbWrapper extends LayerManager {
 
     private void sync() {
         LOGGER.debug("Syncing Layers");
-        layersGroupManager.refreshAllLayers();;
+
+        if (activeUserProfile.getMode() == ActiveUserProfile.Mode.ONLINE)
+            layersGroupManager.refreshAllLayers();
+
         List<BaseObject> allLayers = getAllLayers();
         if (allLayers.isEmpty()) {
             LOGGER.debug("There are no layers exist for this user");

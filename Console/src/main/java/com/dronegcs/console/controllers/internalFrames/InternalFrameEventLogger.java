@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers.internalFrames;
 
 import com.auditdb.persistence.base_scheme.EventLogObject;
 import com.auditdb.persistence.scheme.*;
+import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogEntry;
@@ -46,6 +47,7 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(InternalFrameEventLogger.class);
 
+	@Autowired private ActiveUserProfile activeUserProfile;
 
 	@NotNull @FXML private TableView<EventLogEntry> table;
 
@@ -245,6 +247,9 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 	static final int SEC = 1000;
 	@Scheduled(fixedRate = 2 * SEC)
 	public void tik() {
+		if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
+			return;
+
 		LOGGER.debug("Refresh Log");
 		Platform.runLater(() -> loadTable());
 	}

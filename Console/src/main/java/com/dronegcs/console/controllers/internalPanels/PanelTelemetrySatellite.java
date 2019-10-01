@@ -195,7 +195,7 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 					SetHeartBeat(true);
 					return;
 				case HEARTBEAT_RESTORED:
-					loggerDisplayerSvc.logGeneral("Quad Connection Restored");
+					loggerDisplayerSvc.logSuccess("Quad Connection Restored");
 					SetHeartBeat(true);
 					return;
 				case DISCONNECTED:
