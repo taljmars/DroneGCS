@@ -140,6 +140,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 					loggerDisplayerSvc.logGeneral("Close Connection");
 					drone.getMavClient().disconnect();
 				});
+				return;
 			}
 
 			Platform.runLater(() -> {

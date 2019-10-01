@@ -294,3 +294,10 @@
     -fx-background-radius: 2em;
 }
 
+.chart {
+    -fx-background-color: #462300;
+}
+
+.axis-label {
+   -fx-text-fill: #462300;
+}

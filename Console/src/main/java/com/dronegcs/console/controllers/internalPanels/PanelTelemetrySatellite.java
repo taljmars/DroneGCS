@@ -30,6 +30,8 @@ import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.generic_tools.validations.ValidatorResponse;
 import org.springframework.util.Assert;
 
+import static com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType.HEARTBEAT_TIMEOUT;
+
 @Component
 public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
 
@@ -199,8 +201,10 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 					SetHeartBeat(true);
 					return;
 				case DISCONNECTED:
-				case HEARTBEAT_TIMEOUT:
 					loggerDisplayerSvc.logError("Quad Disconnected");
+				case HEARTBEAT_TIMEOUT:
+					if (event == HEARTBEAT_TIMEOUT)
+						loggerDisplayerSvc.logWarning("Quad Latency detected");
 					SetLblHeight(0);
 					SetSignal(0);
 					SetBattery(0);

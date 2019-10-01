@@ -191,7 +191,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasString()) {
-                loggerDisplayerSvc.logGeneral(db.getString());
+//                loggerDisplayerSvc.logGeneral(db.getString());
+                LOGGER.debug("Generating drop plugin: " + db.getString());
                 success = true;
             }
 
