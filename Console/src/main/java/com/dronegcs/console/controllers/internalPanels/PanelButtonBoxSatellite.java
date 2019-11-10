@@ -268,6 +268,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
         		catch (Exception exp) {
         			exp.printStackTrace();
         			Platform.runLater( () -> dialogManagerSvc.showErrorMessageDialog("Failed to get required height for value '" + val + "'\n", exp));
+					takeOffThreadRunning = false;
         		}
     			return null;
 				}

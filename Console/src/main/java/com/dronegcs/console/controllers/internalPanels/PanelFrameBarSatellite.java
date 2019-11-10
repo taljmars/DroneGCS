@@ -234,7 +234,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         if (event.getClickCount() >= 2) {
             String springInstansiation = (String) button.getUserData();
             Dashboard dashboard = applicationContext.getBean(Dashboard.class);
-            dashboard.loadBigScreenContainter(springInstansiation);
+            dashboard.loadBigScreenContainer(springInstansiation);
         }
     }
 

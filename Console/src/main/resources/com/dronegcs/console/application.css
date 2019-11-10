@@ -90,6 +90,7 @@
    buttonHoverColor: lightgray;
    buttonHoverTextColor: #1d1d1d;
    textColor: #1d1d1d;
+   hud_text: #2ff556;
 
     /*
     Dark background on blue button and white text
@@ -295,9 +296,7 @@
 }
 
 .chart {
-    -fx-background-color: #462300;
+    -fx-background-color: ghostwhite;
 }
 
-.axis-label {
-   -fx-text-fill: #462300;
-}
+

@@ -70,11 +70,16 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
     		keyBoardController.ReleaseIfNeeded();
     		keyBoardController.Activate();
     		int eAvg = drone.getRC().getAverageThrust();
-    		loggerDisplayerSvc.logGeneral("Setting Keyboard Thrust starting value to " + eAvg);
+			loggerDisplayerSvc.logWarning("Arrow keys for roll and pitch");
+			loggerDisplayerSvc.logWarning("'A' and 'D' to control yaw");
+			loggerDisplayerSvc.logWarning("'W' and 'S' to control thrust");
+			loggerDisplayerSvc.logWarning("Controller Instructions:");
+			loggerDisplayerSvc.logWarning("Setting Keyboard Thrust starting value to " + eAvg);
     		keyBoardController.SetThrust(eAvg);
     		break;
     	case REMOTE:
-    		keyBoardController.ReleaseIfNeeded();
+			loggerDisplayerSvc.logWarning("Changing to radio controller");
+			keyBoardController.ReleaseIfNeeded();
     		keyBoardController.Deactivate();
     		int[] rcOutputs = {0, 0, 0, 0, 0, 0, 0, 0};
     		MavLinkRC.sendRcOverrideMsg(drone, rcOutputs);

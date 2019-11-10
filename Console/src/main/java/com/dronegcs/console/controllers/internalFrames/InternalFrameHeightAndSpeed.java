@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Component
-public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener, Initializable {
+public class InternalFrameHeightAndSpeed extends InternalFrameChart implements OnDroneListener {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
@@ -53,6 +53,8 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize(location, resources);
+
 		lineChart.setPrefWidth(root.getPrefWidth());
 		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
@@ -89,7 +91,7 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 		});
 	}
 
-	private void loadChart() {
+	protected void loadChart() {
         seriesHeight = new XYChart.Series<String, Number>();
         seriesHeight.setName("Height (m)");
 		lineChart.getData().add(seriesHeight);
@@ -102,7 +104,12 @@ public class InternalFrameHeightAndSpeed extends Pane implements OnDroneListener
 		seriesVerticalSpeed.setName("Vertical Speed (m/s)");
 		lineChart.getData().add(seriesVerticalSpeed);
 	}
-	
+
+	@Override
+	protected LineChart<String, Number> getLineChart() {
+		return lineChart;
+	}
+
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="dashboardView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.dashboard.Dashboard">
+<StackPane fx:id="dashboardView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.dashboard.Dashboard">
 
     <children>
 
@@ -39,8 +39,9 @@
 
         <Pane fx:id="bottomPanel" opacity="0.7" StackPane.alignment="BOTTOM_CENTER">
             <children>
-            <TabPane fx:id="bottomPanelTab" side="RIGHT" tabClosingPolicy="UNAVAILABLE" tabMaxWidth="0.0">
-              <tabs>
+            <!--<TabPane fx:id="bottomPanelTab" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" tabMaxWidth="0.0">-->
+            <TabPane fx:id="bottomPanelTab" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+                <tabs>
                 <Tab text="Logs">
                   <content>
                     <AnchorPane>
@@ -57,6 +58,15 @@
                             <fx:include source="panels/internal/PanelTableView2.fxml" />
                         </children>
                     </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Map Control">
+                  <content>
+                      <AnchorPane>
+                          <children>
+                              <fx:include source="panels/internal/PanelMapControlView.fxml" />
+                          </children>
+                      </AnchorPane>
                   </content>
                 </Tab>
               </tabs>

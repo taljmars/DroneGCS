@@ -42,6 +42,10 @@ public class EventQueueSvcImpl implements EventQueueSvc {
         queue.add(new EventMessage(Logger.Type.GENERAL, entry));
     }
 
+    private void addSuccessMessegeToDisplay(String entry) {
+        queue.add(new EventMessage(Logger.Type.SUCCESS, entry));
+    }
+
     private void addIncommingMessegeToDisplay(String entry) {
         queue.add(new EventMessage(Logger.Type.INCOMING, entry));
     }
@@ -54,9 +58,16 @@ public class EventQueueSvcImpl implements EventQueueSvc {
         queue.add(new EventMessage(Logger.Type.ERROR, entry));
     }
 
+    private void addWarningMessegeToDisplay(String entry) {
+        queue.add(new EventMessage(Logger.Type.WARNING, entry));
+    }
+
     @EventListener
     public void onLogDisplayerEvent(LogAbstractDisplayerEvent event) {
         switch (event.getType()) {
+            case WARNING:
+                addWarningMessegeToDisplay(event.getEntry());
+                break;
             case ERROR:
                 addErrorMessegeToDisplay(event.getEntry());
                 break;
@@ -68,6 +79,9 @@ public class EventQueueSvcImpl implements EventQueueSvc {
                 break;
             case OUTGOING:
                 addOutgoingMessegeToDisplay(event.getEntry());
+                break;
+            case SUCCESS:
+                addSuccessMessegeToDisplay(event.getEntry());
                 break;
         }
     }

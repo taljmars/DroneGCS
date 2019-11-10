@@ -25,12 +25,12 @@ public class FloatingNodeManager {
         pane.setMaxSize(width, height);
         pane.setPrefSize(width, height);
 
-        wrapGroup.addEventFilter(MouseEvent.ANY, event ->  {
-                if (dragModeActiveProperty.get()) {
-                    // disable mouse events for all children
-                    event.consume();
-                }
-        });
+//        wrapGroup.addEventFilter(MouseEvent.ANY, event ->  {
+//                if (dragModeActiveProperty.get()) {
+//                    // disable mouse events for all children
+//                    event.consume();
+//                }
+//        });
 
         wrapGroup.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
                         if (dragModeActiveProperty.get()) {

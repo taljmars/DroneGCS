@@ -1,6 +1,5 @@
 package com.dronegcs.console.controllers.droneEye;
 
-import com.dronegcs.console_plugin.services.internal.MissionCompilerSvcImpl;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -29,7 +28,7 @@ import java.util.ResourceBundle;
 
 @Component
 public class DroneEye extends StackPane implements ObjectDetectorListener, OnDroneListener, Initializable {
-    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MissionCompilerSvcImpl.class);
+    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DroneEye.class);
 
     @NotNull @FXML private StackPane root;
     @NotNull @FXML private ImageView imageViewer;

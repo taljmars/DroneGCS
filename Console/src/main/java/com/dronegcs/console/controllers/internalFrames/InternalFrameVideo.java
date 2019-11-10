@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.droneEye.DroneEye;
+import com.dronegcs.console.controllers.internalFrames.internal.HUD;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
@@ -23,15 +24,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -83,6 +91,9 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     @Autowired
     private RuntimeValidator runtimeValidator;
 
+    @Autowired
+    private HUD hud;
+
     @NotNull
     @FXML
     private Pane root;
@@ -93,7 +104,15 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
     @NotNull
     @FXML
-    private Label backgroundLabel;
+    private RadioButton hud_all;
+
+    @NotNull
+    @FXML
+    private RadioButton hud_dataonly;
+
+    @NotNull
+    @FXML
+    private RadioButton hud_hide;
 
     @NotNull
     @FXML
@@ -146,9 +165,16 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
         ValidatorResponse validatorResponse = runtimeValidator.validate(this);
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
-    }
 
-    ;
+//        handleOpHudOnAction(null);
+
+        ToggleGroup radioGroup = new ToggleGroup();
+        hud_all.setToggleGroup(radioGroup);
+        hud_dataonly.setToggleGroup(radioGroup);
+        hud_hide.setToggleGroup(radioGroup);
+
+        hud.setHideBackground(false);
+    }
 
     @FXML
     public void handleVideoMouseClick(MouseEvent mouseEvent) {
@@ -219,19 +245,19 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 //        imageViewer.setFitWidth(root.getPrefWidth());
         imageViewer.setPreserveRatio(true);
         imageViewer.setImage(img);
-
-        if (backgroundLabel.isVisible())
-            backgroundLabel.setVisible(false);
     }
+
 
     @FXML
     public void handleOpCameraOnAction(ActionEvent actionEvent) {
         if (detector.isActive()) {
             opCamera.setText("Start Camera");
             detector.stop();
+            hud.setHideBackground(false);
         } else {
             opCamera.setText("Stop Camera");
             detector.start();
+            hud.setHideBackground(true);
         }
     }
 
@@ -254,5 +280,17 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
             default:
                 break;
         }
+    }
+
+    public void setHudViewAll(ActionEvent actionEvent) {
+        hud.setItemsLevel(HUD.ViewLevel.ALL_ITEMS);
+    }
+
+    public void setHudViewDataOnly(ActionEvent actionEvent) {
+        hud.setItemsLevel(HUD.ViewLevel.DATA_ONLY);
+    }
+
+    public void setHudViewHide(ActionEvent actionEvent) {
+        hud.setItemsLevel(HUD.ViewLevel.NONE);
     }
 }

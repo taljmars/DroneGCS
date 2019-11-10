@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Component
-public class InternalFrameBattery extends Pane implements OnDroneListener, Initializable {
+public class InternalFrameBattery extends InternalFrameChart implements OnDroneListener {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
@@ -55,6 +55,8 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize(location, resources);
+
 		lineChart.setPrefWidth(root.getPrefWidth());
 		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
@@ -93,7 +95,7 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		});
 	}
 
-	private void loadChart() {
+	protected void loadChart() {
 		seriesCurrent = new XYChart.Series<String, Number>();
 		seriesCurrent.setName("Current");
 		lineChart.getData().add(seriesCurrent);
@@ -109,6 +111,11 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 		seriesVolt = new XYChart.Series<String, Number>();
 		seriesVolt.setName("Volt");
 		lineChart.getData().add(seriesVolt);
+	}
+
+	@Override
+	protected LineChart<String, Number> getLineChart() {
+		return lineChart;
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -132,5 +139,5 @@ public class InternalFrameBattery extends Pane implements OnDroneListener, Initi
 			break;
 		}
 	}
-	
+
 }

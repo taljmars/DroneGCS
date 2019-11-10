@@ -6,15 +6,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ToggleButton?>
 <AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameSignals" opacity="0.7">
 	<children>
-		<LineChart fx:id="lineChart" title="Signals" >
-			<xAxis>
-				<CategoryAxis label="Time (s)" fx:id="xAxis" />
-			</xAxis>
-			<yAxis>
-				<NumberAxis fx:id="valuesSignals" label="Signals" side="LEFT" upperBound="3000.0" />
-			</yAxis>
-		</LineChart>
+		<BorderPane>
+			<top>
+				<HBox maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
+					<ToggleButton fx:id="btnLastMin" text="Last 2 minutes" onAction="#handleFilteredMinutes" selected="false"/>
+					<Button fx:id="btnClean" text="Clear" onAction="#handleClear"/>
+				</HBox>
+			</top>
+			<center>
+				<LineChart fx:id="lineChart" title="Signals" >
+					<xAxis>
+						<CategoryAxis label="Time (s)" fx:id="xAxis" />
+					</xAxis>
+					<yAxis>
+						<NumberAxis fx:id="valuesSignals" label="Signals" side="LEFT" upperBound="3000.0" />
+					</yAxis>
+				</LineChart>
+			</center>
+		</BorderPane>
 	</children>
 </AnchorPane>

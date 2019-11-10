@@ -45,9 +45,8 @@ public class InternalFrameMavlinkConfiguration extends Pane implements OnDroneLi
 	
 	@NotNull @FXML private Pane root;
 
-	@NotNull @FXML private ScrollPane sc1;
-
-	@NotNull @FXML private VBox vbox;
+//	@NotNull @FXML private ScrollPane sc1;
+;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -55,7 +54,7 @@ public class InternalFrameMavlinkConfiguration extends Pane implements OnDroneLi
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 
-		sc1.setPrefHeight(root.getPrefHeight());
+//		sc1.setPrefHeight(root.getPrefHeight());
 	}
 	
 	private static int called;

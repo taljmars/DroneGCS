@@ -5,15 +5,29 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
 <AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameBattery" opacity="0.7">
 	<children>
-		<LineChart fx:id="lineChart" title="Battery">
-			<xAxis>
-				<CategoryAxis label="Time (s)" fx:id="xAxis" />
-			</xAxis>
-			<yAxis>
-				<NumberAxis fx:id="valuesBattery" label="Battery" side="LEFT" upperBound="3000.0" />
-			</yAxis>
-		</LineChart>
+		<BorderPane>
+			<top>
+				<HBox maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
+					<ToggleButton fx:id="btnLastMin" text="Last 2 minutes" onAction="#handleFilteredMinutes" selected="false"/>
+					<Button fx:id="btnClean" text="Clear" onAction="#handleClear"/>
+				</HBox>
+			</top>
+			<center>
+				<LineChart fx:id="lineChart" title="Battery">
+					<xAxis>
+						<CategoryAxis label="Time (s)" fx:id="xAxis" />
+					</xAxis>
+					<yAxis>
+						<NumberAxis fx:id="valuesBattery" label="Battery" side="LEFT" upperBound="3000.0" />
+					</yAxis>
+				</LineChart>
+			</center>
+		</BorderPane>
 	</children>
 </AnchorPane>

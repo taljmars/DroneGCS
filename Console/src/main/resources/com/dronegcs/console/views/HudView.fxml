@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Arc?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Sphere?>
+<?import javafx.scene.text.*?>
+<StackPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" style="-fx-background-color: textColor;" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.HUD">
+    <children>
+        <Sphere fx:id="sphere" radius="${root.prefHeight / 2}" StackPane.alignment="CENTER" />
+        <Arc fx:id="arc" length="120.0" radiusX="${sphere.radius * 0.7}" radiusY="${sphere.radius * 0.7}" startAngle="30.0" stroke="chartreuse" strokeLineCap="ROUND" strokeType="INSIDE" strokeWidth="2.0" translateY="${sphere.radius * 0.7 / -1.5}" />
+        <Line fx:id="horizontal_bar_left" endX="${root.prefHeight / 4}" fill="#2ff556" stroke="#2ff556" strokeLineCap="ROUND" strokeWidth="7.0" translateX="${root.prefHeight / 4}" />
+        <Line fx:id="horizontal_bar_right" endX="${-1 * root.prefHeight / 4}" fill="#2ff556" stroke="#2ff556" strokeLineCap="ROUND" strokeWidth="7.0" translateX="${-1 * root.prefHeight / 4}" />
+
+        <Label fx:id="hud_m_45" rotate="-60" text="60" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * -0.86602}"
+               translateY="${sphere.radius * 0.7 * -0.49999}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_m_30" rotate="-40" text="40" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * -0.64278}"
+               translateY="${sphere.radius * 0.7 * -0.76604}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_m_15" rotate="-20" text="20" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * -0.34202}"
+               translateY="${sphere.radius * 0.7 * -0.93969}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_0" rotate="0" text="0" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * 0}"
+               translateY="${sphere.radius * 0.7 * -1}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_p_15" rotate="20" text="20" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * 0.34202}"
+               translateY="${sphere.radius * 0.7 * -0.93969}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_p_30" rotate="40" text="40" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * 0.64278}"
+               translateY="${sphere.radius * 0.7 * -0.76604}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="hud_p_45" rotate="60" text="60" textFill="chartreuse"
+               translateX="${sphere.radius * 0.7 * 0.86602}"
+               translateY="${sphere.radius * 0.7 * -0.49999}"
+        >
+            <font><Font size="12.0" /></font>
+        </Label>
+        <StackPane prefHeight="150.0" prefWidth="200.0" translateY="${root.prefHeight / 4}" StackPane.alignment="CENTER">
+            <children>
+                <Label fx:id="lblPointerToHomeBorder" prefHeight="55.0" prefWidth="55.0" text="    " textAlignment="CENTER" textFill="#2ff556">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblPointerToHome" text="^" textAlignment="CENTER" textFill="#2ff556">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+            </children>
+        </StackPane>
+        <BorderPane prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" StackPane.alignment="CENTER">
+            <bottom>
+                <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                            <children>
+                                <Label fx:id="lblDistToLaunch" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="lblDistToLaunch" textAlignment="RIGHT" textFill="#2ff556">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblAlt" text="lblAlt" textAlignment="CENTER" textFill="#2ff556">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </bottom>
+            <left>
+                <VBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="lblMode" text="lblMode" textAlignment="CENTER" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblSignal" text="lblSignal" textAlignment="CENTER" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblBattery" text="lblBattery" textAlignment="CENTER" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <opaqueInsets>
+                        <Insets left="10.0" />
+                    </opaqueInsets>
+                    <BorderPane.margin>
+                        <Insets left="10.0" />
+                    </BorderPane.margin>
+                </VBox>
+            </left>
+            <right>
+                <VBox BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox alignment="CENTER">
+                            <children>
+                                <Label fx:id="lblMode1" prefHeight="53.0" prefWidth="89.0" text="North:" textFill="#2ff556">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                                <StackPane prefHeight="55.0" prefWidth="55.0">
+                                    <children>
+                                        <Label fx:id="lblCompassBorder" alignment="CENTER" prefHeight="55.0" prefWidth="55.0" text="    " textAlignment="CENTER">
+                                            <font>
+                                                <Font size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblCompass" text="^" textAlignment="CENTER" textFill="#2ff556">
+                                            <font>
+                                                <Font name="System Bold" size="18.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </HBox>
+                        <Label fx:id="lblFlightTime" text="lblFlightTime" textAlignment="CENTER" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblFlightDist" text="lblFlightDist" textAlignment="CENTER" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblSpeed" prefHeight="53.0" prefWidth="89.0" text="lblSpeed" textFill="#2ff556">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <opaqueInsets>
+                        <Insets />
+                    </opaqueInsets>
+                    <BorderPane.margin>
+                        <Insets right="10.0" top="10.0" />
+                    </BorderPane.margin>
+                </VBox>
+            </right>
+        </BorderPane>
+    </children>
+</StackPane>

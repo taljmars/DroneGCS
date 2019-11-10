@@ -74,6 +74,16 @@ public class PanelLogBox extends Pane implements Initializable {
         addMessegeToDisplay(cmd, Type.ERROR);
     }
 
+    private void addWarningMessegeToDisplay(String cmd) {
+        LOGGER.error(cmd);
+        addMessegeToDisplay(cmd, Type.WARNING);
+    }
+
+    private void addSuccessMessegeToDisplay(String cmd) {
+        LOGGER.info(cmd);
+        addMessegeToDisplay(cmd, Type.SUCCESS);
+    }
+
     private void addOutgoingMessegeToDisplay(String cmd) {
         LOGGER.info(cmd);
         addMessegeToDisplay(cmd, Type.OUTGOING);
@@ -113,11 +123,17 @@ public class PanelLogBox extends Pane implements Initializable {
             case GENERAL:
                 newcontent.setStyle("-fx-font-size: 14; -fx-fill: black;");
                 break;
+            case SUCCESS:
+                newcontent.setStyle("-fx-font-size: 14; -fx-fill: green;");
+                break;
             case OUTGOING:
-                newcontent.setStyle("-fx-font-size: 14; -fx-fill: blue;");
+                newcontent.setStyle("-fx-font-size: 14; -fx-fill: blue; -fx-font-weight: bold;");
                 break;
             case INCOMING:
-                newcontent.setStyle("-fx-font-size: 14; -fx-fill: green;");
+                newcontent.setStyle("-fx-font-size: 14; -fx-fill: blue");
+                break;
+            case WARNING:
+                newcontent.setStyle("-fx-font-size: 14; -fx-fill: orange;");
                 break;
             case ERROR:
                 newcontent.setStyle("-fx-font-size: 14; -fx-fill: red;");
@@ -134,6 +150,9 @@ public class PanelLogBox extends Pane implements Initializable {
     public void onLogDisplayerEvent(LogAbstractDisplayerEvent event) {
         Platform.runLater(() -> {
             switch (event.getType()) {
+                case WARNING:
+                    addWarningMessegeToDisplay(event.getEntry());
+                    break;
                 case ERROR:
                     addErrorMessegeToDisplay(event.getEntry());
                     break;
@@ -145,6 +164,9 @@ public class PanelLogBox extends Pane implements Initializable {
                     break;
                 case OUTGOING:
                     addOutgoingMessegeToDisplay(event.getEntry());
+                    break;
+                case SUCCESS:
+                    addSuccessMessegeToDisplay(event.getEntry());
                     break;
             }
         });

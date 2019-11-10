@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Component
-public class InternalFrameActualPWM extends Pane implements OnDroneListener, Initializable {
+public class InternalFrameActualPWM extends InternalFrameChart implements OnDroneListener {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
@@ -54,6 +54,8 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 			
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize(location, resources);
+
 		lineChart.setPrefWidth(root.getPrefWidth());
 		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
@@ -92,7 +94,7 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 		});
 	}
 
-	private void loadChart() {
+	protected void loadChart() {
 		seriesE1 = new XYChart.Series<String, Number>();
 		seriesE1.setName("E1");
 		lineChart.getData().add(seriesE1);
@@ -108,6 +110,11 @@ public class InternalFrameActualPWM extends Pane implements OnDroneListener, Ini
 		seriesE4 = new XYChart.Series<String, Number>();
 		seriesE4.setName("E4");
 		lineChart.getData().add(seriesE4);
+	}
+
+	@Override
+	protected LineChart<String, Number> getLineChart() {
+		return lineChart;
 	}
 
 	@SuppressWarnings("incomplete-switch")

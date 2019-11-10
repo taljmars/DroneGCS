@@ -10,10 +10,12 @@ import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -26,11 +28,12 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Component
-public class InternalFrameSignals extends Pane implements OnDroneListener, Initializable {
+public class InternalFrameSignals extends InternalFrameChart implements OnDroneListener {
 
 	@Autowired @NotNull( message="Internal Error: Failed to get drone" )
 	private Drone drone;
@@ -54,6 +57,8 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.initialize(location, resources);
+
 		lineChart.setPrefWidth(root.getPrefWidth());
 		lineChart.setPrefHeight(root.getPrefHeight());
 		loadChart();
@@ -77,22 +82,32 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 
 	private void addValues(int distance, int signal, int noise, int rssi) {
 		Platform.runLater( () -> {
-			String timestamp = LocalDateTime.now().toLocalTime().toString();
+			LocalTime localtime = LocalDateTime.now().toLocalTime();
+			String timestamp = localtime.toString();
 			
-			if (seriesDistance != null)
+			if (seriesDistance != null) {
 				seriesDistance.getData().add(new XYChart.Data<String, Number>(timestamp, distance));
-			if (seriesSignal != null)
+				clearSeries(seriesDistance);
+			}
+			if (seriesSignal != null) {
 				seriesSignal.getData().add(new XYChart.Data<String, Number>(timestamp, signal));
-			if (seriesNoise != null)
+				clearSeries(seriesSignal);
+			}
+			if (seriesNoise != null) {
 				seriesNoise.getData().add(new XYChart.Data<String, Number>(timestamp, noise));
-			if (seriesRssi != null)
+				clearSeries(seriesNoise);
+			}
+			if (seriesRssi != null) {
 				seriesRssi.getData().add(new XYChart.Data<String, Number>(timestamp, rssi));
+				clearSeries(seriesRssi);
+			}
 			
 			csv.addEntry(Arrays.asList(timestamp, distance, signal, noise, rssi));
 		});
 	}
 
-	private void loadChart() {
+	@Override
+	protected void loadChart() {
         seriesDistance = new XYChart.Series<String, Number>();
         seriesDistance.setName("Distance (m)");
 		lineChart.getData().add(seriesDistance);
@@ -109,7 +124,12 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 		seriesNoise.setName("Noise (%)");
 		lineChart.getData().add(seriesNoise);
 	}
-	
+
+	@Override
+	protected LineChart getLineChart() {
+		return lineChart;
+	}
+
 	private int valueUpdate = 0;
 
 	@SuppressWarnings("incomplete-switch")
@@ -144,4 +164,5 @@ public class InternalFrameSignals extends Pane implements OnDroneListener, Initi
 			break;
 		}
 	}
+
 }

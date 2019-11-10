@@ -95,7 +95,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     private static final double BOTTOM_PANEL_RATIO_H = 0.15;
     private static final double BOTTOM_PANEL_RATIO_W = 0.65;
-    private static final double BOTTOM_PANEL_RATIO_BOTTOM_MARGIN_H = 0.08;
+    private static final double BOTTOM_PANEL_RATIO_BOTTOM_MARGIN_H = 0.04;
     @FXML private Pane bottomPanel;
     @FXML private TabPane bottomPanelTab;
 
@@ -274,9 +274,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
                 return;
             case WARNING_SIGNAL_WEAK:
-                loggerDisplayerSvc.logError("Warning: Weak signal");
-                loggerDisplayerSvc.logError("Warning: Weak signal");
-                loggerDisplayerSvc.logError("Warning: Weak signal");
+                loggerDisplayerSvc.logWarning("Warning: Weak signal");
+                loggerDisplayerSvc.logWarning("Warning: Weak signal");
+                loggerDisplayerSvc.logWarning("Warning: Weak signal");
                 java.awt.Toolkit.getDefaultToolkit().beep();
                 java.awt.Toolkit.getDefaultToolkit().beep();
                 java.awt.Toolkit.getDefaultToolkit().beep();
@@ -367,17 +367,17 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         }
     }
 
-    private void handleFrameContainerRequest(String springInstansiation) {
-        if (springInstansiation.isEmpty())
+    private void handleFrameContainerRequest(String springInstantiation) {
+        if (springInstantiation.isEmpty())
             return;
 
-        Node selectedPane = guiAppConfig.loadInternalFrame(springInstansiation, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        Node selectedPane = guiAppConfig.loadInternalFrame(springInstantiation, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
-        selectedPane.setUserData(springInstansiation);
+        selectedPane.setUserData(springInstantiation);
         selectedPane = floatingNodeManager.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
         Button b = new Button();
         b.setText("X");
-        b.setCancelButton(true);
+//        b.setCancelButton(true);
         b.setLayoutX(-10);
         b.setLayoutY(-10);
         ((Pane) selectedPane).getChildren().add(b);
@@ -387,8 +387,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         dashboardView.getChildren().add(selectedPane);
     }
 
-    public void loadBigScreenContainter(String springInstansiation) {
-        Pane node = (Pane) guiAppConfig.loadInternalFrame(springInstansiation, GUISettings._WIDTH.get() * BIG_SCREEN_CONTAINER_RATIO_W, GUISettings._HEIGHT.get() * BIG_SCREEN_CONTAINER_RATIO_H);
+    public void loadBigScreenContainer(String springInstantiation) {
+        Pane node = (Pane) guiAppConfig.loadInternalFrame(springInstantiation, GUISettings._WIDTH.get() * BIG_SCREEN_CONTAINER_RATIO_W, GUISettings._HEIGHT.get() * BIG_SCREEN_CONTAINER_RATIO_H);
         bigScreenContainer.getChildren().clear();
         bigScreenContainer.getChildren().addAll(node);
 
@@ -405,7 +405,11 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
         Button b = new Button();
         b.setText("X");
-        b.setCancelButton(true);
+//        b.setCancelButton(true);
+        b.setTranslateX(-10 - bigScreenContainer.widthProperty().get() / 2);
+        b.setTranslateY(-10 - bigScreenContainer.heightProperty().get() / 2);
+//        b.setLayoutX(leftrightPadding);
+//        b.setLayoutY(topbuttomPadding);
         bigScreenContainer.getChildren().add(b);
         b.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             b.getParent().setVisible(false);
