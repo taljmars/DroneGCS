@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.TelemetryRates">
+
+    <children>
+
+        <VBox spacing="20.0">
+            <children>
+                <Label text="Telemetry" style="-fx-font-weight: bold" />
+                <HBox spacing="20.0">
+                    <children>
+
+                        <HBox >
+                            <children>
+                                <Label text="Altitude   " />
+                                <ComboBox fx:id="cmbAlt">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                            <String fx:value="50" />
+                                            <String fx:value="100" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="4" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                        <HBox >
+                            <children>
+                                <Label text="Position   " />
+                                <ComboBox fx:id="cmbPos">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                            <String fx:value="20" />
+                                            <String fx:value="50" />
+                                            <String fx:value="100" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="2" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                        <HBox >
+                            <children>
+                                <Label text="Mode/Status   " />
+                                <ComboBox fx:id="cmbModeStatus">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="2" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                        <HBox >
+                            <children>
+                                <Label text="RC   " />
+                                <ComboBox fx:id="cmbRC">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="2" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                        <HBox >
+                            <children>
+                                <Label text="Sensors   " />
+                                <ComboBox fx:id="cmbSensors">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                            <String fx:value="50" />
+                                            <String fx:value="100" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="2" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+
+    </children>
+
+</Pane>
+

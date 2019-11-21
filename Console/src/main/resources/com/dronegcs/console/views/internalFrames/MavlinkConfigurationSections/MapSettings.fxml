@@ -3,32 +3,43 @@
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import java.lang.*?>
-<Pane prefHeight="460.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.MapSettings">
+<?import javafx.scene.control.CheckBox?>
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.MapSettings">
 
     <children>
-        <VBox prefHeight="300" prefWidth="500" spacing="20.0">
+        <VBox spacing="20.0">
             <children>
                 <Label text="Map Settings" style="-fx-font-weight: bold" />
+                <HBox>
+                    <children>
 
-                <Label text="Map icons font size" />
-                <ComboBox fx:id="cmbMapIconFontSize">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="16" />
-                            <String fx:value="18" />
-                            <String fx:value="20" />
-                            <String fx:value="24" />
-                            <String fx:value="28" />
-                            <String fx:value="36" />
-                        </FXCollections>
-                    </items>
-                    <value>
-                        <String fx:value="20" />
-                    </value>
-                </ComboBox>
+                        <Label text="Map icons font size   " />
+                        <ComboBox fx:id="cmbMapIconFontSize">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="16" />
+                                    <String fx:value="18" />
+                                    <String fx:value="20" />
+                                    <String fx:value="24" />
+                                    <String fx:value="28" />
+                                    <String fx:value="36" />
+                                </FXCollections>
+                            </items>
+                            <value>
+                                <String fx:value="20" />
+                            </value>
+                        </ComboBox>
+                        <Label text="     Lock Position  " />
+                        <CheckBox fx:id="cbLockPosition" selected="true"/>
+
+                        <Label text="     Leave Trail  " />
+                        <CheckBox fx:id="cbTrail" selected="true"/>
+                    </children>
+                </HBox>
             </children>
         </VBox>
     </children>

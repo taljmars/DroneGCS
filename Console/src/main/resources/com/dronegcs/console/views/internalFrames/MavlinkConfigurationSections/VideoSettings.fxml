@@ -6,18 +6,18 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<Pane prefHeight="460.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.VideoSettings">
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.VideoSettings">
 
     <children>
 
-        <VBox prefHeight="300" prefWidth="500" spacing="20.0">
+        <VBox spacing="20.0">
             <children>
 
                 <Label text="Video Settings" style="-fx-font-weight: bold" />
 
-                <Label text="Camera Device ID" />
                 <HBox >
                     <children>
+                        <Label text="Camera Device ID   " />
                         <TextField fx:id="txtDeviceId" text="1" />
                         <Button fx:id="btnUpdateDevice" text="Update" />
                     </children>

@@ -60,15 +60,6 @@
                     </AnchorPane>
                   </content>
                 </Tab>
-                <Tab text="Map Control">
-                  <content>
-                      <AnchorPane>
-                          <children>
-                              <fx:include source="panels/internal/PanelMapControlView.fxml" />
-                          </children>
-                      </AnchorPane>
-                  </content>
-                </Tab>
               </tabs>
             </TabPane>
             </children>

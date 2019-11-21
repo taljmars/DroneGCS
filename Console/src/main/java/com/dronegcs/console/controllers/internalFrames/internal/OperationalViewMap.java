@@ -517,15 +517,23 @@ OnDroneListener, EventHandler<ActionEvent> {
         applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
     }
 
+    public void setLockOnMyPosition(boolean shouldLock) {
+        lockMapOnMyPosition = shouldLock;
+    }
+
+    public void setLeaveTrail(boolean shouldLock) {
+        paintTrail = shouldLock;
+    }
+
     @Override
     public void handle(ActionEvent event) {
         if (event.getSource().equals(cbLockMyPos)) {
             if (cbLockMyPos.isSelected()) {
                 loggerDisplayerSvc.logGeneral("Lock on my position");
-                lockMapOnMyPosition = true;
+                setLockOnMyPosition(true);
             } else {
                 loggerDisplayerSvc.logGeneral("Release lock on my position");
-                lockMapOnMyPosition = false;
+                setLockOnMyPosition(false);
             }
             return;
         }
@@ -534,10 +542,10 @@ OnDroneListener, EventHandler<ActionEvent> {
             if (cbFollowTrail.isSelected()) {
                 loggerDisplayerSvc.logGeneral("Paint My Trail");
                 myTrailPath = null;
-                paintTrail = true;
+                setLeaveTrail(true);
             } else {
                 loggerDisplayerSvc.logGeneral("Stop Paint My Trail");
-                paintTrail = false;
+                setLeaveTrail(false);
                 removeMapLine(myTrailPath);
                 myTrailPath = null;
             }

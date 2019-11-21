@@ -1,11 +1,13 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
+import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapViewer.internal.MapViewerSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,12 @@ public class MapSettings extends Pane implements Initializable {
     @Autowired
     private RuntimeValidator runtimeValidator;
 
+    @Autowired
+    private OperationalViewMap operationalViewMap;
+
     @NotNull @FXML private ComboBox<String> cmbMapIconFontSize;
+    @NotNull @FXML private CheckBox cbLockPosition;
+    @NotNull @FXML private CheckBox cbTrail;
 
     private static int called = 0;
     @PostConstruct
@@ -46,6 +53,14 @@ public class MapSettings extends Pane implements Initializable {
             MapViewerSettings.setMarkersFontSize(cmbMapIconFontSize.getValue());
             OperationalViewTree operationalViewTree = applicationContext.getBean(OperationalViewTree.class);
             operationalViewTree.regenerateTree();
+        });
+
+        cbLockPosition.setOnAction( e -> {
+            operationalViewMap.setLockOnMyPosition(cbLockPosition.isSelected());
+        });
+
+        cbTrail.setOnAction( e -> {
+            operationalViewMap.setLeaveTrail(cbTrail.isSelected());
         });
     }
 }
