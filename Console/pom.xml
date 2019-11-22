@@ -179,6 +179,7 @@
                             <descriptors>
                                 <descriptor>assembly-win-64.xml</descriptor>
                             </descriptors>
+                            <finalName>DroneGCS</finalName>
                             <outputDirectory>../ClientInstallation/Windows/</outputDirectory>
                         </configuration>
                     </execution>
@@ -192,6 +193,7 @@
                             <descriptors>
                                 <descriptor>assembly-linux-32.xml</descriptor>
                             </descriptors>
+                            <finalName>DroneGCS</finalName>
                             <outputDirectory>../ClientInstallation/Linux-32/</outputDirectory>
                         </configuration>
                     </execution>

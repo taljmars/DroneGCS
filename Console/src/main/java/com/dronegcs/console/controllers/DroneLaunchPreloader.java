@@ -22,6 +22,8 @@ import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
+
 import static com.db.persistence.scheme.LoginLogoutStatus.OK;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.LOGIN;
 import static com.dronegcs.console.controllers.DroneLaunchPreloader.PreloaderMode.OFFLINE;
@@ -60,13 +62,36 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
     private static final String backgroundDefinitions = "-fx-background-image: url(/com/dronegcs/console/guiImages/background.png); -fx-background-size: cover;";
     private static final String style = "-fx-bounds-type: logical_vertical_center; -fx-font-smoothing-type: lcd;";
     private static final Font font = new Font("Aharoni", 32);
+    private static final Font versionFont = new Font("Aharoni", 10);
     private static final Label label = new Label("Drone GCS");
+    private static final Label versionlabel = new Label("unknown");
     {
+        versionlabel.setStyle(style);
+        versionlabel.setFont(versionFont);
         label.setStyle(style);
         label.setFont(font);
     }
 
     public void start(Stage primaryStage) throws Exception {
+        InputStream inputStream = null;
+        try {
+            File file = new File(getClass().getClassLoader().getResource("version").getFile());
+            inputStream = new FileInputStream(file);
+            byte[] versionBuffer = new byte[32];
+            inputStream.read(versionBuffer);
+            String version = new String(versionBuffer);
+            versionlabel.setText("(v1." + version.trim() + ")");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         this.preloaderStage = primaryStage;
         GUISettings._WIDTH.set((int) Screen.getPrimary().getVisualBounds().getMaxX());
         GUISettings._HEIGHT.set((int) Screen.getPrimary().getVisualBounds().getMaxY());
@@ -75,7 +100,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         root.setStyle(backgroundDefinitions);
         ProgressIndicator progressIndicator = new ProgressIndicator();
         progressIndicator.setPrefSize(20, 20);
-        vBox.getChildren().addAll(label, progressIndicator);
+        vBox.getChildren().addAll(label, versionlabel, progressIndicator);
         vBox.setAlignment(Pos.CENTER);
         root.setCenter(vBox);
         root.getStylesheets().add(DroneLaunch.STYLE_FILE);

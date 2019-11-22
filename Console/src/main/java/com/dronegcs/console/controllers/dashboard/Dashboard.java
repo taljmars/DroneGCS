@@ -46,6 +46,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -57,6 +58,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
     public static final String APP_TITLE = "Quad Ground Station";
+
+    private String app_ver = "unknown";
 
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
@@ -125,6 +128,26 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        InputStream inputStream = null;
+        try {
+            File file = new File(getClass().getClassLoader().getResource("version").getFile());
+            inputStream = new FileInputStream(file);
+            byte[] versionBuffer = new byte[32];
+            inputStream.read(versionBuffer);
+            app_ver = new String(versionBuffer);
+            app_ver = "v1." + app_ver.trim();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         initializeGui();
     }
 
@@ -268,7 +291,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
                     prefix = "[OFFLINE] ";
                 String finalPrefix = prefix;
-                Platform.runLater(() -> viewManager.setTitle(finalPrefix + APP_TITLE + " (" + drone.getState().getMode().getName() + ")"));
+                Platform.runLater(() -> viewManager.setTitle(finalPrefix + APP_TITLE + " [" + app_ver + "] (" + drone.getState().getMode().getName() + ")"));
                 return;
             case TEXT_MESSEGE:
                 loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
@@ -351,7 +374,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         String prefix = "";
         if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
             prefix = "[OFFLINE] ";
-        viewManager.setTitle(prefix + APP_TITLE);
+        viewManager.setTitle(prefix + APP_TITLE + " [" + app_ver + "]");
         viewManager.setOnCloseRequest(this);
     }
 
