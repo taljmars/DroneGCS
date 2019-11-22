@@ -130,8 +130,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     public void initialize(URL location, ResourceBundle resources) {
         InputStream inputStream = null;
         try {
-            File file = new File(getClass().getClassLoader().getResource("version").getFile());
-            inputStream = new FileInputStream(file);
+            inputStream = Dashboard.class.getClassLoader().getResourceAsStream("version");
             byte[] versionBuffer = new byte[32];
             inputStream.read(versionBuffer);
             app_ver = new String(versionBuffer);

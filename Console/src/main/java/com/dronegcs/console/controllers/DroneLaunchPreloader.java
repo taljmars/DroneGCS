@@ -75,8 +75,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
     public void start(Stage primaryStage) throws Exception {
         InputStream inputStream = null;
         try {
-            File file = new File(getClass().getClassLoader().getResource("version").getFile());
-            inputStream = new FileInputStream(file);
+            inputStream = DroneLaunchPreloader.class.getClassLoader().getResourceAsStream("version");
             byte[] versionBuffer = new byte[32];
             inputStream.read(versionBuffer);
             String version = new String(versionBuffer);
