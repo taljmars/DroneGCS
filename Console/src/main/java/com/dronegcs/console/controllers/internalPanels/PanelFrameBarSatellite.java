@@ -74,6 +74,11 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     @NotNull
     @FXML
+    private Button btnQuickData;
+    private static String QUICK_DATA_VIEW = "InternalFrameQuickDataView.fxml";
+
+    @NotNull
+    @FXML
     private Button btnCamera;
     private static String CAMERA_VIEW = "InternalFrameVideoView.fxml";
 
@@ -191,6 +196,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         btnMavlinkParams.setUserData(INTERNAL_FRAME_PATH + MAVLINKPARAM_VIEW);
         btnMavlinkConfiguration.setUserData(INTERNAL_FRAME_PATH + MAVLINKCONFIGURATION_VIEW);
         btnEventLog.setUserData(INTERNAL_FRAME_PATH + EVENTLOG_VIEW);
+        btnQuickData.setUserData(INTERNAL_FRAME_PATH + QUICK_DATA_VIEW);
     }
 
     @FXML

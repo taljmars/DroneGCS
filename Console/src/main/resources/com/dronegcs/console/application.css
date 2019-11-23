@@ -1,6 +1,9 @@
 #btnMapImage {
 	-fx-image: url("guiImages/Map.png");
 }
+#btnQuickDataImage {
+	-fx-image: url("guiImages/quickData.png");
+}
 #btnActualPWMImage {          
 	-fx-image: url("guiImages/Motor.png");
 }

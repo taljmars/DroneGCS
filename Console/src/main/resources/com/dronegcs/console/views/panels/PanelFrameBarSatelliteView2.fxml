@@ -17,6 +17,11 @@
 	
    <children>
 
+	   <Button fx:id="btnQuickData" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+			   onMouseClicked="#ToolbarOnClickEvent">
+		   <graphic><ImageView fx:id="btnQuickDataImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+	   </Button>
+
 	  <Button fx:id="btnActualPWM" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
 			  onMouseClicked="#ToolbarOnClickEvent">
          <graphic><ImageView fx:id="btnActualPWMImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 

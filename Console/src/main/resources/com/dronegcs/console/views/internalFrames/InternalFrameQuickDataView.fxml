@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane fx:id="root" opacity="0.7" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameQuickData">
+    <children>
+        <GridPane fx:id="grid" alignment="CENTER" hgap="5.0" vgap="5.0" style="-fx-background-color: whitesmoke;">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="${prefWidth / 4}" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="${prefWidth / 4}" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="${prefWidth / 4}" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="${prefHeight * 0.2}" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="${prefHeight * 0.35}" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" text="Altitude" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="21.0" />
+                    </font>
+                </Label>
+                <Label alignment="CENTER" contentDisplay="CENTER" text="Speed" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="21.0" />
+                    </font>
+                </Label>
+                <Label alignment="CENTER" contentDisplay="CENTER" text="Dist. to Home" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="21.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblAltValue" alignment="CENTER" contentDisplay="CENTER" text="0 m" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" >
+                    <font>
+                        <Font name="System" size="36.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblSpeedValue" alignment="CENTER" contentDisplay="CENTER" text="0 m/s" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" >
+                    <font>
+                        <Font name="System" size="36.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblDistValue" alignment="CENTER" contentDisplay="CENTER" text="0 m" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" >
+                    <font>
+                        <Font name="System" size="36.0" />
+                    </font>
+                </Label>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </GridPane>
+    </children>
+</AnchorPane>
