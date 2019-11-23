@@ -245,6 +245,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 //        imageViewer.setFitWidth(root.getPrefWidth());
         imageViewer.setPreserveRatio(true);
         imageViewer.setImage(img);
+        imageViewer.setLayoutX((imageViewer.getImage().getWidth() - root.getPrefWidth())/2);
     }
 
 
@@ -253,10 +254,12 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
         if (detector.isActive()) {
             opCamera.setText("Start Camera");
             detector.stop();
+            imageViewer.setVisible(false);
             hud.setHideBackground(false);
         } else {
             opCamera.setText("Stop Camera");
             detector.start();
+            imageViewer.setVisible(true);
             hud.setHideBackground(true);
         }
     }
