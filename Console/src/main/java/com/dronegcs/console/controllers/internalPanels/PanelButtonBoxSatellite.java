@@ -12,6 +12,7 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnParameterManagerListener;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.drone.variables.Perimeter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
@@ -399,7 +400,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@FXML
 	public void ButtonStartPerimeterOnAction(ActionEvent actionEvent) {
-		drone.getPerimeter().setEnforce(btnStartPerimeter.isSelected());
+		drone.getPerimeter().setPerimeterMode(btnStartPerimeter.isSelected() ? Perimeter.PerimeterMode.ENFORCE : Perimeter.PerimeterMode.ALERT);
 	}
 	
 //	@FXML

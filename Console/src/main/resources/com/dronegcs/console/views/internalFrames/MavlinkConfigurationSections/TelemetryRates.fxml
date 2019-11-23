@@ -16,7 +16,7 @@
 
                         <HBox >
                             <children>
-                                <Label text="Altitude   " />
+                                <Label text="Altitude/Orientation   " />
                                 <ComboBox fx:id="cmbAlt">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -37,7 +37,7 @@
                                         </FXCollections>
                                     </items>
                                     <value>
-                                        <String fx:value="4" />
+                                        <String fx:value="10" />
                                     </value>
                                 </ComboBox>
                             </children>
@@ -67,7 +67,7 @@
                                         </FXCollections>
                                     </items>
                                     <value>
-                                        <String fx:value="2" />
+                                        <String fx:value="1" />
                                     </value>
                                 </ComboBox>
                             </children>
@@ -94,7 +94,7 @@
                                         </FXCollections>
                                     </items>
                                     <value>
-                                        <String fx:value="2" />
+                                        <String fx:value="1" />
                                     </value>
                                 </ComboBox>
                             </children>
@@ -121,7 +121,7 @@
                                         </FXCollections>
                                     </items>
                                     <value>
-                                        <String fx:value="2" />
+                                        <String fx:value="1" />
                                     </value>
                                 </ComboBox>
                             </children>
@@ -150,12 +150,42 @@
                                         </FXCollections>
                                     </items>
                                     <value>
-                                        <String fx:value="2" />
+                                        <String fx:value="1" />
                                     </value>
                                 </ComboBox>
                             </children>
                         </HBox>
 
+                        <HBox >
+                            <children>
+                                <Label text="Controller   " />
+                                <ComboBox fx:id="cmbController">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="-1" />
+                                            <String fx:value="0" />
+                                            <String fx:value="1" />
+                                            <String fx:value="2" />
+                                            <String fx:value="3" />
+                                            <String fx:value="4" />
+                                            <String fx:value="5" />
+                                            <String fx:value="6" />
+                                            <String fx:value="7" />
+                                            <String fx:value="8" />
+                                            <String fx:value="9" />
+                                            <String fx:value="10" />
+                                            <String fx:value="50" />
+                                            <String fx:value="100" />
+                                        </FXCollections>
+                                    </items>
+                                    <value>
+                                        <String fx:value="1" />
+                                    </value>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+
+                        <Button text="Update" onAction="#UpdateRates"/>
                     </children>
                 </HBox>
 

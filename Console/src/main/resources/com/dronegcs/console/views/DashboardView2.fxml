@@ -86,7 +86,7 @@
 
         <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.7" StackPane.alignment="TOP_RIGHT">
             <children>
-                <fx:include source="panels/internal/PanelStatisticsView2.fxml" />
+                <fx:include source="panels/PanelProtocolSatelliteView.fxml" />
             </children>
             <StackPane.margin>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

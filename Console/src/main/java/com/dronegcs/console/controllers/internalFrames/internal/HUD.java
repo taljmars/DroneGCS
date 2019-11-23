@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HUD.class);
     private boolean initializedDone;
+    private double hud_radius;
 
     public enum ViewLevel {
         ALL_ITEMS,
@@ -69,6 +72,8 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
     @NotNull @FXML private Label hud_m_15;
     @NotNull @FXML private Label hud_m_30;
     @NotNull @FXML private Label hud_m_45;
+
+    @NotNull @FXML private Label tiltPointer;
 
     @NotNull @Autowired
     private Drone drone;
@@ -109,7 +114,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         SetRollAngle(0, true);
         SetPitchAngle(0, true);
 
-        double hud_radius = sphere.radiusProperty().get() * 0.7;
+        hud_radius = sphere.radiusProperty().get() * 0.7;
 
 //        arc.setRadiusX(hud_radius);
 //        arc.setRadiusY(hud_radius);
@@ -130,6 +135,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         angleLabels.add(hud_p_15);
         angleLabels.add(hud_p_30);
         angleLabels.add(hud_p_45);
+        angleLabels.add(tiltPointer);
 
         for (Label label : angleLabels)
             setLabelStyle(label, "-fx-text-fill: chartreuse;");
@@ -226,7 +232,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         Platform.runLater(() -> {
             switch (event) {
                 case SPEED:
-                    SetLblSpeed(drone.getSpeed().getSpeedParameter().valueInMetersPerSecond());
+                    SetLblSpeed(drone.getSpeed().getAirSpeed().valueInMetersPerSecond());
                     break;
                 case ORIENTATION:
                     SetLblAlt(drone.getAltitude().getAltitude());
@@ -266,10 +272,17 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         Rotate rotate = new Rotate();
 
         rotate.setAngle(roll);
-        if (isReset)
+        if (isReset) {
             sphere.getTransforms().add(rotate);
-        else
+            tiltPointer.getTransforms().add(rotate);
+        }
+        else {
             sphere.getTransforms().set(0, rotate);
+            tiltPointer.getTransforms().set(0, rotate);
+        }
+
+        tiltPointer.setTranslateX(sphere.radiusProperty().get() * 0.6 * Math.sin(Math.toRadians(roll)));
+        tiltPointer.setTranslateY(-sphere.radiusProperty().get() * 0.6 * Math.cos(Math.toRadians(roll)));
     }
 
     private void SetPitchAngle(double pitch, boolean isReset) {

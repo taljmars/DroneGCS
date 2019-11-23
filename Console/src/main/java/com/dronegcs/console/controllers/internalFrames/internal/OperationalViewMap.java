@@ -521,8 +521,16 @@ OnDroneListener, EventHandler<ActionEvent> {
         lockMapOnMyPosition = shouldLock;
     }
 
+    public boolean getLockOnMyPosition() {
+        return lockMapOnMyPosition;
+    }
+
     public void setLeaveTrail(boolean shouldLock) {
         paintTrail = shouldLock;
+    }
+
+    public boolean getLeaveTrail() {
+        return paintTrail;
     }
 
     @Override

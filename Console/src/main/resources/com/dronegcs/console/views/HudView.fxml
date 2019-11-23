@@ -14,47 +14,29 @@
         <Line fx:id="horizontal_bar_left" endX="${root.prefHeight / 4}" fill="#2ff556" stroke="#2ff556" strokeLineCap="ROUND" strokeWidth="7.0" translateX="${root.prefHeight / 4}" />
         <Line fx:id="horizontal_bar_right" endX="${-1 * root.prefHeight / 4}" fill="#2ff556" stroke="#2ff556" strokeLineCap="ROUND" strokeWidth="7.0" translateX="${-1 * root.prefHeight / 4}" />
 
-        <Label fx:id="hud_m_45" rotate="-60" text="60" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * -0.86602}"
-               translateY="${sphere.radius * 0.7 * -0.49999}"
-        >
+        <Label fx:id="hud_m_45" rotate="-60" text="60" textFill="chartreuse" translateX="${sphere.radius * 0.7 * -0.86602}" translateY="${sphere.radius * 0.7 * -0.49999}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_m_30" rotate="-40" text="40" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * -0.64278}"
-               translateY="${sphere.radius * 0.7 * -0.76604}"
-        >
+        <Label fx:id="hud_m_30" rotate="-40" text="40" textFill="chartreuse" translateX="${sphere.radius * 0.7 * -0.64278}" translateY="${sphere.radius * 0.7 * -0.76604}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_m_15" rotate="-20" text="20" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * -0.34202}"
-               translateY="${sphere.radius * 0.7 * -0.93969}"
-        >
+        <Label fx:id="hud_m_15" rotate="-20" text="20" textFill="chartreuse" translateX="${sphere.radius * 0.7 * -0.34202}" translateY="${sphere.radius * 0.7 * -0.93969}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_0" rotate="0" text="0" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * 0}"
-               translateY="${sphere.radius * 0.7 * -1}"
-        >
+        <Label fx:id="hud_0" rotate="0" text="0" textFill="chartreuse" translateX="${sphere.radius * 0.7 * 0}" translateY="${sphere.radius * 0.7 * -1}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_p_15" rotate="20" text="20" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * 0.34202}"
-               translateY="${sphere.radius * 0.7 * -0.93969}"
-        >
+        <Label fx:id="hud_p_15" rotate="20" text="20" textFill="chartreuse" translateX="${sphere.radius * 0.7 * 0.34202}" translateY="${sphere.radius * 0.7 * -0.93969}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_p_30" rotate="40" text="40" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * 0.64278}"
-               translateY="${sphere.radius * 0.7 * -0.76604}"
-        >
+        <Label fx:id="hud_p_30" rotate="40" text="40" textFill="chartreuse" translateX="${sphere.radius * 0.7 * 0.64278}" translateY="${sphere.radius * 0.7 * -0.76604}">
             <font><Font size="12.0" /></font>
         </Label>
-        <Label fx:id="hud_p_45" rotate="60" text="60" textFill="chartreuse"
-               translateX="${sphere.radius * 0.7 * 0.86602}"
-               translateY="${sphere.radius * 0.7 * -0.49999}"
-        >
+        <Label fx:id="hud_p_45" rotate="60" text="60" textFill="chartreuse" translateX="${sphere.radius * 0.7 * 0.86602}" translateY="${sphere.radius * 0.7 * -0.49999}">
             <font><Font size="12.0" /></font>
+        </Label>
+        <Label fx:id="tiltPointer" rotate="180" text="V" textFill="chartreuse">
+            <font><Font size="30.0" /></font>
         </Label>
         <StackPane prefHeight="150.0" prefWidth="200.0" translateY="${root.prefHeight / 4}" StackPane.alignment="CENTER">
             <children>

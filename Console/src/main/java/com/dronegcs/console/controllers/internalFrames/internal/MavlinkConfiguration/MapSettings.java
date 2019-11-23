@@ -55,10 +55,12 @@ public class MapSettings extends Pane implements Initializable {
             operationalViewTree.regenerateTree();
         });
 
+        cbLockPosition.setSelected(operationalViewMap.getLockOnMyPosition());
         cbLockPosition.setOnAction( e -> {
             operationalViewMap.setLockOnMyPosition(cbLockPosition.isSelected());
         });
 
+        cbTrail.setSelected(operationalViewMap.getLeaveTrail());
         cbTrail.setOnAction( e -> {
             operationalViewMap.setLeaveTrail(cbTrail.isSelected());
         });

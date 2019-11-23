@@ -64,6 +64,20 @@
 						</ScrollPane>
 					</content>
 				</Tab>
+
+				<Tab text="Geo Fence">
+					<content>
+						<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">
+							<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">
+								<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
+								<children>
+									<fx:include source="MavlinkConfigurationSections/GeoFence.fxml"/>
+									<Separator maxHeight="10"/>
+								</children>
+							</VBox>
+						</ScrollPane>
+					</content>
+				</Tab>
 			</tabs>
 		</TabPane>
 	</children>
