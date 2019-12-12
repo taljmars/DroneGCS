@@ -51,6 +51,9 @@ public class InternalFrameQuickData extends Pane implements Initializable, Drone
 
     @Override
     public void onDroneEvent(DroneInterfaces.DroneEventsType droneEventsType, Drone drone) {
+        if (root == null)
+            return;
+
         Platform.runLater( () -> {
             switch (droneEventsType) {
                 case SPEED:

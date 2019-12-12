@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.ESCCalibration">
+
+    <children>
+
+        <VBox spacing="20.0">
+            <children>
+                <Label style="-fx-font-weight: bold" text="ESC Calibration" />
+
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Button text="Calibrate" onAction="#handleCalibrate"/>
+                    </children>
+                </HBox>
+                <Label text=" 1. Disconnect the battery and USB cable so the autopilot powers down"/>
+                <Label text=" 2. Connect the battery"/>
+                <Label text=" 3. The arming tone will be played (if the vehicle has a buzzer attached)"/>
+                <Label text=" 4. If using a autopilot with a safety button (like the Pixhawk) press it until it displays solid red"/>
+                <Label text=" 5. You will hear a musical tone then two beeps"/>
+                <Label text=" 6. A few seconds later you should hear a number of beeps (one for each battery cell you’re using) and finally a single long beep indicating the end points have been set and the ESC is calibrated"/>
+                <Label text=" 7. Disconnect the battery and power up again normally and test as described below"/>
+            </children>
+        </VBox>
+
+    </children>
+
+</Pane>

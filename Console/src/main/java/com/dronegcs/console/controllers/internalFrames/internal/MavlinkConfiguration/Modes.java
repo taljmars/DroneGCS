@@ -376,6 +376,10 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     public void onEndReceivingParameters(List<Parameter> list) {}
 
     public void resetAll() {
+        // Verify GUI components were initialized
+        if (comboBoxFltModeMap != null)
+            return;
+
         for (ComboBox comboBox : comboBoxFltModeMap.values())
             comboBox.setValue(null);
 

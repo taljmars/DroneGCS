@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane fx:id="root" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.AccelerometerCalibration">
+
+    <children>
+
+        <VBox spacing="20.0">
+            <children>
+                <Label style="-fx-font-weight: bold" text="Accelerometer Calibration" />
+
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="startAccCalibration" onAction="#handleCalibrationGyro" text="Calibrate Gyro" />
+                        <Label fx:id="lblGyroStatus" text=""/>
+                    </children>
+                </HBox>
+
+                <HBox spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="startAccLevel" onAction="#handleCalibrationLevel" text="Calibrate Level" />
+                        <Label fx:id="lblLevelStatus" text=""/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+    </children>
+
+</Pane>

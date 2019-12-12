@@ -228,13 +228,14 @@ public class KeyBoardControllerImpl implements KeyBoardController, Runnable {
 	
 	static long LastContolKeyTS = 0;
 	private void UpdateRCSet(KeyEvent event) {
-		LOGGER.debug("Updating RC Set");
+
 		if (!bActive.get())
 			return;
 		
 		if (event == null)
 			return;
-		
+
+		LOGGER.debug("Updating RC Set");
 		switch( event.getCode() ) { 
 			// For pitch: down is positive, up is negative
 		    case UP:

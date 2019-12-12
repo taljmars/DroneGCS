@@ -8,13 +8,20 @@
 	<children>
 		<TabPane side="TOP" tabClosingPolicy="UNAVAILABLE">
 			<tabs>
-				<Tab text="Modes">
+				<Tab text="Drone Calibration">
 					<content>
 						<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">
 							<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">
 								<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
 								<children>
+									<fx:include source="MavlinkConfigurationSections/Frame.fxml" />
+									<Separator maxHeight="10"/>
 									<fx:include source="MavlinkConfigurationSections/Modes.fxml" />
+									<Separator maxHeight="10"/>
+									<fx:include source="MavlinkConfigurationSections/AccelerometerCalibration.fxml"/>
+									<Separator maxHeight="10"/>
+									<fx:include source="MavlinkConfigurationSections/ESCCalibration.fxml"/>
+									<Separator maxHeight="10"/>
 								</children>
 							</VBox>
 						</ScrollPane>
@@ -28,6 +35,19 @@
 								<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
 								<children>
 									<fx:include source="MavlinkConfigurationSections/RadioCalib.fxml" />
+								</children>
+							</VBox>
+						</ScrollPane>
+					</content>
+				</Tab>
+
+				<Tab text="Servos">
+					<content>
+						<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">
+							<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">
+								<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
+								<children>
+									<fx:include source="MavlinkConfigurationSections/ServoOutput.fxml" />
 								</children>
 							</VBox>
 						</ScrollPane>
@@ -78,6 +98,20 @@
 						</ScrollPane>
 					</content>
 				</Tab>
+
+				<!--<Tab text="Utils">-->
+					<!--<content>-->
+						<!--<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">-->
+							<!--<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">-->
+								<!--<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>-->
+								<!--<children>-->
+									<!--<fx:include source="MavlinkConfigurationSections/Records.fxml"/>-->
+									<!--<Separator maxHeight="10"/>-->
+								<!--</children>-->
+							<!--</VBox>-->
+						<!--</ScrollPane>-->
+					<!--</content>-->
+				<!--</Tab>-->
 			</tabs>
 		</TabPane>
 	</children>

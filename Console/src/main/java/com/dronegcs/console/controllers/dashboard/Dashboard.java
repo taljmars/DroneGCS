@@ -346,7 +346,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             return;
         }
         LOGGER.debug("Received parameter {}/{}: {}", index, count, parameter);
-        int prc = drone.getParameters().getPrecentageComplete();
+        int prc = drone.getParameters().getPercentageComplete();
         if (prc > 95) {
             setProgressBar(1);
             drone.getStreamRates().setupStreamRatesFromPref();

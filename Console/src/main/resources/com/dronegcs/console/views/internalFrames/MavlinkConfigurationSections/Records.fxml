@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.Recording">
+
+    <children>
+
+        <VBox spacing="20.0">
+            <children>
+                <Label style="-fx-font-weight: bold" text="Record Drone Data Stream" />
+                <HBox spacing="20.0">
+                    <children>
+                        <ToggleButton fx:id="recordBtn" onMouseClicked="#handleRecord" text="Record" />
+                        <HBox alignment="CENTER">
+                            <children>
+                                <Button onAction="#handleOpenFile" text="Choose File" />
+                                <TextField fx:id="filePathTxtBox" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+
+            </children>
+        </VBox>
+
+    </children>
+
+</Pane>

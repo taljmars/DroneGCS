@@ -106,7 +106,7 @@ public class OpChangeFlightControllerQuad extends OperationHandler {
 		return drone;
 	}
 
-	public FlightController getRequiredControler() {
+	public FlightController getRequiredController() {
 		return requiredFlightMode;
 	}
 }

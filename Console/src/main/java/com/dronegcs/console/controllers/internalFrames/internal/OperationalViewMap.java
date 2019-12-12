@@ -70,6 +70,11 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -151,6 +156,12 @@ OnDroneListener, EventHandler<ActionEvent> {
         ValidatorResponse validatorResponse = runtimeValidator.validate(this);
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
+
+        homeCircles = new HashMap<Integer, MapMarkerCircle>();
+        List<Integer> homeCirclesRadius = new ArrayList<Integer>(Arrays.asList(25,50, 75, 100, 250, 500, 750, 1000, 1500, 2000));
+        for (Integer rad : homeCirclesRadius) {
+            homeCircles.put(rad, null);
+        }
     }
     
     private ContextMenu buildPopup(Point point) {
@@ -257,10 +268,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         }
     }
 
-    private MapMarkerCircle myMapCircle25 = null;
-    private MapMarkerCircle myMapCircle50 = null;
-    private MapMarkerCircle myMapCircle75 = null;
-    private MapMarkerCircle myMapCircle100 = null;
+    private HashMap<Integer, MapMarkerCircle> homeCircles;
 
     private void SetHome(Home home) {
         if (home == null || !home.isValid())
@@ -272,29 +280,21 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (myHome != null)
             removeMapMarker(myHome);
 
-        if (myMapCircle25 != null)
-            removeMapMarker(myMapCircle25);
-
-        if (myMapCircle50 != null)
-            removeMapMarker(myMapCircle50);
-
-        if (myMapCircle75 != null)
-            removeMapMarker(myMapCircle75);
-
-        if (myMapCircle100 != null)
-            removeMapMarker(myMapCircle100);
+        for (Integer rad : homeCircles.keySet()) {
+            if (homeCircles.get(rad) != null) {
+                removeMapMarker(homeCircles.get(rad));
+                homeCircles.put(rad, null);
+            }
+        }
 
         myHome = new MapMarkerDot("H", Color.BLUE, home.getCoord());
         addMapMarker(myHome);
 
-        myMapCircle25 = new MapMarkerCircle(myHome.getCoordinate(), 25);
-        myMapCircle50 = new MapMarkerCircle(myHome.getCoordinate(), 50);
-        myMapCircle75 = new MapMarkerCircle(myHome.getCoordinate(), 70);
-        myMapCircle100 = new MapMarkerCircle(myHome.getCoordinate(), 100);
-        addMapMarker(myMapCircle25);
-        addMapMarker(myMapCircle50);
-        addMapMarker(myMapCircle75);
-        addMapMarker(myMapCircle100);
+        for (Integer rad : homeCircles.keySet()) {
+            MapMarkerCircle mapCircle = new MapMarkerCircle(myHome.getCoordinate(), rad);
+            homeCircles.put(rad, mapCircle);
+            addMapMarker(mapCircle);
+        }
 
         loggerDisplayerSvc.logGeneral("Setting new Home position");
     }

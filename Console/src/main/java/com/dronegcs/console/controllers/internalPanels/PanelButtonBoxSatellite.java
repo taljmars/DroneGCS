@@ -1,10 +1,12 @@
 package com.dronegcs.console.controllers.internalPanels;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.flightControllers.FlightController;
 import com.dronegcs.console.operations.*;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.simulator.DroneStreamSimulator;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationData;
 import com.dronegcs.mavlink.core.connection.helper.GCSLocationDataFactory;
 import com.dronegcs.mavlink.is.drone.Drone;
@@ -32,6 +34,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
+import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -67,6 +72,9 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	
 	@NotNull @FXML private ComboBox<ApmModes> flightModesCombo;
 	@NotNull @FXML private Button btnSetMode;
+
+	@Autowired
+	private GuiAppConfig guiAppConfig;
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -103,7 +111,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 
 	@Autowired @NotNull(message = "Internal Error: Failed to get gcs beacon factory")
 	private GCSLocationDataFactory gcsLocationDataFactory;
-	
+
+	@Autowired @NotNull
+	private DroneStreamSimulator droneStreamSimulator;
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
 	
@@ -132,7 +143,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 	}
-	
+
+	private static int disconnectClickCounter = 0;
 	@FXML
 	public void ButtonConnectOnAction(ActionEvent actionEvent) {
     	try {
@@ -140,20 +152,40 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 				Platform.runLater(() -> {
 					loggerDisplayerSvc.logGeneral("Close Connection");
 					drone.getMavClient().disconnect();
+					disconnectClickCounter++;
 				});
 				return;
 			}
 
 			Platform.runLater(() -> {
 				Object[] ports = serialConnection.listPorts();
-				if (ports.length == 0) {
-					dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
-					return;
+				Object[] mod_ports = new Object[ports.length + 1];
+				int idx = 0;
+				for ( ; idx < ports.length ; idx++) {
+					mod_ports[idx] = ports[idx];
 				}
-				Pair<Object, Object> res = dialogManagerSvc.showMultiComboBoxMessageDialog("Select port: ", ports, ports[0], "Select baud rate: ", serialConnection.baudList(), serialConnection.getDefaultBaud());
+//				Object[] mod_ports = new Object[1];
+//				int idx = 0;
+
+//				mod_ports[idx] = droneStreamSimulator.SIM_DEVICE_NAME;
+//				if (mod_ports.length == 0) {
+//					dialogManagerSvc.showAlertMessageDialog("Failed to find ports");
+//					return;
+//				}
+				Pair<Object, Object> res = dialogManagerSvc.showMultiComboBoxMessageDialog("Select port: ", mod_ports, mod_ports[0], "Select baud rate: ", serialConnection.baudList(), serialConnection.getDefaultBaud());
 				if (res != null) {
 					String port_name = (String) res.getKey();
 					Integer baud = (Integer) res.getValue();
+					System.out.println(port_name);
+//					if (port_name.equals(droneStreamSimulator.SIM_DEVICE_NAME)) {
+//						FileChooser fileChooser = new FileChooser();
+//						File file = fileChooser.showOpenDialog(guiAppConfig.getRootStage());
+//						if (file != null) {
+//							droneStreamSimulator.activate(file);
+//							loggerDisplayerSvc.logGeneral("Simulator Started, source: " + file.getPath());
+//						}
+//					}
+
 					serialConnection.setPortName(port_name);
 					serialConnection.setBaud(baud);
 
@@ -519,7 +551,7 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 
 	@Override
 	public void onParameterReceived(Parameter parameter, int index, int count) {
-		int prc = drone.getParameters().getPrecentageComplete();
+		int prc = drone.getParameters().getPercentageComplete();
 		if (prc > 95)
 			setButtonControl(true);
 	}
