@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames;
 
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -12,7 +12,6 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
@@ -131,7 +130,7 @@ public class InternalFrameBattery extends InternalFrameChart implements OnDroneL
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 

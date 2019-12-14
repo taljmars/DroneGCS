@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEvent;
  * @author taljmars
  *
  */
-public class QuadGuiEvent extends ApplicationEvent {
+public class DroneGuiEvent extends ApplicationEvent {
 	
 	private static final long serialVersionUID = 8701544867914969620L;
 	
@@ -18,7 +18,7 @@ public class QuadGuiEvent extends ApplicationEvent {
      * @author taljmars
      *
      */
-    public enum QUAD_GUI_COMMAND {
+    public enum DRONE_GUI_COMMAND {
 //        MOVE,
 //        ZOOM,
 //        CONTORL_KEYBOARD,
@@ -51,19 +51,19 @@ public class QuadGuiEvent extends ApplicationEvent {
         CAMERA_DEVICEID
     }
 
-    private QUAD_GUI_COMMAND command;
+    private DRONE_GUI_COMMAND command;
 
     /**
      * @param cmd
      * @param source
      */
-    public QuadGuiEvent(QUAD_GUI_COMMAND cmd, Object source) {
+    public DroneGuiEvent(DRONE_GUI_COMMAND cmd, Object source) {
         super(source);
 
         this.command = cmd;
     }
 
-    public QuadGuiEvent(QUAD_GUI_COMMAND cmd) {
+    public DroneGuiEvent(DRONE_GUI_COMMAND cmd) {
         super(new Object());
 
         this.command = cmd;
@@ -73,7 +73,7 @@ public class QuadGuiEvent extends ApplicationEvent {
      * get command enum type
      * @return the command
      */
-    public QUAD_GUI_COMMAND getCommand() {
+    public DRONE_GUI_COMMAND getCommand() {
         return command;
     }
 }

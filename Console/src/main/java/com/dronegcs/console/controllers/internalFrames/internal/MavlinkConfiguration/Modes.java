@@ -7,6 +7,7 @@ import com.dronegcs.mavlink.is.drone.profiles.Parameters;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmCommands;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmTuning;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -25,7 +26,6 @@ import java.util.*;
 
 import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT16;
 import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT8;
-import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE.MAV_TYPE_QUADROTOR;
 
 /**
  * Created by taljmars on 6/17/2017.
@@ -120,7 +120,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
                     if (newValue instanceof ApmModes)
                         mode = (ApmModes) newValue;
                     else if (newValue instanceof Parameter)
-                        mode = getMode((Parameter) newValue);
+                        mode = getMode((Parameter) newValue, drone.getType().getDroneType());
                     else throw new RuntimeException("Unexpected type " + newValue.getClass());
 
                     checkBoxSimpleModeList.get(finalI).setVisible(mode.isSuperSimpleOrSimpleModeAvailable());
@@ -149,7 +149,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
         // Generate flight mode combo-boxs and keys
         Vector<ApmModes> flightModes = new Vector<ApmModes>();
-        flightModes.addAll(FXCollections.observableArrayList(ApmModes.getModeList(MAV_TYPE_QUADROTOR)));
+        flightModes.addAll(FXCollections.observableArrayList(ApmModes.getModeList(drone.getType().getDroneType())));
         loadComboBox(flightModes, comboBoxFltModeMap);
 
         // Generate command combo-boxs and keys
@@ -184,7 +184,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
             Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(entry.getKey())).findFirst();
             if (optional.isPresent()) {
                 Parameter parameter = (Parameter) optional.get();
-                ApmModes modes = getMode(parameter);
+                ApmModes modes = getMode(parameter, drone.getType().getDroneType());
                 entry.getValue().setValue(modes);
             }
         }
@@ -224,10 +224,10 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         return ApmTuning.getTune(Integer.parseInt(parameter.getValue()));
     }
 
-    private static ApmModes getMode(Parameter parameter) {
+    private static ApmModes getMode(Parameter parameter, MAV_TYPE droneType) {
         if (parameter == null)
             return null;
-        return ApmModes.getMode(Integer.parseInt(parameter.getValue()), MAV_TYPE_QUADROTOR);
+        return ApmModes.getMode(Integer.parseInt(parameter.getValue()), droneType);
     }
 
     private static ApmCommands getCommand(Parameter parameter) {
@@ -322,7 +322,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     public void onParameterReceived(Parameter parameter, int i, int i1) {
         Platform.runLater(() -> {
             if (comboBoxFltModeMap != null && comboBoxFltModeMap.keySet().contains(parameter.name)) {
-                ApmModes mode = getMode(parameter);
+                ApmModes mode = getMode(parameter, drone.getType().getDroneType());
                 LOGGER.debug("Received flight mode = {}", mode);
                 ((ComboBox<ApmModes>) comboBoxFltModeMap.get(parameter.name)).setValue(mode);
                 return;
@@ -377,7 +377,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
     public void resetAll() {
         // Verify GUI components were initialized
-        if (comboBoxFltModeMap != null)
+        if (comboBoxFltModeMap == null)
             return;
 
         for (ComboBox comboBox : comboBoxFltModeMap.values())
@@ -404,7 +404,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         Platform.runLater(() -> {
             switch (droneEventsType) {
                 case DISCONNECTED: {
-                    LOGGER.debug("Quad disconnected reset combo boxes");
+                    LOGGER.debug("Drone  disconnected reset combo boxes");
                     resetAll();
                     break;
                 }

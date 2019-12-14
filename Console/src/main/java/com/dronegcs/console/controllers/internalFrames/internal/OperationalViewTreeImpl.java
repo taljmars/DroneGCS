@@ -4,14 +4,12 @@ import com.dronedb.persistence.scheme.Mission;
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.internalFrames.internal.Editors.*;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
-import com.dronegcs.console_plugin.mission_editor.MissionEditor;
-import com.dronegcs.console_plugin.mission_editor.MissionUpdateException;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.services.*;
 import com.dronegcs.console_plugin.services.internal.MissionComparatorException;
 import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
@@ -39,8 +37,8 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
-import static com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED;
+import static com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent.DRONE_GUI_COMMAND.EDITMODE_EXISTING_LAYER_START;
+import static com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent.DRONE_GUI_COMMAND.PRIVATE_SESSION_STARTED;
 
 @Component
 public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypointManagerListener, OperationalViewTree {
@@ -238,7 +236,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 	public void updateTreeItemName(String fromText, TreeItem<AbstractLayer> treeItem) {
 		LOGGER.debug("Named changed from '" + fromText + "' to '" + treeItem.getValue().getName() + "'");
 		helpers.get(treeItem.getValue().getClass()).renameItem((EditedLayer) treeItem.getValue());
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED, treeItem.getValue()));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(PRIVATE_SESSION_STARTED, treeItem.getValue()));
 	}
 
 	@Override
@@ -272,7 +270,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 				((CheckBoxTreeItem) treeItem).selectedProperty().setValue(true);
 				modifiedItem = treeItem;
 				refresh();
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
+				applicationEventPublisher.publishEvent(new DroneGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
 			}
 		});
 		
@@ -286,27 +284,27 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			LOGGER.debug("Ignore this message - it a bug in the GUI I/S were event is raised once replacing the root");
 			return;
 		}
-		QuadGuiEvent.QUAD_GUI_COMMAND eventType = null;
+		DroneGuiEvent.DRONE_GUI_COMMAND eventType = null;
 		AbstractLayer layer = node.getValue();
 		if (layer instanceof LayerMission) {
 			if (modifiedItem != null && modifiedItem.getValue() == layer)
-				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED;
+				eventType = DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_EDITING_STARTED;
 			else
-				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED;
+				eventType = DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_VIEW_ONLY_STARTED;
 		}
 		if (layer instanceof LayerPerimeter) {
 			if (modifiedItem != null && modifiedItem.getValue() == layer)
-				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED;
+				eventType = DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_EDITING_STARTED;
 			else
-				eventType = QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED;
+				eventType = DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_VIEW_ONLY_STARTED;
 		}
 		else {
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_VIEW_ONLY_FINISHED, layer));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_VIEW_ONLY_FINISHED, layer));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_VIEW_ONLY_FINISHED, layer));
 		}
 
 		if (eventType != null)
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(eventType, layer));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(eventType, layer));
 	}
 
 	@Override
@@ -454,7 +452,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) {
 		Platform.runLater(() -> {
 			switch (command.getCommand()) {
 				case MISSION_EDITING_FINISHED: {
@@ -566,7 +564,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		super.addTreeItemAction(newItem, parentOfNewItem);
 		((LayerManagerDbWrapper) layerManager).create(newItem.getValue());
 
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(PRIVATE_SESSION_STARTED));
 	}
 
 	@Override
@@ -586,7 +584,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 		((CheckBoxTreeItem) item).selectedProperty().setValue(true);
 		modifiedItem = item;
 		refresh();
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(EDITMODE_EXISTING_LAYER_START, layer));
 	}
 
 	@Override
@@ -595,7 +593,7 @@ public class OperationalViewTreeImpl extends CheckBoxViewTree implements OnWaypo
 			helpers.get(treeItem.getValue().getClass()).removeItem((EditedLayer) treeItem.getValue());
 			((LayerManagerDbWrapper) layerManager).delete(treeItem.getValue());
 			super.removeTreeItemAction(treeItem);
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(PRIVATE_SESSION_STARTED));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(PRIVATE_SESSION_STARTED));
 		}
 		catch (Throwable e) {
 			loggerDisplayerSvc.logError(e.getMessage());

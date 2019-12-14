@@ -1,7 +1,12 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
+import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
+import com.dronegcs.mavlink.is.drone.parameters.Parameter;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmFrameTypes;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_FRAME_TYPE;
+import com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_TYPE;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -21,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +37,106 @@ import java.util.ResourceBundle;
 @Component
 public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListener {
 
+    static Frame FRAME_X_4 = new Frame("Quad X", ApmFrameTypes.QUAD_X, new Engine[]{
+            Engine.build(1, 45 - 90, false),
+            Engine.build(3, -45 - 90, true),
+            Engine.build(2, -135 - 90, false),
+            Engine.build(4, 135 - 90, true),
+    });
+
+    static Frame FRAME_X_4_DOUBLE = new Frame("OCTO QUAD X8", ApmFrameTypes.OCTO_QUAD_X_8, new Engine[]{
+            Engine.build(1, 45 - 90, false),
+            Engine.build(2, -45 - 90, true),
+            Engine.build(3, -135 - 90, false),
+            Engine.build(4, 135 - 90, true),
+            Engine.build(6, 45 - 90, true),
+            Engine.build(5, -45 - 90, false),
+            Engine.build(8, -135 - 90, true),
+            Engine.build(7, 135 - 90, false),
+    });
+
+    static Frame FRAME_X_6 = new Frame("HEXA X", ApmFrameTypes.HEX_X, new Engine[]{
+            Engine.build(5, 30 - 90, false),
+            Engine.build(3, -30 - 90, true),
+            Engine.build(2, -90 - 90, false),
+            Engine.build(6, -150 - 90, true),
+            Engine.build(4, 150 - 90, false),
+            Engine.build(1, 90 - 90, true),
+    });
+
+    static Frame FRAME_X_8 = new Frame("OCTO X", ApmFrameTypes.OCTO_X, new Engine[]{
+            Engine.build(1, 22.5 - 90, true),
+            Engine.build(5, -22.5 - 90, false),
+            Engine.build(7, -67.5 - 90, true),
+            Engine.build(6, -112.5 - 90, false),
+            Engine.build(2, -157.5 - 90, true),
+            Engine.build(4, 157.5 - 90, false),
+            Engine.build(8, 112.5 - 90, true),
+            Engine.build(3, 67.5 - 90, false),
+    });
+
+    static Frame FRAME_V_TAIL = new Frame("QUAD V", ApmFrameTypes.QUAD_V_TAIL, new Engine[]{
+            Engine.build(1, 60 - 90, false, 1.2),
+            Engine.build(3, -60 - 90, true, 1.2),
+            Engine.build(2, -150 - 90, false),
+            Engine.build(4, 150 - 90, true),
+    });
+
+    static Frame FRAME_PLUS_4 = new Frame("QUAD +", ApmFrameTypes.QUAD_PLUS, new Engine[]{
+            Engine.build(3, 0 - 90, true),
+            Engine.build(2, -90 - 90, false),
+            Engine.build(4, -180 - 90, true),
+            Engine.build(1, 90 - 90, false),
+    });
+
+    static Frame FRAME_PLUS_6 = new Frame("HEXA +", ApmFrameTypes.HEX_PLUS, new Engine[]{
+            Engine.build(1, 0 - 90, true),
+            Engine.build(5, -60 - 90, false),
+            Engine.build(3, -120 - 90, true),
+            Engine.build(2, 180 - 90, false),
+            Engine.build(6, 120 - 90, true),
+            Engine.build(4, 60 - 90, false),
+    });
+
+    static Frame FRAME_PLUS_8 = new Frame("OCTO +", ApmFrameTypes.OCTO_PLUS, new Engine[]{
+            Engine.build(1, 0 - 90, true),
+            Engine.build(5, -45 - 90, false),
+            Engine.build(7, -90 - 90, true),
+            Engine.build(6, -135 - 90, false),
+            Engine.build(2, 180 - 90, true),
+            Engine.build(4, 135 - 90, false),
+            Engine.build(8, 90 - 90, true),
+            Engine.build(3, 45 - 90, false),
+    });
+
+    static Frame FRAME_H_4 = new Frame("QUAD H", ApmFrameTypes.QUAD_H, new Engine[]{
+            Engine.build(1, 45 - 90, true),
+            Engine.build(3, -45 - 90, false),
+            Engine.build(4, 135 - 90, false),
+            Engine.build(2, -135 - 90, true),
+    });
+
+    private static final Frame[] frames = new Frame[]{
+            FRAME_X_4,
+            FRAME_X_4_DOUBLE,
+            FRAME_X_6,
+            FRAME_X_8,
+            FRAME_H_4,
+            FRAME_V_TAIL,
+            FRAME_PLUS_4,
+            FRAME_PLUS_6,
+            FRAME_PLUS_8
+    };
 
     @Autowired
     public Drone drone;
+
+    @FXML
+    public Pane rootServoOutput;
+
+    @Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
+    private LoggerDisplayerSvc loggerDisplayerSvc;
+
 
     @FXML public Rectangle body;
     @FXML public AnchorPane modelGraphic;
@@ -90,10 +194,12 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
     static class Frame {
 
         private final Engine[] engines;
+        private final ApmFrameTypes apmFrameTypes;
         private final String name;
 
-        public Frame(String name, Engine[] engines) {
+        public Frame(String name, ApmFrameTypes apmFrameTypes, Engine[] engines) {
             this.engines = engines;
+            this.apmFrameTypes = apmFrameTypes;
             this.name = name;
         }
 
@@ -125,84 +231,7 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
         }
     }
 
-    Frame FRAME_X_4 = new Frame("Quad X", new Engine[]{
-            Engine.build(1, 45 - 90, false),
-            Engine.build(3, -45 - 90, true),
-            Engine.build(2, -135 - 90, false),
-            Engine.build(4, 135 - 90, true),
-    });
 
-    Frame FRAME_X_4_DOUBLE = new Frame("OCTO QUAD X8", new Engine[]{
-            Engine.build(1, 45 - 90, false),
-            Engine.build(2, -45 - 90, true),
-            Engine.build(3, -135 - 90, false),
-            Engine.build(4, 135 - 90, true),
-            Engine.build(6, 45 - 90, true),
-            Engine.build(5, -45 - 90, false),
-            Engine.build(8, -135 - 90, true),
-            Engine.build(7, 135 - 90, false),
-    });
-
-    Frame FRAME_X_6 = new Frame("HEXA QUAD X", new Engine[]{
-            Engine.build(5, 30 - 90, false),
-            Engine.build(3, -30 - 90, true),
-            Engine.build(2, -90 - 90, false),
-            Engine.build(6, -150 - 90, true),
-            Engine.build(4, 150 - 90, false),
-            Engine.build(1, 90 - 90, true),
-    });
-
-    Frame FRAME_X_8 = new Frame("OCTO X", new Engine[]{
-            Engine.build(1, 22.5 - 90, true),
-            Engine.build(5, -22.5 - 90, false),
-            Engine.build(7, -67.5 - 90, true),
-            Engine.build(6, -112.5 - 90, false),
-            Engine.build(2, -157.5 - 90, true),
-            Engine.build(4, 157.5 - 90, false),
-            Engine.build(8, 112.5 - 90, true),
-            Engine.build(3, 67.5 - 90, false),
-    });
-
-    Frame FRAME_V_TAIL = new Frame("QUAD V", new Engine[]{
-            Engine.build(1, 60 - 90, false, 1.2),
-            Engine.build(3, -60 - 90, true, 1.2),
-            Engine.build(2, -150 - 90, false),
-            Engine.build(4, 150 - 90, true),
-    });
-
-    Frame FRAME_PLUS_4 = new Frame("QUAD +", new Engine[]{
-            Engine.build(3, 0 - 90, true),
-            Engine.build(2, -90 - 90, false),
-            Engine.build(4, -180 - 90, true),
-            Engine.build(1, 90 - 90, false),
-    });
-
-    Frame FRAME_PLUS_6 = new Frame("HEXA +", new Engine[]{
-            Engine.build(1, 0 - 90, true),
-            Engine.build(5, -60 - 90, false),
-            Engine.build(3, -120 - 90, true),
-            Engine.build(2, 180 - 90, false),
-            Engine.build(6, 120 - 90, true),
-            Engine.build(4, 60 - 90, false),
-    });
-
-    Frame FRAME_PLUS_8 = new Frame("OCTO +", new Engine[]{
-            Engine.build(1, 0 - 90, true),
-            Engine.build(5, -45 - 90, false),
-            Engine.build(7, -90 - 90, true),
-            Engine.build(6, -135 - 90, false),
-            Engine.build(2, 180 - 90, true),
-            Engine.build(4, 135 - 90, false),
-            Engine.build(8, 90 - 90, true),
-            Engine.build(3, 45 - 90, false),
-    });
-
-    Frame FRAME_H_4 = new Frame("QUAD H", new Engine[]{
-            Engine.build(1, 45 - 90, true),
-            Engine.build(3, -45 - 90, false),
-            Engine.build(4, 135 - 90, false),
-            Engine.build(2, -135 - 90, true),
-    });
 
     private void displaceEngine(Node imageView, double angle, double radius) {
         imageView.setTranslateX(radius * Math.cos(Math.toRadians(angle)));
@@ -214,10 +243,37 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        cbFrameType.getItems().addAll(FRAME_X_4, FRAME_X_4_DOUBLE, FRAME_X_6, FRAME_X_8, FRAME_H_4, FRAME_V_TAIL, FRAME_PLUS_4, FRAME_PLUS_6, FRAME_PLUS_8);
-        cbFrameType.setValue(FRAME_X_4);
+        if (drone == null || drone.getParameters() == null || drone.getType().getDroneType() == MAV_TYPE.MAV_TYPE_GENERIC) {
+            loggerDisplayerSvc.logGeneral("Drone isn't connected / synced");
+            return;
+        }
 
-        loadGraphic(FRAME_X_4);
+        if (drone.getType().isPlane()) {
+            loggerDisplayerSvc.logGeneral("Plane frame tuning is not relevant");
+            return;
+        }
+
+        Parameter parameter = drone.getParameters().getParameter("FRAME");
+        if (parameter == null) {
+            loggerDisplayerSvc.logGeneral("Drone parameter not found");
+            return;
+        }
+
+        rootServoOutput.setVisible(true);
+        MAV_FRAME_TYPE mav_frame_type = MAV_FRAME_TYPE.getFrameType((int) parameter.value);
+        Frame currentFrame = null;
+        for (Frame frame : frames) {
+            if (drone.getType().getDroneType() == frame.apmFrameTypes.getDroneType()) {
+                cbFrameType.getItems().add(frame);
+                if (frame.apmFrameTypes.getFrameType() == mav_frame_type) {
+                    // found current frame
+                    currentFrame = frame;
+                }
+            }
+        }
+
+        cbFrameType.setValue(currentFrame);
+        loadGraphic(currentFrame);
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
@@ -228,8 +284,8 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
         double centerY = body.getLayoutY() + body.getHeight()/2;
         modelGraphic.getChildren().removeAll(modelGraphic.getChildren());
 
-        Image imageCW = new Image(getClass().getResource("/com/dronegcs/console/controllers/ViewTester/motor-cw-75px.png").toExternalForm());
-        Image imageCCW = new Image(getClass().getResource("/com/dronegcs/console/controllers/ViewTester/motor-ccw-75px.png").toExternalForm());
+        Image imageCW = new Image(getClass().getResource("/com/dronegcs/console/guiImages/motors/motor-cw-75px.png").toExternalForm());
+        Image imageCCW = new Image(getClass().getResource("/com/dronegcs/console/guiImages/motors/motor-ccw-75px.png").toExternalForm());
         for (Engine engine : frame.engines) {
             ImageView imageView;
             Label label = new Label(engine.id + "");

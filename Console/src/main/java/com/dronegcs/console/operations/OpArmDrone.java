@@ -14,9 +14,9 @@ import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 import org.springframework.util.Assert;
 
 @Component
-public class OpArmQuad extends OperationHandler {
+public class OpArmDrone extends OperationHandler {
 
-	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmQuad.class);
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmDrone.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
@@ -24,7 +24,7 @@ public class OpArmQuad extends OperationHandler {
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
-	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when arming quad")
+	@Autowired @NotNull(message = "Internal Error: Failed to get dialog manager when arming drone")
 	private DialogManagerSvc dialogManagerSvc;
 	
 	static int called;
@@ -42,7 +42,7 @@ public class OpArmQuad extends OperationHandler {
 			return super.go();
 		}
 		
-		loggerDisplayerSvc.logGeneral("Arming Quad");
+		loggerDisplayerSvc.logGeneral("Arming Drone");
 		MavLinkArm.sendArmMessage(drone, true);
 		int armed_waiting_time = 5000; // 5 seconds
 		long sleep_time = 1000;
@@ -57,9 +57,9 @@ public class OpArmQuad extends OperationHandler {
 		}
 		
 		if (retry <= 0) {
-			loggerDisplayerSvc.logError("Failed to arm quad");
-			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to arm quadcopter, taking off was canceled"));
-			LOGGER.error(getClass().getName() + "Failed to arm quadcopter, taking off was canceled");
+			loggerDisplayerSvc.logError("Failed to arm drone");
+			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to arm drone, taking off was canceled"));
+			LOGGER.error(getClass().getName() + "Failed to arm drone, taking off was canceled");
 			
 			return false;
 		}

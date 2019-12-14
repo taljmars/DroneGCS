@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -11,9 +11,7 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +73,7 @@ public class InternalFrameMavlinkConfiguration extends Pane implements OnDroneLi
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 

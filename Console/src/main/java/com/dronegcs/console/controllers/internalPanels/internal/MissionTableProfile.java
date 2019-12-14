@@ -5,7 +5,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
 import com.dronegcs.console_plugin.mission_editor.MissionEditor;
 import com.dronegcs.console_plugin.mission_editor.MissionsManager;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
@@ -137,7 +137,7 @@ public class MissionTableProfile extends TableProfile {
                             mission.getMissionItemsUids().remove(getIndex());
                             mission.getMissionItemsUids().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -161,7 +161,7 @@ public class MissionTableProfile extends TableProfile {
                             mission.getMissionItemsUids().remove(getIndex());
                             mission.getMissionItemsUids().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerMission);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -184,7 +184,7 @@ public class MissionTableProfile extends TableProfile {
                             MissionEditor missionEditor = missionsManager.openMissionEditor(layerMission.getMission());
                             missionEditor.removeMissionItem((MissionItem) entry.getReferredItem());
                             generateTable(true, layerMission);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerMission));
                         });
                         setGraphic( btn );
                     }
@@ -314,7 +314,7 @@ public class MissionTableProfile extends TableProfile {
 
     @SuppressWarnings("incomplete-switch")
     @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
+    public void onApplicationEvent(DroneGuiEvent command) {
         Platform.runLater( () -> {
             switch (command.getCommand()) {
                 case MISSION_EDITING_STARTED:

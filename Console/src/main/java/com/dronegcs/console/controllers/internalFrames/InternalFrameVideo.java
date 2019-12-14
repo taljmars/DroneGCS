@@ -5,7 +5,7 @@ import com.dronegcs.console.controllers.droneEye.DroneEye;
 import com.dronegcs.console.controllers.internalFrames.internal.HUD;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -24,22 +24,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Material;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -148,7 +139,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
             LOGGER.warn("Failed to initialize detector", e);
             LOGGER.warn("Flight detector and camera will not be accessible");
             loggerDisplayerSvc.logError("Failed to initialize detector: " + e.getMessage());
-            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
+            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.DETECTOR_LOAD_FAILURE));
         }
 
         myself = this;
@@ -219,7 +210,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
     @SuppressWarnings("incomplete-switch")
     @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
+    public void onApplicationEvent(DroneGuiEvent command) {
         switch (command.getCommand()) {
             case EXIT:
                 if (detector != null)

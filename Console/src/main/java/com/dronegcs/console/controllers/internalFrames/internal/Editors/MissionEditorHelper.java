@@ -20,7 +20,7 @@ import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.MissionCompilerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
 import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilationException;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import com.gui.core.layers.AbstractLayer;
@@ -241,7 +241,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 		menuItemMissionAddWayPoint.setOnAction( arg -> {
 			missionEditor.addWaypoint(layerViewMap.getPosition(point));
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
@@ -255,7 +255,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			int turns = Integer.parseInt((String) val);
 			missionEditor.addLoiterTurns(layerViewMap.getPosition(point), turns);
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
@@ -269,35 +269,35 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			int time = Integer.parseInt((String) val);
 			missionEditor.addLoiterTime(layerViewMap.getPosition(point), time);
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddLoiterUnlimited.setOnAction( arg -> {
 			missionEditor.addLoiterUnlimited(layerViewMap.getPosition(point));
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionSetLandPoint.setOnAction( arg -> {
 			missionEditor.addLandPoint(layerViewMap.getPosition(point));
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionAddROI.setOnAction( arg -> {
 			missionEditor.addRegionOfInterest(layerViewMap.getPosition(point));
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
 		menuItemMissionSetRTL.setOnAction( arg -> {
 			missionEditor.addReturnToLaunch();
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
@@ -311,7 +311,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 			double altitude = Double.parseDouble((String) val);
 			missionEditor.addTakeOff(altitude);
 			modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_MAP, modifiedLayerMissionOriginal));
 			modifiedLayerMissionOriginal.regenerateMapObjects();
 		});
 
@@ -323,7 +323,7 @@ public class MissionEditorHelper implements EditorHelper<LayerMission> {
 		modifiedLayerMissionOriginal.setMission(missionEditor.getMission());
 		modifiedLayerMissionOriginal.setName(missionEditor.getMission().getName());
 		missionEditor = null;
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifiedLayerMissionOriginal));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_EDITING_FINISHED, this.modifiedLayerMissionOriginal));
 
 		setModifiedLayerMissionOriginal(null);
 		setBuildMode(false);

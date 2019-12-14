@@ -28,7 +28,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.Editors.Perimete
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.*;
 import com.dronegcs.console.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -45,7 +45,6 @@ import com.gui.core.mapViewerObjects.MapMarkerCircle;
 import com.gui.core.mapViewerObjects.MapMarkerDot;
 import com.gui.core.mapViewerObjects.MapVectorImpl;
 import com.gui.is.interfaces.mapObjects.MapLine;
-import com.gui.is.interfaces.mapObjects.MapMarker;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -74,7 +73,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -514,7 +512,7 @@ OnDroneListener, EventHandler<ActionEvent> {
         if (drawingEditorMode.isBuildMode())
             drawingEditorMode.saveEditor();
 
-        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
+        applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.EDITMODE_EXISTING_LAYER_FINISH));
     }
 
     public void setLockOnMyPosition(boolean shouldLock) {
@@ -563,7 +561,7 @@ OnDroneListener, EventHandler<ActionEvent> {
 
     @SuppressWarnings("incomplete-switch")
     @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
+    public void onApplicationEvent(DroneGuiEvent command) {
         switch (command.getCommand()) {
             case EDITMODE_EXISTING_LAYER_START:
 //                EditModeOn();
@@ -572,18 +570,18 @@ OnDroneListener, EventHandler<ActionEvent> {
                     LOGGER.debug("Working on DroneMission Layer");
                     LayerMission modifiedLayerMissionOriginal = missionEditorMode.startEditing((LayerMission) layer);
                     setEditedLayer(modifiedLayerMissionOriginal);
-                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
+                    applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_EDITING_STARTED, modifiedLayerMissionOriginal));
                 }
                 else if (layer instanceof LayerPolygonPerimeter || layer instanceof LayerCircledPerimeter) {
                     LOGGER.debug("Working on Perimeter Layer");
                     LayerPerimeter modifiedLayerPerimeterOriginal = perimeterEditorMode.startEditing((LayerPerimeter) layer);
                     setEditedLayer(modifiedLayerPerimeterOriginal);
-                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifiedLayerPerimeterOriginal));
+                    applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_EDITING_STARTED, modifiedLayerPerimeterOriginal));
                 }
                 else if (layer instanceof LayerDraw) {
                     LOGGER.debug("Working on Drawing Layer");
                     setEditedLayer(layer);
-                    applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DRAW_EDITING_STARTED, layer));
+                    applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.DRAW_EDITING_STARTED, layer));
                 }
                 else {
                     LOGGER.debug("Unrecognized Layer");

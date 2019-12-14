@@ -6,10 +6,9 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPerimeter;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerPolygonPerimeter;
 import com.dronegcs.console.controllers.internalPanels.PanelTableBox;
-import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -96,7 +95,7 @@ public class PerimeterTableProfile extends TableProfile {
             CirclePerimeter perimeter = (CirclePerimeter) entry.getReferredItem();
             perimeter.setRadius(t.getNewValue());
             generateTable(true, this.layerPerimeter);
-            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
+            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
         });
 
         panelTableBox.getUp().setCellFactory(param -> {
@@ -114,7 +113,7 @@ public class PerimeterTableProfile extends TableProfile {
                             polygonPerimeter.getPoints().remove(getIndex());
                             polygonPerimeter.getPoints().add(getIndex() - 1, ((MissionItem) entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -138,7 +137,7 @@ public class PerimeterTableProfile extends TableProfile {
                             polygonPerimeter.getPoints().remove(getIndex());
                             polygonPerimeter.getPoints().add(getIndex() + 1, ((MissionItem)entry.getReferredItem()).getKeyId().getObjId());
                             generateTable(true, layerPerimeter);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.MISSION_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -162,7 +161,7 @@ public class PerimeterTableProfile extends TableProfile {
                             PolygonPerimeterEditor polygonPerimeterEditor = null;//perimetersManager.getPerimeterEditor(((LayerPolygonPerimeter) layerPerimeter).getPolygonPerimeter());
                             polygonPerimeterEditor.removePoint((Point) entry.getReferredItem());
                             generateTable(true, layerPerimeter);
-                            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
+                            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_UPDATED_BY_TABLE, layerPerimeter));
                         });
                         setGraphic( btn );
                     }
@@ -255,7 +254,7 @@ public class PerimeterTableProfile extends TableProfile {
 
     @SuppressWarnings("incomplete-switch")
     @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
+    public void onApplicationEvent(DroneGuiEvent command) {
         Platform.runLater( () -> {
             switch (command.getCommand()) {
                 case PERIMETER_EDITING_STARTED:

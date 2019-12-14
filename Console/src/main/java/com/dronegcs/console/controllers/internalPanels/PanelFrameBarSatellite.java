@@ -18,7 +18,7 @@ import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.SessionsSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.layers.AbstractLayer;
@@ -183,7 +183,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
         if (operationalViewTree.hasPrivateSession()) {
             LOGGER.debug("Private session was found");
-            applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PRIVATE_SESSION_STARTED));
+            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PRIVATE_SESSION_STARTED));
         }
     }
 
@@ -285,7 +285,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         operationalViewTree.regenerateTree();
         // TODO: find better solution than reload - it too aggressive - also fix the icons
         operationalViewTree.reloadData();
-        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PUBLISH));
+        applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PUBLISH));
     }
 
     public <T extends BaseObject> void handleClosingPair(Collection<ClosingPair<T>> closingPairs) {
@@ -338,7 +338,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         operationalViewTree.reloadData();
 
         operationalViewTree.regenerateTree();
-        applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.DISCARD));
+        applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.DISCARD));
     }
 
     private void setImageButton(Button button, URL resource) {
@@ -351,7 +351,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     @SuppressWarnings("incomplete-switch")
     @EventListener
-    public void onApplicationEvent(QuadGuiEvent command) {
+    public void onApplicationEvent(DroneGuiEvent command) {
         switch (command.getCommand()) {
             case MISSION_EDITING_STARTED:
             case MISSION_UPDATED_BY_MAP:

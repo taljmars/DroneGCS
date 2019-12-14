@@ -34,7 +34,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
-import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +42,6 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -82,17 +79,17 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	@Autowired @NotNull(message = "Internal Error: Failed to get text publisher")
 	private TextNotificationPublisherSvc textNotificationPublisherSvc;
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get quad armer")
-	private OpArmQuad opArmQuad;
+	@Autowired @NotNull(message = "Internal Error: Failed to get drone armer")
+	private OpArmDrone opArmDrone;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GCS terminator")
 	private OpGCSTerminationHandler opGCSTerminationHandler;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get takeoff handler")
-	private OpTakeoffQuad opTakeoffQuad;
+	private OpTakeoffDrone opTakeoffDrone;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get droneMission handler")
-	private OpStartMissionQuad opStartMissionQuad;
+	private OpStartMissionDrone opStartMissionDrone;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get flight controller service")
 	private OpChangeFlightControllerQuad opChangeFlightControllerQuad;
@@ -274,8 +271,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		    		
 		logger.LogGeneralMessege("MavlinkTakeoff thread Stated!");
 	    if (!drone.getState().isArmed()) {
-	    	if (dialogManagerSvc.showAlertMessageDialog("Quad will automatically be armed")) {
-	    		LOGGER.info("User notified quad was armed");
+	    	if (dialogManagerSvc.showAlertMessageDialog("Drone will automatically be armed")) {
+	    		LOGGER.info("User notified drone was armed");
 	    	}
 	    }
 					
@@ -291,10 +288,10 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
     		@Override protected Void call() throws Exception {
         		try {
         			double real_value = Double.parseDouble(val);
-        			opTakeoffQuad.setTargetHeight(real_value);
-					opArmQuad.setNext(opTakeoffQuad);
-					opTakeoffQuad.setNext(null);
-					opArmQuad.go();
+        			opTakeoffDrone.setTargetHeight(real_value);
+					opArmDrone.setNext(opTakeoffDrone);
+					opTakeoffDrone.setNext(null);
+					opArmDrone.go();
 					takeOffThreadRunning = false;
 	   				logger.LogGeneralMessege("MavlinkTakeoff thread Done!");
         		}
@@ -329,8 +326,8 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 	public void ButtonFollowBeaconOnAction(ActionEvent actionEvent) {
 		if (btnFollowBeaconStart.isSelected()) {
     		if (!drone.getState().isArmed()) {
-    			if (dialogManagerSvc.showAlertMessageDialog("Quad will automatically be armed")) {
-    				LOGGER.info("User was notified about arming quad");
+    			if (dialogManagerSvc.showAlertMessageDialog("Drone will automatically be armed")) {
+    				LOGGER.info("User was notified about arming drone");
     			}
     		}
         		
@@ -350,11 +347,11 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
     			@Override protected Void call() throws Exception {	        		
         		try {
         			double real_value = Double.parseDouble((String) val);
-        			opArmQuad.setNext(opTakeoffQuad);
-        			opTakeoffQuad.setTargetHeight(real_value);
-        			opTakeoffQuad.setNext(null);
+        			opArmDrone.setNext(opTakeoffDrone);
+        			opTakeoffDrone.setTargetHeight(real_value);
+        			opTakeoffDrone.setNext(null);
         			
-					if (!opArmQuad.go()) {
+					if (!opArmDrone.go()) {
 						btnFollowBeaconStart.setSelected(false);
 						return null;
 					}
@@ -415,9 +412,9 @@ public class PanelButtonBoxSatellite extends TilePane implements OnDroneListener
 		Platform.runLater( () -> {
 			if (btnStartMission.isSelected()) {
         		try {
-        			opStartMissionQuad.setDroneMission(drone.getDroneMission());
-        			opStartMissionQuad.setNext(null);
-					if (!opStartMissionQuad.go())
+        			opStartMissionDrone.setDroneMission(drone.getDroneMission());
+        			opStartMissionDrone.setNext(null);
+					if (!opStartMissionDrone.go())
 						btnStartMission.setSelected(false);
 				} catch (Exception e1) {
 					dialogManagerSvc.showErrorMessageDialog("Failed to start droneMission, please resolve issue and try again", e1);

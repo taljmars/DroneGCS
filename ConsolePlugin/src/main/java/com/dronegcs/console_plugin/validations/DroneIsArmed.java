@@ -1,6 +1,6 @@
 package com.dronegcs.console_plugin.validations;
 
-import com.dronegcs.console_plugin.validations.internal.QuadIsArmedValidator;
+import com.dronegcs.console_plugin.validations.internal.DroneIsArmedValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,10 +12,10 @@ import javax.validation.Payload;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { QuadIsArmedValidator.class })
-public @interface QuadIsArmed {
+@Constraint(validatedBy = { DroneIsArmedValidator.class })
+public @interface DroneIsArmed {
 	
-	String message() default "Quad is not armed";
+	String message() default "Drone is not armed";
 
     Class<?>[] groups() default {};
 

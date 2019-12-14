@@ -3,7 +3,7 @@ package com.dronegcs.console.operations;
 import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.logger.Logger;
 import com.generic_tools.validations.RuntimeValidator;
@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @Component
 public class OpGCSTerminationHandler extends OperationHandler {
 
-	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmQuad.class);
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpArmDrone.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get GUI event publisher")
 	protected ApplicationEventPublisher applicationEventPublisher;
@@ -80,7 +80,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 		logger.LogGeneralMessege("Max Height: " + drone.getAltitude().getMaxAltitude() + "m");
 		logger.LogGeneralMessege("Max Speed: " + drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond() + "m/s (" + ((int) (drone.getSpeed().getMaxAirSpeed().valueInMetersPerSecond()*3.6)) + "km/h)");
 		logger.LogGeneralMessege("Flight time: " + drone.getState().getFlightTime() + "");
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.EXIT, this));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.EXIT, this));
 		logger.close();
 		System.exit(0);
 	}

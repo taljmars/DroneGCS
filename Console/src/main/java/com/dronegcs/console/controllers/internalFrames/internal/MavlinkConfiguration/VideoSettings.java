@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.fxml.FXML;
@@ -43,6 +43,6 @@ public class VideoSettings extends Pane implements Initializable {
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-        btnUpdateDevice.setOnAction( e -> applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
+        btnUpdateDevice.setOnAction( e -> applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
     }
 }

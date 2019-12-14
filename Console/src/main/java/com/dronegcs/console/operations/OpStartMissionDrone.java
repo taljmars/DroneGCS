@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console_plugin.validations.QuadIsArmed;
+import com.dronegcs.console_plugin.validations.DroneIsArmed;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.generic_tools.validations.RuntimeValidator;
@@ -15,13 +15,13 @@ import com.generic_tools.validations.ValidatorResponse;
 import org.springframework.util.Assert;
 
 @Component
-public class OpStartMissionQuad extends OperationHandler {
+public class OpStartMissionDrone extends OperationHandler {
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
-	@QuadIsArmed
+	@DroneIsArmed
 	private Drone drone;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get droneMission")

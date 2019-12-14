@@ -1,18 +1,13 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
-import com.dronegcs.mavlink.core.firmware.FirmwareType;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.Preferences;
-import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkStreamRates;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;

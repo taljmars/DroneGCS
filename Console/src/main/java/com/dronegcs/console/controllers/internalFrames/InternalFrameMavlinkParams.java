@@ -4,7 +4,7 @@ import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -170,7 +170,7 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 

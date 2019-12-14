@@ -73,12 +73,14 @@ public class Frame extends Pane implements Initializable {
             throw new RuntimeException(validatorResponse.toString());
 
         List<RadioButton> lst = new ArrayList<>();
-        ToggleGroup group = new ToggleGroup();
-        for (ApmFrameTypes type : ApmFrameTypes.getFrameTypesList()) {
+        group = new ToggleGroup();
+        for (ApmFrameTypes type : ApmFrameTypes.getFrameList(drone.getFirmwareType(), drone.getType().getDroneType())) {
             RadioButton rb = new RadioButton(type.getName());
             if (drone != null) {
                 Parameter parameter = drone.getParameters().getParameter("FRAME");
-                if (parameter != null && parameter.value == type.getType())
+                if (parameter != null && parameter.value == type.getFrameType().getIndex())
+                    rb.setSelected(true);
+                else if (type == ApmFrameTypes.FIXED_WING)
                     rb.setSelected(true);
             }
             rb.setToggleGroup(group);
@@ -97,13 +99,22 @@ public class Frame extends Pane implements Initializable {
         if (group == null)
             return;
 
+        if (drone == null || drone.getParameters() == null) {
+            loggerDisplayerSvc.logError("Drone isn't connected / synced");
+            return;
+        }
+
+        if (drone.getType().isPlane()) {
+            return;
+        }
         Parameter frameParam = drone.getParameters().getParameter("FRAME");
         if (frameParam == null) {
             loggerDisplayerSvc.logError("Failed to find parameter name \"Frame\"");
             return;
         }
         RadioButton chk = (RadioButton)group.getSelectedToggle(); // Cast object to radio button
-        frameParam.value = ApmFrameTypes.valueOf(chk.getText()).getType();
+        frameParam.value = ApmFrameTypes.valueOf(chk.getText()).getFrameType().getIndex();
         drone.getParameters().sendParameter(frameParam);
+        loggerDisplayerSvc.logGeneral("Frame Type changed: " + ApmFrameTypes.valueOf(chk.getText()));
     }
 }

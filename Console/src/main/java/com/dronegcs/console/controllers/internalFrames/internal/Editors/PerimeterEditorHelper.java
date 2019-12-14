@@ -19,7 +19,7 @@ import com.dronegcs.console_plugin.perimeter_editor.PolygonPerimeterEditor;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.gui.core.layers.AbstractLayer;
 import com.gui.core.mapViewer.LayeredViewMap;
@@ -230,7 +230,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 				// Updating GUI layer
 				modifiedLayerPerimeterOriginal.setPayload(layer);
 				modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
-				applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
+				applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
 				modifiedLayerPerimeterOriginal.regenerateMapObjects();
 			}
 			catch (Throwable e) {
@@ -251,7 +251,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 			((CirclePerimeterEditor) perimeterEditor).setCenter(layerViewMap.getPosition(point));
 			((CirclePerimeterEditor) perimeterEditor).setRadius(Integer.parseInt(value));
 			modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
-			applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_UPDATED_BY_MAP, modifiedLayerPerimeterOriginal));
 			modifiedLayerPerimeterOriginal.regenerateMapObjects();
 		});
 
@@ -266,7 +266,7 @@ public class PerimeterEditorHelper implements EditorHelper<LayerPerimeter> {
 		modifiedLayerPerimeterOriginal.setPerimeter(perimeterEditor.getPerimeter());
 		modifiedLayerPerimeterOriginal.setName(perimeterEditor.getPerimeter().getName());
 		perimeterEditor = null;
-		applicationEventPublisher.publishEvent(new QuadGuiEvent(QuadGuiEvent.QUAD_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifiedLayerPerimeterOriginal));
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PERIMETER_EDITING_FINISHED, this.modifiedLayerPerimeterOriginal));
 
 		setModifiedLayerPerimeterOriginal(null);
 		setBuildMode(false);

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import com.dronegcs.console_plugin.validations.QuadIsArmed;
+import com.dronegcs.console_plugin.validations.DroneIsArmed;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -21,16 +21,16 @@ import org.springframework.util.Assert;
 
 @ComponentScan("tools.com.dronegcs.console_plugin.validations")
 @ComponentScan("gui.com.dronegcs.console_plugin.services")
-@Component("opTakeoffQuad")
-public class OpTakeoffQuad extends OperationHandler {
+@Component("opTakeoffDrone")
+public class OpTakeoffDrone extends OperationHandler {
 
-	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpTakeoffQuad.class);
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OpTakeoffDrone.class);
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
 	private LoggerDisplayerSvc loggerDisplayerSvc;
 	
 	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
-	@QuadIsArmed
+	@DroneIsArmed
 	private Drone drone;
 	
 	@Min(value=1, message="Expected height must be above 1m")
@@ -73,13 +73,13 @@ public class OpTakeoffQuad extends OperationHandler {
 		}
 		
 		if (retry <= 0) {
-			loggerDisplayerSvc.logError("Failed to lift quad");
-			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to lift quadcopter, taking off was canceled"));
-			LOGGER.error(getClass().getName() + "Failed to lift quadcopter, taking off was canceled");
+			loggerDisplayerSvc.logError("Failed to lift drone");
+			Platform.runLater( () -> dialogManagerSvc.showAlertMessageDialog("Failed to lift drone, taking off was canceled"));
+			LOGGER.error(getClass().getName() + "Failed to lift drone, taking off was canceled");
 			return false;
 		}
 		
-		loggerDisplayerSvc.logGeneral("MavlinkTakeoff done! Quad height is " + drone.getAltitude().getAltitude() + "m");
+		loggerDisplayerSvc.logGeneral("MavlinkTakeoff done! Drone height is " + drone.getAltitude().getAltitude() + "m");
 		
 		return super.go();
 	}

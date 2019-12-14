@@ -9,7 +9,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventL
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
 import com.dronegcs.console_plugin.event_logger.EventLogBundle;
 import com.dronegcs.console_plugin.event_logger.EventLogManager;
-import com.dronegcs.console_plugin.services.internal.logevents.QuadGuiEvent;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
@@ -237,7 +237,7 @@ public class InternalFrameEventLogger extends Pane implements Initializable {
 
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(QuadGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) {
 		switch (command.getCommand()) {
 		case EXIT:
 			break;

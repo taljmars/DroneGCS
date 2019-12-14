@@ -193,18 +193,18 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 					SetLblHeight(drone.getAltitude().getAltitude());
 					return;
 				case HEARTBEAT_FIRST:
-					loggerDisplayerSvc.logGeneral("Quad Connected");
+					loggerDisplayerSvc.logGeneral("Drone Connected");
 					SetHeartBeat(true);
 					return;
 				case HEARTBEAT_RESTORED:
-					loggerDisplayerSvc.logSuccess("Quad Connection Restored");
+					loggerDisplayerSvc.logSuccess("Drone Connection Restored");
 					SetHeartBeat(true);
 					return;
 				case DISCONNECTED:
-					loggerDisplayerSvc.logError("Quad Disconnected");
+					loggerDisplayerSvc.logError("Drone Disconnected");
 				case HEARTBEAT_TIMEOUT:
 					if (event == HEARTBEAT_TIMEOUT)
-						loggerDisplayerSvc.logWarning("Quad Latency detected");
+						loggerDisplayerSvc.logWarning("Drone Latency detected");
 					SetLblHeight(0);
 					SetSignal(0);
 					SetBattery(0);

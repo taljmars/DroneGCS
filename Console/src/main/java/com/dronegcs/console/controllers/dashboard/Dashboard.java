@@ -57,7 +57,7 @@ import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
 public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
-    public static final String APP_TITLE = "Quad Ground Station";
+    public static final String APP_TITLE = "Drone Ground Station";
 
     private String app_ver = "unknown";
 
@@ -275,7 +275,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         switch (event) {
             case LEFT_PERIMETER:
                 textNotificationPublisherSvc.publish("Outside Perimeter");
-                loggerDisplayerSvc.logError("Quad left the perimeter");
+                loggerDisplayerSvc.logError("Drone left the perimeter");
                 java.awt.Toolkit.getDefaultToolkit().beep();
                 return;
             case ENFORCING_PERIMETER:
@@ -311,6 +311,12 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 return;
             case FOLLOW_STOP:
                 loggerDisplayerSvc.logGeneral("Follow Me Ended");
+                return;
+            case FIRMWARE:
+                loggerDisplayerSvc.logGeneral("Firmware Identified: " + drone.getFirmwareType());
+                return;
+            case TYPE:
+                loggerDisplayerSvc.logGeneral("Drone Type: " + drone.getType().getDroneType());
                 return;
         }
     }
