@@ -2,6 +2,7 @@ package com.ngxbridge.svc.internal;
 
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.variables.Perimeter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkArm;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.MavLinkModes;
@@ -85,7 +86,7 @@ public class CommunicationSvcImpl implements CommunicationSvc {
 
     @Override
     public void enforcePerimeter(boolean isOn) {
-        drone.getPerimeter().setEnforce(isOn);
+        drone.getPerimeter().setPerimeterMode(Perimeter.PerimeterMode.ENFORCE);
     }
 
     @Override
