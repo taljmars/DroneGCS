@@ -5,6 +5,8 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewT
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.gui.core.mapViewer.internal.MapViewerSettings;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -64,5 +66,9 @@ public class MapSettings extends Pane implements Initializable {
         cbTrail.setOnAction( e -> {
             operationalViewMap.setLeaveTrail(cbTrail.isSelected());
         });
+    }
+
+    public void handleFlushTrail(ActionEvent actionEvent) {
+        operationalViewMap.flushTrail();
     }
 }

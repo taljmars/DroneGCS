@@ -3,21 +3,24 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.layout.*?>
-<Pane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.GeoFence">
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.GeoFence">
     <children>
         <VBox spacing="20.0">
             <children>
-                <Label text="Geo Fence Settings" style="-fx-font-weight: bold" />
-                <HBox >
+                <Label style="-fx-font-weight: bold" text="Geo Fence Settings" />
+                <HBox alignment="CENTER">
                     <HBox.margin>
                         <Insets left="10.0" right="10.0" />
                     </HBox.margin>
                     <children>
                         <Label text="Mode:   " />
-                        <RadioButton fx:id="geoOff" contentDisplay="CENTER" onAction="#setGeoFenceOff" text="Off"/>
-                        <RadioButton fx:id="geoAlert" contentDisplay="CENTER" onAction="#setGeoFenceAlert" text="Alert Only"/>
-                        <RadioButton fx:id="geoEnforce" contentDisplay="CENTER" onAction="#setGeoFenceEnforce" text="Enforce"/>
+                        <RadioButton fx:id="geoOff" contentDisplay="CENTER" onAction="#setGeoFenceOff" text="Off" />
+                        <RadioButton fx:id="geoAlert" contentDisplay="CENTER" onAction="#setGeoFenceAlert" text="Alert Only" />
+                        <RadioButton fx:id="geoEnforce" contentDisplay="CENTER" onAction="#setGeoFenceEnforce" text="Enforce" />
                     </children>
                 </HBox>
             </children>

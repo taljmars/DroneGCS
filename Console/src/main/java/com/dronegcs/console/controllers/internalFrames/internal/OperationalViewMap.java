@@ -484,6 +484,10 @@ OnDroneListener, EventHandler<ActionEvent> {
         }
     }
 
+    public void flushTrail() {
+        myTrailPath.getCoordinates().clear();
+    }
+
     private void SetMyPosition(Coordinate coord) {
         if (coord == null) {
             System.err.println("No Positions");
@@ -606,4 +610,5 @@ OnDroneListener, EventHandler<ActionEvent> {
                 break;
         }
     }
+
 }

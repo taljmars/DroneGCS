@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import java.lang.*?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
 <Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.TelemetryRates">
 
     <children>
 
         <VBox spacing="20.0">
             <children>
-                <Label text="Telemetry" style="-fx-font-weight: bold" />
-                <HBox spacing="20.0">
+                <Label style="-fx-font-weight: bold" text="Telemetry" />
+                <HBox alignment="CENTER" spacing="20.0">
                     <children>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="Altitude/Orientation   " />
                                 <ComboBox fx:id="cmbAlt">
@@ -43,7 +48,7 @@
                             </children>
                         </HBox>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="Position   " />
                                 <ComboBox fx:id="cmbPos">
@@ -73,7 +78,7 @@
                             </children>
                         </HBox>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="Mode/Status   " />
                                 <ComboBox fx:id="cmbModeStatus">
@@ -100,7 +105,7 @@
                             </children>
                         </HBox>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="RC   " />
                                 <ComboBox fx:id="cmbRC">
@@ -127,7 +132,7 @@
                             </children>
                         </HBox>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="Sensors   " />
                                 <ComboBox fx:id="cmbSensors">
@@ -156,7 +161,7 @@
                             </children>
                         </HBox>
 
-                        <HBox >
+                        <HBox alignment="CENTER">
                             <children>
                                 <Label text="Controller   " />
                                 <ComboBox fx:id="cmbController">
@@ -185,7 +190,7 @@
                             </children>
                         </HBox>
 
-                        <Button text="Update" onAction="#UpdateRates"/>
+                        <Button onAction="#UpdateRates" text="Update" />
                     </children>
                 </HBox>
 
@@ -195,4 +200,3 @@
     </children>
 
 </Pane>
-
