@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
+import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.HighlightingLabelLayout;
 import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
@@ -15,15 +16,14 @@ import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
@@ -41,6 +41,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
 
@@ -57,7 +58,6 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	@NotNull(message = "Internal Error: Failed to get floatingNodeManager")
 	private FloatingNodeManager floatingNodeManager;
 
-
 	@NotNull @FXML private TableView<ParamsTableEntry> table;
 
 	@NotNull @FXML private TableColumn<ParamsTableEntry,Integer> id;
@@ -66,6 +66,9 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	@NotNull @FXML private TableColumn<ParamsTableEntry,Integer> type;
 	@NotNull @FXML private TableColumn<ParamsTableEntry,String> update;
 	@NotNull @FXML private TableColumn<ParamsTableEntry,String> description;
+
+	@NotNull @FXML private TextField txtSearchField;
+
 
 	private ObservableList<ParamsTableEntry> data;
 
@@ -79,12 +82,17 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	private RuntimeValidator runtimeValidator;
 	
 	@NotNull @FXML private Pane root;
+
+	private FilteredList<Parameter> filteredData = null;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		List<Parameter> parametersList = drone.getParameters().getParametersList();
+		filteredData = new FilteredList<>(FXCollections.observableList(parametersList), p -> true);
 
 		table.setPrefWidth(root.getPrefWidth());
 //		table.setPrefHeight(root.getPrefHeight());
@@ -105,6 +113,28 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 
 		id.setCellValueFactory(new PropertyValueFactory<>("id"));
 		name.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+//		name.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+//		name.setCellFactory(param -> {
+//			final TableCell<ParamsTableEntry, String> cell = new TableCell<ParamsTableEntry, String>() {
+//				private final HighlightingLabelLayout layout = new HighlightingLabelLayout();
+//				{
+//					layout.highlightTextProperty().bind(txtSearchField.textProperty());
+//				}
+//
+//				@Override
+//				protected void updateItem(String data, boolean empty) {
+//					super.updateItem(data, empty);
+//					if (empty) {
+//						setGraphic(null);
+//					} else {
+//						layout.setText(data);
+//						setGraphic(layout);
+//					}
+//				}
+//			};
+//			return cell;
+//		});
 
 		value.setCellValueFactory(new PropertyValueFactory<>("value"));
 		value.setCellFactory(cellFactory);
@@ -148,8 +178,45 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 		});
 
 		description.setCellValueFactory(new PropertyValueFactory<>("description"));
+//		description.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+//		description.setCellFactory(param -> {
+//			final TableCell<ParamsTableEntry, String> cell = new TableCell<ParamsTableEntry, String>() {
+//				private final HighlightingLabelLayout layout = new HighlightingLabelLayout();
+//				{
+//					layout.highlightTextProperty().bind(txtSearchField.textProperty());
+//				}
+//
+//				@Override
+//				protected void updateItem(String data, boolean empty) {
+//					super.updateItem(data, empty);
+//					if (empty) {
+//						setGraphic(null);
+//					} else {
+//						layout.setText(data);
+//						setGraphic(layout);
+//					}
+//				}
+//			};
+//			return cell;
+//		});
 
-		loadTable();
+		txtSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+			Predicate<Parameter> predicate = (Parameter parameter) -> {
+				if (parameter.getDescription().toLowerCase().contains(newValue.toLowerCase()))
+					return true;
+
+				if (parameter.getName().toLowerCase().contains(newValue.toLowerCase()))
+					return true;
+
+				return false;
+			};
+
+			filteredData.setPredicate(predicate);
+			loadTable(filteredData);
+		});
+
+		filteredData.setPredicate(p -> true);
+		loadTable(filteredData);
 	}
 	
 	private static int called;
@@ -178,16 +245,17 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 		}
 	}
 
-	public void loadTable() {
+	public void loadTable(FilteredList<Parameter> filteredData) {
 		if (table == null) {
 			LOGGER.debug("Table wasn't initialize yet");
 			return;
 		}
-		List<Parameter> parametersList = drone.getParameters().getParametersList();
-		if (parametersList.size() > 0) {
+
+		if (filteredData.size() > 0) {
 			data = FXCollections.observableArrayList();
-			for (int i = 0; i < parametersList.size(); i++) {
-				Parameter parameter = parametersList.get(i);
+
+			for (int i = 0; i < filteredData.size(); i++) {
+				Parameter parameter = filteredData.get(i);
 				ParamsTableEntry entry = new ParamsTableEntry(i, parameter.name, parameter.getValue(), parameter.type, parameter.getDescription());
 				data.add(entry);
 			}
@@ -206,12 +274,19 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 
 		LOGGER.debug("Received updated parameter {}", parameter);
 		LOGGER.debug("new value -> {}", drone.getParameters().getParameter(parameter.name));
-		Platform.runLater(() -> loadTable());
+		if (filteredData != null) {
+			filteredData.setPredicate(p -> true);
+			Platform.runLater(() -> loadTable(filteredData));
+		}
 	}
 
 	@Override
 	public void onEndReceivingParameters(List<Parameter> list) {
 		LOGGER.debug("Received updated parameter, amount {}", list.size());
-		Platform.runLater(() -> loadTable());
+		if (filteredData != null) {
+			filteredData.setPredicate(p -> true);
+			Platform.runLater(() -> loadTable(filteredData));
+		}
 	}
+
 }

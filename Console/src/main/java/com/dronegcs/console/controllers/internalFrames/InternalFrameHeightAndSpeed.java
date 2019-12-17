@@ -4,11 +4,10 @@ import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
-import com.generic_tools.csv.CSV;
-import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import com.opencsv.CSVWriter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -22,10 +21,11 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Component
@@ -36,20 +36,20 @@ public class InternalFrameHeightAndSpeed extends InternalFrameChart implements O
 
 	@Autowired @NotNull(message="Internal Error: Failed to get environment")
 	private Environment environment;
-	
+
 	@Autowired
 	private RuntimeValidator runtimeValidator;
-	
+
 	@NotNull @FXML private Pane root;
 	@NotNull @FXML private LineChart<String,Number> lineChart;
-	
-	private CSV csv;
+
+	private CSVWriter csv;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesHeight;
 	private static XYChart.Series<String, Number> seriesAirSpeed;
 	private static XYChart.Series<String, Number> seriesVerticalSpeed;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.initialize(location, resources);
@@ -65,40 +65,43 @@ public class InternalFrameHeightAndSpeed extends InternalFrameChart implements O
 
 	private static int called;
 	@PostConstruct
-	private void init() throws URISyntaxException {
+	private void init() throws URISyntaxException, IOException {
 		Assert.isTrue(++called == 1, "Not a Singleton");
-		
+
 		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "HeightAndSpeed.csv");
-		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv");
-		csv.addEntry(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
-		
+		csv = new CSVWriter(new FileWriter(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv"));
+
+//		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "HeightAndSpeed.csv");
+//		csv.addEntry(Arrays.asList("Time", "Height", "VerticalSpeed", "AirSpeed"));
+		csv.writeNext(new String[]{"Time", "Height", "VerticalSpeed", "AirSpeed"});
+
 		drone.addDroneListener(this);
 	}
 
 	private void addValues(double altitude, double airSpeed, double verticalSpeed) {
 		Platform.runLater( () -> {
 			String timestamp = LocalDateTime.now().toLocalTime().toString();
-			
+
 			if (seriesHeight != null)
 				seriesHeight.getData().add(new XYChart.Data<String, Number>(timestamp, altitude));
 			if (seriesVerticalSpeed != null)
 				seriesVerticalSpeed.getData().add(new XYChart.Data<String, Number>(timestamp, verticalSpeed));
 			if (seriesAirSpeed != null)
 				seriesAirSpeed.getData().add(new XYChart.Data<String, Number>(timestamp, airSpeed));
-			
-			csv.addEntry(Arrays.asList(timestamp, altitude, airSpeed, verticalSpeed));
+
+			csv.writeNext(new String[]{timestamp, String.valueOf(altitude), String.valueOf(airSpeed), String.valueOf(verticalSpeed)});
 		});
 	}
 
 	protected void loadChart() {
-        seriesHeight = new XYChart.Series<String, Number>();
-        seriesHeight.setName("Height (m)");
+		seriesHeight = new XYChart.Series<String, Number>();
+		seriesHeight.setName("Height (m)");
 		lineChart.getData().add(seriesHeight);
-		
+
 		seriesAirSpeed = new XYChart.Series<String, Number>();
 		seriesAirSpeed.setName("Air Speed (m/s)");
 		lineChart.getData().add(seriesAirSpeed);
-		
+
 		seriesVerticalSpeed = new XYChart.Series<String, Number>();
 		seriesVerticalSpeed.setName("Vertical Speed (m/s)");
 		lineChart.getData().add(seriesVerticalSpeed);
@@ -118,15 +121,15 @@ public class InternalFrameHeightAndSpeed extends InternalFrameChart implements O
 				break;
 		}
 	}
-	
+
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(DroneGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) throws IOException {
 		switch (command.getCommand()) {
-		case EXIT:
-			if (csv != null) 
-				CSVFactory.closeFile(csv);
-			break;
+			case EXIT:
+				if (csv != null)
+					csv.close();
+				break;
 		}
 	}
 }

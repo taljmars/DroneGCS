@@ -10,6 +10,7 @@ import com.generic_tools.csv.CSVFactory;
 import com.generic_tools.environment.Environment;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import com.opencsv.CSVWriter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -23,6 +24,8 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -44,7 +47,7 @@ public class InternalFrameBattery extends InternalFrameChart implements OnDroneL
 	@NotNull @FXML private Pane root;
 	@NotNull @FXML private LineChart<String,Number> lineChart;
 	
-	private CSV csv;
+	private CSVWriter csv;
 
 	/** The time series data. */
 	private static XYChart.Series<String, Number> seriesCurrent;
@@ -67,12 +70,14 @@ public class InternalFrameBattery extends InternalFrameChart implements OnDroneL
 	
 	private static int called;
 	@PostConstruct
-	private void init() throws URISyntaxException {
+	private void init() throws URISyntaxException, IOException {
 		Assert.isTrue(++called == 1, "Not a Singleton");
 		
-		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
-		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv");
-		csv.addEntry(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
+//		//csv = new CSVImpl(Environment.getRunningEnvLogDirectory() + Environment.DIR_SEPERATOR + "battery.csv");
+//		csv = CSVFactory.createNew(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv");
+		csv = new CSVWriter(new FileWriter(environment.getRunningEnvLogDirectory() + File.separator + "battery.csv"));
+		csv.writeNext(new String[]{"Time", "Current", "Discharge/1000", "Remain", "Volt"});
+//		csv.addEntry(Arrays.asList("Time", "Current", "Discharge/1000", "Remain", "Volt"));
 		
 		drone.addDroneListener(this);
 	}
@@ -90,7 +95,7 @@ public class InternalFrameBattery extends InternalFrameChart implements OnDroneL
 			if (seriesVolt != null)
 				seriesVolt.getData().add(new XYChart.Data<String, Number>(timestamp, battVolt));
 			
-			csv.addEntry(Arrays.asList(timestamp, battCurrent, battDischarge/1000, battRemain, battVolt));
+			csv.writeNext(new String[]{timestamp, String.valueOf(battCurrent), String.valueOf(battDischarge/1000), String.valueOf(battRemain), String.valueOf(battVolt)});
 		});
 	}
 
@@ -130,11 +135,11 @@ public class InternalFrameBattery extends InternalFrameChart implements OnDroneL
 	
 	@SuppressWarnings("incomplete-switch")
 	@EventListener
-	public void onApplicationEvent(DroneGuiEvent command) {
+	public void onApplicationEvent(DroneGuiEvent command) throws IOException {
 		switch (command.getCommand()) {
 		case EXIT:
 			if (csv != null) 
-				CSVFactory.closeFile(csv);
+				csv.close();
 			break;
 		}
 	}
