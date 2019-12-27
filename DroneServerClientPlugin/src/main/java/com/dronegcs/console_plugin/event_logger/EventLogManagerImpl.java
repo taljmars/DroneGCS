@@ -6,6 +6,10 @@ import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.QueryRequestRemote;
 import com.db.persistence.scheme.QueryResponseRemote;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
+import com.dronegcs.tracker.objects.EventSource;
+import com.dronegcs.tracker.objects.TrackerEvent;
+import com.dronegcs.tracker.services.TrackerEventProducer;
+import com.dronegcs.tracker.services.TrackerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.stereotype.Component;
@@ -18,13 +22,16 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Component
-public class EventLogManagerImpl implements EventLogManager {
+public class EventLogManagerImpl implements EventLogManager, TrackerEventProducer {
 
     @Autowired
     private QuerySvcRemoteWrapper querySvcRemote;
 
     @Autowired
-    private LoggingStreamingHandler loggingStringHandler;
+    private LoggingStreamingHandler loggingStreamHandler;
+
+    @Autowired
+    private TrackerSvc trackerSvc;
 
     @PostConstruct
     public void init(){
@@ -33,7 +40,9 @@ public class EventLogManagerImpl implements EventLogManager {
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        stompClient.connect("ws://localhost:9024/events", loggingStringHandler);
+        stompClient.connect("ws://localhost:9024/events", loggingStreamHandler);
+
+        trackerSvc.addEventProducer(this);
     }
 
     @Override
@@ -71,7 +80,23 @@ public class EventLogManagerImpl implements EventLogManager {
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
+        for (EventLogObject a: eventLogBundle.logs) {
+            trackerSvc.pushEvent(this,convertToTrackerEvent(a));
+        }
         return eventLogBundle;
+    }
+
+    private TrackerEvent convertToTrackerEvent(EventLogObject eventLogObject) {
+        return new TrackerEvent(
+                eventLogObject.getUserName(),
+                EventSource.DB_SERVER.name(),
+                UUID.fromString(eventLogObject.getKeyId().getObjId()),
+                TrackerEvent.Type.INFO,
+                eventLogObject.getEventTime(),
+                "",
+                "",
+                null
+        );
     }
 
     @Override
@@ -120,6 +145,10 @@ public class EventLogManagerImpl implements EventLogManager {
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
+        for (EventLogObject a: eventLogBundle.logs) {
+            trackerSvc.pushEvent(this,convertToTrackerEvent(a));
+        }
+
         return eventLogBundle;
     }
 
@@ -132,8 +161,8 @@ public class EventLogManagerImpl implements EventLogManager {
         return logs;
     }
 
-    @Override
-    public EventLogBundle getLastEvents() {
-        return loggingStringHandler.popEventLogBundle();
-    }
+//    @Override
+//    public EventLogBundle getLastEvents() {
+//        return loggingStreamHandler.popEventLogBundle();
+//    }
 }

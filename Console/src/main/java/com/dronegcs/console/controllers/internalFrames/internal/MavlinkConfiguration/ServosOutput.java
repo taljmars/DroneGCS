@@ -260,7 +260,7 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
         }
 
         rootServoOutput.setVisible(true);
-        MAV_FRAME_TYPE mav_frame_type = MAV_FRAME_TYPE.getFrameType((int) parameter.value);
+        MAV_FRAME_TYPE mav_frame_type = MAV_FRAME_TYPE.getFrameType(parameter.getValue().intValue());
         Frame currentFrame = null;
         for (Frame frame : frames) {
             if (drone.getType().getDroneType() == frame.apmFrameTypes.getDroneType()) {

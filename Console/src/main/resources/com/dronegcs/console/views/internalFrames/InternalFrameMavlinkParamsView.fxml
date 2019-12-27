@@ -9,29 +9,49 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Separator?>
 <AnchorPane fx:id="root" opacity="0.7" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkParams">
 	<children>
 		<VBox>
 			<children>
 				<HBox alignment="CENTER" spacing="5.0" style="-fx-background-color: ghostwhite">
 					<children>
+						<ComboBox fx:id="cbOfflineProfile" disable="true" onAction="#handleOfflineProfile"/>
+						<ComboBox fx:id="cbParamGroup" onAction="#handleGroupChange"/>
+						<Separator />
+						<Separator />
 						<Label text="Search" />
 						<TextField fx:id="txtSearchField"/>
+						<Separator />
+						<Separator />
+                        <Button disable="true" text="Refresh" onAction="#handleRefresh" fx:id="btnRefresh"/>
 					</children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
+					<padding>
+						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+					</padding>
 				</HBox>
 				<TableView fx:id="table" prefHeight="${root.prefHeight}" prefWidth="1260.0">
 					<columns>
-						<TableColumn fx:id="id" prefWidth="50.0" text="#" />
+						<TableColumn fx:id="id" prefWidth="30.0" text="#" />
 						<TableColumn fx:id="name" prefWidth="140.0" text="Name" />
-						<TableColumn fx:id="value" prefWidth="140.0" text="Value" />
-						<TableColumn fx:id="type" prefWidth="50.0" text="Type" />
-						<TableColumn fx:id="update" prefWidth="70.0" text="Update" />
+						<TableColumn fx:id="title" prefWidth="140.0" text="Title" />
+						<TableColumn fx:id="value" prefWidth="100.0" text="Value" editable="false"/>
+						<TableColumn fx:id="defaultValue" prefWidth="80.0" text="Default Value" />
+						<TableColumn fx:id="unit" prefWidth="100.0" text="Unit" />
+						<TableColumn fx:id="modify" prefWidth="70.0" text="Modify" visible="false"/>
+						<TableColumn fx:id="update" prefWidth="70.0" text="Update" visible="false"/>
 						<TableColumn fx:id="description" prefWidth="1040.0" text="Description" />
 					</columns>
 				</TableView>
-			</children></VBox>
+				<HBox alignment="CENTER_RIGHT" style="-fx-background-color: ghostwhite">
+					<children>
+						<Label fx:id="lblEntries" text="0 Entries" />
+					</children>
+				</HBox>
+			</children>
+		</VBox>
 	</children>
 </AnchorPane>

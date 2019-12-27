@@ -17,6 +17,7 @@
 
         <!--Important to be the last since it include the packager-->
         <module>Console</module>
+        <module>Tracker</module>
     </modules>
 
     <parent>

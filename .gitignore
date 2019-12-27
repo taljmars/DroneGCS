@@ -10,7 +10,7 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
-# Igone bin directory - talma
+# Ignore bin directory - talma
 .idea
 target
 logs
@@ -22,8 +22,6 @@ ClientInstallation
 log.html
 *.log
 *.elg
-*.csv
-*.csv#
 
 # Windows Installer files
 *.cab

@@ -3,11 +3,21 @@ package com.dronegcs.console_plugin.services;
 import javax.annotation.PostConstruct;
 
 import com.dronegcs.console_plugin.services.internal.logevents.*;
+import com.dronegcs.tracker.objects.EventSource;
+import com.dronegcs.tracker.objects.TrackerEvent;
+import com.dronegcs.tracker.services.TrackerEventProducer;
+import com.dronegcs.tracker.services.TrackerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import org.springframework.util.Assert;
+
+import java.util.Date;
+
+import static com.dronegcs.tracker.objects.TrackerEvent.Type.ERROR;
+import static com.dronegcs.tracker.objects.TrackerEvent.Type.INFO;
+import static com.dronegcs.tracker.objects.TrackerEvent.Type.WARNING;
 
 /**
  * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.
@@ -16,10 +26,13 @@ import org.springframework.util.Assert;
  *
  */
 @Component
-public class LoggerDisplayerSvc {
+public class LoggerDisplayerSvc implements TrackerEventProducer {
 	
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
+
+	@Autowired
+	private TrackerSvc trackerSvc;
 	
 	private static int called;
 	/**
@@ -28,6 +41,7 @@ public class LoggerDisplayerSvc {
 	@PostConstruct
 	private void init() {
 		Assert.isTrue(++called == 1, "Not a Singleton");
+		trackerSvc.addEventProducer(this);
 	}
 
 	/**
@@ -37,6 +51,19 @@ public class LoggerDisplayerSvc {
 	 */
 	private void publish(LogAbstractDisplayerEvent event) {
 		applicationEventPublisher.publishEvent(event);
+		TrackerEvent.Type type = INFO;
+		if (event instanceof LogWarningDisplayerEvent)
+			type = WARNING;
+		else if (event instanceof LogErrorDisplayerEvent)
+			type = ERROR;
+
+		trackerSvc.pushEvent(this, new TrackerEvent(
+				"",
+				EventSource.SYSTEM.name(),
+				type,
+				"",
+				event.getEntry()
+		));
 	}
 
 	/**

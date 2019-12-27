@@ -78,7 +78,7 @@ public class Frame extends Pane implements Initializable {
             RadioButton rb = new RadioButton(type.getName());
             if (drone != null) {
                 Parameter parameter = drone.getParameters().getParameter("FRAME");
-                if (parameter != null && parameter.value == type.getFrameType().getIndex())
+                if (parameter != null && parameter.getValue().intValue() == type.getFrameType().getIndex())
                     rb.setSelected(true);
                 else if (type == ApmFrameTypes.FIXED_WING)
                     rb.setSelected(true);
@@ -113,7 +113,7 @@ public class Frame extends Pane implements Initializable {
             return;
         }
         RadioButton chk = (RadioButton)group.getSelectedToggle(); // Cast object to radio button
-        frameParam.value = ApmFrameTypes.valueOf(chk.getText()).getFrameType().getIndex();
+        frameParam.setValue(ApmFrameTypes.valueOf(chk.getText()).getFrameType().getIndex());
         drone.getParameters().sendParameter(frameParam);
         loggerDisplayerSvc.logGeneral("Frame Type changed: " + ApmFrameTypes.valueOf(chk.getText()));
     }

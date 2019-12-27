@@ -1,22 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameEventLogger" opacity="0.7">
+<AnchorPane fx:id="root" opacity="0.7" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameEventLogger">
 	<children>
-		<!--<TableView fx:id="table" prefHeight="${prefHeight}" prefWidth="1260.0">-->
-		<TableView fx:id="table" prefHeight="-Infinity" prefWidth="1260.0">
-			<columns>
-				<TableColumn fx:id="id" prefWidth="25.0" text="#" />
-				<TableColumn fx:id="icon" prefWidth="25.0" text="" />
-				<TableColumn fx:id="date" prefWidth="170.0" text="Date" />
-				<TableColumn fx:id="userName" prefWidth="120.0" text="User Name" />
-				<TableColumn fx:id="code" prefWidth="100.0" text="Code" />
-				<TableColumn fx:id="topic" prefWidth="100.0" text="Topic" />
-				<TableColumn fx:id="summary" prefWidth="1040.0" text="Summary" />
-			</columns>
-		</TableView>
+		<VBox>
+			<children>
+				<HBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: ghostwhite">
+					<children>
+						<Label text="Search">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets></Label>
+						<TextField fx:id="txtSearchField" onKeyPressed="#onTextSearchKeyPressed">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets></TextField>
+						<HBox fx:id="tagsList">
+							<padding>
+								<Insets bottom="0" left="5.0" right="5.0" top="0" />
+							</padding>
+						</HBox>
+					</children>
+					<padding>
+						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+					</padding>
+				</HBox>
+				<TableView fx:id="table" prefHeight="-Infinity" prefWidth="1260.0">
+					<columns>
+						<TableColumn fx:id="eventSource" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Source" />
+						<TableColumn fx:id="icon" prefWidth="25.0" style="-fx-alignment: CENTER;" text="" />
+						<TableColumn fx:id="date" prefWidth="170.0" style="-fx-alignment: CENTER;" text="Date" />
+						<TableColumn fx:id="userName" prefWidth="120.0" style="-fx-alignment: CENTER;" text="User Name" />
+						<TableColumn fx:id="topic" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Topic" />
+						<TableColumn fx:id="summary" prefWidth="1040.0" text="Summary" />
+					</columns>
+				</TableView>
+				<HBox alignment="CENTER_RIGHT" style="-fx-background-color: ghostwhite">
+					<children>
+						<Label fx:id="lblEntries" text="0 Entries">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </HBox.margin></Label>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
 	</children>
 </AnchorPane>

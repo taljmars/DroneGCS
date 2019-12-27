@@ -224,7 +224,7 @@ public class MissionTableProfile extends TableProfile {
 
         int radiusCentimeters = CIRCLE_RADIUS; // 10M
         if ((drone.getParameters()) != null && drone.getParameters().getParameter("CIRCLE_RADIUS") != null)
-            radiusCentimeters = Integer.parseInt(drone.getParameters().getParameter("CIRCLE_RADIUS").getValue());
+            radiusCentimeters = drone.getParameters().getParameter("CIRCLE_RADIUS").getValue().intValue();
         double radiusMeters = radiusCentimeters / 100;
         if (!editMode)
             panelTableBox.getTable().getColumns().addAll(

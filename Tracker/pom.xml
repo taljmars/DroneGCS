@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>DroneGCS</artifactId>
+        <groupId>com.dronegcs</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>Tracker</artifactId>
+
+    <properties>
+        <jar.path>../${build.output}/jars/</jar.path>
+        <class.path>../${build.output}/classes/</class.path>
+        <pkg_server.path>../${build.output}/pkg_server</pkg_server.path>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.generic_tools</groupId>
+            <artifactId>Logger</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!--Logging-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4jVersion}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <outputDirectory>${class.path}</outputDirectory>
+    </build>
+
+</project>

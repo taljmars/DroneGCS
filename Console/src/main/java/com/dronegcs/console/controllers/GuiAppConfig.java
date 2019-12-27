@@ -1,5 +1,6 @@
 package com.dronegcs.console.controllers;
 
+import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogTableEntry;
 import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,7 @@ import java.net.URL;
  * Created by taljmars on 3/13/17.
  */
 @ComponentScan("com.dronegcs.console_plugin")
+@ComponentScan("com.dronegcs.tracker.services.internal")
 @Component
 public class GuiAppConfig implements EventHandler<WindowEvent> {
     private final static Logger LOGGER = LoggerFactory.getLogger(GuiAppConfig.class);
@@ -97,6 +99,30 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
         }
     }
 
+    public Node loadInternalFrame(String internalFrameUrl, Object object) {
+        try {
+            InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
+            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
+            Node node = fxmlLoader.load(fxmlStream);
+            ((Node)fxmlLoader.getController()).setUserData(object);
+            return node;
+        } catch (IOException e) {
+            LOGGER.error("Failed to load internal frames", e);
+            return null;
+        }
+    }
+
+    public Node loadInternalFrame(String internalFrameUrl) {
+        try {
+            InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
+            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
+            return fxmlLoader.load(fxmlStream);
+        } catch (IOException e) {
+            LOGGER.error("Failed to load internal frames", e);
+            return null;
+        }
+    }
+
     @Override
     public void handle(WindowEvent event) {
         if (event.getEventType() == WindowEvent.WINDOW_CLOSE_REQUEST) {
@@ -108,5 +134,7 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
             }
         }
     }
+
+
 }
 

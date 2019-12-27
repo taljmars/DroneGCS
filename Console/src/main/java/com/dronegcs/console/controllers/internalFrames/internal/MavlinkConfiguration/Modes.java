@@ -165,14 +165,14 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         loadSimplesModes();
 
         spChannel6Max.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 32.767, 1.0, 0.01));
-        Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(TUNE_HIGH)).findFirst();
+        Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.getName().equals(TUNE_HIGH)).findFirst();
         if (optional.isPresent())
-            spChannel6Max.getValueFactory().valueProperty().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
+            spChannel6Max.getValueFactory().valueProperty().setValue(((Parameter)optional.get()).getValue().doubleValue());
 
         spChannel6Min.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 32.767, 0.0, 0.01));
-        optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(TUNE_LOW)).findFirst();
+        optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.getName().equals(TUNE_LOW)).findFirst();
         if (optional.isPresent())
-            spChannel6Min.getValueFactory().valueProperty().setValue(Double.parseDouble(((Parameter)optional.get()).getValue()));
+            spChannel6Min.getValueFactory().valueProperty().setValue(((Parameter)optional.get()).getValue().doubleValue());
 
         fltLabels = new ArrayList<>();
         fltLabels.addAll(Arrays.asList(cbFltMode1Label, cbFltMode2Label, cbFltMode3Label, cbFltMode4Label, cbFltMode5Label, cbFltMode6Label));
@@ -181,7 +181,7 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     private void loadComboBox(Vector<?> options, Map<String, ComboBox> comboBoxMap) {
         for (Map.Entry<String, ComboBox> entry : comboBoxMap.entrySet()) {
             entry.getValue().getItems().addAll(options);
-            Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(entry.getKey())).findFirst();
+            Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.getName().equals(entry.getKey())).findFirst();
             if (optional.isPresent()) {
                 Parameter parameter = (Parameter) optional.get();
                 ApmModes modes = getMode(parameter, drone.getType().getDroneType());
@@ -193,14 +193,14 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     private void loadSimplesModes() {
         Byte simple = 0;
         Byte superSimple = 0;
-        Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(SIMPLE_MODE)).findFirst();
+        Optional optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.getName().equals(SIMPLE_MODE)).findFirst();
         if (optional.isPresent())
-            simple = Byte.parseByte(((Parameter) optional.get()).getValue());
+            simple = ((Parameter) optional.get()).getValue().byteValue();
 
-        optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.name.equals(SUPER_SIMPLE_MODE)).findFirst();
+        optional = drone.getParameters().getParametersList().stream().filter(parameter -> parameter.getName().equals(SUPER_SIMPLE_MODE)).findFirst();
         if (optional.isPresent())
             //superSimple = (Byte) optional.get();
-            superSimple = Byte.parseByte(((Parameter) optional.get()).getValue());
+            superSimple = ((Parameter) optional.get()).getValue().byteValue();
 
         loadSimplesModes(simple, checkBoxSimpleModeList);
         loadSimplesModes(superSimple, checkBoxSuperSimpleModeList);
@@ -221,19 +221,19 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     private ApmTuning getTuning(Parameter parameter) {
         if (parameter == null)
             return null;
-        return ApmTuning.getTune(Integer.parseInt(parameter.getValue()));
+        return ApmTuning.getTune(parameter.getValue().intValue());
     }
 
     private static ApmModes getMode(Parameter parameter, MAV_TYPE droneType) {
         if (parameter == null)
             return null;
-        return ApmModes.getMode(Integer.parseInt(parameter.getValue()), droneType);
+        return ApmModes.getMode(parameter.getValue().intValue(), droneType);
     }
 
     private static ApmCommands getCommand(Parameter parameter) {
         if (parameter == null)
             return null;
-        return ApmCommands.getCommand(Integer.parseInt(parameter.getValue()));
+        return ApmCommands.getCommand(parameter.getValue().intValue());
     }
 
     @FXML
@@ -266,31 +266,85 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
         for (Map.Entry<String, ComboBox> entry : comboBoxFltModeMap.entrySet()) {
             existingParameter = params.getParameter(entry.getKey());
-            parameter = new Parameter(entry.getKey(), ((ApmModes) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
+            parameter = new Parameter(
+                    entry.getKey(),
+                    existingParameter.getGroup(),
+                    ((ApmModes) entry.getValue().getValue()).getNumber(),
+                    existingParameter.getDefaultValue(),
+                    existingParameter.getUnit(),
+//                    MAV_PARAM_TYPE_INT8,
+                    existingParameter.getType(),
+                    existingParameter.isReadOnly(),
+                    existingParameter.getTitle(),
+                    existingParameter.getDescription()
+            );
             System.err.println("Send updated flt param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
         for (Map.Entry<String, ComboBox> entry : comboBoxCommandsMap.entrySet()) {
             existingParameter = params.getParameter(entry.getKey());
-            parameter = new Parameter(entry.getKey(), ((ApmCommands) entry.getValue().getValue()).getNumber(), MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
+            parameter = new Parameter(
+                    entry.getKey(),
+                    existingParameter.getGroup(),
+                    ((ApmCommands) entry.getValue().getValue()).getNumber(),
+                    existingParameter.getDefaultValue(),
+                    existingParameter.getUnit(),
+//                    MAV_PARAM_TYPE_INT8,
+                    existingParameter.getType(),
+                    existingParameter.isReadOnly(),
+                    existingParameter.getTitle(),
+                    existingParameter.getDescription()
+            );
             System.err.println("Send updated cmd param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
         for (Map.Entry<String, ComboBox> entry : comboBoxTuningMap.entrySet()) {
             existingParameter = params.getParameter(entry.getKey());
-            parameter = new Parameter(entry.getKey(), ((ApmTuning) entry.getValue().getValue()).getNumber(), 9, existingParameter.getRange(), existingParameter.getDescription());
+            parameter = new Parameter(
+                    entry.getKey(),
+                    existingParameter.getGroup(),
+                    ((ApmTuning) entry.getValue().getValue()).getNumber(),
+                    existingParameter.getDefaultValue(),
+                    existingParameter.getUnit(),
+//                    9,
+                    existingParameter.getType(),
+                    existingParameter.isReadOnly(),
+                    existingParameter.getTitle(),
+                    existingParameter.getDescription());
             System.err.println("Send updated tune param " + parameter);
             drone.getParameters().sendParameter(parameter);
         }
 
         existingParameter = params.getParameter(TUNE_HIGH);
-        parameter = new Parameter(TUNE_HIGH, spChannel6Max.getValue(), MAV_PARAM_TYPE_INT16, existingParameter.getRange(), existingParameter.getDescription());
+        parameter = new Parameter(
+                TUNE_HIGH,
+                existingParameter.getGroup(),
+                spChannel6Max.getValue(),
+                existingParameter.getDefaultValue(),
+                existingParameter.getUnit(),
+//                MAV_PARAM_TYPE_INT16,
+                existingParameter.getType(),
+                existingParameter.isReadOnly(),
+                existingParameter.getTitle(),
+                existingParameter.getDescription()
+        );
         drone.getParameters().sendParameter(parameter);
 
         existingParameter = params.getParameter(TUNE_LOW);
-        parameter = new Parameter(TUNE_LOW, spChannel6Min.getValue(), MAV_PARAM_TYPE_INT16, existingParameter.getRange(), existingParameter.getDescription());
+        parameter = new Parameter(
+                TUNE_LOW,
+                existingParameter.getGroup(),
+                spChannel6Min.getValue(),
+                existingParameter.getDefaultValue(),
+                existingParameter.getUnit(),
+//                MAV_PARAM_TYPE_INT16,
+                existingParameter.getType(),
+                existingParameter.isReadOnly(),
+                existingParameter.getTitle(),
+                existingParameter.getDescription()
+        );
         drone.getParameters().sendParameter(parameter);
 
         Integer simple = 0;
@@ -307,11 +361,33 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
         }
 
         existingParameter = params.getParameter(SIMPLE_MODE);
-        parameter = new Parameter(SIMPLE_MODE, simple, MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
+        parameter = new Parameter(
+                SIMPLE_MODE,
+                existingParameter.getGroup(),
+                simple,
+                existingParameter.getDefaultValue(),
+                existingParameter.getUnit(),
+//                MAV_PARAM_TYPE_INT8,
+                existingParameter.getType(),
+                existingParameter.isReadOnly(),
+                existingParameter.getTitle(),
+                existingParameter.getDescription()
+        );
         drone.getParameters().sendParameter(parameter);
 
         existingParameter = params.getParameter(SUPER_SIMPLE_MODE);
-        parameter = new Parameter(SUPER_SIMPLE_MODE, superSimple, MAV_PARAM_TYPE_INT8, existingParameter.getRange(), existingParameter.getDescription());
+        parameter = new Parameter(
+                SUPER_SIMPLE_MODE,
+                existingParameter.getGroup(),
+                superSimple,
+                existingParameter.getDefaultValue(),
+                existingParameter.getUnit(),
+//                MAV_PARAM_TYPE_INT8,
+                existingParameter.getType(),
+                existingParameter.isReadOnly(),
+                existingParameter.getTitle(),
+                existingParameter.getDescription()
+        );
         drone.getParameters().sendParameter(parameter);
     }
 
@@ -321,50 +397,50 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
     @Override
     public void onParameterReceived(Parameter parameter, int i, int i1) {
         Platform.runLater(() -> {
-            if (comboBoxFltModeMap != null && comboBoxFltModeMap.keySet().contains(parameter.name)) {
+            if (comboBoxFltModeMap != null && comboBoxFltModeMap.keySet().contains(parameter.getName())) {
                 ApmModes mode = getMode(parameter, drone.getType().getDroneType());
                 LOGGER.debug("Received flight mode = {}", mode);
-                ((ComboBox<ApmModes>) comboBoxFltModeMap.get(parameter.name)).setValue(mode);
+                ((ComboBox<ApmModes>) comboBoxFltModeMap.get(parameter.getName())).setValue(mode);
                 return;
             }
 
-            if (comboBoxCommandsMap != null && comboBoxCommandsMap.keySet().contains(parameter.name)) {
+            if (comboBoxCommandsMap != null && comboBoxCommandsMap.keySet().contains(parameter.getName())) {
                 ApmCommands cmd = getCommand(parameter);
                 LOGGER.debug("Received command = {}", cmd);
-                comboBoxCommandsMap.get(parameter.name).setValue(cmd);
+                comboBoxCommandsMap.get(parameter.getName()).setValue(cmd);
                 return;
             }
 
-            if (comboBoxTuningMap != null && comboBoxTuningMap.keySet().contains(parameter.name)) {
+            if (comboBoxTuningMap != null && comboBoxTuningMap.keySet().contains(parameter.getName())) {
                 ApmTuning tune = getTuning(parameter);
                 LOGGER.debug("Received tune = {}", tune);
-                comboBoxTuningMap.get(parameter.name).setValue(tune);
+                comboBoxTuningMap.get(parameter.getName()).setValue(tune);
                 return;
             }
 
-            if (spChannel6Min != null && parameter.name.equals(TUNE_LOW)) {
-                Double tuneLow = Double.parseDouble(parameter.getValue());
+            if (spChannel6Min != null && parameter.getName().equals(TUNE_LOW)) {
+                Double tuneLow = parameter.getValue().doubleValue();
                 LOGGER.debug("Received tune low = {}", tuneLow);
                 spChannel6Min.getValueFactory().valueProperty().setValue(tuneLow);
                 return;
             }
 
-            if (spChannel6Max != null && parameter.name.equals(TUNE_HIGH)) {
-                Double tuneHigh = Double.parseDouble(parameter.getValue());
+            if (spChannel6Max != null && parameter.getName().equals(TUNE_HIGH)) {
+                Double tuneHigh = parameter.getValue().doubleValue();
                 LOGGER.debug("Received tune high = {}", tuneHigh);
                 spChannel6Max.getValueFactory().valueProperty().setValue(tuneHigh);
                 return;
             }
 
-            if (checkBoxSimpleModeList != null && parameter.name.equals(SIMPLE_MODE)) {
-                Byte simple = Byte.parseByte(parameter.getValue());
+            if (checkBoxSimpleModeList != null && parameter.getName().equals(SIMPLE_MODE)) {
+                Byte simple = parameter.getValue().byteValue();
                 LOGGER.debug("Received simple = {}", simple);
                 loadSimplesModes(simple, checkBoxSimpleModeList);
                 return;
             }
 
-            if (checkBoxSuperSimpleModeList != null && parameter.name.equals(SUPER_SIMPLE_MODE)) {
-                Byte superSimple = Byte.parseByte(parameter.getValue());
+            if (checkBoxSuperSimpleModeList != null && parameter.getName().equals(SUPER_SIMPLE_MODE)) {
+                Byte superSimple = parameter.getValue().byteValue();
                 LOGGER.debug("Received superSimple = {}", superSimple);
                 loadSimplesModes(superSimple, checkBoxSuperSimpleModeList);
                 return;

@@ -7,14 +7,20 @@ public class ParamsTableEntry {
 	
     private final SimpleIntegerProperty id;
     private final SimpleStringProperty name;
+    private final SimpleStringProperty title;
     private final SimpleStringProperty value;
+    private final SimpleStringProperty defaultValue;
+    private final SimpleStringProperty unit;
     private final SimpleIntegerProperty type;
     private final SimpleStringProperty description;
  
-    public ParamsTableEntry(Integer pId, String pName, String pValue, Integer pType, String pDescription) {
+    public ParamsTableEntry(Integer pId, String pName, String pTitle, String pValue, String pDefaultValue, String pUnit, Integer pType, String pDescription) {
         this.id = new SimpleIntegerProperty(pId);
         this.name = new SimpleStringProperty(pName);
+        this.title = new SimpleStringProperty(pTitle);
         this.value = new SimpleStringProperty(pValue);
+        this.defaultValue = new SimpleStringProperty(pDefaultValue);
+        this.unit = new SimpleStringProperty(pUnit);
         this.type = new SimpleIntegerProperty(pType);
         this.description = new SimpleStringProperty(pDescription);
     }
@@ -43,6 +49,18 @@ public class ParamsTableEntry {
         this.name.set(name);
     }
 
+    public String getTitle() {
+        return title.get();
+    }
+
+    public SimpleStringProperty titleProperty() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
+    }
+
     public String getValue() {
         return value.get();
     }
@@ -53,6 +71,30 @@ public class ParamsTableEntry {
 
     public void setValue(String value) {
         this.value.set(value);
+    }
+
+    public String getDefaultValue() {
+        return defaultValue.get();
+    }
+
+    public SimpleStringProperty defaultValueProperty() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue.set(defaultValue);
+    }
+
+    public String getUnit() {
+        return unit.get();
+    }
+
+    public SimpleStringProperty unitProperty() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit.set(unit);
     }
 
     public int getType() {

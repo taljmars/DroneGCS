@@ -17,6 +17,9 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnWaypointManagerListener;
 import com.dronegcs.mavlink.is.drone.parameters.Parameter;
 import com.dronegcs.mavlink.is.protocol.msg_metadata.ApmModes;
 import com.dronegcs.mavlink.is.protocol.msgbuilder.WaypointManager.WaypointEvent_Type;
+import com.dronegcs.tracker.objects.TrackerEvent;
+import com.dronegcs.tracker.services.TrackerEventProducer;
+import com.dronegcs.tracker.services.TrackerSvc;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
@@ -48,13 +51,17 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType.*;
 import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
+import static com.dronegcs.tracker.objects.EventSource.DRONE;
+import static com.dronegcs.tracker.objects.EventSource.SYSTEM;
 
 @Component
-public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable {
+public class Dashboard extends StackPane implements OnDroneListener, OnWaypointManagerListener, OnParameterManagerListener, EventHandler<WindowEvent>, Initializable, TrackerEventProducer {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
     public static final String APP_TITLE = "Drone Ground Station";
@@ -63,6 +70,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
+
+    @Autowired
+    private TrackerSvc trackerSvc;
 
     @Autowired
     private DialogManagerSvc dialogManagerSvc;
@@ -123,18 +133,22 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
+        trackerSvc.addEventProducer(this);
         initializeDefinitions();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         InputStream inputStream = null;
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO, "LOGIN", "GCS Started, Welcome " + activeUserProfile.getUsername()));
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO, "LOGIN", "Working mode: " + activeUserProfile.getMode()));
         try {
             inputStream = Dashboard.class.getClassLoader().getResourceAsStream("version");
             byte[] versionBuffer = new byte[32];
             inputStream.read(versionBuffer);
             app_ver = new String(versionBuffer);
             app_ver = "v1." + app_ver.trim();
+            trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO, "Notification", "Application version - " + app_ver));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +172,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
         if (drone.isConnectionAlive()) {
 //			tbTelemtry.SetHeartBeat(true);
-            drone.notifyDroneEvent(DroneEventsType.MODE);
+            drone.notifyDroneEvent(MODE);
         }
     }
 
@@ -281,11 +295,20 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             case ENFORCING_PERIMETER:
                 textNotificationPublisherSvc.publish("Enforcing Perimeter");
                 loggerDisplayerSvc.logError("Enforcing Perimeter");
+                trackerSvc.pushEvent(this, new TrackerEvent(
+                        activeUserProfile.getUsername(),
+                        DRONE.name(),
+                        TrackerEvent.Type.INFO,
+                        "FENCE",
+                        "Enforcing Perimeter"
+                ));
                 return;
             case ORIENTATION:
                 SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP());
                 return;
             case MODE:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+                        "Mode changed", "Drone mode changed to '" + drone.getState().getMode().getName() + "'"));
                 String prefix = "";
                 if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
                     prefix = "[OFFLINE] ";
@@ -313,10 +336,22 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 loggerDisplayerSvc.logGeneral("Follow Me Ended");
                 return;
             case FIRMWARE:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+                        "Firmware Recognize", "Firmware Identified: " + drone.getFirmwareType()));
                 loggerDisplayerSvc.logGeneral("Firmware Identified: " + drone.getFirmwareType());
                 return;
             case TYPE:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+                        "Type Found", "Drone Type: '" + drone.getType().getDroneType() + "'"));
                 loggerDisplayerSvc.logGeneral("Drone Type: " + drone.getType().getDroneType());
+                return;
+            case WARNING_NO_GPS:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.WARNING,
+                        GPS.name(), "No GPS"));
+                return;
+            case GPS_FIX:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.SUCCESS,
+                        GPS.name(), "GPS Fixed"));
                 return;
         }
     }
@@ -342,6 +377,8 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @Override
     public void onBeginReceivingParameters() {
         LOGGER.debug("Start Receiving parameters");
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+                "Syncing Parameters", "Start syncing parameters"));
         initProgressBar();
         drone.getStreamRates().prepareStreamRates();
     }
@@ -357,21 +394,27 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             setProgressBar(1);
             drone.getStreamRates().setupStreamRatesFromPref();
             if (drone.isConnectionAlive())
-                drone.notifyDroneEvent(DroneEventsType.MODE);
+                drone.notifyDroneEvent(MODE);
         } else {
             setProgressBar(((double) prc) / 100.0);
         }
     }
+
+    String tmpParametersString = "";
 
     @Override
     public void onEndReceivingParameters(List<Parameter> parameter) {
         LOGGER.debug("Finish receiving parameters");
         finishProgressBar();
 
+        tmpParametersString = "";
+        drone.getParameters().getParametersList().forEach(p -> tmpParametersString += p.toString() + "\n");
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.SUCCESS,
+                "Syncing Parameters", "Finish syncing parameters", tmpParametersString));
         drone.getStreamRates().prepareStreamRates();
         drone.getStreamRates().setupStreamRatesFromPref();
         if (drone.isConnectionAlive())
-            drone.notifyDroneEvent(DroneEventsType.MODE);
+            drone.notifyDroneEvent(MODE);
     }
 
     public void setViewManager(Stage stage) {
@@ -459,6 +502,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             case SERVER_CLOCK:
                 LOGGER.debug("Current server time: " + event.getPayload().get(0));
                 break;
+            default:
+                break;
+
         }
     }
 }

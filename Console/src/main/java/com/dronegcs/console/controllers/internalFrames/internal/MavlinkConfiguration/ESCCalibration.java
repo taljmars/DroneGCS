@@ -54,7 +54,7 @@ public class ESCCalibration extends Pane implements Initializable {
     public void handleCalibrate(ActionEvent actionEvent) {
         loggerDisplayerSvc.logGeneral("Starting ESC calibration");
         Parameter parameter = drone.getParameters().getParameter("ESC_CALIBRATION");
-        parameter.value = 3;
+        parameter.setValue(3);
         drone.getParameters().sendParameter(parameter);
     }
 }

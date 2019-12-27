@@ -127,9 +127,10 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 	}
 
     @Override
-    public void handleOffline() {
+    public void handleOffline(String username) {
         restClientHelper.setToken(null);
 		activeUserProfile.setMode(ActiveUserProfile.Mode.OFFLINE);
+		activeUserProfile.setUsername(username);
         showMainScreen();
     }
 
