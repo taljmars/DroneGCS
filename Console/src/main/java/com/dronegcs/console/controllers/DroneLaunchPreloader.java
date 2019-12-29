@@ -142,6 +142,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         ObservableList<String> options =
                 FXCollections.observableArrayList(
                         "localhost",
+                        "127.0.0.1",
                         "drone-server.us-east-2.elasticbeanstalk.com"
                 );
         final ComboBox serverIp = new ComboBox(options);
@@ -169,6 +170,7 @@ public class DroneLaunchPreloader extends Preloader implements EventHandler<KeyE
         status = new Label(message);
 
         loginBtn.setOnAction((actionEvent) -> {
+            LOGGER.debug("Trying to login to " + serverIp.getValue() + ":" + serverPort.getText() + " with user " + userName.getText());
             LoginResponse loginRestResponse = loginLoader.handleLogin(userName.getText(), password.getText(), serverIp.getValue().toString(), Integer.parseInt(serverPort.getText()));
             Integer loginStatus = loginRestResponse.getReturnCode();
             if (loginStatus.equals(OK)) {

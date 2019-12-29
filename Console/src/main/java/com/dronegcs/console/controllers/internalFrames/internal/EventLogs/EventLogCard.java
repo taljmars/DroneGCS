@@ -47,6 +47,9 @@ public class EventLogCard extends StackPane {
             case SUCCESS:
                 headerBox.setStyle("-fx-background-color: #96dd86;");
                 break;
+            case OP_BEGIN:
+                headerBox.setStyle("-fx-background-color: #darkgrey;");
+                break;
             case INFO:
                 headerBox.setStyle("-fx-background-color: #ace7ec;");
                 break;
@@ -60,8 +63,8 @@ public class EventLogCard extends StackPane {
         }
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid.setText(uuid.toString());
+    public void setUuid(String uuid) {
+        this.uuid.setText(uuid);
     }
 
     public void setDate(Date date) {

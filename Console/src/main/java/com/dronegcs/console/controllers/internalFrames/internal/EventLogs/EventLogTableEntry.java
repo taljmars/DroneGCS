@@ -19,15 +19,15 @@ public class EventLogTableEntry {
     private final SimpleStringProperty topic;
     private final SimpleStringProperty summary;
     private final SimpleObjectProperty data;
-    private UUID uid;
+    private String uid;
     private Object payload;
 //    private String data;
 
     public EventLogTableEntry() {
-        this(null, "", "", "", TrackerEvent.Type.INFO, "", "", "");
+        this("", "", "", "", TrackerEvent.Type.INFO, "", "", "");
     }
 
-    public EventLogTableEntry(UUID uid, String eventSource, String date, String userName, TrackerEvent.Type type, String topic, String summary, Object data) {
+    public EventLogTableEntry(String uid, String eventSource, String date, String userName, TrackerEvent.Type type, String topic, String summary, Object data) {
         this.uid = uid;
         this.eventSource = new SimpleStringProperty(eventSource);
         this.date = new SimpleStringProperty(date);
@@ -92,6 +92,9 @@ public class EventLogTableEntry {
             case SUCCESS:
                 img = new Image(getClass().getResourceAsStream("/com/dronegcs/console/guiImages/alerts/succ.png"));
                 break;
+            case OP_BEGIN:
+                img = new Image(getClass().getResourceAsStream("/com/dronegcs/console/guiImages/alerts/wait.png"));
+                break;
             default:
                 img = new Image(getClass().getResourceAsStream("/com/dronegcs/console/guiImages/alerts/info.png"));
                 break;
@@ -154,11 +157,11 @@ public class EventLogTableEntry {
         this.date.set(date);
     }
 
-    public UUID getUid() {
+    public String getUid() {
         return uid;
     }
 
-    public void setUid(UUID uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 

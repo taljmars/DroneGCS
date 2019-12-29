@@ -1,11 +1,16 @@
 package com.dronegcs.console.controllers.internalFrames;
 
+import com.auditdb.persistence.scheme.ExternalObjectLog;
+import com.db.persistence.remote_exception.DatabaseValidationRemoteException;
+import com.db.persistence.remote_exception.ObjectInstanceRemoteException;
 import com.dronegcs.console.controllers.ActiveUserProfile;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.EventLogs.EventLogTableEntry;
 import com.dronegcs.console.controllers.internalPanels.internal.TableItemEntry;
+import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
+import com.dronegcs.tracker.objects.EventSource;
 import com.dronegcs.tracker.objects.TrackerEvent;
 import com.dronegcs.tracker.services.TrackerEventConsumer;
 import com.dronegcs.tracker.services.TrackerSvc;
@@ -56,6 +61,8 @@ public class InternalFrameEventLogger extends Pane implements Initializable, Tra
 
 
 	@Autowired private ActiveUserProfile activeUserProfile;
+
+	@Autowired private ObjectCrudSvcRemoteWrapper objectCrudSvcRemoteWrapper;
 
 	@NotNull @FXML private TextField txtSearchField;
 	@NotNull @FXML private HBox tagsList;
@@ -321,13 +328,31 @@ public class InternalFrameEventLogger extends Pane implements Initializable, Tra
 		if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
 			return;
 
-		LOGGER.debug("Refresh Log");
+//		LOGGER.debug("Refresh Log");
 		Platform.runLater(() -> loadTable());
 	}
 
 	@Override
 	public void offer(TrackerEvent trackerEvent) {
 		data.add(0,buildEntry(trackerEvent));
+		if (activeUserProfile.getMode().equals(ActiveUserProfile.Mode.ONLINE) && !trackerEvent.getEventSource().equals(EventSource.DB_SERVER.name())) {
+			try {
+				ExternalObjectLog externalObjectLog = objectCrudSvcRemoteWrapper.create(ExternalObjectLog.class.getCanonicalName());
+				externalObjectLog.setDate(trackerEvent.getDate());
+				externalObjectLog.setEventSource(trackerEvent.getEventSource());
+				externalObjectLog.setPayload((String) trackerEvent.getPayload());
+				externalObjectLog.setSummary(trackerEvent.getSummary());
+				externalObjectLog.setTopic(trackerEvent.getTopic());
+				externalObjectLog.setType(trackerEvent.getType().name());
+				externalObjectLog.setExternalUser(trackerEvent.getUserName());
+				objectCrudSvcRemoteWrapper.update(externalObjectLog);
+			}
+			catch (ObjectInstanceRemoteException e) {
+				e.printStackTrace();
+			} catch (DatabaseValidationRemoteException e) {
+				e.printStackTrace();
+			}
+		}
 //		lblEntries.setText(data.size() + " Entries");
 	}
 

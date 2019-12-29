@@ -35,6 +35,7 @@ public class LoginSvcRemoteWrapper {
     public LoginResponse login(LoginRequest loginRestRequest, String pass, String server, int port) {
         LoginResponse loginResponse;
         try {
+            LOGGER.debug("Login request started " + loginRestRequest);
             restClientHelper.setServerIp(server);
             restClientHelper.setServerPort(port);
             restClientHelper.setUsernamePassword(loginRestRequest.getUserName(), pass);

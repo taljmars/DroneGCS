@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers;
 
 import com.db.persistence.scheme.*;
 import com.dronegcs.console.flightControllers.KeyBoardController;
+import com.dronegcs.console_plugin.event_logger.EventLogManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
@@ -55,6 +56,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 
 	@Autowired
 	private RestClientHelper restClientHelper;
+
+	@Autowired
+	private EventLogManager eventLogManager;
 
 	private Stage mainStage;
 
@@ -112,6 +116,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 			activeUserProfile.setMode(ActiveUserProfile.Mode.ONLINE);
 			activeUserProfile.setUsername(userName);
             showMainScreen();
+
+            // Logged in, sync all recent events
+			eventLogManager.SyncTracker();
             return loginRestResponse;
         }
 

@@ -7,6 +7,7 @@ import java.util.UUID;
 public class TrackerEvent {
 
     public enum Type {
+        OP_BEGIN,
         SUCCESS,
         INFO,
         WARNING,
@@ -14,7 +15,7 @@ public class TrackerEvent {
     }
 
     private final String eventSource;
-    private final UUID id;
+    private final String id;
     private final Date date;
     private final String topic;
     private final Type type;
@@ -27,14 +28,14 @@ public class TrackerEvent {
     }
 
     public TrackerEvent(String userName, String eventSource, Type type, String topic, String summary, Object payload) {
-        this(userName, eventSource, UUID.randomUUID(), type, topic, summary, payload);
+        this(userName, eventSource, UUID.randomUUID().toString(), type, topic, summary, payload);
     }
 
-    public TrackerEvent(String userName, String eventSource, UUID id, Type type, String topic, String summary, Object payload) {
+    public TrackerEvent(String userName, String eventSource, String id, Type type, String topic, String summary, Object payload) {
         this(userName, eventSource, id, type, new Date(), topic, summary, payload);
     }
 
-    public TrackerEvent(String userName, String eventSource, UUID id, Type type, Date date, String topic, String summary, Object payload) {
+    public TrackerEvent(String userName, String eventSource, String id, Type type, Date date, String topic, String summary, Object payload) {
         this.id = id;
         this.eventSource = eventSource;
         this.date = date;
@@ -45,7 +46,7 @@ public class TrackerEvent {
         this.payload = payload;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
     

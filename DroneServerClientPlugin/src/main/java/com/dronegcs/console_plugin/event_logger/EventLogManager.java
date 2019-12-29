@@ -8,5 +8,5 @@ public interface EventLogManager {
 
     EventLogBundle getAllEventLogsBetween(Date startDate, Date endDate);
 
-//    EventLogBundle getLastEvents();
+    void SyncTracker();
 }

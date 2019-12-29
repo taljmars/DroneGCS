@@ -377,7 +377,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @Override
     public void onBeginReceivingParameters() {
         LOGGER.debug("Start Receiving parameters");
-        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.OP_BEGIN,
                 "Syncing Parameters", "Start syncing parameters"));
         initProgressBar();
         drone.getStreamRates().prepareStreamRates();

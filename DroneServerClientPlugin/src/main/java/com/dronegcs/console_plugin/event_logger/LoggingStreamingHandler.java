@@ -1,6 +1,7 @@
 package com.dronegcs.console_plugin.event_logger;
 
 import com.auditdb.persistence.base_scheme.EventLogObject;
+import com.auditdb.persistence.scheme.*;
 import com.db.persistence.scheme.BaseObject;
 import com.dronegcs.tracker.objects.EventSource;
 import com.dronegcs.tracker.objects.TrackerEvent;
@@ -71,18 +72,72 @@ public class LoggingStreamingHandler extends StompSessionHandlerAdapter implemen
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        BaseObject object = (BaseObject) payload;
-        EventLogObject eventLogObject = (EventLogObject) object;
+//        BaseObject object = (BaseObject) payload;
 //        eventLogBundle.append((EventLogObject) object);
-        trackerSvc.pushEvent(this, new TrackerEvent(
+
+        if (payload instanceof ExternalObjectLog)
+            return;
+
+        pushEventToTracker(this, trackerSvc, (EventLogObject) payload);
+
+    }
+
+    public static void pushEventToTracker(TrackerEventProducer producer, TrackerSvc trackerSvc, EventLogObject eventLogObject) {
+//        EventLogObject eventLogObject = (EventLogObject) object;
+        String topic = "", summary = "";
+        Object extra = null;
+
+        if (eventLogObject instanceof ExternalObjectLog) {
+            ExternalObjectLog ex = ((ExternalObjectLog) eventLogObject);
+            trackerSvc.pushEvent(producer, new TrackerEvent(
+                    ex.getExternalUser(),
+                    ex.getEventSource(),
+                    ex.getKeyId().getObjId(),
+                    TrackerEvent.Type.valueOf(ex.getType()),
+                    ex.getDate(),
+                    ex.getTopic(),
+                    ex.getSummary(),
+                    ex.getPayload()
+            ));
+            return;
+        }
+        else if (eventLogObject instanceof ObjectCreationLog) {
+            topic = "Object Creation";
+            summary = ((ObjectCreationLog) eventLogObject).getReferredObjType().getSimpleName() + " Created";
+        }
+        else if (eventLogObject instanceof ObjectDeletionLog) {
+            topic = "Object Deletion";
+            summary = ((ObjectDeletionLog) eventLogObject).getReferredObjType().getSimpleName() + " Deleted";
+        }
+        else if (eventLogObject instanceof ObjectUpdateLog) {
+            topic = "Object Modified";
+            summary = ((ObjectUpdateLog) eventLogObject).getReferredObjType().getSimpleName() + " Modified";
+            extra = "Changed fields: " + ((ObjectUpdateLog) eventLogObject).getChangedFields().toString() + "\n";
+            for (int i = 0 ; i < ((ObjectUpdateLog) eventLogObject).getChangedFields().size() ; i++) {
+                String field = ((ObjectUpdateLog) eventLogObject).getChangedFields().get(i);
+                String from = ((ObjectUpdateLog) eventLogObject).getChangedFromValues().get(i);
+                String to = ((ObjectUpdateLog) eventLogObject).getChangedToValues().get(i);
+                extra += "Field named '" + field + "' changed from '" + from + "' to '" + to + "'\n";
+            }
+        }
+        else if (eventLogObject instanceof AccessLog) {
+            topic = "login";
+            summary = "User '" + ((AccessLog) eventLogObject).getUserName() + "' logged to DB server";
+        }
+        else if (eventLogObject instanceof RegistrationLog) {
+            topic = "Registration";
+            summary = "New user joined '" + ((RegistrationLog) eventLogObject).getUserName() + "'";
+        }
+
+        trackerSvc.pushEvent(producer, new TrackerEvent(
                 eventLogObject.getUserName(),
                 EventSource.DB_SERVER.name(),
-                UUID.fromString(eventLogObject.getKeyId().getObjId()),
+                eventLogObject.getKeyId().getObjId(),
                 TrackerEvent.Type.INFO,
                 eventLogObject.getEventTime(),
-                "",
-                "",
-                null
+                topic,
+                summary,
+                extra
         ));
     }
 

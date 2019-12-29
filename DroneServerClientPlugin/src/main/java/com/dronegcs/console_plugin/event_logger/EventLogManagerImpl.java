@@ -6,10 +6,10 @@ import com.db.persistence.scheme.BaseObject;
 import com.db.persistence.scheme.QueryRequestRemote;
 import com.db.persistence.scheme.QueryResponseRemote;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
-import com.dronegcs.tracker.objects.EventSource;
-import com.dronegcs.tracker.objects.TrackerEvent;
 import com.dronegcs.tracker.services.TrackerEventProducer;
 import com.dronegcs.tracker.services.TrackerSvc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.stereotype.Component;
@@ -23,6 +23,8 @@ import java.util.*;
 
 @Component
 public class EventLogManagerImpl implements EventLogManager, TrackerEventProducer {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(EventLogManagerImpl.class);
 
     @Autowired
     private QuerySvcRemoteWrapper querySvcRemote;
@@ -80,24 +82,14 @@ public class EventLogManagerImpl implements EventLogManager, TrackerEventProduce
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
-        for (EventLogObject a: eventLogBundle.logs) {
-            trackerSvc.pushEvent(this,convertToTrackerEvent(a));
-        }
+        req.setQuery("ExternalObjectLog");
+        req.setClz(ExternalObjectLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
+
         return eventLogBundle;
     }
 
-    private TrackerEvent convertToTrackerEvent(EventLogObject eventLogObject) {
-        return new TrackerEvent(
-                eventLogObject.getUserName(),
-                EventSource.DB_SERVER.name(),
-                UUID.fromString(eventLogObject.getKeyId().getObjId()),
-                TrackerEvent.Type.INFO,
-                eventLogObject.getEventTime(),
-                "",
-                "",
-                null
-        );
-    }
 
     @Override
     public EventLogBundle getAllEventLogsBetween(Date startDate, Date endDate) {
@@ -139,15 +131,17 @@ public class EventLogManagerImpl implements EventLogManager, TrackerEventProduce
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
-        req.setQuery("GetAllRegistrationLog");
+        req.setQuery("GetAllRegistrationLog_BetweenDates");
         req.getParameters().putAll(boundaries);
         req.setClz(RegistrationLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
-        for (EventLogObject a: eventLogBundle.logs) {
-            trackerSvc.pushEvent(this,convertToTrackerEvent(a));
-        }
+        req.setQuery("ExternalObjectLog_BetweenDates");
+        req.getParameters().putAll(boundaries);
+        req.setClz(ExternalObjectLog.class.getCanonicalName());
+        resp = querySvcRemote.query(req);
+        eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
         return eventLogBundle;
     }
@@ -161,8 +155,17 @@ public class EventLogManagerImpl implements EventLogManager, TrackerEventProduce
         return logs;
     }
 
-//    @Override
-//    public EventLogBundle getLastEvents() {
-//        return loggingStreamHandler.popEventLogBundle();
-//    }
+    @Override
+    public void SyncTracker() {
+        LOGGER.debug("Generating logs from the last month");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1); // to get previous year add -1
+        Date lastDate = cal.getTime();
+        LOGGER.debug("Setting first timestamp to " + lastDate);
+        Date tmpDate = new Date();
+        EventLogBundle eventLogBundle = getAllEventLogsBetween(lastDate, tmpDate);
+        for (EventLogObject a: eventLogBundle.logs) {
+            LoggingStreamingHandler.pushEventToTracker(this, trackerSvc, a);
+        }
+    }
 }

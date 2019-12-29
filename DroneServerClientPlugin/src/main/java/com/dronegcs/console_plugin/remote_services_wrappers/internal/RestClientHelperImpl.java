@@ -45,15 +45,15 @@ public class RestClientHelperImpl implements RestClientHelper {
 
     @Override
     public WebResource.Builder getWebResourceNoAuth(String path, Object... objs) throws InactiveRestClient{
-        if (getToken() == null)
-            throw new InactiveRestClient("Token not initialized");
+//        if (getToken() == null)
+//            throw new InactiveRestClient("Token not initialized");
 
         return getWebResource(false, path, objs);
     }
 
     @Override
     public WebResource.Builder getWebResourceWithAuth(String path, Object... objs) throws InactiveRestClient{
-        if (getToken() == null)
+        if (path != "login" && getToken() == null)
             throw new InactiveRestClient("Token not initialized");
 
         return getWebResource(true, path, objs);
