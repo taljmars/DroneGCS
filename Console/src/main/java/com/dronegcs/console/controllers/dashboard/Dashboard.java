@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.dashboard;
 
 import com.dronegcs.console.DialogManagerSvc;
-import com.dronegcs.console.controllers.ActiveUserProfile;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.GuiAppConfig;
 import com.dronegcs.console.controllers.internalFrames.InternalFrameMap;
@@ -51,7 +51,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -140,7 +139,7 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         InputStream inputStream = null;
-        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO, "LOGIN", "GCS Started, Welcome " + activeUserProfile.getUsername()));
+        trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.SUCCESS, "LOGIN", "GCS Started, Welcome " + activeUserProfile.getUsername()));
         trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO, "LOGIN", "Working mode: " + activeUserProfile.getMode()));
         try {
             inputStream = Dashboard.class.getClassLoader().getResourceAsStream("version");

@@ -20,7 +20,7 @@ public class EventLogTableEntry {
     private final SimpleStringProperty summary;
     private final SimpleObjectProperty data;
     private String uid;
-    private Object payload;
+//    private Object payload;
 //    private String data;
 
     public EventLogTableEntry() {
@@ -55,8 +55,7 @@ public class EventLogTableEntry {
     }
 
     public Date getDate() {
-//        return new Date(Date.parse(date.get()));
-        return new Date();
+        return new Date(Date.parse(date.get()));
     }
 
     public SimpleStringProperty dateProperty() {

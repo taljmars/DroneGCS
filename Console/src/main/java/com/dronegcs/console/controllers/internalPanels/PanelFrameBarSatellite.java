@@ -5,7 +5,7 @@ import com.db.gui.persistence.scheme.LayersGroup;
 import com.db.persistence.scheme.BaseObject;
 import com.dronedb.persistence.scheme.Perimeter;
 import com.dronegcs.console.DialogManagerSvc;
-import com.dronegcs.console.controllers.ActiveUserProfile;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console.controllers.dashboard.Dashboard;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;

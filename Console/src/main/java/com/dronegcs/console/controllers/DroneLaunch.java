@@ -2,6 +2,7 @@ package com.dronegcs.console.controllers;
 
 import com.db.persistence.scheme.*;
 import com.dronegcs.console.flightControllers.KeyBoardController;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.event_logger.EventLogManager;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;

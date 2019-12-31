@@ -82,7 +82,7 @@ public class EventLogManagerImpl implements EventLogManager, TrackerEventProduce
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
-        req.setQuery("ExternalObjectLog");
+        req.setQuery("GetAllExternalObjectLog");
         req.setClz(ExternalObjectLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
@@ -137,7 +137,7 @@ public class EventLogManagerImpl implements EventLogManager, TrackerEventProduce
         resp = querySvcRemote.query(req);
         eventLogBundle.append(convertToEventLogObject(resp.getResultList()));
 
-        req.setQuery("ExternalObjectLog_BetweenDates");
+        req.setQuery("GetAllExternalObjectLog_BetweenDates");
         req.getParameters().putAll(boundaries);
         req.setClz(ExternalObjectLog.class.getCanonicalName());
         resp = querySvcRemote.query(req);

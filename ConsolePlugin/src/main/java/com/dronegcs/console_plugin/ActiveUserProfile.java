@@ -1,4 +1,4 @@
-package com.dronegcs.console.controllers;
+package com.dronegcs.console_plugin;
 
 import org.springframework.stereotype.Component;
 

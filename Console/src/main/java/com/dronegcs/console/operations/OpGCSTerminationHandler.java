@@ -1,7 +1,7 @@
 package com.dronegcs.console.operations;
 
 import com.dronegcs.console.DialogManagerSvc;
-import com.dronegcs.console.controllers.ActiveUserProfile;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrapper;
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;

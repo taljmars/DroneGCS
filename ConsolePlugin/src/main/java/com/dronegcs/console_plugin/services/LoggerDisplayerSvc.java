@@ -2,6 +2,7 @@ package com.dronegcs.console_plugin.services;
 
 import javax.annotation.PostConstruct;
 
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.services.internal.logevents.*;
 import com.dronegcs.tracker.objects.EventSource;
 import com.dronegcs.tracker.objects.TrackerEvent;
@@ -15,9 +16,7 @@ import org.springframework.util.Assert;
 
 import java.util.Date;
 
-import static com.dronegcs.tracker.objects.TrackerEvent.Type.ERROR;
-import static com.dronegcs.tracker.objects.TrackerEvent.Type.INFO;
-import static com.dronegcs.tracker.objects.TrackerEvent.Type.WARNING;
+import static com.dronegcs.tracker.objects.TrackerEvent.Type.*;
 
 /**
  * This service responsible of publishing event to any listener based on applicationEvent I/S in Spring framework.
@@ -33,7 +32,10 @@ public class LoggerDisplayerSvc implements TrackerEventProducer {
 
 	@Autowired
 	private TrackerSvc trackerSvc;
-	
+
+	@Autowired
+	private ActiveUserProfile activeUserProfile;
+
 	private static int called;
 	/**
 	 * Safety method that verify that the object is indeed a singleton
@@ -56,9 +58,11 @@ public class LoggerDisplayerSvc implements TrackerEventProducer {
 			type = WARNING;
 		else if (event instanceof LogErrorDisplayerEvent)
 			type = ERROR;
+		else if (event instanceof LogSuccessDisplayerEvent)
+			type = SUCCESS;
 
 		trackerSvc.pushEvent(this, new TrackerEvent(
-				"",
+				activeUserProfile.getUsername(),
 				EventSource.SYSTEM.name(),
 				type,
 				"",

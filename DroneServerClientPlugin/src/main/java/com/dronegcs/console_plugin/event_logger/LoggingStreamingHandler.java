@@ -25,22 +25,22 @@ public class LoggingStreamingHandler extends StompSessionHandlerAdapter implemen
 
     private Logger logger = LoggerFactory.getLogger(LoggingStreamingHandler.class);
 
-    private EventLogBundle eventLogBundle;
+//    private EventLogBundle eventLogBundle;
 
     @Autowired
     private TrackerSvc trackerSvc;
 
     @PostConstruct
     public void init() {
-        eventLogBundle = new EventLogBundle();
+//        eventLogBundle = new EventLogBundle();
         trackerSvc.addEventProducer(this);
     }
 
-    public EventLogBundle popEventLogBundle() {
-        EventLogBundle tmp = eventLogBundle;
-        eventLogBundle = new EventLogBundle();
-        return tmp;
-    }
+//    public EventLogBundle popEventLogBundle() {
+//        EventLogBundle tmp = eventLogBundle;
+//        eventLogBundle = new EventLogBundle();
+//        return tmp;
+//    }
 
 
     @Override
