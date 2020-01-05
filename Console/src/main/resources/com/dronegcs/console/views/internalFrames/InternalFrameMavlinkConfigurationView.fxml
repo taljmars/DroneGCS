@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
 <AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameMavlinkConfiguration" opacity="0.7">
 	<children>
 		<TabPane side="TOP" tabClosingPolicy="UNAVAILABLE">
@@ -77,6 +76,20 @@
 									<Separator maxHeight="10"/>
 									<fx:include source="MavlinkConfigurationSections/VideoSettings.fxml" />
 									<Separator maxHeight="10"/>
+								</children>
+							</VBox>
+						</ScrollPane>
+					</content>
+				</Tab>
+
+				<Tab text="Protocol">
+					<content>
+						<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">
+							<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">
+								<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>
+								<children>
+									<fx:include source="MavlinkConfigurationSections/ProtocolSettings.fxml" />
+									<Separator maxHeight="10"/>
 									<fx:include source="MavlinkConfigurationSections/TelemetryRates.fxml" />
 									<Separator maxHeight="10"/>
 								</children>
@@ -100,17 +113,17 @@
 				</Tab>
 
 				<!--<Tab text="Utils">-->
-					<!--<content>-->
-						<!--<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">-->
-							<!--<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">-->
-								<!--<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>-->
-								<!--<children>-->
-									<!--<fx:include source="MavlinkConfigurationSections/Records.fxml"/>-->
-									<!--<Separator maxHeight="10"/>-->
-								<!--</children>-->
-							<!--</VBox>-->
-						<!--</ScrollPane>-->
-					<!--</content>-->
+				<!--<content>-->
+				<!--<ScrollPane fitToHeight="false" maxHeight="${root.prefHeight}" maxWidth="${root.prefWidth}">-->
+				<!--<VBox minHeight="${root.prefHeight}" prefWidth="${root.prefWidth - 5}" spacing="30">-->
+				<!--<padding><Insets bottom="5.0" left="5.0" right="5.0" top="5.0" /></padding>-->
+				<!--<children>-->
+				<!--<fx:include source="MavlinkConfigurationSections/Records.fxml"/>-->
+				<!--<Separator maxHeight="10"/>-->
+				<!--</children>-->
+				<!--</VBox>-->
+				<!--</ScrollPane>-->
+				<!--</content>-->
 				<!--</Tab>-->
 			</tabs>
 		</TabPane>

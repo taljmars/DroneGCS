@@ -5,9 +5,9 @@ import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.geo_tools.Coordinate;
-import com.gui.core.mapViewer.LayeredViewMap;
-import com.gui.core.mapViewerObjects.MapPolygonImpl;
-import com.gui.is.interfaces.mapObjects.MapPolygon;
+import com.mapviewer.gui.core.mapViewer.LayeredViewMap;
+import com.mapviewer.gui.core.mapViewerObjects.MapPolygonImpl;
+import com.mapviewer.gui.is.interfaces.mapObjects.MapPolygon;
 
 import java.util.List;
 

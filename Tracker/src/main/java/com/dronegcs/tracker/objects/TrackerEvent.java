@@ -1,5 +1,6 @@
 package com.dronegcs.tracker.objects;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public class TrackerEvent {
     }
 
     public TrackerEvent(String userName, String eventSource, String id, Type type, String topic, String summary, Object payload) {
-        this(userName, eventSource, id, type, new Date(), topic, summary, payload);
+        this(userName, eventSource, id, type, Calendar.getInstance().getTime(), topic, summary, payload);
     }
 
     public TrackerEvent(String userName, String eventSource, String id, Type type, Date date, String topic, String summary, Object payload) {

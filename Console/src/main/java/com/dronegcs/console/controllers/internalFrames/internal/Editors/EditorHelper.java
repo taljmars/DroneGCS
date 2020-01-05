@@ -3,7 +3,7 @@ package com.dronegcs.console.controllers.internalFrames.internal.Editors;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.EditedLayer;
-import com.gui.core.layers.AbstractLayer;
+import com.mapviewer.gui.core.layers.AbstractLayer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeItem;
 

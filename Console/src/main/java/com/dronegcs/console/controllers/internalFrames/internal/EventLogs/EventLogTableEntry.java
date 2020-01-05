@@ -6,6 +6,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -22,15 +26,18 @@ public class EventLogTableEntry {
     private String uid;
 //    private Object payload;
 //    private String data;
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public EventLogTableEntry() {
-        this("", "", "", "", TrackerEvent.Type.INFO, "", "", "");
+        this("", "", Calendar.getInstance().getTime(), "", TrackerEvent.Type.INFO, "", "", "");
     }
 
-    public EventLogTableEntry(String uid, String eventSource, String date, String userName, TrackerEvent.Type type, String topic, String summary, Object data) {
+    public EventLogTableEntry(String uid, String eventSource, Date date, String userName, TrackerEvent.Type type, String topic, String summary, Object data) {
         this.uid = uid;
         this.eventSource = new SimpleStringProperty(eventSource);
-        this.date = new SimpleStringProperty(date);
+
+        String strDate = dateFormat.format(date);
+        this.date = new SimpleStringProperty(dateFormat.format(date));
         this.userName = new SimpleStringProperty(userName);
         this.type = new SimpleObjectProperty<TrackerEvent.Type>(type);
         this.icon = new SimpleObjectProperty(null);
@@ -55,7 +62,13 @@ public class EventLogTableEntry {
     }
 
     public Date getDate() {
-        return new Date(Date.parse(date.get()));
+        try {
+            return dateFormat.parse(date.get());
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public SimpleStringProperty dateProperty() {
@@ -63,7 +76,7 @@ public class EventLogTableEntry {
     }
 
     public void setDate(Date date) {
-        this.date.set(date.toString());
+        this.date.set(dateFormat.format(date));
     }
 
     public TrackerEvent.Type getType() {

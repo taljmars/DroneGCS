@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.gui.core.layers.AbstractLayer;
-import com.gui.core.mapTree.internal.TreeCellEditorConvertor;
+import com.mapviewer.gui.core.layers.AbstractLayer;
+import com.mapviewer.gui.core.mapTree.internal.TreeCellEditorConvertor;
 import javafx.scene.control.TreeItem;
 
 /**

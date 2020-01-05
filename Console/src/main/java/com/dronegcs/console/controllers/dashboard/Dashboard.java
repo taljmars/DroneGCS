@@ -305,9 +305,15 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             case ORIENTATION:
                 SetDistanceToWaypoint(drone.getMissionStats().getDistanceToWP());
                 return;
+            case PROTOCOL_LEARNING:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.INFO,
+                        "Protocol", "Protocol Learning mode"));
+                return;
+            case PROTOCOL_IDENTIFIED:
+                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), SYSTEM.name(), TrackerEvent.Type.SUCCESS,
+                        "Protocol", "Protocol Identified: '" + drone.getMavClient().getMavlinkVersion() + "'"));
+                return;
             case MODE:
-                trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
-                        "Mode changed", "Drone mode changed to '" + drone.getState().getMode().getName() + "'"));
                 String prefix = "";
                 if (activeUserProfile.getMode() == ActiveUserProfile.Mode.OFFLINE)
                     prefix = "[OFFLINE] ";
@@ -315,7 +321,10 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
                 Platform.runLater(() -> viewManager.setTitle(finalPrefix + APP_TITLE + " [" + app_ver + "] (" + drone.getState().getMode().getName() + ")"));
                 return;
             case TEXT_MESSEGE:
-                loggerDisplayerSvc.logIncoming(drone.getMessegeQueue().pop());
+                String msg = drone.getMessegeQueue().pop(this);
+                if (msg == null)
+                    return;
+                loggerDisplayerSvc.logIncoming(msg);
                 return;
             case WARNING_SIGNAL_WEAK:
                 loggerDisplayerSvc.logWarning("Warning: Weak signal");

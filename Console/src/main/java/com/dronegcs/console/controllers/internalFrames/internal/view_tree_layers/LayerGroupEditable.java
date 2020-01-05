@@ -1,6 +1,6 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.gui.core.layers.LayerGroup;
+import com.mapviewer.gui.core.layers.LayerGroup;
 
 public class LayerGroupEditable extends LayerGroup implements EditedLayer {
 

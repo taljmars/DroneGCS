@@ -1,7 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers;
 
-import com.gui.core.layers.LayerSingle;
-import com.gui.core.mapViewer.LayeredViewMap;
+import com.mapviewer.gui.core.layers.LayerSingle;
+import com.mapviewer.gui.core.mapViewer.LayeredViewMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

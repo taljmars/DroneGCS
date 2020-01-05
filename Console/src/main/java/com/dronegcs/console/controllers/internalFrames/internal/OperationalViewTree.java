@@ -1,8 +1,8 @@
 package com.dronegcs.console.controllers.internalFrames.internal;
 
-import com.gui.core.layers.AbstractLayer;
-import com.gui.core.layers.LayerGroup;
-import com.gui.core.mapTree.LayeredViewTree;
+import com.mapviewer.gui.core.layers.AbstractLayer;
+import com.mapviewer.gui.core.layers.LayerGroup;
+import com.mapviewer.gui.core.mapTree.LayeredViewTree;
 
 /**
  * Created by taljmars on 5/5/17.

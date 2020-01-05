@@ -23,8 +23,8 @@ import com.dronegcs.console_plugin.services.internal.convertors.MissionCompilati
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.mission.DroneMission;
-import com.gui.core.layers.AbstractLayer;
-import com.gui.core.mapViewer.LayeredViewMap;
+import com.mapviewer.gui.core.layers.AbstractLayer;
+import com.mapviewer.gui.core.mapViewer.LayeredViewMap;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;

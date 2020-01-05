@@ -6,6 +6,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewM
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
+import com.mapviewer.os_utilities.Environment;
 import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,6 +60,12 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 	@PostConstruct
 	private void init() {
 		Assert.isTrue(++called == 1, "Not a Singleton");
+		String maptilePath = System.getProperty("user.home");
+		if (maptilePath != null && !maptilePath.isEmpty()) {
+			maptilePath += "/DroneGCS/";
+			System.out.println("Tile cache path sets to " + maptilePath);
+			Environment.setBasicWorkingDirectory(maptilePath);
+		}
 	}
 	
 	@Override

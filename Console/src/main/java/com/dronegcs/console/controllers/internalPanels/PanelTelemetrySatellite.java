@@ -1,5 +1,9 @@
 package com.dronegcs.console.controllers.internalPanels;
 
+import com.dronegcs.console_plugin.ActiveUserProfile;
+import com.dronegcs.tracker.objects.TrackerEvent;
+import com.dronegcs.tracker.services.TrackerEventProducer;
+import com.dronegcs.tracker.services.TrackerSvc;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,9 +35,10 @@ import com.generic_tools.validations.ValidatorResponse;
 import org.springframework.util.Assert;
 
 import static com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType.HEARTBEAT_TIMEOUT;
+import static com.dronegcs.tracker.objects.EventSource.DRONE;
 
 @Component
-public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable {
+public class PanelTelemetrySatellite extends VBox implements OnDroneListener, Initializable, TrackerEventProducer {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(PanelTelemetrySatellite.class);
 	
@@ -67,6 +72,12 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	
 	@Autowired
 	private RuntimeValidator runtimeValidator;
+
+	@Autowired
+	private ActiveUserProfile activeUserProfile;
+
+	@Autowired
+	private TrackerSvc trackerSvc;
 	
 	private static int called;
 	@PostConstruct
@@ -74,23 +85,26 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 		Assert.isTrue(++called == 1, "Not a Singleton");
 		
 		drone.addDroneListener(this);
+		trackerSvc.addEventProducer(this);
 	}
-	
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		batteryBar.setProgress(0);
-		SetHeartBeat(true);
+		SetHeartBeat(drone.getMavClient().isConnected());
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 	}
-	
+
 	protected void SetFlightModeLabel(String name) {
 		if (lblFlightMode.getText().equals(name)) {
 			LOGGER.debug("Flight mode '{}' wasn't actually changed", name);
 			return;
 		}
+		trackerSvc.pushEvent(this, new TrackerEvent(activeUserProfile.getUsername(), DRONE.name(), TrackerEvent.Type.INFO,
+				"Mode changed", "Drone mode changed to '" + drone.getState().getMode().getName() + "'"));
 		LOGGER.debug("Update Flight Mode: {}", name);
 		loggerDisplayerSvc.logGeneral("New Mode was detected " + drone.getState().getMode().getName());
 		lblFlightMode.setText(name);

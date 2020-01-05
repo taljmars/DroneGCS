@@ -403,6 +403,11 @@ public class InternalFrameMavlinkParams extends Pane implements OnDroneListener,
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void onDroneEvent(DroneEventsType event, Drone drone) {
+		if (cbOfflineProfile == null) {
+			// GUI frame is not initialized yet
+			return;
+		}
+
 		Platform.runLater(() -> {
 			switch (event) {
 				case TYPE:

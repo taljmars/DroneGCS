@@ -3,6 +3,7 @@ package com.dronegcs.console.controllers.internalPanels;
 import com.dronegcs.mavlink.is.connection.ConnectionStatistics;
 import com.dronegcs.mavlink.is.connection.MavLinkConnectionStatisticsListener;
 import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
@@ -20,9 +21,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 @Component
-public class PanelProtocolSatellite extends Pane implements Initializable, MavLinkConnectionStatisticsListener {
+public class PanelProtocolSatellite extends Pane implements Initializable, MavLinkConnectionStatisticsListener, DroneInterfaces.OnDroneListener {
 
-	@Autowired @NotNull(message = "Internal Error: Failed to get drone")
+    @Autowired @NotNull(message = "Internal Error: Failed to get drone")
 	private Drone drone;
 	
 	@Autowired
@@ -41,6 +42,7 @@ public class PanelProtocolSatellite extends Pane implements Initializable, MavLi
 	@NotNull @FXML public Label transmittedBytesVal;
 	@NotNull @FXML public Label transmittedBytesPerSecondVal;
 	@NotNull @FXML public Label throughputBytesPerSecondVal;
+	@NotNull @FXML public Label protocolVal;
 
 	//
 	private static int called = 0;
@@ -49,6 +51,7 @@ public class PanelProtocolSatellite extends Pane implements Initializable, MavLi
 		Assert.isTrue(++called == 1, "Not a Singleton");
 
 		drone.getMavClient().addMavLinkConnectionStatisticsListener(this.getClass().toString(), this);
+		drone.addDroneListener(this);
 	}
 	
 	@Override 
@@ -74,6 +77,26 @@ public class PanelProtocolSatellite extends Pane implements Initializable, MavLi
 			transmittedBytesVal.setText(connectionStatistics.getTransmittedBytes() + "");
 			transmittedBytesPerSecondVal.setText(connectionStatistics.getTransmittedBytesPerSecond() + "");
 			throughputBytesPerSecondVal.setText(connectionStatistics.getReceivedBytesPerSecond() + connectionStatistics.getTransmittedBytesPerSecond() + "");
+		});
+	}
+
+	@Override
+	public void onDroneEvent(DroneInterfaces.DroneEventsType droneEventsType, Drone drone) {
+		if (protocolVal == null)
+			return;
+
+		Platform.runLater(() -> {
+			switch (droneEventsType) {
+				case DISCONNECTED:
+					protocolVal.setText("");
+					return;
+				case PROTOCOL_LEARNING:
+					protocolVal.setText("> Identifying..");
+					return;
+				case PROTOCOL_IDENTIFIED:
+					protocolVal.setText("> " + drone.getMavClient().getMavlinkVersion());
+					return;
+			}
 		});
 	}
 }

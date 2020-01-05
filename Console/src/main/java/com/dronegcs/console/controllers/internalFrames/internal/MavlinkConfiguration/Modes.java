@@ -24,9 +24,6 @@ import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.*;
 
-import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT16;
-import static com.dronegcs.mavlink.is.protocol.msg_metadata.enums.MAV_PARAM_TYPE.MAV_PARAM_TYPE_INT8;
-
 /**
  * Created by taljmars on 6/17/2017.
  */
@@ -453,26 +450,31 @@ public class Modes implements Initializable, DroneInterfaces.OnParameterManagerL
 
     public void resetAll() {
         // Verify GUI components were initialized
-        if (comboBoxFltModeMap == null)
-            return;
+        if (comboBoxFltModeMap != null)
+            for (ComboBox comboBox : comboBoxFltModeMap.values())
+                comboBox.setValue(null);
 
-        for (ComboBox comboBox : comboBoxFltModeMap.values())
-            comboBox.setValue(null);
+        if (comboBoxCommandsMap != null)
+            for (ComboBox comboBox : comboBoxCommandsMap.values())
+                comboBox.setValue(null);
 
-        for (ComboBox comboBox : comboBoxCommandsMap.values())
-            comboBox.setValue(null);
+        if (comboBoxTuningMap != null)
+            for (ComboBox comboBox : comboBoxTuningMap.values())
+                comboBox.setValue(null);
 
-        for (ComboBox comboBox : comboBoxTuningMap.values())
-            comboBox.setValue(null);
+        if (checkBoxSimpleModeList != null)
+            for (CheckBox checkBox : checkBoxSimpleModeList)
+                checkBox.setSelected(false);
 
-        for (CheckBox checkBox : checkBoxSimpleModeList)
-            checkBox.setSelected(false);
+        if (checkBoxSuperSimpleModeList != null)
+            for (CheckBox checkBox : checkBoxSuperSimpleModeList)
+                checkBox.setSelected(false);
 
-        for (CheckBox checkBox : checkBoxSuperSimpleModeList)
-            checkBox.setSelected(false);
+        if (spChannel6Min != null)
+            spChannel6Min.getValueFactory().setValue(new Double(0.0));
 
-        spChannel6Min.getValueFactory().setValue(new Double(0.0));
-        spChannel6Max.getValueFactory().setValue(new Double(1.0));
+        if (spChannel6Max != null)
+            spChannel6Max.getValueFactory().setValue(new Double(1.0));
     }
 
     @Override

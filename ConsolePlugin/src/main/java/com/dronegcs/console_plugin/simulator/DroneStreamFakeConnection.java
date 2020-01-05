@@ -185,6 +185,18 @@ public class DroneStreamFakeConnection implements SerialConnection {
         return receivedBytes;
     }
 
+    @Override
+    public void resetCounters() {
+        receivedBytes = 0L;
+        transmittedBytes = 0L;
+        lastReadTimestamp = 0L;
+        bytesSinceLastRead = 0L;
+        receivedBytesPerSecond = 0L;
+        lastWriteTimestamp = 0L;
+        bytesSinceLastWrite = 0L;
+        transmittedBytesPerSecond = 0L;
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         loggerDisplayerSvc = applicationContext.getBean(LoggerDisplayerSvc.class);

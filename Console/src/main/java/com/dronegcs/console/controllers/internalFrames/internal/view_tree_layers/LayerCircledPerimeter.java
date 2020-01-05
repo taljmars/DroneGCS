@@ -6,8 +6,8 @@ import com.dronegcs.console_plugin.perimeter_editor.PerimeterUpdateException;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.geo_tools.Coordinate;
 import com.geo_tools.GeoTools;
-import com.gui.core.mapViewer.LayeredViewMap;
-import com.gui.core.mapViewerObjects.MapMarkerCircle;
+import com.mapviewer.gui.core.mapViewer.LayeredViewMap;
+import com.mapviewer.gui.core.mapViewerObjects.MapMarkerCircle;
 
 import java.util.List;
 

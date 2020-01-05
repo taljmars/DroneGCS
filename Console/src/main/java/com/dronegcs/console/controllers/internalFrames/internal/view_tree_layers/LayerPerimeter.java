@@ -7,7 +7,7 @@ import com.dronedb.persistence.scheme.Perimeter;
 import com.dronedb.persistence.scheme.PolygonPerimeter;
 import com.dronegcs.console_plugin.perimeter_editor.PerimetersManager;
 import com.dronegcs.mavlink.is.drone.variables.Compound;
-import com.gui.core.mapViewer.LayeredViewMap;
+import com.mapviewer.gui.core.mapViewer.LayeredViewMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

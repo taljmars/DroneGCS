@@ -4,7 +4,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewM
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
-import com.gui.core.mapViewer.internal.MapViewerSettings;
+import com.mapviewer.gui.core.mapViewer.internal.MapViewerSettings;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

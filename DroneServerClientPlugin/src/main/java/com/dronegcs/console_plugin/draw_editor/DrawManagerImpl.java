@@ -12,7 +12,7 @@ import com.dronegcs.console_plugin.ClosingPair;
 import com.dronegcs.console_plugin.remote_services_wrappers.LayersCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.ObjectCrudSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.QuerySvcRemoteWrapper;
-import com.gui.core.layers.LayerGroup;
+import com.mapviewer.gui.core.layers.LayerGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

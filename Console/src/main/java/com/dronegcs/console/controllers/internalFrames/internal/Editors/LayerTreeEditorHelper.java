@@ -11,7 +11,7 @@ import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers
 import com.dronegcs.console.controllers.internalFrames.internal.view_tree_layers.LayerManagerDbWrapper;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupEditor;
 import com.dronegcs.console_plugin.layergroup_editor.LayersGroupsManager;
-import com.gui.core.layers.AbstractLayer;
+import com.mapviewer.gui.core.layers.AbstractLayer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;

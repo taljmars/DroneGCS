@@ -255,7 +255,7 @@ public class ServosOutput implements Initializable, DroneInterfaces.OnDroneListe
 
         Parameter parameter = drone.getParameters().getParameter("FRAME");
         if (parameter == null) {
-            loggerDisplayerSvc.logGeneral("Drone parameter not found");
+            loggerDisplayerSvc.logGeneral("Drone parameter name 'FRAME' not found");
             return;
         }
 
