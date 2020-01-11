@@ -126,12 +126,12 @@
                                 </StackPane>
                             </children>
                         </HBox>
-                        <Label fx:id="lblFlightTime" text="lblFlightTime" textAlignment="CENTER" textFill="#2ff556">
+                        <Label fx:id="lblFlightTime" text="-" textAlignment="CENTER" textFill="#2ff556">
                             <font>
                                 <Font size="18.0" />
                             </font>
                         </Label>
-                        <Label fx:id="lblFlightDist" text="lblFlightDist" textAlignment="CENTER" textFill="#2ff556">
+                        <Label fx:id="lblFlightDist" text="-" textAlignment="CENTER" textFill="#2ff556">
                             <font>
                                 <Font size="18.0" />
                             </font>

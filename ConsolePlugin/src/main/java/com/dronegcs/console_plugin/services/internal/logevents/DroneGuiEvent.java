@@ -48,7 +48,9 @@ public class DroneGuiEvent extends ApplicationEvent {
         EXIT,
         SPLIT_FRAMECONTAINER,
 
-        CAMERA_DEVICEID
+        CAMERA_DEVICEID,
+
+        USER_PROFILE_LOADED,
     }
 
     private DRONE_GUI_COMMAND command;

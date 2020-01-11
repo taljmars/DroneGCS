@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-<AnchorPane fx:id="root" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.ViewTester.FXMLDocumentController">
-
+<Pane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameVideo">
     <children>
-        <HBox >
-            <children>
-
-                <VBox alignment="CENTER" spacing="10">
+        <BorderPane>
+            <top>
+                <HBox maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
                     <children>
-                        <Label text="Frame Type"><font><Font name="System Bold"/></font></Label>
-                        <ComboBox fx:id="cbFrameType" onAction="#handleFrameSelect"/>
-                        <Label text="Engines (RPM)"><font><Font name="System Bold"/></font></Label>
-                        <Label fx:id="lblEngine1" />
-                        <Label fx:id="lblEngine2" />
-                        <Label fx:id="lblEngine3" />
-                        <Label fx:id="lblEngine4" />
-                        <Label fx:id="lblEngine5" />
-                        <Label fx:id="lblEngine6" />
-                        <Label fx:id="lblEngine7" />
-                        <Label fx:id="lblEngine8" />
+                        <Label maxHeight="1.7976931348623157E308" text="HUD: ">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Label>
+                        <RadioButton fx:id="hud_all" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" onAction="#setHudViewAll" selected="true" style="-fx-background-color: whitesmoke;" text="All">
+                            <HBox.margin>
+                                <Insets left="10.0" right="10.0" />
+                            </HBox.margin></RadioButton>
+                        <RadioButton fx:id="hud_dataonly" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" onAction="#setHudViewDataOnly" style="-fx-background-color: whitesmoke;" text="Data Only">
+                            <HBox.margin>
+                                <Insets right="10.0" />
+                            </HBox.margin></RadioButton>
+                        <RadioButton fx:id="hud_hide" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" onAction="#setHudViewHide" style="-fx-background-color: whitesmoke;" text="Hide |">
+                            <HBox.margin>
+                                <Insets right="10.0" />
+                            </HBox.margin></RadioButton>
+                        <Button fx:id="opCamera" mnemonicParsing="false" onAction="#handleOpCameraOnAction" text="Start Camera" />
+                        <Label maxHeight="1.7976931348623157E308" style="-fx-background-color: whitesmoke;" text="  |  Select Tracker:  " />
+                        <ComboBox fx:id="cbTrackerSelect" onAction="#handleTrackerSelectOnAction" prefWidth="150.0" />
                     </children>
-                </VBox>
-
-                <AnchorPane fx:id="modelGraphic">
+                </HBox>
+            </top>
+            <bottom>
+                <Label fx:id="redirectionLabel" alignment="CENTER" contentDisplay="CENTER" text="Video Redirection" textAlignment="CENTER" visible="false" BorderPane.alignment="CENTER" />
+            </bottom>
+            <center>
+                <AnchorPane BorderPane.alignment="CENTER">
                     <children>
-                        <Rectangle fx:id="body" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="75.0" layoutX="200.0" layoutY="170.0" stroke="BLACK" strokeType="INSIDE" width="42.0" />
+                        <!--<Label fx:id="backgroundLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" style="-fx-background-color: black; -fx-border-color: black;" text="No Image" textAlignment="CENTER" textFill="#f8f8f8" />-->
+                        <ImageView fx:id="imageViewer" fitHeight="${root.prefHeight}" fitWidth="${root.prefWidth}" onMouseClicked="#handleVideoMouseClick" visible="false" />
+                        <fx:include prefHeight="${root.prefHeight}" prefWidth="${root.prefWidth}" source="/com/dronegcs/console/views/HudView.fxml" />
                     </children>
                 </AnchorPane>
-            </children>
-        </HBox>
+            </center>
+        </BorderPane>
     </children>
-
-</AnchorPane>
+</Pane>

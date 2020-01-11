@@ -4,11 +4,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameVideo">
+<Pane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameVideo">
     <children>
-        <BorderPane>
+        <BorderPane fx:id="content">
             <top>
-                <HBox maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
+                <HBox fx:id="videoToolbar" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
                     <children>
                         <Label maxHeight="1.7976931348623157E308" text="HUD: ">
                             <HBox.margin>
@@ -47,4 +47,4 @@
             </center>
         </BorderPane>
     </children>
-</AnchorPane>
+</Pane>

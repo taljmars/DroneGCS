@@ -9,6 +9,7 @@ import com.dronegcs.tracker.objects.TrackerEvent;
 import com.dronegcs.tracker.services.TrackerEventProducer;
 import com.dronegcs.tracker.services.TrackerSvc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,10 @@ public class LoggerDisplayerSvc implements TrackerEventProducer {
 	private TrackerSvc trackerSvc;
 
 	@Autowired
-	private ActiveUserProfile activeUserProfile;
+	private ApplicationContext applicationContext;
+
+	//@Autowired
+	private ActiveUserProfile activeUserProfile = null;
 
 	private static int called;
 	/**
@@ -60,6 +64,9 @@ public class LoggerDisplayerSvc implements TrackerEventProducer {
 			type = ERROR;
 		else if (event instanceof LogSuccessDisplayerEvent)
 			type = SUCCESS;
+
+		if (activeUserProfile == null)
+			activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
 
 		trackerSvc.pushEvent(this, new TrackerEvent(
 				activeUserProfile.getUsername(),

@@ -11,7 +11,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.MapSettings">
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.RadioButton?>
+<Pane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration.ViewSettings">
 
     <children>
         <VBox spacing="20.0">
@@ -47,6 +49,20 @@
 
                         <Label text="   " />
                         <Button onAction="#handleFlushTrail" text="Flush Trail" />
+                    </children>
+                </HBox>
+                <Separator/>
+                <Label style="-fx-font-weight: bold" text="View Settings" />
+                <HBox alignment="CENTER">
+                    <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                    </HBox.margin>
+                    <children>
+
+                        <Label text="Main Screen View   " />
+                        <RadioButton fx:id="rbMap" text="Map    " onAction="#onMainScreenViewSelect"/>
+                        <RadioButton fx:id="rbHud" text="HUD    " onAction="#onMainScreenViewSelect"/>
+                        <Label text="   * Note: Effective after restarting the application" />
                     </children>
                 </HBox>
             </children>

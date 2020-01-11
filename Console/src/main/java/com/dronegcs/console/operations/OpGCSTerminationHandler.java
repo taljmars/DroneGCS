@@ -10,6 +10,7 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -38,7 +39,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 	private LoginSvcRemoteWrapper loginSvcRemote;
 
 	@Autowired
-	private ActiveUserProfile activeUserProfile;
+	private ApplicationContext applicationContext;
 
 	@Autowired
 	private RuntimeValidator runtimeValidator;
@@ -59,6 +60,7 @@ public class OpGCSTerminationHandler extends OperationHandler {
 			LOGGER.debug("Bye Bye");
 
 			try {
+				ActiveUserProfile activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
 				if (activeUserProfile.getMode() == ActiveUserProfile.Mode.ONLINE)
 					loginSvcRemote.logout();
 			}

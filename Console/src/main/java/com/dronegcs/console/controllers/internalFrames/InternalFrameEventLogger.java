@@ -117,7 +117,7 @@ public class InternalFrameEventLogger extends Pane implements Initializable, Tra
 			if (eventLogTableEntry == null)
 				return;
 
-			Parent eventLogCard = (Parent) guiAppConfig.loadInternalFrame("/com/dronegcs/console/views/LogEntryView.fxml", eventLogTableEntry);
+			Parent eventLogCard = (Parent) guiAppConfig.loadFrame("/com/dronegcs/console/views/LogEntryView.fxml", eventLogTableEntry);
 			Stage stage = new Stage();
 			stage.setTitle("Log/ " + eventLogTableEntry.getUid());
 			stage.setResizable(false);
@@ -335,6 +335,7 @@ public class InternalFrameEventLogger extends Pane implements Initializable, Tra
 	@Override
 	public void offer(TrackerEvent trackerEvent) {
 		data.add(0,buildEntry(trackerEvent));
+		ActiveUserProfile activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
 		if (activeUserProfile.getMode().equals(ActiveUserProfile.Mode.ONLINE) && !trackerEvent.getEventSource().equals(EventSource.DB_SERVER.name())) {
 			try {
 				ExternalObjectLog externalObjectLog = objectCrudSvcRemoteWrapper.create(ExternalObjectLog.class.getCanonicalName());

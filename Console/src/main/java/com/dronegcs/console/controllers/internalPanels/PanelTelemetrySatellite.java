@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -74,6 +75,9 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 	private RuntimeValidator runtimeValidator;
 
 	@Autowired
+	private ApplicationContext applicationContext;
+
+	//	@Autowired
 	private ActiveUserProfile activeUserProfile;
 
 	@Autowired
@@ -96,6 +100,8 @@ public class PanelTelemetrySatellite extends VBox implements OnDroneListener, In
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
+
+		activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
 	}
 
 	protected void SetFlightModeLabel(String name) {

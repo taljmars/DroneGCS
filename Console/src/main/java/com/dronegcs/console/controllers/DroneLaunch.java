@@ -8,6 +8,7 @@ import com.dronegcs.console_plugin.remote_services_wrappers.LoginSvcRemoteWrappe
 import com.dronegcs.console_plugin.remote_services_wrappers.RegistrationSvcRemoteWrapper;
 import com.dronegcs.console_plugin.remote_services_wrappers.RestClientHelper;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.devices.SerialConnection;
 import com.generic_tools.environment.Environment;
 import javafx.scene.Parent;
@@ -19,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.nio.file.Paths;
@@ -32,7 +35,10 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 	protected static final String STYLE_FILE = "/com/dronegcs/console/application.css";
 
 	@Autowired
-	private ActiveUserProfile activeUserProfile;
+	private ApplicationContext applicationContext;
+
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
     private GlobalStatusSvc globalStatus;
@@ -60,6 +66,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 
 	@Autowired
 	private EventLogManager eventLogManager;
+
+	@Autowired
+	private ActiveUserProfile activeUserProfile;
 
 	private Stage mainStage;
 
@@ -114,9 +123,11 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		LoginResponse loginRestResponse = loginSvcRemoteWrapper.login(loginRestRequest, password, server, port);
         if (loginRestResponse.getReturnCode().equals(LoginLogoutStatus.OK)){
 			restClientHelper.setToken(loginRestResponse.getToken());
-			activeUserProfile.setMode(ActiveUserProfile.Mode.ONLINE);
 			activeUserProfile.setUsername(userName);
-            showMainScreen();
+			activeUserProfile.setMode(ActiveUserProfile.Mode.ONLINE);
+			applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.USER_PROFILE_LOADED, activeUserProfile));
+
+			showMainScreen();
 
             // Logged in, sync all recent events
 			eventLogManager.SyncTracker();
@@ -137,13 +148,15 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
     @Override
     public void handleOffline(String username) {
         restClientHelper.setToken(null);
-		activeUserProfile.setMode(ActiveUserProfile.Mode.OFFLINE);
 		activeUserProfile.setUsername(username);
-        showMainScreen();
+		activeUserProfile.setMode(ActiveUserProfile.Mode.OFFLINE);
+		applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.USER_PROFILE_LOADED, activeUserProfile));
+
+		showMainScreen();
     }
 
     private void showMainScreen() {
-		Parent root = (Parent) guiAppConfig.load("/com/dronegcs/console/views/DashboardView2.fxml");
+		Parent root = (Parent) guiAppConfig.loadFrame("/com/dronegcs/console/views/DashboardView2.fxml");
 //        root.setStyle("-fx-background-color: whitesmoke;");
 		root.getStylesheets().add(STYLE_FILE);
 //		Scene scene = new Scene(root, WIDTH, HEIGHT);

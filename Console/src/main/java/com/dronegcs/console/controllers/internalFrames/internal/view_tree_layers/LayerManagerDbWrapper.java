@@ -24,6 +24,7 @@ import com.mapviewer.gui.core.layers.LayerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -44,9 +45,12 @@ public class LayerManagerDbWrapper extends LayerManager {
 
     @Autowired
     private QuerySvcRemoteWrapper querySvcRemote;
+//
+//    @Autowired
+//    private ActiveUserProfile activeUserProfile;
 
     @Autowired
-    private ActiveUserProfile activeUserProfile;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private LayersGroupsManager layersGroupManager;
@@ -78,6 +82,7 @@ public class LayerManagerDbWrapper extends LayerManager {
     private void sync() {
         LOGGER.debug("Syncing Layers");
 
+        ActiveUserProfile activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
         if (activeUserProfile.getMode() == ActiveUserProfile.Mode.ONLINE)
             layersGroupManager.refreshAllLayers();
 

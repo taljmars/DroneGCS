@@ -31,6 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,52 +51,61 @@ import java.util.ResourceBundle;
 public class PanelFrameBarSatellite extends FlowPane implements Initializable {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(PanelFrameBarSatellite.class);
-    private static String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
+    public static final String INTERNAL_FRAME_PATH = "/com/dronegcs/console/views/internalFrames/";
+
+    @NotNull
+    @FXML
+    private VBox root;
 
     @NotNull
     @FXML
     private Button btnActualPWM;
-    private static String ACTUAL_PWM_VIEW = "InternalFrameActualPWMView.fxml";
+    public static final String ACTUAL_PWM_VIEW = "InternalFrameActualPWMView.fxml";
 
     @NotNull
     @FXML
     private Button btnBattery;
-    private static String BATTERY_VIEW = "InternalFrameBatteryView.fxml";
+    public static final String BATTERY_VIEW = "InternalFrameBatteryView.fxml";
 
     @NotNull
     @FXML
     private Button btnSignal;
-    private static String SIGNALS_VIEW = "InternalFrameSignalsView.fxml";
+    public static final String SIGNALS_VIEW = "InternalFrameSignalsView.fxml";
 
     @NotNull
     @FXML
     private Button btnHeightAndSpeed;
-    private static String HEIGHT_SPEED_VIEW = "InternalFrameHeightAndSpeedView.fxml";
+    public static final String HEIGHT_SPEED_VIEW = "InternalFrameHeightAndSpeedView.fxml";
 
     @NotNull
     @FXML
     private Button btnQuickData;
-    private static String QUICK_DATA_VIEW = "InternalFrameQuickDataView.fxml";
+    public static final String QUICK_DATA_VIEW = "InternalFrameQuickDataView.fxml";
 
     @NotNull
     @FXML
     private Button btnCamera;
-    private static String CAMERA_VIEW = "InternalFrameVideoView.fxml";
+    public static final String CAMERA_VIEW = "InternalFrameVideoView.fxml";
+
+    @NotNull
+    @FXML
+    private Button btnMap;
+    public static final String MAP_VIEW = "InternalFrameMapAndTreeView2.fxml";
 
     @NotNull
     @FXML
     private Button btnMavlinkParams;
-    private static String MAVLINKPARAM_VIEW = "InternalFrameMavlinkParamsView.fxml";
+    public static String MAVLINKPARAM_VIEW = "InternalFrameMavlinkParamsView.fxml";
 
     @NotNull
     @FXML
     private Button btnMavlinkConfiguration;
-    private static String MAVLINKCONFIGURATION_VIEW = "InternalFrameMavlinkConfigurationView.fxml";
+    public static final String MAVLINKCONFIGURATION_VIEW = "InternalFrameMavlinkConfigurationView.fxml";
 
     @NotNull
     @FXML
     private Button btnEventLog;
-    private static String EVENTLOG_VIEW = "InternalFrameEventLogView.fxml";
+    public static final String EVENTLOG_VIEW = "InternalFrameEventLogView.fxml";
 
     @NotNull @FXML
     private Button btnPublish;
@@ -185,6 +195,15 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
             LOGGER.debug("Private session was found");
             applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.PRIVATE_SESSION_STARTED));
         }
+
+        if (String.valueOf(Dashboard.DisplayMode.HUD_MODE).equals(activeUserProfile.getDefinition(String.valueOf(Dashboard.DisplayMode.DisplayMode)))) {
+            btnMap.setVisible(true);
+            btnCamera.setVisible(false);
+            root.getChildren().remove(btnCamera);
+        }
+        else {
+            root.getChildren().remove(btnMap);
+        }
     }
 
     private void updateFrameMapPath() {
@@ -193,6 +212,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
         btnHeightAndSpeed.setUserData(INTERNAL_FRAME_PATH + HEIGHT_SPEED_VIEW);
         btnBattery.setUserData(INTERNAL_FRAME_PATH + BATTERY_VIEW);
         btnCamera.setUserData(INTERNAL_FRAME_PATH + CAMERA_VIEW);
+        btnMap.setUserData(INTERNAL_FRAME_PATH + MAP_VIEW);
         btnMavlinkParams.setUserData(INTERNAL_FRAME_PATH + MAVLINKPARAM_VIEW);
         btnMavlinkConfiguration.setUserData(INTERNAL_FRAME_PATH + MAVLINKCONFIGURATION_VIEW);
         btnEventLog.setUserData(INTERNAL_FRAME_PATH + EVENTLOG_VIEW);
@@ -380,7 +400,7 @@ public class PanelFrameBarSatellite extends FlowPane implements Initializable {
                 break;
             case DETECTOR_LOAD_FAILURE:
                 LOGGER.warn("Detector load failure, canceling button");
-                setImageButton(btnCamera, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
+//                setImageButton(btnCamera, this.getClass().getResource("/com/dronegcs/console/guiImages/SaveOff.png"));
                 break;
             case EXIT:
                 break;

@@ -4,6 +4,7 @@ import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewMap;
 import com.dronegcs.console.controllers.internalFrames.internal.OperationalViewTree;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import com.mapviewer.os_utilities.Environment;
@@ -15,6 +16,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -22,6 +24,10 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static com.dronegcs.console.controllers.dashboard.Dashboard.DisplayMode.DisplayMode;
+import static com.dronegcs.console.controllers.dashboard.Dashboard.DisplayMode.HUD_MODE;
+
 
 @Component
 public class InternalFrameMap extends Pane implements Initializable {//, ChangeListener<Number> {
@@ -31,6 +37,12 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 
 	@Autowired
 	private FloatingNodeManager draggableNode;
+
+	@Autowired
+	private ApplicationContext applicationContext;
+
+//	@Autowired
+	private ActiveUserProfile activeUserProfile;
 
 	@Autowired
 	public void setOperationalViewTree(OperationalViewTree operationalViewTree) {
@@ -70,14 +82,16 @@ public class InternalFrameMap extends Pane implements Initializable {//, ChangeL
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		splitPane.setPrefWidth(root.getPrefWidth());
-		splitPane.setPrefHeight(root.getPrefHeight());
+//		splitPane.setPrefWidth(root.getPrefWidth());
+//		splitPane.setPrefHeight(root.getPrefHeight());
 
 		TreeView tree = operationalViewTree.getTree();
 		operationalViewMap.setMapBounds(0, 0, (int) splitPane.getPrefWidth(), (int) splitPane.getPrefHeight());
 
-
-		left.getChildren().add(tree);
+		activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
+		if (activeUserProfile.getDefinition(String.valueOf(DisplayMode)) == null || !activeUserProfile.getDefinition(String.valueOf(DisplayMode)).equals(HUD_MODE.name())) {
+			left.getChildren().add(tree);
+		}
 		right.getChildren().add(operationalViewMap);
 
 		ValidatorResponse validatorResponse = runtimeValidator.validate(this);

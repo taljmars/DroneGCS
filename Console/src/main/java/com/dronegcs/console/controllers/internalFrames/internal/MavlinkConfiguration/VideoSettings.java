@@ -1,5 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
+import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
@@ -26,6 +28,12 @@ public class VideoSettings extends Pane implements Initializable {
     protected ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
+    private DialogManagerSvc dialogManagerSvc;
+
+    @Autowired
+    private ActiveUserProfile activeUserProfile;
+
+    @Autowired
     private RuntimeValidator runtimeValidator;
 
     @NotNull @FXML private Button btnUpdateDevice;
@@ -43,6 +51,16 @@ public class VideoSettings extends Pane implements Initializable {
         if (validatorResponse.isFailed())
             throw new RuntimeException(validatorResponse.toString());
 
-        btnUpdateDevice.setOnAction( e -> applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.CAMERA_DEVICEID,  Integer.parseInt(txtDeviceId.getText())  )));
+        String deviceId = activeUserProfile.getDefinition("deviceId", "0");
+        txtDeviceId.setText(deviceId);
+
+        btnUpdateDevice.setOnAction( e -> {
+            if (!txtDeviceId.getText().matches("[0-9]*")) {
+                dialogManagerSvc.showErrorMessageDialog("Value '{}' is illegal, must be numeric", new NumberFormatException());
+                return;
+            }
+            activeUserProfile.setDefinition("deviceId", txtDeviceId.getText());
+            applicationEventPublisher.publishEvent(new DroneGuiEvent(DroneGuiEvent.DRONE_GUI_COMMAND.CAMERA_DEVICEID, Integer.parseInt(txtDeviceId.getText())));
+        });
     }
 }

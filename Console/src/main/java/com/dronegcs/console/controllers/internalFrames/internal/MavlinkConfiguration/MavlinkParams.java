@@ -1,4 +1,4 @@
-package com.dronegcs.console.controllers.internalFrames;
+package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
 import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
@@ -48,9 +48,9 @@ import java.util.function.Predicate;
 import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
 
 @Component
-public class InternalFrameMavlinkParams extends Pane implements OnDroneListener, Initializable, DroneInterfaces.OnParameterManagerListener {
+public class MavlinkParams extends Pane implements OnDroneListener, Initializable, DroneInterfaces.OnParameterManagerListener {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(InternalFrameMavlinkParams.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(MavlinkParams.class);
 
 	@Autowired
 	@NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")

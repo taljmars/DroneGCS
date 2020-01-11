@@ -15,7 +15,10 @@
 
     <children>
 
-        <fx:include fx:id="mapBoard" source="internalFrames/InternalFrameMapAndTreeView2.fxml" StackPane.alignment="CENTER" />
+        <!--<fx:include source="internalFrames/InternalFrameMapAndTreeView2.fxml" StackPane.alignment="CENTER" />-->
+        <!--<fx:include prefHeight="${dashboardView.prefHeight}" prefWidth="${dashboardView.prefWidth}" source="internalFrames/InternalFrameVideoView.fxml" StackPane.alignment="CENTER" />-->
+
+        <!--<fx:include prefHeight="${dashboardView.prefHeight}" prefWidth="${dashboardView.prefWidth}" source="dashboardView.src" StackPane.alignment="CENTER" />-->
 
         <fx:include maxHeight="100.0" maxWidth="100.0" prefHeight="100.0" prefWidth="100.0" source="internalFrames/LayerEditorView.fxml" />
 

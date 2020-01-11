@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal.MavlinkConfiguration;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.mavlink.core.gcs.GCSHeartbeat;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.generic_tools.validations.RuntimeValidator;
@@ -40,6 +41,9 @@ public class ProtocolSettings extends Pane implements Initializable {
     @Autowired
     private DialogManagerSvc dialogManagerSvc;
 
+    @Autowired
+    private ActiveUserProfile activeUserProfile;
+
     @FXML
     public CheckBox cbFetchOnConnect;
 
@@ -70,6 +74,7 @@ public class ProtocolSettings extends Pane implements Initializable {
         else {
             drone.getParameters().setAutoFetch(false);
         }
+        activeUserProfile.setDefinition(ActiveUserProfile.DEFS.ParamAutoFetch.name(), String.valueOf(cbFetchOnConnect.isSelected()));
     }
 
     @FXML
@@ -89,5 +94,6 @@ public class ProtocolSettings extends Pane implements Initializable {
             dialogManagerSvc.showErrorMessageDialog("Interval must be greater than zero", e);
         }
         gcsHbInterval.setText(gcsHeartbeat.getFrequency() + "");
+        activeUserProfile.setDefinition(ActiveUserProfile.DEFS.HeartBeatFreq.name(), gcsHbInterval.getText());
     }
 }

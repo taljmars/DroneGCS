@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers.dashboard;
 
 import com.dronegcs.console.DialogManagerSvc;
+import com.dronegcs.console.controllers.internalPanels.PanelFrameBarSatellite;
 import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console.controllers.GUISettings;
 import com.dronegcs.console.controllers.GuiAppConfig;
@@ -9,6 +10,8 @@ import com.dronegcs.console.operations.OpGCSTerminationHandler;
 import com.dronegcs.console_plugin.plugin_event.ClientPluginEvent;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.TextNotificationPublisherSvc;
+import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
+import com.dronegcs.mavlink.core.gcs.GCSHeartbeat;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
@@ -42,6 +45,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -64,6 +68,13 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
     public static final String APP_TITLE = "Drone Ground Station";
+
+    public enum DisplayMode {
+        HUD_MODE,
+        MAP_MODE,
+
+        DisplayMode // Just for the sake of find usage easily
+    }
 
     private String app_ver = "unknown";
 
@@ -101,12 +112,15 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     private RuntimeValidator runtimeValidator;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private ActiveUserProfile activeUserProfile;
 
     @FXML private StackPane dashboardView;
 
     private static final double BOTTOM_PANEL_RATIO_H = 0.15;
-    private static final double BOTTOM_PANEL_RATIO_W = 0.65;
+    private static final double BOTTOM_PANEL_RATIO_W = 0.5;
     private static final double BOTTOM_PANEL_RATIO_BOTTOM_MARGIN_H = 0.04;
     @FXML private Pane bottomPanel;
     @FXML private TabPane bottomPanelTab;
@@ -178,6 +192,15 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
     private void initializeGui() {
         LOGGER.info("Initialize GUI");
         setViewManager(guiAppConfig.getRootStage());
+        Node node = null;
+        activeUserProfile = applicationContext.getBean(ActiveUserProfile.class);
+        if (activeUserProfile.getDefinition(String.valueOf(DisplayMode.DisplayMode)) == null || activeUserProfile.getDefinition(String.valueOf(DisplayMode.DisplayMode)).equals(String.valueOf(DisplayMode.MAP_MODE))) {
+            node = guiAppConfig.loadFrame("/com/dronegcs/console/views/internalFrames/InternalFrameMapAndTreeView2.fxml", dashboardView.getPrefWidth(), dashboardView.getPrefHeight());
+        }
+        else {
+            node = guiAppConfig.loadFrame("/com/dronegcs/console/views/internalFrames/InternalFrameVideoView.fxml", dashboardView.getPrefWidth(), dashboardView.getPrefHeight());
+        }
+        dashboardView.getChildren().add(0, node);
 
         floatingNodeManager.bind(widgetDragging.selectedProperty());
         setDragPlane(dashboardView);
@@ -446,14 +469,18 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
         }
     }
 
-    private void handleFrameContainerRequest(String springInstantiation) {
+    private Pane handleFrameContainerRequest(String springInstantiation) {
         if (springInstantiation.isEmpty())
-            return;
+            return null;
 
-        Node selectedPane = guiAppConfig.loadInternalFrame(springInstantiation, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
-        ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        double RATIO = 0.3;
+        if (activeUserProfile.getDefinition(DisplayMode.DisplayMode.name()).equals(DisplayMode.HUD_MODE.name()))
+            RATIO = 0.20;
+
+        Node selectedPane = guiAppConfig.loadFrame(springInstantiation, GUISettings._WIDTH.get() * RATIO, GUISettings._HEIGHT.get() * RATIO);
+        ((Pane)selectedPane).setMaxSize(GUISettings._WIDTH.get() * RATIO, GUISettings._HEIGHT.get() * RATIO);
         selectedPane.setUserData(springInstantiation);
-        selectedPane = floatingNodeManager.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * 0.3, GUISettings._HEIGHT.get() * 0.3);
+        selectedPane = floatingNodeManager.makeDraggable(dashboardView, selectedPane, GUISettings._WIDTH.get() * RATIO, GUISettings._HEIGHT.get() * RATIO);
         Button b = new Button();
         b.setText("X");
 //        b.setCancelButton(true);
@@ -464,10 +491,11 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             b.getParent().setVisible(false);
         });
         dashboardView.getChildren().add(selectedPane);
+        return (Pane) selectedPane;
     }
 
     public void loadBigScreenContainer(String springInstantiation) {
-        Pane node = (Pane) guiAppConfig.loadInternalFrame(springInstantiation, GUISettings._WIDTH.get() * BIG_SCREEN_CONTAINER_RATIO_W, GUISettings._HEIGHT.get() * BIG_SCREEN_CONTAINER_RATIO_H);
+        Pane node = (Pane) guiAppConfig.loadFrame(springInstantiation, GUISettings._WIDTH.get() * BIG_SCREEN_CONTAINER_RATIO_W, GUISettings._HEIGHT.get() * BIG_SCREEN_CONTAINER_RATIO_H);
         bigScreenContainer.getChildren().clear();
         bigScreenContainer.getChildren().addAll(node);
 
@@ -513,6 +541,17 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             default:
                 break;
 
+        }
+    }
+
+    @EventListener
+    public void onApplicationEvent(DroneGuiEvent event) {
+        switch (event.getCommand()) {
+            case USER_PROFILE_LOADED:
+                drone.getParameters().setAutoFetch(Boolean.parseBoolean(activeUserProfile.getDefinition(ActiveUserProfile.DEFS.ParamAutoFetch.name(),ActiveUserProfile.DEFS.ParamAutoFetch.defaultVal)));
+                GCSHeartbeat gcsHeartbeat = applicationContext.getBean(GCSHeartbeat.class);
+                gcsHeartbeat.setFrequency(Integer.parseInt(activeUserProfile.getDefinition(ActiveUserProfile.DEFS.HeartBeatFreq.name(),ActiveUserProfile.DEFS.HeartBeatFreq.defaultVal)));
+                break;
         }
     }
 }

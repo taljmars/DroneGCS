@@ -1,8 +1,10 @@
 package com.dronegcs.console.controllers.internalFrames;
 
 import com.dronegcs.console.controllers.GuiAppConfig;
+import com.dronegcs.console.controllers.dashboard.Dashboard;
 import com.dronegcs.console.controllers.droneEye.DroneEye;
 import com.dronegcs.console.controllers.internalFrames.internal.HUD;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.services.GlobalStatusSvc;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
 import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
@@ -11,8 +13,9 @@ import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.OnDroneListener;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
-import com.objects_detector.Detector;
+import com.objects_detector.detector.Detector;
 import com.objects_detector.ObjectDetectorListener;
+import com.objects_detector.detector.StreamDetector;
 import com.objects_detector.trackers.ColorTracker.ColorTracker;
 import com.objects_detector.trackers.ColorTrackerLockSingleObject.ColorTrackerLockSingleObject;
 import com.objects_detector.trackers.FakeTracker.FakeTracker;
@@ -30,6 +33,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -51,6 +56,9 @@ import java.util.ResourceBundle;
 @Component
 public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectDetectorListener, Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(InternalFrameVideo.class);
+
+    @FXML
+    public BorderPane content;
 
     @Autowired
     @NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
@@ -77,6 +85,9 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     private GlobalStatusSvc globalStatusSvc;
 
     @Autowired
+    private ActiveUserProfile activeUserProfile;
+
+    @Autowired
     private GuiAppConfig guiAppConfig;
 
     @Autowired
@@ -88,6 +99,10 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     @NotNull
     @FXML
     private Pane root;
+
+    @NotNull
+    @FXML
+    private HBox videoToolbar;
 
     @NotNull
     @FXML
@@ -117,7 +132,7 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     @FXML
     private ComboBox<TrackersEnum> cbTrackerSelect;
 
-    private Detector detector;
+    private StreamDetector detector;
     private InternalFrameVideo myself;
 
     private double originalVideoWidth = 0;
@@ -125,13 +140,18 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
 
     private static int called;
 
+    private boolean isOnMainScreen() {
+        return String.valueOf(Dashboard.DisplayMode.HUD_MODE).equals(activeUserProfile.getDefinition(String.valueOf(Dashboard.DisplayMode.DisplayMode)));
+    }
+
     @PostConstruct
     private void init() {
         Assert.isTrue(++called == 1, "Not a Singleton");
 
         drone.addDroneListener(this);
         try {
-            detector = new Detector(1);
+            int devID = Integer.parseInt(activeUserProfile.getDefinition("deviceId", "0"));
+            detector = new StreamDetector(devID);
             detector.setTracker(null);
             detector.addListener(this);
             globalStatusSvc.setComponentStatus(GlobalStatusSvc.Component.DETECTOR, true);
@@ -165,16 +185,25 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
         hud_hide.setToggleGroup(radioGroup);
 
         hud.setHideBackground(false);
+
+        if (isOnMainScreen()) {
+            content.setTop(null);
+            hud.setItemsLevel(HUD.ViewLevel.ANGLE_ONLY);
+            handleOpCameraOnAction(null);
+        }
     }
 
     @FXML
     public void handleVideoMouseClick(MouseEvent mouseEvent) {
+        if (isOnMainScreen()) {
+            return;
+        }
         if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mouseEvent.getClickCount() >= 2) {
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             double ratio = (primaryScreenBounds.getHeight() - 50) / originalVideoHeight;
             double height = primaryScreenBounds.getHeight();
             double width = originalVideoWidth * ratio;
-            Parent droneEyeView = (Parent) guiAppConfig.loadInternalFrame("/com/dronegcs/console/views/DroneEyeView.fxml", width, height);
+            Parent droneEyeView = (Parent) guiAppConfig.loadFrame("/com/dronegcs/console/views/DroneEyeView.fxml", width, height);
             loggerDisplayerSvc.logGeneral("add drone listening to drone eye view");
             drone.addDroneListener(externalFrameVideo);
             detector.addListener(externalFrameVideo);
@@ -221,7 +250,12 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
                 if (detector != null && detector.isActive()) {
                     loggerDisplayerSvc.logGeneral("Device is running  stopping current before switching id");
                     detector.stop();
-                    detector.setDeviceId((int) command.getSource());
+                    String deviceId = activeUserProfile.getDefinition("deviceId");
+                    if (deviceId == null) {
+                        loggerDisplayerSvc.logError("Failed to identify device ID");
+                        return;
+                    }
+                    detector.setDeviceId(Integer.parseInt(deviceId));
                     detector.start();
                 }
                 break;
@@ -234,9 +268,10 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
         originalVideoWidth = img.getWidth();
         originalVideoHeight = img.getHeight();
 //        imageViewer.setFitWidth(root.getPrefWidth());
-        imageViewer.setPreserveRatio(true);
+//        imageViewer.setPreserveRatio(true);
         imageViewer.setImage(img);
-        imageViewer.setLayoutX((imageViewer.getImage().getWidth() - root.getPrefWidth())/2);
+//        imageViewer.setLayoutX((imageViewer.getImage().getWidth() - root.getPrefWidth())/2);
+//        imageViewer.setLayoutX(100);
     }
 
 
@@ -258,6 +293,9 @@ public class InternalFrameVideo extends Pane implements OnDroneListener, ObjectD
     @FXML
     public void handleTrackerSelectOnAction(ActionEvent actionEvent) {
         TrackersEnum value = cbTrackerSelect.getValue();
+        if (detector == null)
+            return;
+
         switch (value) {
             case MOVEMENT_TRACKER:
                 detector.setTracker(new MovmentTracker(10, 24));

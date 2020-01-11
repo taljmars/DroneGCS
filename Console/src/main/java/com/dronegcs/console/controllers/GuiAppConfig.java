@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Created by taljmars on 3/13/17.
@@ -75,18 +76,34 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
         return fxmlloader;
     }
 
-    public Object load(String url) {
-        try {
-            InputStream fxmlStream = AppConfig.class.getResourceAsStream(url);
-            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(url);
-            return fxmlLoader.load(fxmlStream);
-        } catch (IOException e) {
-            LOGGER.error("Failed to load configuration", e);
-            return null;
-        }
-    }
+//    public Object load(String url) {
+//        try {
+//            InputStream fxmlStream = AppConfig.class.getResourceAsStream(url);
+//            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(url);
+//            return fxmlLoader.load(fxmlStream);
+//        } catch (IOException e) {
+//            LOGGER.error("Failed to load configuration", e);
+//            return null;
+//        }
+//    }
 
-    public Node loadInternalFrame(String internalFrameUrl, double width, double height) {
+//    public Node loadFrame(String internalFrameUrl, Map<String, Object> defs) {
+//        try {
+//            InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
+//            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
+//            if (defs != null) {
+//                for (Map.Entry<String, Object> e : defs.entrySet()) {
+//                    fxmlLoader.getNamespace().put(e.getKey(), e.getValue());
+//                }
+//            }
+//            return fxmlLoader.load(fxmlStream);
+//        } catch (IOException e) {
+//            LOGGER.error("Failed to load internal frames", e);
+//            return null;
+//        }
+//    }
+
+    public Node loadFrame(String internalFrameUrl, double width, double height) {
         try {
             InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
             FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
@@ -99,12 +116,17 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
         }
     }
 
-    public Node loadInternalFrame(String internalFrameUrl, Object object) {
+    public Node loadFrame(String internalFrameUrl) {
+        return loadFrame(internalFrameUrl, null);
+    }
+
+    public Node loadFrame(String internalFrameUrl, Object object) {
         try {
             InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
             FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
             Node node = fxmlLoader.load(fxmlStream);
-            ((Node)fxmlLoader.getController()).setUserData(object);
+            if (object != null)
+                ((Node)fxmlLoader.getController()).setUserData(object);
             return node;
         } catch (IOException e) {
             LOGGER.error("Failed to load internal frames", e);
@@ -112,16 +134,6 @@ public class GuiAppConfig implements EventHandler<WindowEvent> {
         }
     }
 
-    public Node loadInternalFrame(String internalFrameUrl) {
-        try {
-            InputStream fxmlStream = AppConfig.class.getResourceAsStream(internalFrameUrl);
-            FXMLLoader fxmlLoader = getFXMLLoaderForUrl(internalFrameUrl);
-            return fxmlLoader.load(fxmlStream);
-        } catch (IOException e) {
-            LOGGER.error("Failed to load internal frames", e);
-            return null;
-        }
-    }
 
     @Override
     public void handle(WindowEvent event) {

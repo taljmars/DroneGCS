@@ -19,6 +19,9 @@
 #btnCameraImage {          
 	-fx-image: url("guiImages/Camera.png");
 }
+#btnMapImage {
+	-fx-image: url("guiImages/Map.png");
+}
 #btnMavlinkParamsImage {
 	-fx-image: url("guiImages/MavlinkParams.png");
 }

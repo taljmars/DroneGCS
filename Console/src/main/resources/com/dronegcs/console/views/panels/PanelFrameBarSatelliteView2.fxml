@@ -6,78 +6,84 @@
 <?import javafx.scene.layout.VBox?>
 <?import java.lang.Double?>
 <VBox
-	  xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-	  fx:controller="com.dronegcs.console.controllers.internalPanels.PanelFrameBarSatellite"
-	  spacing="3"
-	  opacity="0.6">
+		fx:id="root"
+		xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+		fx:controller="com.dronegcs.console.controllers.internalPanels.PanelFrameBarSatellite"
+		spacing="3"
+		opacity="0.6">
 
 	<fx:define>
 		<Double fx:id="buttonSize" fx:value="40.0"/>
 	</fx:define>
-	
-   <children>
 
-	   <Button fx:id="btnQuickData" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			   onMouseClicked="#ToolbarOnClickEvent">
-		   <graphic><ImageView fx:id="btnQuickDataImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
-	   </Button>
+	<children>
 
-	  <Button fx:id="btnActualPWM" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			  onMouseClicked="#ToolbarOnClickEvent">
-         <graphic><ImageView fx:id="btnActualPWMImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
-	  </Button>
-	  
-	  <Button fx:id="btnBattery" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			  onMouseClicked="#ToolbarOnClickEvent">
-         <graphic><ImageView fx:id="btnBatteryImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
-	  </Button>
-	  
-	  <Button fx:id="btnSignal" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			  onMouseClicked="#ToolbarOnClickEvent">
-          <graphic><ImageView fx:id="btnSignalImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
-	  </Button>
-	  
-	  <Button fx:id="btnHeightAndSpeed" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			  onMouseClicked="#ToolbarOnClickEvent">
-         <graphic><ImageView fx:id="btnHeightAndSpeedImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
-	  </Button>
-	  
-	  <Button fx:id="btnCamera" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			  onMouseClicked="#ToolbarOnClickEvent">
-         <graphic><ImageView fx:id="btnCameraImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic> 
-	  </Button>
+		<Button fx:id="btnQuickData" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnQuickDataImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
 
-	   <Button fx:id="btnMavlinkParams" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			   onMouseClicked="#ToolbarOnClickEvent">
-		   <graphic><ImageView fx:id="btnMavlinkParamsImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
-	   </Button>
+		<Button fx:id="btnActualPWM" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnActualPWMImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
 
-	   <Button fx:id="btnMavlinkConfiguration" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-			   onMouseClicked="#ToolbarOnClickEvent">
-		   <graphic><ImageView fx:id="btnMavlinkConfigurationImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
-	   </Button>
+		<Button fx:id="btnBattery" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnBatteryImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
 
-	   <Button fx:id="btnEventLog" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
-	   			onMouseClicked="#ToolbarOnClickEvent">
-		   <graphic><ImageView fx:id="btnEventLogImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
-	   </Button>
+		<Button fx:id="btnSignal" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnSignalImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
 
-	  	<Button fx:id="btnPublish" onMouseClicked="#publish">
-         	<graphic><ImageView fx:id="btnPublishOffImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
-	  	</Button>
+		<Button fx:id="btnHeightAndSpeed" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnHeightAndSpeedImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
 
-	  	<Button fx:id="btnDiscard" onMouseClicked="#discard">
+		<Button fx:id="btnCamera" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnCameraImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnMap" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent" visible="false">
+			<graphic><ImageView fx:id="btnMapImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnMavlinkParams" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+		onMouseClicked="#ToolbarOnClickEvent">
+		<graphic><ImageView fx:id="btnMavlinkParamsImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnMavlinkConfiguration" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnMavlinkConfigurationImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnEventLog" onDragDetected="#ToolbarOnDragEvent" onDragDone="#ToolbarOnDragDone"
+				onMouseClicked="#ToolbarOnClickEvent">
+			<graphic><ImageView fx:id="btnEventLogImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnPublish" onMouseClicked="#publish">
+			<graphic><ImageView fx:id="btnPublishOffImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
+		</Button>
+
+		<Button fx:id="btnDiscard" onMouseClicked="#discard">
 			<graphic><ImageView fx:id="btnDiscardOffImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>
 		</Button>
 
 
-	   <!--<Button fx:id="btnExit" onMouseClicked="#ButtonExitOnAction">-->
-			<!--<graphic><ImageView fx:id="btnExitImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>-->
-	   <!--</Button>-->
-	  
-   </children>
-   <padding>
-      <!--<Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
-	   <Insets bottom="2.0" top="2.0" />
-   </padding>
+		<!--<Button fx:id="btnExit" onMouseClicked="#ButtonExitOnAction">-->
+		<!--<graphic><ImageView fx:id="btnExitImage" fitHeight="$buttonSize" fitWidth="$buttonSize" /></graphic>-->
+		<!--</Button>-->
+
+	</children>
+	<padding>
+		<!--<Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />-->
+		<Insets bottom="2.0" top="2.0" />
+	</padding>
 </VBox>

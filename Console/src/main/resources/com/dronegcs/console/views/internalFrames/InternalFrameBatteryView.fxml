@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <AnchorPane fx:id="root" prefHeight="${prefHeight}" prefWidth="${prefWidth}" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dronegcs.console.controllers.internalFrames.InternalFrameBattery" opacity="0.7">
 	<children>
-		<BorderPane>
+		<BorderPane style="-fx-background-color: whitesmoke;" >
 			<top>
 				<HBox maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="${root.prefWidth}" style="-fx-background-color: whitesmoke;" BorderPane.alignment="CENTER">
 					<ToggleButton fx:id="btnLastMin" text="Last 2 minutes" onAction="#handleFilteredMinutes" selected="false"/>

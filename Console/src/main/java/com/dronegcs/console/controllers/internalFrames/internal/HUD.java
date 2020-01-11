@@ -1,5 +1,7 @@
 package com.dronegcs.console.controllers.internalFrames.internal;
 
+import com.dronegcs.console.controllers.dashboard.Dashboard;
+import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.generic_tools.logger.Logger;
@@ -38,6 +40,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
 
     public enum ViewLevel {
         ALL_ITEMS,
+        ANGLE_ONLY,
         DATA_ONLY,
         NONE
     }
@@ -81,6 +84,9 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
     @NotNull @Autowired
     private Logger logger;
 
+    @Autowired
+    private ActiveUserProfile activeUserProfile;
+
     private List<Label> angleLabels;
     private List<Label> dataLabels;
 
@@ -99,16 +105,19 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         initializedDone = false;
     }
 
+
+
     @FXML
     public void initialize() {
-        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
-        if (validatorResponse.isFailed())
-            throw new RuntimeException(validatorResponse.toString());
+//        ValidatorResponse validatorResponse = runtimeValidator.validate(this);
+//        if (validatorResponse.isFailed())
+//            throw new RuntimeException(validatorResponse.toString());
 
         PhongMaterial mat4 = new PhongMaterial();
         Image img = new Image(getClass().getResource("/com/dronegcs/console/guiImages/diffuse.jpg").toExternalForm());
         mat4.setDiffuseMap(img);
         sphere.setMaterial(mat4);
+
 
         // create ImagePattern
         SetRollAngle(0, true);
@@ -136,6 +145,7 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         angleLabels.add(hud_p_30);
         angleLabels.add(hud_p_45);
         angleLabels.add(tiltPointer);
+        angleLabels.add(lblPointerToHome);
 
         for (Label label : angleLabels)
             setLabelStyle(label, "-fx-text-fill: chartreuse;");
@@ -146,7 +156,6 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
         dataLabels.add(lblAlt);
         dataLabels.add(lblSignal);
         dataLabels.add(lblBattery);
-        dataLabels.add(lblPointerToHome);
         dataLabels.add(lblCompass);
         dataLabels.add(lblFlightTime);
         dataLabels.add(lblFlightDist);
@@ -158,6 +167,15 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
 
         arc.setFill(null);
         arc.getStrokeDashArray().addAll(2d, 21d);
+
+        SetFlightModeLabel("-");
+        SetLblSignal(0);
+        SetLblBattery(0);
+
+        SetLblSpeed(0);
+
+        SetDistToLaunch(0);
+        SetLblAlt(0);
 
         initializedDone = true;
     }
@@ -333,6 +351,15 @@ public class HUD extends StackPane implements DroneInterfaces.OnDroneListener {
                     for (Label l : angleLabels) l.setVisible(false);
                     for (Label l : dataLabels) l.setVisible(true);
                     this.viewLevel = ViewLevel.DATA_ONLY;
+                    break;
+                case ANGLE_ONLY:
+                    root.setVisible(true);
+                    arc.setVisible(true);
+                    horizontal_bar_left.setVisible(true);
+                    horizontal_bar_right.setVisible(true);
+                    for (Label l : angleLabels) l.setVisible(true);
+                    for (Label l : dataLabels) l.setVisible(false);
+                    this.viewLevel = ViewLevel.ANGLE_ONLY;
                     break;
             }
         });
