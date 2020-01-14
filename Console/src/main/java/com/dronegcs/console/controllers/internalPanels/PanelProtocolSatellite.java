@@ -42,6 +42,7 @@ public class PanelProtocolSatellite extends Pane implements Initializable, MavLi
 	@NotNull @FXML public Label transmittedBytesVal;
 	@NotNull @FXML public Label transmittedBytesPerSecondVal;
 	@NotNull @FXML public Label throughputBytesPerSecondVal;
+	@NotNull @FXML public Label receivedUncategorizedPackets;
 	@NotNull @FXML public Label protocolVal;
 
 	//
@@ -77,6 +78,7 @@ public class PanelProtocolSatellite extends Pane implements Initializable, MavLi
 			transmittedBytesVal.setText(connectionStatistics.getTransmittedBytes() + "");
 			transmittedBytesPerSecondVal.setText(connectionStatistics.getTransmittedBytesPerSecond() + "");
 			throughputBytesPerSecondVal.setText(connectionStatistics.getReceivedBytesPerSecond() + connectionStatistics.getTransmittedBytesPerSecond() + "");
+			receivedUncategorizedPackets.setText(connectionStatistics.getReceivedUncategorizedPackets() + "");
 		});
 	}
 

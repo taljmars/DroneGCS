@@ -1,6 +1,7 @@
 package com.dronegcs.console.controllers;
 
 import com.db.persistence.scheme.*;
+import com.dronegcs.console.controllers.internalFrames.debug.DebugTool;
 import com.dronegcs.console.flightControllers.KeyBoardController;
 import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.console_plugin.event_logger.EventLogManager;
@@ -69,6 +70,9 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 
 	@Autowired
 	private ActiveUserProfile activeUserProfile;
+
+	@Autowired
+	private DebugTool debugTool;
 
 	private Stage mainStage;
 
@@ -163,6 +167,7 @@ public class DroneLaunch extends AbstractJavaFxApplicationSupport implements Dro
 		Scene scene = new Scene(root);
 		//scene.getStylesheets().add("talma.css");
 		scene.setOnKeyPressed(keyBoardController);
+		scene.setOnKeyReleased(debugTool);
 //		mainStage.setResizable(false);
 		mainStage.setScene(scene);
 		mainStage.setMaximized(true);

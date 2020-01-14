@@ -233,6 +233,8 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 						});
 						hbox.getChildren().addAll(cb);
 					}
+//					else if (existParam.getUnit().equals(MAV_PARAM_UNIT.)) {
+//					}
 					else {
 						TextField textField = new TextField(entry.getValue());
 						textField.setOnAction(value -> getTableView().getItems().get(getIndex()).setValue(textField.getText()));
