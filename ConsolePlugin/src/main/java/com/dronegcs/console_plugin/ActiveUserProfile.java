@@ -17,6 +17,7 @@ public class ActiveUserProfile implements Serializable {
     public enum DEFS {
         HeartBeatFreq("1"),
         ParamAutoFetch("false"),
+        GCSID("255")
         ;
 
         public final String defaultVal;

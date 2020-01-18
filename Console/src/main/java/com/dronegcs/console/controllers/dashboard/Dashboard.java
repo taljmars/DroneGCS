@@ -50,6 +50,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import com.dronegcs.console_plugin.ActiveUserProfile.DEFS.*;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
@@ -58,6 +59,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.dronegcs.console_plugin.ActiveUserProfile.DEFS.GCSID;
+import static com.dronegcs.console_plugin.ActiveUserProfile.DEFS.HeartBeatFreq;
 import static com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType.*;
 import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
 import static com.dronegcs.tracker.objects.EventSource.DRONE;
@@ -550,7 +553,9 @@ public class Dashboard extends StackPane implements OnDroneListener, OnWaypointM
             case USER_PROFILE_LOADED:
                 drone.getParameters().setAutoFetch(Boolean.parseBoolean(activeUserProfile.getDefinition(ActiveUserProfile.DEFS.ParamAutoFetch.name(),ActiveUserProfile.DEFS.ParamAutoFetch.defaultVal)));
                 GCSHeartbeat gcsHeartbeat = applicationContext.getBean(GCSHeartbeat.class);
-                gcsHeartbeat.setFrequency(Integer.parseInt(activeUserProfile.getDefinition(ActiveUserProfile.DEFS.HeartBeatFreq.name(),ActiveUserProfile.DEFS.HeartBeatFreq.defaultVal)));
+                gcsHeartbeat.setFrequency(Integer.parseInt(activeUserProfile.getDefinition(HeartBeatFreq.name(), HeartBeatFreq.defaultVal)));
+                int gcsid = Integer.parseInt(activeUserProfile.getDefinition(GCSID.name(), drone.getGCS().getId() + ""));
+                drone.getGCS().setId(gcsid);
                 break;
         }
     }

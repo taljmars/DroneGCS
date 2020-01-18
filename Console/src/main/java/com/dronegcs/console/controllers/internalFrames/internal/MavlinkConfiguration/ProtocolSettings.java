@@ -4,6 +4,9 @@ import com.dronegcs.console.DialogManagerSvc;
 import com.dronegcs.console_plugin.ActiveUserProfile;
 import com.dronegcs.mavlink.core.gcs.GCSHeartbeat;
 import com.dronegcs.mavlink.is.drone.Drone;
+import com.dronegcs.tracker.objects.TrackerEvent;
+import com.dronegcs.tracker.services.TrackerEventProducer;
+import com.dronegcs.tracker.services.TrackerSvc;
 import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.event.ActionEvent;
@@ -24,7 +27,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 @Component
-public class ProtocolSettings extends Pane implements Initializable {
+public class ProtocolSettings extends Pane implements Initializable, TrackerEventProducer {
 
     @Autowired @NotNull(message = "Internal Error: Failed to get drone")
     private Drone drone;
@@ -44,16 +47,18 @@ public class ProtocolSettings extends Pane implements Initializable {
     @Autowired
     private ActiveUserProfile activeUserProfile;
 
-    @FXML
-    public CheckBox cbFetchOnConnect;
+    @Autowired
+    private TrackerSvc trackerSvc;
 
-    @FXML
-    public TextField gcsHbInterval;
+    @FXML private CheckBox cbFetchOnConnect;
+    @FXML private TextField gcsHbInterval;
+    @FXML private TextField gcsId;
 
     private static int called = 0;
     @PostConstruct
     private void init() {
         Assert.isTrue(++called == 1, "Not a Singleton");
+        trackerSvc.addEventProducer(this);
     }
 
     @Override
@@ -68,12 +73,15 @@ public class ProtocolSettings extends Pane implements Initializable {
 
     @FXML
     public void onFetchParameters(ActionEvent actionEvent) {
+        TrackerEvent event = null;
         if (cbFetchOnConnect.isSelected()) {
             drone.getParameters().setAutoFetch(true);
         }
         else {
             drone.getParameters().setAutoFetch(false);
         }
+        event = new TrackerEvent(activeUserProfile.getUsername(),"",TrackerEvent.Type.INFO,"Setting","Autofetch set to " + drone.getParameters().isFetchOnConnect());
+        trackerSvc.pushEvent(this,event);
         activeUserProfile.setDefinition(ActiveUserProfile.DEFS.ParamAutoFetch.name(), String.valueOf(cbFetchOnConnect.isSelected()));
     }
 
@@ -84,7 +92,10 @@ public class ProtocolSettings extends Pane implements Initializable {
             if (interval <= 0) {
                 dialogManagerSvc.showErrorMessageDialog("Interval must be greater than zero", null);
             }
+            int oldFreq = gcsHeartbeat.getFrequency();
             gcsHeartbeat.setFrequency(interval);
+            TrackerEvent event = new TrackerEvent(activeUserProfile.getUsername(),"",TrackerEvent.Type.INFO,"Setting","GCS Heartbeat interval changed from " + oldFreq + " bits to " + interval + " bits per seconds");
+            trackerSvc.pushEvent(this,event);
             return;
         }
         catch (NumberFormatException e) {
@@ -95,5 +106,29 @@ public class ProtocolSettings extends Pane implements Initializable {
         }
         gcsHbInterval.setText(gcsHeartbeat.getFrequency() + "");
         activeUserProfile.setDefinition(ActiveUserProfile.DEFS.HeartBeatFreq.name(), gcsHbInterval.getText());
+    }
+
+    @FXML
+    public void updateGCSId(ActionEvent actionEvent) {
+        try {
+            int id = Integer.parseInt(gcsId.getText());
+            if (id <= 0 || id > 255) {
+                dialogManagerSvc.showErrorMessageDialog("GCS ID must be within the range of 0-255", null);
+            }
+            gcsHeartbeat.setFrequency(id);
+            return;
+        }
+        catch (NumberFormatException e) {
+            dialogManagerSvc.showErrorMessageDialog("Interval must be native and complete number", e);
+        }
+        catch (Exception e) {
+            dialogManagerSvc.showErrorMessageDialog("GCS ID must be within the range of 0-255", e);
+        }
+
+        int oldId = drone.getGCS().getId();
+        drone.getGCS().setId(Integer.parseInt(gcsId.getText()));
+        TrackerEvent event = new TrackerEvent(activeUserProfile.getUsername(),"",TrackerEvent.Type.INFO,"Setting","GCS ID changed from " + oldId + " to " + gcsId.getText());
+        trackerSvc.pushEvent(this,event);
+        activeUserProfile.setDefinition(ActiveUserProfile.DEFS.GCSID.name(), gcsId.getText());
     }
 }

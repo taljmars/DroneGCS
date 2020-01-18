@@ -4,7 +4,6 @@ import com.dronegcs.console.controllers.EditingCell;
 import com.dronegcs.console.controllers.dashboard.FloatingNodeManager;
 import com.dronegcs.console.controllers.internalFrames.internal.MavlinkParameters.ParamsTableEntry;
 import com.dronegcs.console_plugin.services.LoggerDisplayerSvc;
-import com.dronegcs.console_plugin.services.internal.logevents.DroneGuiEvent;
 import com.dronegcs.mavlink.is.drone.Drone;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces;
 import com.dronegcs.mavlink.is.drone.DroneInterfaces.DroneEventsType;
@@ -17,6 +16,7 @@ import com.generic_tools.validations.RuntimeValidator;
 import com.generic_tools.validations.ValidatorResponse;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -26,15 +26,18 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import javafx.util.converter.NumberStringConverter;
+import org.controlsfx.control.CheckComboBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -51,6 +54,24 @@ import static com.dronegcs.mavlink.is.drone.profiles.Parameters.UNINDEX_PARAM;
 public class MavlinkParams extends Pane implements OnDroneListener, Initializable, DroneInterfaces.OnParameterManagerListener {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(MavlinkParams.class);
+	private static final String MODIFIED_COLOR = "-fx-background-color: #96dd86;";
+
+	public class BitMaskTuple {
+		String value;
+		int bit;
+		int bitAsInt = 1;
+
+		public BitMaskTuple(String value, int bit) {
+			this.value = value;
+			this.bit = bit;
+			bitAsInt = (bitAsInt << bit);
+		}
+
+		@Override
+		public String toString() {
+			return value;
+		}
+	}
 
 	@Autowired
 	@NotNull(message = "Internal Error: Failed to get com.generic_tools.logger displayer")
@@ -69,12 +90,14 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 	@NotNull @FXML private TableColumn<ParamsTableEntry,Number> defaultValue;
 	@NotNull @FXML private TableColumn<ParamsTableEntry,String> unit;
 	@NotNull @FXML private TableColumn<ParamsTableEntry,String> modify;
-	@NotNull @FXML private TableColumn<ParamsTableEntry,String> update;
+	//	@NotNull @FXML private TableColumn<ParamsTableEntry,String> update;
 	@NotNull @FXML private TableColumn<ParamsTableEntry,String> description;
 
+	@NotNull @FXML private CheckBox cbHideUnknownParams;
 	@NotNull @FXML private TextField txtSearchField;
 	@NotNull @FXML private Label lblEntries;
 
+	@NotNull @FXML private Button btnUpdate;
 	@NotNull @FXML private Button btnRefresh;
 	@NotNull @FXML private ComboBox cbOfflineProfile;
 
@@ -95,6 +118,8 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 	@NotNull @FXML private Pane root;
 
 	private FilteredList<Parameter> filteredData = null;
+
+	private HashMap<String,ParamsTableEntry> modifiedList;
 
 	private class ParamGroup {
 		String name;
@@ -121,11 +146,15 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 		if (validatorResponse.isFailed())
 			throw new RuntimeException(validatorResponse.toString());
 
+		modifiedList = new HashMap();
+
 		btnRefresh.setDisable(!drone.getMavClient().isConnected());
+		btnUpdate.setDisable(!drone.getMavClient().isConnected());
 		cbOfflineProfile.setDisable(drone.getMavClient().isConnected());
 		cbOfflineProfile.getItems().addAll(MAV_TYPE.values());
 		cbOfflineProfile.setValue(drone.getMavClient().isConnected() ? drone.getType().getDroneType() : MAV_TYPE.MAV_TYPE_QUADROTOR);
 
+		// Get parameters list
 		List<Parameter> parametersList = null;
 		if (drone.getMavClient().isConnected())
 			parametersList = drone.getParameters().getParametersList();
@@ -153,7 +182,27 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 		});
 
 		id.setCellValueFactory(new PropertyValueFactory<>("id"));
-		name.setCellValueFactory(new PropertyValueFactory<>("name"));
+//		name.setCellValueFactory(new PropertyValueFactory<>("name"));
+		name.setCellFactory( param -> {
+			final TableCell<ParamsTableEntry, String> cell = new TableCell<ParamsTableEntry, String>() {
+				@Override
+				public void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+					setGraphic(null);
+					setText(null);
+
+					if (empty || getIndex() < 0)
+						return;
+
+					ParamsTableEntry entry = getTableView().getItems().get( getIndex() );
+					Label label = new Label(entry.getName());
+					if (modifiedList.get(entry.getName()) != null)
+						label.setStyle(MODIFIED_COLOR);
+					setGraphic( label );
+				}
+			};
+			return cell;
+		});
 		title.setCellValueFactory(new PropertyValueFactory<>("title"));
 
 //		name.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -201,13 +250,13 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 					MAV_PARAM_I existParam = drone.getVehicleProfile().getParametersMetadataMap().get(entry.getName());
 					if (existParam == null) {
 						LOGGER.error("Parameter '" + entry.getName() + "' doesn't exist in the parameters list");
-						return;
+						entry.setKnownParam(false);
 					}
-					if (existParam.isReadOnly())
+					if (existParam != null && existParam.isReadOnly())
 						return;
 
 					HBox hbox = new HBox();
-					if (existParam.getUnit().equals(MAV_PARAM_UNIT.FLAGS)) {
+					if (existParam != null && existParam.getUnit().equals(MAV_PARAM_UNIT.FLAGS)) {
 						ComboBox cb = new ComboBox();
 						cb.setPrefWidth(value.getPrefWidth());
 						cb.getItems().addAll(existParam.getOptions().values());
@@ -220,30 +269,83 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 						cb.setValue(existParam.getOptions().get(number));
 						cb.setOnAction(value -> {
 							if (!drone.getMavClient().isConnected()) {
-								// In offile we force the original value
+								// In offline we force the original value
 								cb.setValue(existParam.getOptions().get(number));
 								return;
 							}
 							for (Map.Entry<Number, String> entrySet : existParam.getOptions().entrySet()) {
 								if (entrySet.getValue().equals(cb.getValue())) {
 									getTableView().getItems().get(getIndex()).setValue(String.valueOf(entrySet.getKey()));
-									return;
+									break;
 								}
 							}
+							modifiedList.put(entry.getName(), entry);
+							name.getTableView().refresh();
 						});
 						hbox.getChildren().addAll(cb);
 					}
-//					else if (existParam.getUnit().equals(MAV_PARAM_UNIT.)) {
-//					}
+					else if (existParam.getUnit().equals(MAV_PARAM_UNIT.BITMASK)) {
+						CheckComboBox cb = new CheckComboBox();
+						cb.setPrefWidth(value.getPrefWidth());
+						ObservableList<BitMaskTuple> strings = FXCollections.observableArrayList();
+						int val = Integer.parseInt(entry.getValue());
+						for (Number key : existParam.getOptions().keySet()) {
+							strings.addAll(new BitMaskTuple(existParam.getOptions().get(key), key.intValue()));
+
+						}
+
+						cb.getItems().addAll(strings);
+						int index = 0;
+						for (Object obj : cb.getItems()) {
+							BitMaskTuple bitMaskTuple = (BitMaskTuple) obj;
+							if ((bitMaskTuple.bitAsInt & val) == bitMaskTuple.bitAsInt)
+								cb.getCheckModel().check(index);
+							index++;
+						}
+
+						cb.getCheckModel().getCheckedIndices().addListener((ListChangeListener) c -> {
+							if (!drone.getMavClient().isConnected()) {
+								// In offline we force the original value
+								return;
+							}
+							c.next();
+							int currentVal = Integer.parseInt(entry.getValue());
+							if (c.wasAdded()) {
+								for (Object obj : c.getAddedSubList()) {
+									BitMaskTuple bitMaskTuple = (BitMaskTuple) cb.getItems().get((Integer) obj);
+									currentVal = (currentVal | bitMaskTuple.bitAsInt);
+								}
+							}
+							if (c.wasRemoved()) {
+								for (Object obj : c.getRemoved()) {
+									BitMaskTuple bitMaskTuple = (BitMaskTuple) cb.getItems().get((Integer) obj);
+									currentVal = (currentVal & ~bitMaskTuple.bitAsInt);
+								}
+							}
+							entry.setValue(currentVal+"");
+							modifiedList.put(entry.getName(), entry);
+							name.getTableView().refresh();
+						});
+						hbox.getChildren().addAll(cb);
+					}
 					else {
-						TextField textField = new TextField(entry.getValue());
-						textField.setOnAction(value -> getTableView().getItems().get(getIndex()).setValue(textField.getText()));
+						Number val = Double.parseDouble(entry.getValue());
+						if ((val.doubleValue() == Math.floor(val.doubleValue())) && !Double.isInfinite(val.doubleValue()))
+							val = new Integer((int) val.doubleValue());
+
+						TextField textField = new TextField(val + "");
+						textField.setOnAction(value -> {
+							getTableView().getItems().get(getIndex()).setValue(textField.getText());
+							modifiedList.put(entry.getName(), entry);
+							name.getTableView().refresh();
+						});
 						textField.setPrefWidth(value.getPrefWidth());
 						textField.setEditable(drone.getMavClient().isConnected());
 						hbox.getChildren().addAll(textField);
 					}
 					hbox.setAlignment(Pos.CENTER);
 					setGraphic( hbox );
+//					name.getTableView().refresh();
 				}
 			};
 			return cell;
@@ -276,22 +378,34 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 
 						left.setOnAction( ( ActionEvent event ) -> {
 							Number increment = param.getIncrement();
-							Number value;
+							Number val;
 							if (increment instanceof Double)
-								value = Double.parseDouble(entry.getValue()) - increment.doubleValue();
+								val = Double.parseDouble(entry.getValue()) - increment.doubleValue();
 							else
-								value = Integer.parseInt(entry.getValue()) - increment.intValue();
-							entry.setValue(value + "");
+								val = Double.parseDouble(entry.getValue()) - increment.intValue();
+
+							if ((val.doubleValue() == Math.floor(val.doubleValue())) && !Double.isInfinite(val.doubleValue()))
+								val = new Integer((int) val.doubleValue());
+
+							entry.setValue(val + "");
+							modifiedList.put(entry.getName(), entry);
+							name.getTableView().refresh();
 						});
 
 						right.setOnAction( ( ActionEvent event ) -> {
 							Number increment = param.getIncrement();
-							Number value;
+							Number val;
 							if (increment instanceof Double)
-								value = Double.parseDouble(entry.getValue()) + increment.doubleValue();
+								val = Double.parseDouble(entry.getValue()) + increment.doubleValue();
 							else
-								value = Integer.parseInt(entry.getValue()) + increment.intValue();
-							entry.setValue(value + "");
+								val = Double.parseDouble(entry.getValue()) + increment.intValue();
+
+							if ((val.doubleValue() == Math.floor(val.doubleValue())) && !Double.isInfinite(val.doubleValue()))
+								val = new Integer((int) val.doubleValue());
+
+							entry.setValue(val + "");
+							modifiedList.put(entry.getName(), entry);
+							name.getTableView().refresh();
 						});
 						HBox hbox = new HBox(left, right);
 						hbox.setAlignment(Pos.CENTER);
@@ -302,49 +416,49 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 			return cell;
 		});
 
-		update.setVisible(drone.getMavClient().isConnected());
-		update.setCellFactory( param -> {
-			final TableCell<ParamsTableEntry, String> cell = new TableCell<ParamsTableEntry, String>() {
-				final Button btn = new Button("Update");
-				@Override
-				public void updateItem( String item, boolean empty ) {
-					super.updateItem( item, empty );
-					setGraphic( null );
-					setText( null );
-					if ( !empty && getIndex() > 0 ) {
-						ParamsTableEntry entry = getTableView().getItems().get( getIndex() );
-						MAV_PARAM_I param = drone.getVehicleProfile().getParametersMetadataMap().get(entry.getName());
-						if (param == null) {
-							LOGGER.error("Parameter '" + entry.getName() + "' doesn't exist in the parameters list");
-							return;
-						}
-						if (param.isReadOnly()) {
-							return;
-						}
-
-						btn.setOnAction( ( ActionEvent event ) -> {
-//							ParamsTableEntry entry = getTableView().getItems().get( getIndex() );
-							Double value = Double.parseDouble(entry.getValue());
-							if (value != null) {
-								if (!drone.isConnectionAlive()) {
-									LOGGER.debug("Connection is not a live, failed to update");
-									loggerDisplayerSvc.logGeneral("Connection is not a live, reconnect before update");
-									return;
-								}
-								Parameter parameter = new Parameter(entry.getName(),"dummy", value, value, "dummy", entry.getType(), true,"","Updated by GCS");
-								drone.getParameters().sendParameter(parameter);
-								LOGGER.debug("Update Parameter: {}", parameter);
-								loggerDisplayerSvc.logGeneral("Update Parameter: " + parameter);
-							}
-						});
-						HBox hbox = new HBox(btn);
-						hbox.setAlignment(Pos.CENTER);
-						setGraphic( hbox );
-					}
-				}
-			};
-			return cell;
-		});
+//		update.setVisible(drone.getMavClient().isConnected());
+//		update.setCellFactory( param -> {
+//			final TableCell<ParamsTableEntry, String> cell = new TableCell<ParamsTableEntry, String>() {
+//				final Button btn = new Button("Update");
+//				@Override
+//				public void updateItem( String item, boolean empty ) {
+//					super.updateItem( item, empty );
+//					setGraphic( null );
+//					setText( null );
+//					if ( !empty && getIndex() > 0 ) {
+//						ParamsTableEntry entry = getTableView().getItems().get( getIndex() );
+//						MAV_PARAM_I param = drone.getVehicleProfile().getParametersMetadataMap().get(entry.getName());
+//						if (param == null) {
+//							LOGGER.error("Parameter '" + entry.getName() + "' doesn't exist in the parameters list");
+//							return;
+//						}
+//						if (param.isReadOnly()) {
+//							return;
+//						}
+//
+//						btn.setOnAction( ( ActionEvent event ) -> {
+////							ParamsTableEntry entry = getTableView().getItems().get( getIndex() );
+//							Double value = Double.parseDouble(entry.getValue());
+//							if (value != null) {
+//								if (!drone.isConnectionAlive()) {
+//									LOGGER.debug("Connection is not a live, failed to update");
+//									loggerDisplayerSvc.logGeneral("Connection is not a live, reconnect before update");
+//									return;
+//								}
+//								Parameter parameter = new Parameter(entry.getName(),"dummy", value, value, "dummy", entry.getType(), true,"","Updated by GCS");
+//								drone.getParameters().sendParameter(parameter);
+//								LOGGER.debug("Update Parameter: {}", parameter);
+//								loggerDisplayerSvc.logGeneral("Update Parameter: " + parameter);
+//							}
+//						});
+//						HBox hbox = new HBox(btn);
+//						hbox.setAlignment(Pos.CENTER);
+//						setGraphic( hbox );
+//					}
+//				}
+//			};
+//			return cell;
+//		});
 
 		description.setCellValueFactory(new PropertyValueFactory<>("description"));
 //		description.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
@@ -387,7 +501,8 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 			regenerateGroups();
 		});
 
-		filteredData.setPredicate(p -> true);
+		predicatesSet.add(hideUnknownPredicate);
+		filteredData.setPredicate(generatePredicateSequence());
 		loadTable(filteredData);
 
 		regenerateGroups();
@@ -409,31 +524,46 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 			// GUI frame is not initialized yet
 			return;
 		}
-
 		Platform.runLater(() -> {
 			switch (event) {
+				case CONNECTED:
+					setButtonForOnline();
+					break;
 				case TYPE:
-					if (drone.getParameters().getParametersList() == null || drone.getParameters().getParametersList().size() == 0) {
-						filteredData = new FilteredList<>(FXCollections.observableList(new ArrayList<>()));
-						cbOfflineProfile.setValue(drone.getType().getDroneType());
-						loadTable(filteredData);
-						regenerateGroups();
-						setButtonForOnline();
-					}
+
+//					if (drone.getParameters().getParametersList() == null || drone.getParameters().getParametersList().size() == 0) {
+//						filteredData = new FilteredList<>(FXCollections.observableList(new ArrayList<>()));
+//						cbOfflineProfile.setValue(drone.getType().getDroneType());
+//						loadTable(filteredData);
+//						regenerateGroups();
+//						setButtonForOnline();
+//					}
+					cbOfflineProfile.setValue(drone.getType().getDroneType());
+
+					List<Parameter> parametersList = null;
+					if (drone.getMavClient().isConnected())
+						parametersList = drone.getParameters().getParametersList();
+					else
+						parametersList = drone.getParameters().getParametersMetadata();
+					filteredData = new FilteredList<>(FXCollections.observableList(parametersList), generatePredicateSequence());
+
+					loadTable(filteredData);
+					regenerateGroups();
+
 					break;
 			}
 		});
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	@EventListener
-	public void onApplicationEvent(DroneGuiEvent command) {
-		switch (command.getCommand()) {
-			case EXIT:
-
-				break;
-		}
-	}
+//	@SuppressWarnings("incomplete-switch")
+//	@EventListener
+//	public void onApplicationEvent(DroneGuiEvent command) {
+//		switch (command.getCommand()) {
+//			case EXIT:
+//
+//				break;
+//		}
+//	}
 
 	public void loadTable(FilteredList<Parameter> filteredData) {
 		if (table == null) {
@@ -441,10 +571,8 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 			return;
 		}
 
-//		if (filteredData.size() > 0) {
 		if (filteredData != null) {
 			data = FXCollections.observableArrayList();
-
 			for (int i = 0; i < filteredData.size(); i++) {
 				Parameter parameter = filteredData.get(i);
 				String defaultValue = String.valueOf(parameter.getDefaultValue());
@@ -469,11 +597,14 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 	public void setButtonForOnline() {
 		if (cbOfflineProfile == null)
 			return;
+		if (!drone.isConnectionAlive())
+			return;
 		cbOfflineProfile.setDisable(true);
 		btnRefresh.setDisable(false);
 		value.setEditable(true);
 		modify.setVisible(true);
-		update.setVisible(true);
+//		update.setVisible(true);
+		btnUpdate.setDisable(false);
 	}
 
 	@Override
@@ -512,12 +643,30 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 	}
 
 	@FXML
+	public void handleUpdate(ActionEvent actionEvent) {
+		if (modifiedList.size() == 0) {
+			LOGGER.debug("Modified table is empty");
+			return;
+		}
+		LOGGER.debug(modifiedList.size() + " Needs to be modified");
+
+		for (ParamsTableEntry entry : modifiedList.values()) {
+			Double value = Double.parseDouble(entry.getValue());
+			Parameter parameter = new Parameter(entry.getName(),"dummy", value, value, "dummy", entry.getType(), true,"","Updated by GCS");
+			drone.getParameters().sendParameter(parameter);
+			LOGGER.debug("Update Parameter: {}", parameter);
+			loggerDisplayerSvc.logGeneral("Update Parameter: " + parameter);
+		}
+		modifiedList.clear();
+	}
+
+	@FXML
 	public void handleOfflineProfile(ActionEvent actionEvent) {
-		drone.setType((MAV_TYPE)cbOfflineProfile.getValue());
 		predicatesSet.remove(groupPredicate);
-		filteredData = new FilteredList<>(FXCollections.observableList(drone.getParameters().getParametersMetadata()), generatePredicateSequence());
-		regenerateGroups();
-		loadTable(filteredData);
+		drone.setType((MAV_TYPE)cbOfflineProfile.getValue());
+//		filteredData = new FilteredList<>(FXCollections.observableList(drone.getParameters().getParametersMetadata()), generatePredicateSequence());
+//		regenerateGroups();
+//		loadTable(filteredData);
 	}
 
 	public void regenerateGroups() {
@@ -563,6 +712,13 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 		return false;
 	};
 
+	private Predicate<Parameter> hideUnknownPredicate = (Parameter parameter) -> {
+		if (drone.getVehicleProfile().getParametersMetadataMap().get(parameter.getName()) != null)
+			return true;
+
+		return false;
+	};
+
 	private Predicate<Parameter> generatePredicateSequence(){
 		Predicate<Parameter> predicate = (Parameter parameter) -> {
 			for (Predicate predicateObj : predicatesSet) {
@@ -579,5 +735,21 @@ public class MavlinkParams extends Pane implements OnDroneListener, Initializabl
 		predicatesSet.add(groupPredicate);
 		filteredData.setPredicate(generatePredicateSequence());
 		loadTable(filteredData);
+	}
+
+	@FXML
+	public void cbHideUnknownParamsClick(ActionEvent actionEvent) {
+		if (cbHideUnknownParams.isSelected() == false) {
+			// We need to show unknown params
+			predicatesSet.remove(hideUnknownPredicate);
+		}
+		else {
+			// We need to hide unknown params
+			predicatesSet.add(hideUnknownPredicate);
+		}
+		filteredData.setPredicate(generatePredicateSequence());
+		loadTable(filteredData);
+
+		regenerateGroups();
 	}
 }

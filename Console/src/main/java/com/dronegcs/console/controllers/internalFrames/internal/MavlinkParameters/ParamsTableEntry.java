@@ -13,6 +13,8 @@ public class ParamsTableEntry {
     private final SimpleStringProperty unit;
     private final SimpleIntegerProperty type;
     private final SimpleStringProperty description;
+
+    private boolean knownParam;
  
     public ParamsTableEntry(Integer pId, String pName, String pTitle, String pValue, String pDefaultValue, String pUnit, Integer pType, String pDescription) {
         this.id = new SimpleIntegerProperty(pId);
@@ -23,6 +25,7 @@ public class ParamsTableEntry {
         this.unit = new SimpleStringProperty(pUnit);
         this.type = new SimpleIntegerProperty(pType);
         this.description = new SimpleStringProperty(pDescription);
+        knownParam = true;
     }
 
     public int getId() {
@@ -119,5 +122,13 @@ public class ParamsTableEntry {
 
     public void setDescription(String description) {
         this.description.set(description);
+    }
+
+    public boolean isKnownParam() {
+        return knownParam;
+    }
+
+    public void setKnownParam(boolean knownParam) {
+        this.knownParam = knownParam;
     }
 }
