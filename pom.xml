@@ -55,7 +55,7 @@
         <site-maven-plugin.version>0.12</site-maven-plugin.version>
 
         <!--Spring-->
-        <spring-ver>4.3.3.RELEASE</spring-ver>
+        <spring-ver>5.2.22.RELEASE</spring-ver>
         <!--<spring-ver>5.1.3.RELEASE</spring-ver>-->
 
         <!--Logging-->
